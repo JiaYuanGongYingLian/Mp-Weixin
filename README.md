@@ -150,6 +150,7 @@ pnpm dev:h5:ssr
 
 </details>
 
+yarn run lint --fix
 
 ## 打包构建
 ### 微信小程序

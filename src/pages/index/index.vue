@@ -1,6 +1,6 @@
 <template>
   <view class="index-page">
-    <Hello />
+    <searchBar />
     <UnoCss />
     <text class="h2"> 查看其它页面示例↓ </text>
     <view>
@@ -13,8 +13,8 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
-import Hello from '@/components/hello/index.vue'
 import UnoCss from '@/components/unocss/index.vue'
+import searchBar from '@/components/hy-search-bar/index.vue'
 
 const pages = reactive([
   {
@@ -41,10 +41,12 @@ const pages = reactive([
   font-style: normal;
   text-align: center;
 }
+
 .h2 {
   color: green;
   font-size: 50rpx;
 }
+
 navigator {
   color: #1e80ff;
 }

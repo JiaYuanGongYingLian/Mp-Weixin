@@ -4,6 +4,9 @@ import * as Pinia from 'pinia'
 import uView from 'vk-uview-ui'
 import App from './App.vue'
 
+// custom css
+import '@/styles/main.scss'
+
 // unocss
 import 'uno.css'
 
