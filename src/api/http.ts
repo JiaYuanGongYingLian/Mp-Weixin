@@ -1,89 +1,185 @@
-import axios from 'axios'
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-shadow */
+/* eslint-disable no-console */
+// @ts-ignore
+import buildURL from 'axios/lib/helpers/buildURL'
+import axios, {
+  AxiosInstance,
+  AxiosError,
+  AxiosRequestConfig,
+  AxiosResponse
+} from 'axios'
 
-import { getFullURL } from '@/utils/http'
+type ParamsSerializer = AxiosRequestConfig['paramsSerializer']
+function getFullURL(
+  baseURL: string,
+  url: string,
+  params: Record<string, any>,
+  paramsSerializer?: ParamsSerializer
+) {
+  if (url.startsWith('http')) {
+    return buildURL(url, params, paramsSerializer)
+  }
+  baseURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`
+  url = url.startsWith('/') ? url.slice(1) : url
+  return buildURL(`${baseURL}${url}`, params, paramsSerializer)
+}
+interface Result {
+  code: number
+  msg: string
+}
 
-const instance = axios.create({
-  // Web 侧可以通过 vite.config.js 中的 proxy 配置，指定代理
-  // 小程序APP里需写完整路径，如 https://service-rbji0bev-1256505457.cd.apigw.tencentcs.com/release
-  // 可使用条件编译,详见 https://uniapp.dcloud.io/tutorial/platform.html#preprocessor
-  // #ifdef H5
-  baseURL: import.meta.env.VITE_APP_AXIOS_BASE_URL,
-  // #endif
-  // #ifndef H5
-  // @ts-ignore
-  baseURL: 'https://service-rbji0bev-1256505457.cd.apigw.tencentcs.com/release',
-  // #endif
-  adapter(config) {
-    console.log('request adapter ↓↓')
-    console.log(config)
-    const { url, method, data, params, headers, baseURL, paramsSerializer } =
-      config
-    return new Promise((resolve, reject) => {
-      uni.request({
-        method: method!.toUpperCase() as any,
-        url: getFullURL(baseURL || '', url!, params, paramsSerializer),
-        header: headers,
-        data,
-        dataType: 'json',
-        responseType: config.responseType,
-        success: (res: any) => {
-          console.log('request success ↓↓')
-          console.log(res)
-          resolve(res)
-        },
-        fail: (err: any) => {
-          reject(err)
+// 请求响应参数，包含data
+interface ResultData<T = any> extends Result {
+  data?: T
+}
+let BASEURL: string
+// Web 侧可以通过 vite.config.js 中的 proxy 配置，指定代理
+// 小程序APP里需写完整路径，如 https://service-rbji0bev-1256505457.cd.apigw.tencentcs.com/release
+// 可使用条件编译,详见 https://uniapp.dcloud.io/tutorial/platform.html#preprocessor
+// #ifdef H5
+BASEURL = import.meta.env.VITE_APP_AXIOS_BASE_URL
+// #endif
+// #ifndef H5
+// @ts-ignore
+BASEURL = 'https://api.blacksilverscore.com'
+// #endif
+enum RequestEnums {
+  TIMEOUT = 20000,
+  OVERDUE = 600, // 登录失效
+  FAIL = 999, // 请求失败
+  SUCCESS = 200 // 请求成功
+}
+const CONFIG = {
+  baseURL: BASEURL,
+  timeout: RequestEnums.TIMEOUT as number,
+  withCredentials: true
+}
+
+class RequestHttp {
+  static instance: any
+
+  static getInstance() {
+    if (!RequestHttp.instance) {
+      RequestHttp.instance = new RequestHttp(CONFIG)
+    }
+    return RequestHttp.instance
+  }
+
+  // 定义成员变量并指定类型
+  service: AxiosInstance
+
+  public constructor(config: AxiosRequestConfig) {
+    // 实例化axios
+    this.service = axios.create({
+      ...config,
+      adapter(config) {
+        // console.log('request adapter ↓↓')
+        // console.log(config)
+        const {
+          url,
+          method,
+          data,
+          params,
+          headers,
+          baseURL,
+          paramsSerializer
+        } = config
+        return new Promise((resolve, reject) => {
+          uni.request({
+            method: method!.toUpperCase() as any,
+            url: getFullURL(baseURL || '', url!, params, paramsSerializer),
+            header: headers,
+            data,
+            dataType: 'json',
+            responseType: config.responseType,
+            success: (res: any) => {
+              // console.log('request success ↓↓')
+              // console.log(res)
+              resolve(res)
+            },
+            fail: (err: any) => {
+              reject(err)
+            }
+          })
+        })
+      }
+    })
+    /**
+     * 请求拦截器
+     * 客户端发送请求 -> [请求拦截器] -> 服务器
+     * token校验(JWT) : 接受服务器返回的token,存储到vuex/pinia/本地储存当中
+     */
+
+    this.service.interceptors.request.use(
+      (config: AxiosRequestConfig) => {
+        const token = uni.getStorageSync('token') || ''
+        config.headers.platform = 'CLIENT'
+        if (token) {
+          config.headers.Authorization = token
         }
-      })
-    })
-  }
-})
+        return config
+      },
+      (error: AxiosError) => {
+        // 请求报错
+        Promise.reject(error)
+      }
+    )
+    /**
+     * 响应拦截器
+     * 服务器换返回信息 -> [拦截统一处理] -> 客户端JS获取到信息
+     */
 
-/**
- * 请求拦截
- */
-instance.interceptors.request.use((config) => {
-  const { method, params } = config
-  // 附带鉴权的token
-  const headers: any = {
-    token: uni.getStorageSync('token')
-  }
-  // 不缓存get请求
-  if (method === 'get') {
-    headers['Cache-Control'] = 'no-cache'
-  }
-  // delete请求参数放入body中
-  if (method === 'delete') {
-    headers['Content-type'] = 'application/json;'
-    Object.assign(config, {
-      data: params,
-      params: {}
-    })
-  }
-
-  return {
-    ...config,
-    headers
-  }
-})
-
-/**
- * 响应拦截
- */
-instance.interceptors.response.use((v) => {
-  if (v.data?.code === 401) {
-    uni.removeStorageSync('token')
-    // alert('即将跳转登录页。。。', '登录过期')
-    // setTimeout(redirectHome, 1500)
-    return v.data
+    this.service.interceptors.response.use(
+      (response: AxiosResponse) => {
+        const { data, config } = response
+        if (data.code === RequestEnums.OVERDUE) {
+          // 登录信息失效，应跳转到登录页面，并清空本地的token
+          localStorage.setItem('token', '') // router.replace({ //   path: '/login' // })
+          return Promise.reject(data)
+        } // 全局错误信息拦截（防止下载文件得时候返回数据流，没有code，直接报错）
+        if (data.code !== RequestEnums.SUCCESS) {
+          console.log(data.msg)
+          return Promise.reject(data)
+        }
+        return data
+      },
+      (error: AxiosError) => {
+        const { response } = error
+        if (response) {
+          this.handleCode(response.status)
+        }
+      }
+    )
   }
 
-  // @ts-ignore
-  if ((v.status || v.statusCode) === 200) {
-    return v.data
+  handleCode(code: number): void {
+    switch (code) {
+      case 401:
+        uni.removeStorageSync('token')
+        break
+      default:
+        break
+    }
   }
-  // alert(v.statusText, '网络错误')
-  return Promise.reject(v)
-})
 
-export default instance
+  // 常用方法封装
+  get<T>(url: string, params?: object): Promise<ResultData<T>> {
+    return this.service.get(url, { params })
+  }
+
+  post<T>(url: string, params?: object): Promise<ResultData<T>> {
+    return this.service.post(url, params)
+  }
+
+  put<T>(url: string, params?: object): Promise<ResultData<T>> {
+    return this.service.put(url, params)
+  }
+
+  delete<T>(url: string, params?: object): Promise<ResultData<T>> {
+    return this.service.delete(url, { params })
+  }
+}
+
+export default RequestHttp.getInstance()

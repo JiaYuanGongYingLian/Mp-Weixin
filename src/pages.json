@@ -1,80 +1,86 @@
 {
-  "pages": [
-    //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-    {
-      "path": "pages/index/index",
-      "style": {
-        "enablePullDownRefresh": true,
-        "navigationBarBackgroundColor": "#fff",
-        "navigationBarTextStyle": "black",
-        "backgroundColorTop": "#F7F7F7",
-        "backgroundColorBottom": "#F7F7F7",
-        "onReachBottomDistance": 50,
-        "navigationStyle": "custom",
-        "app-plus": {
-          "titleNView": false,
-          "pullToRefresh": {
-            "support": true,
-            "color": "#fa436a",
-            "style": "default"
-          }
-        }
-      }
-    },
-    {
-      "path": "pages/pinia/index",
-      "style": {
-        "navigationBarTitleText": "状态管理工具（pinia）"
-      }
-    },
-    {
-      "path": "pages/axios/index",
-      "style": {
-        "navigationBarTitleText": "Axios（网络请求示例）"
-      }
-    },
-    {
-      "path": "pages/uview/index",
-      "style": {
-        "navigationBarTitleText": "uView 示例组件"
-      }
-    },
-    {
-      "path": "pages/unocss/index",
-      "style": {
-        "navigationBarTitleText": "UnoCSS 示例"
-      }
-    }
-  ],
-  "globalStyle": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "uni-app",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
-  },
-  "tabBar": {
-    "color": "#C0C4CC",
-    "selectedColor": "#fa436a",
-    "borderStyle": "black",
-    "backgroundColor": "#ffffff",
-    "list": [
-      {
-        "pagePath": "pages/index/index",
-        "iconPath": "static/tab-home.png",
-        "selectedIconPath": "static/tab-home-rf.png",
-        "text": "首页"
-      },
-      {
-        "pagePath": "pages/pinia/index",
-        "iconPath": "static/tab-my.png",
-        "selectedIconPath": "static/tab-my-rf.png",
-        "text": "我的"
-      }
-    ]
-  },
-  "easycom": {
-    "custom": {
-      "^u-(.*)": "vk-uview-ui/components/u-$1/u-$1.vue"
-    }
-  }
+	"pages": [
+		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"enablePullDownRefresh": true,
+				"navigationBarBackgroundColor": "#fff",
+				"navigationBarTextStyle": "black",
+				"backgroundColorTop": "#F7F7F7",
+				"backgroundColorBottom": "#F7F7F7",
+				"onReachBottomDistance": 50,
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false,
+					"pullToRefresh": {
+						"support": true,
+						"color": "#fa436a",
+						"style": "default"
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/pinia/index",
+			"style": {
+				"navigationBarTitleText": "状态管理工具（pinia）"
+			}
+		},
+		{
+			"path": "pages/axios/index",
+			"style": {
+				"navigationBarTitleText": "Axios（网络请求示例）"
+			}
+		},
+		{
+			"path": "pages/uview/index",
+			"style": {
+				"navigationBarTitleText": "uView 示例组件"
+			}
+		},
+		{
+			"path": "pages/unocss/index",
+			"style": {
+				"navigationBarTitleText": "UnoCSS 示例"
+			}
+		},
+		{
+			"path": "pages/launch/index",
+			"style": {
+				"navigationBarTitleText": "launch"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#C0C4CC",
+		"selectedColor": "#fa436a",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/tab-home.png",
+				"selectedIconPath": "static/tab-home-rf.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/pinia/index",
+				"iconPath": "static/tab-my.png",
+				"selectedIconPath": "static/tab-my-rf.png",
+				"text": "我的"
+			}
+		]
+	},
+	"easycom": {
+		"custom": {
+			"^u-(.*)": "vk-uview-ui/components/u-$1/u-$1.vue"
+		}
+	}
 }

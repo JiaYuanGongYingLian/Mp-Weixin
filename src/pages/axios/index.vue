@@ -26,8 +26,8 @@ const getCode = () => {
         title: '获取验证码失败',
         icon: 'error'
       })
-    })
-}
+    });
+};
 </script>
 
 <style lang="less" scoped>

@@ -2,7 +2,7 @@
 import buildURL from 'axios/lib/helpers/buildURL'
 import type { AxiosRequestConfig } from 'axios'
 
-type ParamsSerializer = AxiosRequestConfig['paramsSerializer']
+type ParamsSerializer = AxiosRequestConfig['paramsSerializer'];
 
 export function getFullURL(
   baseURL: string,

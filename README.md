@@ -1,6 +1,8 @@
 # uni-vue3-ts-template
 uni-app Vue3 + TypeScript + Vite + Pinia + Unocss 模板项目
 
+yarn run lint --fix
+
 支持小程序，H5，App
 
 ![图片](https://img.cdn.sugarat.top/mdImg/MTY1MzIxODc4OTk1OQ==653218789959)
@@ -150,7 +152,7 @@ pnpm dev:h5:ssr
 
 </details>
 
-yarn run lint --fix
+
 
 ## 打包构建
 ### 微信小程序

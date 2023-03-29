@@ -1,10 +1,7 @@
 import http from '../http'
 
-function login(account: string, pwd: string) {
-  return http.post('user/login', {
-    account,
-    pwd
-  })
+function login() {
+  return http.post('/auth/api/v1/auth/wxMiniLogin')
 }
 
 /**

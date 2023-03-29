@@ -58,4 +58,4 @@ test('getFullURL1', () => {
   expect(getFullURL('api/', 'user/getList?id=2&age=3#123', {})).toBe(
     'api/user/getList?id=2&age=3#123'
   )
-})
+});
