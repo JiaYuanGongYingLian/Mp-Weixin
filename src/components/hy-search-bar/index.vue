@@ -20,13 +20,13 @@
         <text class="iconfont" @tap.stop="link" :class="[icon]"></text>
       </view>
     </view>
-    <view
-      class="placeholder-box"
-      :style="{
-        height: clientInfo.height + 'px'
-      }"
-    ></view>
   </view>
+  <view
+    class="placeholder-box"
+    :style="{
+      height: clientInfo.height + 'px'
+    }"
+  ></view>
 </template>
 
 <script setup lang="ts">
@@ -68,7 +68,7 @@ const link = () => {
     },
     fail(_res) {}
   })
-}
+};
 const toSearch = async () => {
   // await this.$emit('search', {
   // 	searchValue: this.searchValue
@@ -79,13 +79,13 @@ const toSearch = async () => {
 <style lang="scss" scoped>
 .rf-search-bar {
   padding-bottom: 36rpx;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 10;
 
   .header {
-    position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
-    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -94,6 +94,7 @@ const toSearch = async () => {
     .icon-box {
       margin: 0 $uni-spacing-row-sm 0 0;
       color: $uni-text-color-inverse;
+
       .iconfont {
         font-weight: 400;
         font-size: 50rpx;
@@ -144,6 +145,7 @@ const toSearch = async () => {
     }
   }
 }
+
 .bg {
   &-primary {
     background-color: #288cca;
@@ -152,6 +154,7 @@ const toSearch = async () => {
 
 .placeholder-box {
   width: 100%;
-  height: 40px;
+  padding-bottom: 40rpx;
+  box-sizing: content-box;
 }
 </style>

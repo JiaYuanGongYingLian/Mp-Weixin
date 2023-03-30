@@ -50,6 +50,12 @@
 			"style": {
 				"navigationBarTitleText": "launch"
 			}
+		},
+		{
+			"path": "pages/physicalStore/index",
+			"style": {
+				"navigationBarTitleText": "店铺列表"
+			}
 		}
 	],
 	"globalStyle": {

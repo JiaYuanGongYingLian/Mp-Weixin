@@ -11,7 +11,7 @@ import axios, {
   AxiosResponse
 } from 'axios'
 
-type ParamsSerializer = AxiosRequestConfig['paramsSerializer']
+type ParamsSerializer = AxiosRequestConfig['paramsSerializer'];
 function getFullURL(
   baseURL: string,
   url: string,
@@ -26,13 +26,13 @@ function getFullURL(
   return buildURL(`${baseURL}${url}`, params, paramsSerializer)
 }
 interface Result {
-  code: number
-  msg: string
+  code: number;
+  msg: string;
 }
 
 // 请求响应参数，包含data
 interface ResultData<T = any> extends Result {
-  data?: T
+  data?: T;
 }
 let BASEURL: string
 // Web 侧可以通过 vite.config.js 中的 proxy 配置，指定代理
@@ -103,7 +103,7 @@ class RequestHttp {
               reject(err)
             }
           })
-        })
+        });
       }
     })
     /**
@@ -158,7 +158,7 @@ class RequestHttp {
     switch (code) {
       case 401:
         uni.removeStorageSync('token')
-        break
+        break;
       default:
         break
     }

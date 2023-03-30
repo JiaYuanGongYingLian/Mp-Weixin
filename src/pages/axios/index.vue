@@ -27,7 +27,7 @@ const getCode = () => {
         icon: 'error'
       })
     });
-};
+}
 </script>
 
 <style lang="less" scoped>
