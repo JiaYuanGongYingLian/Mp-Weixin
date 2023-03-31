@@ -28,18 +28,6 @@
 			}
 		},
 		{
-			"path": "pages/axios/index",
-			"style": {
-				"navigationBarTitleText": "Axios（网络请求示例）"
-			}
-		},
-		{
-			"path": "pages/uview/index",
-			"style": {
-				"navigationBarTitleText": "uView 示例组件"
-			}
-		},
-		{
 			"path": "pages/unocss/index",
 			"style": {
 				"navigationBarTitleText": "UnoCSS 示例"
