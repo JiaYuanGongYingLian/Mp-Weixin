@@ -52,9 +52,33 @@
 			}
 		},
 		{
-			"path": "pages/physicalStore/index",
+			"path": "pages/physicalShopList/index",
 			"style": {
 				"navigationBarTitleText": "店铺列表"
+			}
+		},
+		{
+			"path": "pages/physicalShop/index",
+			"style": {
+				"navigationBarTitleText": "店铺详情"
+			}
+		},
+		{
+			"path": "pages/wxAuth/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/wxAuth/bindPhone",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "登录"
 			}
 		}
 	],

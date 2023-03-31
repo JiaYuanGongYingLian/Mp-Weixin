@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app';
-import { baseApi, productApi } from '@/api';
-import { getImgFullPath, getDistances } from '@/utils/index';
-
-const shopList = ref<object[]>([]);
-const tabs = ref([]);
-const currentTab = ref(0);
-const currentLocation = ref();
-
+import { reactive, ref } from 'vue'
+import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { storeToRefs } from 'pinia';
+import { baseApi, productApi } from '@/api'
+import { getImgFullPath, getDistances } from '@/utils/index'
+import { useUserStore } from '@/store'
+const store = useUserStore()
+const { hasLogin } = storeToRefs(store)
+const shopList = ref<object[]>([])
+const tabs = ref([])
+const currentTab = ref(0)
+const currentLocation = ref()
+const keyword = ref('')
 function initData() {
   return tabs.value.map((item) => {
     return {
@@ -18,73 +21,81 @@ function initData() {
       finished: false,
       pageIndex: 1,
       pageSize: 20
-    };
-  });
+    }
+  })
 }
 async function getTabs() {
   await baseApi
     .getCategoryList({ pageSize: 1000, type: 1, parentId: 0 })
     .then((res: { data: any }) => {
-      const { data } = res;
-      tabs.value = data.records;
+      const { data } = res
+      tabs.value = data.records
       tabs.value.unshift({
         name: '全部',
         id: null
-      });
-      shopList.value = initData();
+      })
+      shopList.value = initData()
     })
-    .catch((err: any) => { });
+    .catch((err: any) => { })
 }
 async function getShopList() {
-  const item = shopList.value[currentTab.value];
-  const tab = tabs.value[currentTab.value];
-  const { pageIndex, pageSize, finished } = item;
-  if (finished) return;
+  const item = shopList.value[currentTab.value]
+  const tab = tabs.value[currentTab.value]
+  const { pageIndex, pageSize, finished } = item
+  if (finished) return
   const { data } = await productApi.getShopList({
     pageIndex,
     pageSize,
     detail: 'true',
     otherColumns: 'moneyRuleDetails',
     shopType: 3,
-    categoryId: tab.id
-  });
-  const { records, current, pages } = data;
+    categoryId: tab.id,
+    keywords: keyword.value
+  })
+  const { records, current, pages } = data
   records.forEach((shop: object) => {
     const { provinceName, cityName, districtName, street, other } =
-      shop.address;
-    shop.addr = provinceName + cityName + districtName + street + other;
+      shop.address
+    shop.addr = provinceName + cityName + districtName + street + other
     shop.shopMoneyRule = shop.shopMoneyRules
       ? shop.shopMoneyRules.find((item: { selected: any }) => item.selected)
-      : {};
+      : {}
     if (currentLocation.value) {
-      const {latitude,longitude} = currentLocation.value
+      const { latitude, longitude } = currentLocation.value
       shop.distance = getDistances(
         latitude,
         longitude,
         shop.latitude,
         shop.longitude
-      ).distance_str;
+      ).distance_str
     }
-
-  });
-  item.list.push(...records);
+  })
+  item.list.push(...records)
   if (current < pages) {
-    item.pageIndex++;
+    item.pageIndex++
   } else {
-    item.finished = true;
+    item.finished = true
   }
 }
 function tabsChange(index: any) {
-  currentTab.value = index;
-  const item = shopList.value[currentTab.value];
+  currentTab.value = index
+  const item = shopList.value[currentTab.value]
   if (!item.list.length) {
-    getShopList();
+    getShopList()
   }
+  keyword.value = ''
+}
+function doSearch() {
+  const item = shopList.value[currentTab.value]
+  item.pageIndex = 1
+  item.list = []
+  item.finished = false
+  getShopList()
 }
 // scroll-view到底部加载更多
 function onreachBottom() {
-  console.log('bottom');
-  getShopList();
+  console.log('bottom')
+  getShopList()
 }
 function getLocation() {
   // 获取定位信息
@@ -93,11 +104,11 @@ function getLocation() {
     // 用户允许获取定位
     success(res) {
       if (res.errMsg == 'getLocation:ok') {
-        const { latitude, longitude } = res;
+        const { latitude, longitude } = res
         currentLocation.value = {
           latitude,
           longitude
-        };
+        }
         shopList.value.forEach((item) => {
           item.list.forEach(
             (shop: { distance: string; latitude: any; longitude: any }) => {
@@ -106,15 +117,15 @@ function getLocation() {
                 longitude,
                 shop.latitude,
                 shop.longitude
-              ).distance_str;
+              ).distance_str
             }
-          );
-        });
+          )
+        })
       }
     },
     // 用户拒绝获取定位后 再次点击触发
     fail(res) {
-      console.log(res);
+      console.log(res)
       if (res.errMsg == 'getLocation:fail auth deny') {
         uni.showModal({
           content: '检测到您没打开获取信息功能权限，是否去设置打开？',
@@ -124,29 +135,29 @@ function getLocation() {
             if (res.confirm) {
               uni.openSetting({
                 success: (res) => {
-                  console.log('确定');
+                  console.log('确定')
                 }
-              });
+              })
             } else {
-              console.log('取消');
-              return false;
+              console.log('取消')
+              return false
             }
           }
-        });
+        })
       }
     }
-  });
+  })
 }
 function handleMapLocation(shop: { latitude: any; longitude: any; addr: any }) {
-  const { latitude, longitude, addr } = shop;
-  console.log('进入导航');
+  const { latitude, longitude, addr } = shop
+  console.log('进入导航')
   // 获取定位信息
   uni.getLocation({
     type: 'wgs84',
     success(res) {
       if (res.errMsg == 'getLocation:ok') {
-        console.log(latitude);
-        console.log(longitude);
+        console.log(latitude)
+        console.log(longitude)
         uni.openLocation({
           // 传入你要去的纬度
           latitude,
@@ -157,13 +168,13 @@ function handleMapLocation(shop: { latitude: any; longitude: any; addr: any }) {
           // 缩放大小
           scale: 18,
           success() {
-            console.log('成功的回调success');
+            console.log('成功的回调success')
           }
-        });
+        })
       }
     },
     fail(res) {
-      console.log(res);
+      console.log(res)
       if (res.errMsg == 'getLocation:fail auth deny') {
         uni.showModal({
           content: '检测到您没打开获取信息功能权限，是否去设置打开？',
@@ -173,25 +184,36 @@ function handleMapLocation(shop: { latitude: any; longitude: any; addr: any }) {
             if (res.confirm) {
               uni.openSetting({
                 success: (res) => {
-                  console.log('确定');
+                  console.log('确定')
                 }
-              });
+              })
             } else {
-              console.log('取消');
-              return false;
+              console.log('取消')
+              return false
             }
           }
-        });
+        })
       }
     }
-  });
+  })
 }
-onLoad(() => { });
+function toShopDetail(id: any) {
+  if (!hasLogin.value) {
+    uni.navigateTo({
+      url: `/pages/login/index`
+    })
+    return false
+  };
+  uni.navigateTo({
+    url: `/pages/physicalShop/index?shopId=${id}`
+  })
+}
+onLoad(() => { })
 onReady(async () => {
-  await getTabs();
-  await getShopList();
-  getLocation();
-});
+  await getTabs()
+  await getShopList()
+  getLocation()
+})
 </script>
 
 <template>
@@ -199,11 +221,14 @@ onReady(async () => {
     <view class="tabs">
       <u-tabs :list="tabs" v-model="currentTab" @change="tabsChange" :is-scroll="true"></u-tabs>
     </view>
+    <u-search class="search" shape="round" :clearabled="true" :show-action="true" action-text="搜索" :animation="false"
+      bg-color="#fff" border-color="#288cca" margin="20rpx 30rpx" v-model="keyword" @search="doSearch" @custom="doSearch"
+      @clear="doSearch"></u-search>
     <view class="swiper">
       <view class="swiper-item" v-for="(item, index) in shopList" :key="index">
         <scroll-view class="scorll-view" of v-if="index === currentTab" scroll-y @scrolltolower="onreachBottom">
-          <view class="shop" v-for="shop in item.list" :key="item.id">
-            <view class="contentBox">
+          <view class="shop" v-for="shop in item.list" :key="item.tab">
+            <view class="contentBox" @click="toShopDetail(shop.id)">
               <view class="imgCover">
                 <u-image class="img" border-radius="10rpx" :src="getImgFullPath(shop.avatar)" mode="widthFix" />
                 <text class="type">{{ shop.type }}</text>
@@ -349,6 +374,13 @@ onReady(async () => {
 .tabs {
   position: sticky;
   top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+.search {
+  position: sticky;
+  top: 86rpx;
   background: #fff;
   z-index: 2;
 }

@@ -41,7 +41,7 @@ onShow(async () => {
     });
 })
 const toShopProduct = () => {}
-const toPhysicalStore = (path = '/pages/physicalStore/index') => {
+const toPhysicalStore = (path = '/pages/physicalShopList/index') => {
   uni.navigateTo({
     url: path
   })
