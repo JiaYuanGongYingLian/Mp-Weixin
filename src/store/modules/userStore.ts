@@ -4,11 +4,18 @@ const userStore = defineStore('storeId', {
   state: () => ({
     isAuthorize: false, // 是否授权
     isBindPhone: false, // 是否绑定手机
-    hasLogin: false, // 是否已经登录
-    userInfo: null
+    userInfo: null,
+    accessToken: null
   }),
-  getters: {},
-  actions: {}
+  getters: {
+    hasLogin: (state) => Boolean(state.accessToken)
+  },
+  actions: {
+    syncClearToken() {
+      this.accessToken = null
+      uni.removeStorageSync('accessToken');
+    }
+  }
 });
 
 export default userStore;

@@ -68,7 +68,7 @@ const link = () => {
     },
     fail(_res) {}
   })
-};
+}
 const toSearch = async () => {
   // await this.$emit('search', {
   // 	searchValue: this.searchValue

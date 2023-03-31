@@ -27,7 +27,7 @@
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "import/extensions": "off",
     "quotes": ["warn", "single"],
-    "semi": ["warn", "never"],
+    "semi": "off",
     "import/no-unresolved": "off",
     "todo-ddl/diy": "warn",
     "import/prefer-default-export": "off",

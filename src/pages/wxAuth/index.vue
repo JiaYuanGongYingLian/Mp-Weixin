@@ -2,7 +2,8 @@
 import { reactive, ref } from 'vue';
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app';
 import { baseApi, productApi } from '@/api';
-import { getImgFullPath, getDistances } from '@/utils/index';
+import { getImgFullPath, getDistances } from '@/utils/index'
+
 const bannerList = ref([])
 const info = ref()
 function getUserProfileFn() {
@@ -21,7 +22,7 @@ function getUserProfileFn() {
 
         // }
         uni.redirectTo({
-          url: "/pages/wxAuth/bindPhone"
+          url: '/pages/wxAuth/bindPhone'
         })
       }
     }
@@ -44,7 +45,7 @@ onLoad((option) => {
   productApi.getShopInfo({
     id: shopId
   })
-})
+});
 </script>
 <template>
   <view class="authorize">

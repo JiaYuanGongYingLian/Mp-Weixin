@@ -10,7 +10,9 @@ import axios, {
   AxiosRequestConfig,
   AxiosResponse
 } from 'axios'
+import { useUserStore } from '@/store'
 
+const store = useUserStore()
 type ParamsSerializer = AxiosRequestConfig['paramsSerializer'];
 function getFullURL(
   baseURL: string,
@@ -47,7 +49,7 @@ BASEURL = 'https://api.blacksilverscore.com'
 // #endif
 enum RequestEnums {
   TIMEOUT = 20000,
-  OVERDUE = 600, // 登录失效
+  OVERDUE = 401, // 登录失效
   FAIL = 999, // 请求失败
   SUCCESS = 200 // 请求成功
 }
@@ -59,6 +61,8 @@ const CONFIG = {
 
 class RequestHttp {
   static instance: any
+
+  showModal: boolean
 
   static getInstance() {
     if (!RequestHttp.instance) {
@@ -111,13 +115,12 @@ class RequestHttp {
      * 客户端发送请求 -> [请求拦截器] -> 服务器
      * token校验(JWT) : 接受服务器返回的token,存储到vuex/pinia/本地储存当中
      */
-
     this.service.interceptors.request.use(
       (config: AxiosRequestConfig) => {
-        const token = uni.getStorageSync('token') || ''
+        const token = uni.getStorageSync('accessToken') || ''
         config.headers.platform = 'CLIENT'
         if (token) {
-          config.headers.Authorization = token
+          config.headers.Authorization = `Bearer ${token}`
         }
         return config
       },
@@ -130,17 +133,34 @@ class RequestHttp {
      * 响应拦截器
      * 服务器换返回信息 -> [拦截统一处理] -> 客户端JS获取到信息
      */
+    this.showModal = false
 
     this.service.interceptors.response.use(
       (response: AxiosResponse) => {
         const { data, config } = response
         if (data.code === RequestEnums.OVERDUE) {
           // 登录信息失效，应跳转到登录页面，并清空本地的token
-          localStorage.setItem('token', '') // router.replace({ //   path: '/login' // })
+          store.syncClearToken()
+          if (this.showModal) return
+          this.showModal = true
+          uni.showModal({
+            title: '提示',
+            content: '登录过期，请重新登录',
+            showCancel: true,
+            success: ({ confirm, cancel }) => {
+              if (confirm) {
+                uni.navigateTo({
+                  url: '/pages/login/index'
+                })
+              }
+            },
+            complete: () => {
+              this.showModal = false
+            }
+          })
           return Promise.reject(data)
         } // 全局错误信息拦截（防止下载文件得时候返回数据流，没有code，直接报错）
         if (data.code !== RequestEnums.SUCCESS) {
-          console.log(data.msg)
           return Promise.reject(data)
         }
         return data
@@ -157,8 +177,11 @@ class RequestHttp {
   handleCode(code: number): void {
     switch (code) {
       case 401:
-        uni.removeStorageSync('token')
-        break;
+        uni.showToast({
+          type: 'warn',
+          message: '登录过期，请重新登录'
+        })
+        break
       default:
         break
     }

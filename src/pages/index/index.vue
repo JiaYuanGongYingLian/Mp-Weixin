@@ -45,7 +45,7 @@ const toPhysicalStore = (path = '/pages/physicalShopList/index') => {
   uni.navigateTo({
     url: path
   })
-}
+};
 const toDevice = () => {}
 const toWebview = (url: any) => {}
 const handleClick = (adv: { webUrl: any; objectType: any }) => {
@@ -53,13 +53,13 @@ const handleClick = (adv: { webUrl: any; objectType: any }) => {
     switch (adv.objectType) {
       case 10:
         toShopProduct()
-        break
+        break;
       case 13:
         toPhysicalStore()
-        break
+        break;
       case 100:
         toDevice()
-        break
+        break;
       default:
         () => {}
     }
