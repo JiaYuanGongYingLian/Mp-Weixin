@@ -58,6 +58,12 @@
     "setting": {
       "urlCheck": false
     },
+    "permission": {
+      "scope.userLocation": {
+        "desc": "您的位置信息将用于获取导航线路信息"
+      }
+    },
+    "requiredPrivateInfos" : [ "getLocation","chooseLocation" ],
     "usingComponents": true
   },
   "mp-alipay": {

@@ -148,7 +148,7 @@ const toSearch = async () => {
 
 .bg {
   &-primary {
-    background-color: #288cca;
+    background-color: $bg-primary;
   }
 }
 
