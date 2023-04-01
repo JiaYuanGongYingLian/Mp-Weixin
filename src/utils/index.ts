@@ -127,9 +127,20 @@ export function handleMapLocation(shop: {
   })
 }
 
+// 预览图片
+export function previewImage(pics: any, current?: any) {
+  if (!pics) return
+  uni.previewImage({
+    urls: pics,
+    current,
+    indicator: 'default'
+  })
+}
+
 export default {
   getPrePage,
   log,
   getImgFullPath,
-  getDistances
+  getDistances,
+  previewImage
 }

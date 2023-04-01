@@ -22,6 +22,13 @@ function getShopProductList(data: any) {
 }
 
 /**
+ * 获取店铺产品详情
+ */
+function getShopProductInfo(data: any) {
+  return http.get('/product/api/v1/shop/product/info', data)
+}
+
+/**
  * 获取店铺sku列表
  */
 function getShopSkuList(data: any) {
@@ -31,5 +38,6 @@ export default {
   getShopList,
   getShopInfo,
   getShopProductList,
-  getShopSkuList
+  getShopSkuList,
+  getShopProductInfo
 }

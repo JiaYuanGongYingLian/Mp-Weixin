@@ -80,6 +80,12 @@
 			"style": {
 				"navigationBarTitleText": "订单支付"
 			}
+		},
+		{
+			"path": "pages/physicalShopProduct/index",
+			"style": {
+				"navigationBarTitleText": "商品详情"
+			}
 		}
 	],
 	"globalStyle": {

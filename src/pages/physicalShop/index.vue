@@ -258,9 +258,9 @@ onLoad(async (option) => {
                 <view class="imgCover">
                   <u-image
                     class="img"
-                    border-radius="10rpx"
+                    border-radius="0"
                     :src="getImgFullPath(product.image)"
-                    height="160rpx"
+                    height="220rpx"
                     :lazy-load="true"
                     mode="scaleToFill"
                   />
@@ -392,8 +392,7 @@ onLoad(async (option) => {
     border-radius: $section-raduis;
     background: $uni-bg-color-white;
     margin-bottom: $uni-spacing-col-lg;
-    padding: $uni-spacing-row-lg;
-
+    overflow: hidden;
     .contentBox {
       .imgCover {
         position: relative;
@@ -409,10 +408,10 @@ onLoad(async (option) => {
       }
 
       .content {
+        padding: $uni-spacing-row-lg;
         .name {
           @include ellipsis;
           font-size: 28rpx;
-          margin-top: 10rpx;
         }
 
         .money {
