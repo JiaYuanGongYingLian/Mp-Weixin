@@ -147,6 +147,7 @@ function tabsChange(index: any) {
   }
 }
 function toProductDetail(id: any) {
+  if (!id) return
   uni.navigateTo({
     url: `/pages/physicalShopProduct/index?productId=${id}`
   })
@@ -254,7 +255,10 @@ onLoad(async (option) => {
         >
           <view class="container">
             <view class="itemWrap" v-for="product in item.list" :key="item.tab">
-              <view class="contentBox" @click="toProductDetail(product.id)">
+              <view
+                class="contentBox"
+                @click="toProductDetail(product.productId)"
+              >
                 <view class="imgCover">
                   <u-image
                     class="img"
