@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app';
-import { baseApi, productApi } from '@/api';
-import { getImgFullPath, getDistances } from '@/utils/index';
+import { reactive, ref } from 'vue'
+import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { baseApi, productApi } from '@/api'
+import { getImgFullPath, getDistances, handleMapLocation } from '@/utils/index'
 
-const bannerList = ref([]);
-let shop = reactive({});
-const currentLocation = ref();
+const bannerList = ref([])
+let shop = reactive({})
+const shopId = ref()
+const currentLocation = ref()
+const productList = ref<object[]>([])
+const tabs = ref([])
+const currentTab = ref(0)
 function getLocation() {
   // 获取定位信息
   uni.getLocation({
@@ -14,23 +18,23 @@ function getLocation() {
     // 用户允许获取定位
     success(res) {
       if (res.errMsg == 'getLocation:ok') {
-        const { latitude, longitude } = res;
+        const { latitude, longitude } = res
         currentLocation.value = {
           latitude,
           longitude
-        };
-        if (!shop.latitude) return;
+        }
+        if (!shop.latitude) return
         shop.distance = getDistances(
           latitude,
           longitude,
           shop.latitude,
           shop.longitude
-        ).distance_str;
+        ).distance_str
       }
     },
     // 用户拒绝获取定位后 再次点击触发
     fail(res) {
-      console.log(res);
+      console.log(res)
       if (res.errMsg == 'getLocation:fail auth deny') {
         uni.showModal({
           content: '检测到您没打开获取信息功能权限，是否去设置打开？',
@@ -40,56 +44,145 @@ function getLocation() {
             if (res.confirm) {
               uni.openSetting({
                 success: (res) => {
-                  console.log('确定');
+                  console.log('确定')
                 }
-              });
+              })
             } else {
-              console.log('取消');
-              return false;
+              console.log('取消')
+              return false
             }
           }
-        });
+        })
       }
     }
-  });
+  })
 }
-onLoad(async (option) => {
-  getLocation();
-  const { shopId } = option;
+// eslint-disable-next-line no-shadow
+function handleCheck(shop: { name: any; id: any }) {
+  const { name, id } = shop
+  uni.navigateTo({
+    url: `/pages/physicalShopCheck/index?name=${name}&shopId=${id}`
+  })
+}
+async function getShopInfo() {
   const { data } = await productApi.getShopInfo({
-    id: shopId,
+    id: shopId.value,
     detail: true
-  });
-  const { bannerResources } = data;
-  shop = data;
+  })
+  const { bannerResources } = data
+  shop = data
   bannerResources.forEach((item: { image: string; resourceUrl: string }) => {
     // eslint-disable-next-line no-param-reassign
-    item.image = getImgFullPath(item.resourceUrl);
-  });
-  bannerList.value = bannerResources;
-  const { provinceName, cityName, districtName, street, other } = shop.address;
-  shop.addr = provinceName + cityName + districtName + street + other;
+    item.image = getImgFullPath(item.resourceUrl)
+  })
+  bannerList.value = bannerResources
+  const { provinceName, cityName, districtName, street, other } = shop.address
+  shop.addr = provinceName + cityName + districtName + street + other
   shop.shopMoneyRule = shop.shopMoneyRules
     ? shop.shopMoneyRules.find((item: { selected: any }) => item.selected)
-    : {};
+    : {}
   if (currentLocation.value) {
-    const { latitude, longitude } = currentLocation.value;
+    const { latitude, longitude } = currentLocation.value
     shop.distance = getDistances(
       latitude,
       longitude,
       shop.latitude,
       shop.longitude
-    ).distance_str;
+    ).distance_str
   }
-});
+}
+function initData() {
+  return tabs.value.map((item) => {
+    return {
+      tab: item,
+      list: [],
+      loading: true,
+      finished: false,
+      pageIndex: 1,
+      pageSize: 20
+    }
+  })
+}
+async function getTabs() {
+  const { data } = await baseApi.getCategoryList({
+    detail: true,
+    needShowAll: true,
+    noPaging: true,
+    productShopId: shopId.value
+  })
+  tabs.value = data
+  tabs.value.unshift({
+    name: '全部',
+    id: ''
+  })
+  productList.value = initData()
+}
+async function getShopProduct() {
+  const item = productList.value[currentTab.value]
+  const tab = tabs.value[currentTab.value]
+  const { pageIndex, pageSize, finished } = item
+  if (finished) return
+  const { data } = await productApi.getShopProductList({
+    pageIndex,
+    pageSize,
+    detail: 'true',
+    categoryId: tab.id,
+    shopType: 3,
+    shopId: shopId.value,
+    dynamicPrice: false
+  })
+  const { records, current, pages } = data
+  item.list.push(...records)
+  if (current < pages) {
+    item.pageIndex++
+  } else {
+    item.finished = true
+  }
+}
+function tabsChange(index: any) {
+  currentTab.value = index
+  const item = productList.value[currentTab.value]
+  if (!item.list.length) {
+    getShopProduct()
+  }
+}
+function toProductDetail(id: any) {
+  uni.navigateTo({
+    url: `/pages/physicalShopProduct/index?productId=${id}`
+  })
+}
+// scroll-view到底部加载更多
+function onreachBottom() {
+  console.log('bottom')
+  getShopProduct()
+}
+onLoad(async (option) => {
+  shopId.value = option.shopId
+  getLocation()
+  await getShopInfo()
+  await getTabs()
+  await getShopProduct()
+})
 </script>
 <template>
   <div class="physicalShop">
-    <u-swiper height="400" :list="bannerList" mode="number" indicator-pos="bottomRight"></u-swiper>
+    <u-swiper
+      height="400"
+      :list="bannerList"
+      mode="number"
+      indicator-pos="bottomRight"
+    ></u-swiper>
     <view class="shop">
       <view class="contentBox">
         <view class="imgCover">
-          <u-image class="img" border-radius="10rpx" :src="getImgFullPath(shop.avatar)" mode="widthFix" />
+          <u-image
+            class="img"
+            border-radius="10rpx"
+            :src="getImgFullPath(shop.avatar)"
+            height="160rpx"
+            :lazy-load="true"
+            mode="scaleToFill"
+          />
           <text class="type">{{ shop.type }}</text>
         </view>
         <view class="content">
@@ -111,11 +204,75 @@ onLoad(async (option) => {
           }}</text>
         </view>
         <view class="actions">
-          <u-button type="primary" ripple-bg-color="#909399" size="mini" shape="circle"
-            @click="handleMapLocation(shop)">导航</u-button>
-          <u-button type="primary" ripple-bg-color="#909399" size="mini" shape="circle" v-if="false">VIP充值</u-button>
-          <u-button type="primary" ripple-bg-color="#909399" size="mini" shape="circle">买单</u-button>
+          <u-button
+            type="primary"
+            ripple-bg-color="#909399"
+            size="mini"
+            shape="circle"
+            @click="handleMapLocation(shop)"
+            >导航</u-button
+          >
+          <u-button
+            type="primary"
+            ripple-bg-color="#909399"
+            size="mini"
+            shape="circle"
+            v-if="false"
+            >VIP充值</u-button
+          >
+          <u-button
+            type="primary"
+            ripple-bg-color="#909399"
+            size="mini"
+            shape="circle"
+            @click="handleCheck(shop)"
+            >买单</u-button
+          >
         </view>
+      </view>
+    </view>
+    <view class="tabs">
+      <u-tabs
+        :list="tabs"
+        v-model="currentTab"
+        @change="tabsChange"
+        :is-scroll="true"
+      ></u-tabs>
+    </view>
+    <view class="swiper">
+      <view
+        class="swiper-item"
+        v-for="(item, index) in productList"
+        :key="index"
+      >
+        <scroll-view
+          class="scorll-view"
+          of
+          v-if="index === currentTab"
+          scroll-y
+          @scrolltolower="onreachBottom"
+        >
+          <view class="container">
+            <view class="itemWrap" v-for="product in item.list" :key="item.tab">
+              <view class="contentBox" @click="toProductDetail(product.id)">
+                <view class="imgCover">
+                  <u-image
+                    class="img"
+                    border-radius="10rpx"
+                    :src="getImgFullPath(product.image)"
+                    height="160rpx"
+                    :lazy-load="true"
+                    mode="scaleToFill"
+                  />
+                </view>
+                <view class="content">
+                  <view class="name">{{ product.name }}</view>
+                  <view class="money">￥{{ product.money }}</view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
       </view>
     </view>
   </div>
@@ -135,7 +292,7 @@ onLoad(async (option) => {
 
     .imgCover {
       position: relative;
-      width: 200rpx;
+      width: 160rpx;
       flex-shrink: 0;
       margin-right: 20rpx;
 
@@ -205,6 +362,64 @@ onLoad(async (option) => {
 
       :deep(.u-btn--primary) {
         background: $bg-primary;
+      }
+    }
+  }
+}
+
+.tabs {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+.swiper {
+  flex: 1;
+  padding: $uni-spacing-row-base * 2;
+
+  .scorll-view {
+    width: 100%;
+    height: calc(100vh - 140rpx);
+  }
+  .container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .itemWrap {
+    width: calc((100% - 30rpx) / 2);
+    border-radius: $section-raduis;
+    background: $uni-bg-color-white;
+    margin-bottom: $uni-spacing-col-lg;
+    padding: $uni-spacing-row-lg;
+
+    .contentBox {
+      .imgCover {
+        position: relative;
+        width: 100%;
+        flex-shrink: 0;
+        margin-right: 20rpx;
+
+        .img {
+          width: 100%;
+          // height: 200rpx;
+          border-radius: $section-raduis;
+        }
+      }
+
+      .content {
+        .name {
+          @include ellipsis;
+          font-size: 28rpx;
+          margin-top: 10rpx;
+        }
+
+        .money {
+          color: red;
+          font-size: 26rpx;
+          margin-top: 10rpx;
+        }
       }
     }
   }

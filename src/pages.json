@@ -39,7 +39,6 @@
 				"navigationBarTitleText": "UnoCSS 示例"
 			}
 		},
-		
 		{
 			"path": "pages/physicalShopList/index",
 			"style": {
@@ -69,6 +68,18 @@
 			"style": {
 				"navigationBarTitleText": "登录"
 			}
+		},
+		{
+			"path": "pages/physicalShopCheck/index",
+			"style": {
+				"navigationBarTitleText": "店铺结算"
+			}
+		},
+		{
+			"path": "pages/payment/index",
+			"style": {
+				"navigationBarTitleText": "订单支付"
+			}
 		}
 	],
 	"globalStyle": {
@@ -78,8 +89,8 @@
 		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
-		"color": "#C0C4CC",
-		"selectedColor": "#fa436a",
+		"color": "#333",
+		"selectedColor": "#288cca",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [

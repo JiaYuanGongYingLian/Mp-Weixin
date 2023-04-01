@@ -1,50 +1,50 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app';
-import { storeToRefs } from 'pinia';
-import { Md5 } from 'ts-md5';
-import { useUserStore } from '@/store';
-import { userApi } from '@/api';
-import logo from '@/static/ic_launcher.png';
+import { reactive, ref } from 'vue'
+import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { storeToRefs } from 'pinia'
+import { Md5 } from 'ts-md5'
+import { useUserStore } from '@/store'
+import { userApi } from '@/api'
+import logo from '@/static/ic_launcher.png'
 
-onLoad((option) => {});
-const store = useUserStore();
-const { count } = storeToRefs(store);
+onLoad((option) => {})
+const store = useUserStore()
+const { count } = storeToRefs(store)
 const form = reactive({
   username: '17628281574',
   password: '123456'
-});
+})
 // 手机号验证
 function mobileBlurFn() {
-  const telReg = /^1[3456789]\d{9}$/;
+  const telReg = /^1[3456789]\d{9}$/
   if (form.username != '') {
     if (!telReg.test(form.username)) {
       uni.showToast({
         title: '请输入正确的手机号',
         icon: 'none'
-      });
+      })
     }
   } else {
     uni.showToast({
       title: '请输入手机号',
       icon: 'none'
-    });
+    })
   }
 }
 function clearFn() {
-  form.username = '';
+  form.username = ''
 }
 async function submit() {
   const { data } = await userApi.login({
     type: 10,
     username: form.username,
     code: Md5.hashStr(form.password)
-  });
+  })
   store.$patch((v) => {
-    v.accessToken = data.accessToken;
-    uni.setStorageSync('accessToken', data.accessToken);
-  });
-  uni.navigateBack();
+    v.accessToken = data.accessToken
+    uni.setStorageSync('accessToken', data.accessToken)
+  })
+  uni.navigateBack()
 }
 </script>
 <template>
@@ -81,7 +81,7 @@ async function submit() {
         placeholder="请输入密码"
       />
     </view>
-    <view class="btn" @tap="submit">登录</view>
+    <u-button class="hy-btn" :ripple="true" @click="submit">登录</u-button>
   </view>
 </template>
 
@@ -98,6 +98,7 @@ async function submit() {
   height: 200rpx;
   margin: 0 auto;
   margin-top: 100rpx;
+  border-radius: 10rpx;
 }
 
 .form {
@@ -136,18 +137,7 @@ async function submit() {
   }
 }
 
-.btn {
-  height: 100rpx;
-  line-height: 100rpx;
-  text-align: center;
-  color: #fff;
-  background: $bg-primary;
-  font-size: 34rpx;
-  border-radius: 55rpx;
+.hy-btn {
   margin: 70rpx 0 30rpx 0;
-}
-
-.btn.checked {
-  background: linear-gradient(218deg, #41d8ae 0%, #23c0c0 100%);
 }
 </style>

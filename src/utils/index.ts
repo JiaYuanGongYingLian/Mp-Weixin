@@ -73,6 +73,60 @@ export function getDistances(lat1: any, lng1: any, lat2: any, lng2: any) {
   return objData
 }
 
+export function handleMapLocation(shop: {
+  latitude: any
+  longitude: any
+  addr: any
+}) {
+  const { latitude, longitude, addr } = shop
+  console.log('进入导航')
+  // 获取定位信息
+  uni.getLocation({
+    type: 'wgs84',
+    success(res) {
+      if (res.errMsg == 'getLocation:ok') {
+        console.log(latitude)
+        console.log(longitude)
+        uni.openLocation({
+          // 传入你要去的纬度
+          latitude,
+          // 传入你要去的经度
+          longitude,
+          // 传入你要去的地址信息 不填则为空
+          address: addr,
+          // 缩放大小
+          scale: 18,
+          success() {
+            console.log('成功的回调success')
+          }
+        })
+      }
+    },
+    fail(res) {
+      console.log(res)
+      if (res.errMsg == 'getLocation:fail auth deny') {
+        uni.showModal({
+          content: '检测到您没打开获取信息功能权限，是否去设置打开？',
+          confirmText: '确认',
+          cancelText: '取消',
+          success: (res) => {
+            if (res.confirm) {
+              uni.openSetting({
+                success: (res) => {
+                  console.log('确定')
+                }
+              })
+            } else {
+              console.log('取消')
+              return false
+            }
+          }
+        })
+      }
+    }
+  })
+}
+
 export default {
   getPrePage,
   log,
