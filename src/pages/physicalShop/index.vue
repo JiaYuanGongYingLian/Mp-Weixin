@@ -3,7 +3,9 @@ import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, productApi } from '@/api'
 import { getImgFullPath, getDistances, handleMapLocation } from '@/utils/index'
+import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 
+const loadingSkeleton = ref(false)
 const bannerList = ref([])
 let shop = reactive({})
 const shopId = ref()
@@ -145,11 +147,15 @@ function tabsChange(index: any) {
   if (!item.list.length) {
     getShopProduct()
   }
+  uni.pageScrollTo({
+    scrollTop: 400,
+    duration: 500
+  })
 }
 function toProductDetail(id: any) {
   if (!id) return
   uni.navigateTo({
-    url: `/pages/physicalShopProduct/index?productId=${id}`
+    url: `/pages/physicalShopProduct/index?shopId=${shopId.value}&productId=${id}`
   })
 }
 // scroll-view到底部加载更多
@@ -159,13 +165,18 @@ function onreachBottom() {
 }
 onLoad(async (option) => {
   shopId.value = option.shopId
+  loadingSkeleton.value = true
   getLocation()
   await getShopInfo()
   await getTabs()
   await getShopProduct()
+  setTimeout(() => {
+    loadingSkeleton.value = false
+  }, 500)
 })
 </script>
 <template>
+  <page-skeleton :loading="loadingSkeleton" :type="2"></page-skeleton>
   <div class="physicalShop">
     <u-swiper
       height="400"
@@ -389,6 +400,7 @@ onLoad(async (option) => {
   .container {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
   }
 
   .itemWrap {

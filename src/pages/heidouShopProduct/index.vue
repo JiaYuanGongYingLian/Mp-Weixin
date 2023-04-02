@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
-import { baseApi, productApi } from '@/api'
-import { getImgFullPath, getDistances, previewImage } from '@/utils/index'
+import { productApi } from '@/api'
+import { getImgFullPath, previewImage } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 
 const loadingSkeleton = ref(false)
@@ -59,8 +59,8 @@ onLoad((option) => {
     <view class="introduce-section section">
       <view class="intro-top price">
         <view class="price-box">
-          <view class="price-tip">¥</view>
-          <view class="price">{{ productData.money }}</view>
+          <view class="price">{{ productData.money }} </view>
+          <view class="price-tip">黑豆</view>
         </view>
         <view class="bot-row">
           <view class="text">销量 {{ productData.saleCount || 0 }}</view>
@@ -118,6 +118,7 @@ onLoad((option) => {
   .price {
     font-size: 40rpx;
     font-weight: bold;
+    margin-right: 10rpx;
   }
   .m-price {
     margin: 0 12rpx;
