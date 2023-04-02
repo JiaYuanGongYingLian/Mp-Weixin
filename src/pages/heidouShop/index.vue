@@ -51,7 +51,7 @@ async function getHeidouProductList() {
     pageIndex,
     pageSize,
     detail: 'true',
-    shopId: 225, // 黑银商家
+    shopId: 225, // 黑豆线上商城
     categoryId: tab.id,
     keywords: keyword.value
   })

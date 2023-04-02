@@ -31,13 +31,13 @@ function getShopProductInfo(data: any) {
 /**
  * 获取店铺sku列表
  */
-function getShopSkuList(data: any) {
+function getShopProductSkuList(data: any) {
   return http.get('/product/api/v1/shop/product/sku/list', data)
 }
 export default {
   getShopList,
   getShopInfo,
   getShopProductList,
-  getShopSkuList,
+  getShopProductSkuList,
   getShopProductInfo
 }
