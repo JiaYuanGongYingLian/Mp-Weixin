@@ -1,0 +1,278 @@
+<script setup lang="ts">
+import { reactive, ref } from 'vue'
+import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { baseApi, productApi } from '@/api'
+import { getImgFullPath, getDistances } from '@/utils/index'
+
+const list = ref([])
+const loaded = ref(false)
+const choosedId = ref()
+const type = ref()
+function loadData() {
+  // user_address_list({ page: 1, limit: 20 }).then((res) => {
+  //   if (res) {
+  //     this.list = []
+  //     this.list = res.data
+  //     this.loaded = true
+  //   }
+  // })
+}
+// 选择地址
+function chooseAddress(item: { id: any }) {
+  if (type.value === 'setAddress') {
+    if (choosedId.value !== item.id) {
+      const pages = getCurrentPages() // 当前页面栈
+      if (pages.length > 1) {
+        const beforePage = pages[pages.length - 2] // 获取上一个页面实例对象
+        beforePage.$vm.setAddress(item)
+      }
+    }
+    uni.navigateBack()
+  } else if (type.value === 'editOrderAddress') {
+    // changeOrderAddress({ address_id: item.id, order_id: this.orderId }).then(
+    //   (res: any) => {
+    //     if (res) {
+    //       uni.showToast({
+    //         title: '修改地址成功',
+    //         icon: 'none',
+    //         duration: 2000
+    //       })
+    //       setTimeout(() => {
+    //         uni.navigateBack()
+    //       }, 1000)
+    //     }
+    //   }
+    // )
+  }
+}
+
+// 删除地址
+function delAddress(index: number) {
+  const addressId = list.value[index].id
+  // remove_user_address({ addressId: addressId }).then((res: any) => {
+  //   if (res) {
+  //     uni.showToast({
+  //       title: '删除成功',
+  //       icon: 'none',
+  //       duration: 2000
+  //     })
+  //     list.value.splice(index, 1)
+  //     const pages = getCurrentPages() // 当前页面栈
+  //     if (pages.length > 1) {
+  //       const beforePage = pages[pages.length - 2] // 获取上一个页面实例对象
+  //       if (beforePage.$vm.addressData.id === addressId) {
+  //         beforePage.$vm.setAddress({})
+  //       }
+  //     }
+  //   }
+  // })
+}
+function delAddressConfirm(index: any) {
+  uni.showModal({
+    content: '确定要删除该收获地址吗？',
+    success: (e) => {
+      if (e.confirm) {
+        delAddress(index)
+      }
+    }
+  })
+}
+// 添加地址
+function addAddress(_type = 'add', data: any) {
+  loaded.value = true
+  if (_type === 'edit') {
+    uni.setStorageSync('routerParam', data)
+  }
+  let url = `/pages/addressAdd/index?type=${_type}`
+  if (list.value.length === 0) {
+    url = `${url}&isFirst=true`
+  }
+  uni.navigateTo({
+    url
+  })
+}
+// 获取微信自己的地址
+function getWXAddressFn() {
+  loaded.value = false
+  uni.chooseAddress({
+    success(res) {
+      const item = {
+        city: res.cityName,
+        detail: res.detailInfo,
+        district: res.countyName,
+        phone: res.telNumber,
+        is_default: 0,
+        province: res.provinceName,
+        real_name: res.userName
+      }
+      if (list.value.length === 0) {
+        item.is_default = 1
+      }
+      // edit_user_address(item).then((res: any) => {
+      //   if (res) {
+      //     loadData()
+      //   }
+      // })
+    },
+    fail(_res) {
+      uni.showToast({
+        title: '您已禁止使用微信地址，请前往设置同意微信地址授权!',
+        icon: 'none',
+        duration: 2000
+      })
+      setTimeout(() => {
+        loaded.value = true
+      }, 2000)
+    }
+  })
+}
+onLoad((_option) => {})
+</script>
+<template>
+  <div class="container">
+    <view class="empty" v-if="loaded && list.length === 0">
+      <image
+        class="empty-img"
+        src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/noAddress.png"
+        mode="widthFix"
+      ></image>
+    </view>
+    <view class="item" v-for="(item, index) in list" :key="index">
+      <view @click="chooseAddress(item)">
+        <view class="row-name">
+          <text class="f-m">{{ item.real_name }}</text>
+          <text class="tel">{{ item.phone }}</text>
+        </view>
+        <view class="row-adddress">
+          <text
+            >{{ item.province }} {{ item.city }} {{ item.district }}
+            {{ item.detail }}</text
+          >
+        </view>
+      </view>
+      <view class="row-edit b-t">
+        <view class="default">
+          <text v-if="item.is_default == 1">默认地址</text>
+        </view>
+
+        <view class="op-item" @tap="delAddressConfirm(index)" v-if="!orderId">
+          <image
+            class="osx"
+            src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/del.png"
+          ></image>
+          <text>删除</text>
+        </view>
+        <view class="op-item" @tap="addAddress('edit', item)">
+          <image
+            class="osx"
+            src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/edit.png"
+          ></image>
+          <text>编辑</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="common-btn red add" @tap="addAddress('add')">添加新地址</view>
+    <view class="common-btn red wx" @tap="getWXAddressFn">使用微信地址</view>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.container {
+  padding: 0 16rpx 110rpx;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 150rpx;
+
+    .empty-img {
+      display: block;
+      width: 414rpx;
+      height: 336rpx;
+    }
+  }
+
+  .item {
+    padding: 30rpx;
+    padding-bottom: 0;
+    margin-top: 16rpx;
+    border-radius: 8rpx;
+    background-color: #fff;
+
+    .row-name {
+      display: flex;
+      align-items: baseline;
+      font-size: 30rpx;
+      color: #333;
+
+      .tel {
+        font-size: 28rpx;
+        margin-left: 20rpx;
+      }
+    }
+
+    .row-adddress {
+      padding: 26rpx 0;
+      font-size: 28rpx;
+      color: $uni-text-color-light;
+      line-height: 1.4;
+      word-break: break-all;
+    }
+
+    .row-edit {
+      display: flex;
+      align-items: center;
+      font-size: 26rpx;
+      color: #333;
+      display: flex;
+      height: 80rpx;
+      position: relative;
+      border-top: 1px solid #efefef;
+
+      .op-item {
+        font-size: 26rpx;
+        color: $uni-text-color-light;
+        margin-left: 20rpx;
+
+        .osx {
+          display: inline-block;
+          vertical-align: -4rpx;
+          width: 28rpx;
+          height: 28rpx;
+          margin-right: 8rpx;
+        }
+      }
+
+      .default {
+        flex: 1;
+        font-size: 26rpx;
+        color: #f92c1d;
+      }
+    }
+  }
+
+  .common-btn {
+    position: fixed;
+    bottom: calc(16rpx + env(safe-area-inset-bottom));
+    z-index: 95;
+    margin: 0;
+    width: 300rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+    text-align: center;
+    color: #fff;
+    font-size: 32rpx;
+    background: linear-gradient(to right, #f74f43, #f74f43);
+    box-shadow: 4rpx 4rpx 8rpx rgba(255, 86, 177, 0.4);
+  }
+  .common-btn.add {
+    left: 30rpx;
+  }
+  .common-btn.wx {
+    right: 30rpx;
+  }
+}
+</style>

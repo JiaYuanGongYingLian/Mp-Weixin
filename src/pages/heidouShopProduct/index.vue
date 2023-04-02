@@ -11,7 +11,8 @@ const productId = ref()
 const shopId = ref()
 const skuList = reactive<object[]>([])
 const skuCheckedList = ref<object[]>([])
-const skuCheckedItem = ref<object>({})
+const skuCheckedItem = ref({})
+const buyNumber = ref()
 
 async function getProductInfo() {
   try {
@@ -74,6 +75,7 @@ const totalCartNum = ref()
 function getCartProductNumFn() {
   totalCartNum.value = 2
 }
+getCartProductNumFn()
 function numberChange() {}
 // 选择规格
 function selectSpec(item: any, skuIndex: number) {
@@ -106,22 +108,15 @@ function selectSpec(item: any, skuIndex: number) {
   }
 
   // 获取sku库存、价格信息
-  const skuCheckedItem_temp = {}
-  // for (let key in skuValue) {
-  //   let item = this.skuValue[key]
-  //   if (key === checkSkuIds) {
-  //     skuCheckedItem_temp = item
-  //   }
-  // }
-  // if (!skuCheckedItem_temp) {
-  //   skuCheckedItem.checked = false
-  //   return
-  // }
-  // skuCheckedItem_temp.checked = true
-  skuCheckedItem.value = skuCheckedItem_temp
-  // if (this.buyNumber > this.skuCheckedItem.stock) {
-  //   this.buyNumber = skuCheckedItem.stock
-  // }
+  skuCheckedItem.value = item
+  if (buyNumber.value > skuCheckedItem.value.count) {
+    buyNumber.value = skuCheckedItem.value.count
+  }
+}
+function confirm() {
+  uni.navigateTo({
+    url: '/pages/heidouShopCheckout/index'
+  })
 }
 </script>
 <template>
@@ -217,9 +212,7 @@ function selectSpec(item: any, skuIndex: number) {
             src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newHome/buyCar.png"
           ></image>
           <view>购物车</view>
-          <view class="num" v-if="hasLogin && totalCartNum != '0'">{{
-            totalCartNum
-          }}</view>
+          <view class="num" v-if="totalCartNum > 0">{{ totalCartNum }}</view>
         </view>
       </view>
       <view class="action-btn-group">
@@ -238,7 +231,7 @@ function selectSpec(item: any, skuIndex: number) {
             <view class="price"
               >{{
                 skuCheckedItem.checked
-                  ? skuCheckedItem.price
+                  ? skuCheckedItem.money
                   : productData.money
               }}<text class="symbol">黑豆</text></view
             >
@@ -278,41 +271,21 @@ function selectSpec(item: any, skuIndex: number) {
         <view class="number-box-wrapper">
           <view class="tit f-m">购买数量</view>
           <u-number-box
+            v-model="buyNumber"
             :input-width="100"
             :input-height="60"
             :min="1"
-            :max="100"
+            :max="
+              skuCheckedItem.checked ? skuCheckedItem.count : productData.count
+            "
             @change="numberChange"
           ></u-number-box>
         </view>
-        <view class="btnBox" v-if="isUnconditional">
-          <button
-            class="newBtn newAddCar"
-            :disabled="
-              skuList.length > 0 &&
-              (!skuCheckedItem.checked || skuCheckedItem.stock == 0)
-            "
-            @tap="confirm(2)"
-          >
-            加入购物车
-          </button>
-          <button
-            class="newBtn"
-            :disabled="
-              skuList.length > 0 &&
-              (!skuCheckedItem.checked || skuCheckedItem.stock == 0)
-            "
-            @tap="confirm(1)"
-          >
-            立即购买
-          </button>
-        </view>
         <button
-          v-else
           class="common-btn red btn"
           :disabled="
             skuList.length > 0 &&
-            (!skuCheckedItem.checked || skuCheckedItem.stock == 0)
+            (!skuCheckedItem.checked || skuCheckedItem.count == 0)
           "
           @tap="confirm"
         >
@@ -832,29 +805,6 @@ function selectSpec(item: any, skuIndex: number) {
       line-height: 80rpx;
       color: #fff;
       background: linear-gradient(90deg, #f74f43, #f74f43);
-    }
-    .btnBox {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 28rpx 0 20rpx 0;
-      .newBtn {
-        width: 320rpx;
-        height: 80rpx;
-        line-height: 80rpx;
-        color: #fff;
-        background-color: #f74e3f;
-        font-size: 30rpx;
-        border-radius: 40rpx;
-        &[disabled] {
-          color: #fff !important;
-          background: #ccc !important;
-        }
-      }
-      .newAddCar {
-        background-color: #fee7de;
-        color: #f74e3f;
-      }
     }
   }
 }

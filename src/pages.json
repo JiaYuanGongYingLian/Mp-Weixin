@@ -104,6 +104,24 @@
 			"style": {
 				"navigationBarTitleText": "商品详情"
 			}
+		},
+		{
+			"path": "pages/heidouShopCheckout/index",
+			"style": {
+				"navigationBarTitleText": "创建订单"
+			}
+		},
+		{
+			"path": "pages/addressList/index",
+			"style": {
+				"navigationBarTitleText": "addressList"
+			}
+		},
+		{
+			"path": "pages/addressAdd/index",
+			"style": {
+				"navigationBarTitleText": "addressAdd"
+			}
 		}
 	],
 	"globalStyle": {
