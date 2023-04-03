@@ -18,8 +18,32 @@ function getCode(phone: string): Promise<{ num: number }> {
     }
   })
 }
+/**
+ * 地址
+ */
+function getAddressList(data: any) {
+  return http.get('/ups/api/v1/user/address/list', data)
+}
+function getAddressInfo(data: any) {
+  return http.get('/ups/api/v1/user/address/info', data)
+}
+function updateAddressInfo(data: any) {
+  return http.post('/ups/api/v1/user/address/update', data)
+}
+function deleteAddressInfo(data: any) {
+  return http.get('/ups/api/v1/user/address/delete', data)
+}
+function addressAdd(data: any) {
+  return http.post('/ups/api/v1/user/address/add', data)
+}
+
 export default {
   login,
   wxlogin,
-  getCode
-};
+  getCode,
+  getAddressList,
+  getAddressInfo,
+  updateAddressInfo,
+  deleteAddressInfo,
+  addressAdd
+}

@@ -1,23 +1,73 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
-import { baseApi, productApi } from '@/api'
+import { userApi, orderApi } from '@/api'
 import { getImgFullPath, getDistances } from '@/utils/index'
 
 const addressData = ref({})
-const orderData = {
-  priceGroup: { totalPrice: 0, vipPrice: 0 }
+let orderData = reactive({})
+async function getAddressList() {
+  const { data } = await userApi.getAddressList({
+    noPaging: true,
+    detail: true
+  })
+  addressData.value =
+    data.find((item: { [x: string]: any }) => item.defaultAddress)?.address ||
+    {}
 }
-onLoad((option) => {})
-function onSubmit() {
+async function getOrderMoney() {
+  const { data } = await orderApi.orderMoney(orderData)
+  const { orderMonies, totalMoney, payMoney, money, moneyUnit } = data
+  orderData.orderMonies = orderMonies
+  orderData.totalMoney = totalMoney
+  orderData.payMoney = payMoney
+  orderData.money = money
+  orderData.moneyUnit = moneyUnit
+}
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function setAddress(data: { address: {} }) {
+  addressData.value = data.address
+  orderData.addressId = data.address.id
+  getOrderMoney()
 }
+// 数量
+function numberChange(data) {
+  orderData.orderProductSkus[data.index].count = data.number
+}
+defineExpose({
+  setAddress
+})
+
+// 创建订单
+async function creatOrder() {
+  const { data } = await orderApi.orderAdd(orderData)
+  uni.redirectTo({
+    url: `/pages/money/pay?order=${JSON.stringify(data)}`
+  })
+}
+
+function onSubmit() {
+  if (!orderData.addressId) {
+    uni.showToast({
+      icon: 'none',
+      title: '请填写收货地址！'
+    })
+    return
+  }
+  creatOrder()
+}
+
+onLoad((option) => {
+  orderData = JSON.parse(option?.orderData)
+  getAddressList()
+})
 </script>
 <template>
   <div class="container">
     <!-- 地址 -->
     <navigator
-      :url="'/pages/addressList/index?type=setAddress&id=' + addressData.id"
+      :url="'/pages/addressList/index?type=setAddress'"
       class="address-section"
     >
       <view class="order-content">
@@ -27,12 +77,12 @@ function onSubmit() {
         ></image>
         <view class="cen" v-if="addressData.id">
           <view class="top">
-            <text class="name">{{ addressData.real_name }}</text>
+            <text class="name">{{ addressData.name }}</text>
             <text class="mobile">{{ addressData.phone }}</text>
           </view>
           <text class="address"
-            >{{ addressData.province }}{{ addressData.city
-            }}{{ addressData.district }} {{ addressData.detail }}</text
+            >{{ addressData.provinceName }}{{ addressData.cityName
+            }}{{ addressData.districtName }} {{ addressData.street }}</text
           >
         </view>
         <view class="cen address-empty" v-else>
@@ -62,16 +112,13 @@ function onSubmit() {
     </view>
     <!-- 金额明细 -->
     <view class="yt-list">
-      <view class="yt-list-cell">
-        <text class="cell-tit clamp">商品金额</text>
-        <text class="cell-tip num"
-          >￥{{ orderData.priceGroup.totalPrice}}</text
-        >
-      </view>
-      <!--目前系统没有这个优惠设计-->
-      <view class="yt-list-cell" v-if="orderData.priceGroup.vipPrice > 0">
-        <text class="cell-tit clamp">会员优惠</text>
-        <text class="cell-tip red">-￥{{ orderData.priceGroup.vipPrice }}</text>
+      <view
+        class="yt-list-cell"
+        v-for="item in orderData.orderMonies"
+        :key="item.id"
+      >
+        <text class="cell-tit clamp">{{ item.name }}</text>
+        <text class="cell-tip num">{{ item.money }}</text>
       </view>
       <view class="yt-list-cell">
         <text class="cell-tit clamp">运费</text>
@@ -94,15 +141,27 @@ function onSubmit() {
         />
       </view> -->
     </view>
-
+    <!-- 买家留言 -->
+    <view class="yt-list">
+      <view class="yt-list-cell desc-cell">
+        <text class="cell-tit clamp">买家留言：</text>
+        <input
+          class="desc"
+          type="text"
+          v-model="orderData.remark"
+          placeholder="请填写备注信息"
+          placeholder-class="placeholder"
+        />
+      </view>
+    </view>
     <!-- 底部 -->
     <view class="footer">
       <view class="price-content">
         <text>实付款</text>
         <text class="price-tip">￥</text>
-        <text class="price">{{ 100 }}元</text>
+        <text class="price">{{ orderData.payMoney }}元</text>
       </view>
-      <text class="submit" @click="onSubmit">立即支付</text>
+      <text class="submit" @click="onSubmit">提交订单</text>
     </view>
   </div>
 </template>
@@ -164,7 +223,7 @@ function onSubmit() {
     margin: 12rpx 0 4rpx;
     margin-right: 20rpx;
     color: #626266;
-    font-size: 32rpx;
+    font-size: 28rpx;
     word-break: break-all;
   }
 

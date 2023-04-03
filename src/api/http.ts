@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-shadow */
@@ -13,7 +14,7 @@ import axios, {
 import { useUserStore } from '@/store'
 
 const store = useUserStore()
-type ParamsSerializer = AxiosRequestConfig['paramsSerializer'];
+type ParamsSerializer = AxiosRequestConfig['paramsSerializer']
 function getFullURL(
   baseURL: string,
   url: string,
@@ -28,13 +29,13 @@ function getFullURL(
   return buildURL(`${baseURL}${url}`, params, paramsSerializer)
 }
 interface Result {
-  code: number;
-  msg: string;
+  code: number
+  msg: string
 }
 
 // 请求响应参数，包含data
 interface ResultData<T = any> extends Result {
-  data?: T;
+  data?: T
 }
 let BASEURL: string
 // Web 侧可以通过 vite.config.js 中的 proxy 配置，指定代理
@@ -107,7 +108,7 @@ class RequestHttp {
               reject(err)
             }
           })
-        });
+        })
       }
     })
     /**

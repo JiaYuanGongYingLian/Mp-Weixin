@@ -39,18 +39,14 @@ async function getProductInfo() {
       name: '规格',
       skus
     })
+    // selectSpec(skuList[0][0], 0)
     setTimeout(() => {
       loadingSkeleton.value = false
     }, 500)
   } catch (err) {}
 }
 function shareGroupFn() {}
-onLoad((option) => {
-  productId.value = option.productId
-  shopId.value = option.shopId
-  loadingSkeleton.value = true
-  getProductInfo()
-})
+
 function toFavorite() {}
 
 // 立即购买或者加入购物车
@@ -118,6 +114,12 @@ function confirm() {
     url: '/pages/heidouShopCheckout/index'
   })
 }
+onLoad((option) => {
+  productId.value = option.productId
+  shopId.value = option.shopId
+  loadingSkeleton.value = true
+  getProductInfo()
+})
 </script>
 <template>
   <div class="main">
@@ -160,8 +162,14 @@ function confirm() {
         </view>
       </view>
     </view>
-    <!--服务-->
-    <view class="c-list m-t section yhq">
+    <view class="c-list section yhq">
+      <view class="c-row">
+        <view class="tit">选择</view>
+        <view class="bz-list con">
+          <view class="text"> {{ skuCheckedItem.name || '' }}</view>
+          <view class="text"></view>
+        </view>
+      </view>
       <view class="c-row">
         <view class="tit">服务</view>
         <view class="bz-list con">

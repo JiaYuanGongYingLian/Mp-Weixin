@@ -1,10 +1,10 @@
-import http from '../http';
+import http from '../http'
 
 /**
  * 获取行业分类
  */
 function getCategoryList(data: any) {
-  return http.get('/base/api/v1/category/list', data);
+  return http.get('/base/api/v1/category/list', data)
 }
 
 /**
@@ -26,10 +26,10 @@ enum advertising_enum {
 }
 
 function getAdvertisingList(data: any) {
-  return http.get('/base/api/v1/advertising/list', data);
+  return http.get('/base/api/v1/advertising/list', data)
 }
 export default {
   getCategoryList,
   getAdvertisingList,
   advertising_enum
-};
+}

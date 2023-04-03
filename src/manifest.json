@@ -54,7 +54,7 @@
   "quickapp": {},
   /* 小程序特有相关 */
   "mp-weixin": {
-    "appid": "wx19d1f7180e1bd475",
+    "appid": "wxafc863f97a07a18c",
     "setting": {
       "urlCheck": false
     },
@@ -63,7 +63,7 @@
         "desc": "您的位置信息将用于获取导航线路信息"
       }
     },
-    "requiredPrivateInfos" : [ "getLocation","chooseLocation" ],
+    "requiredPrivateInfos" : [ "getLocation","chooseLocation","chooseAddress" ],
     "usingComponents": true
   },
   "mp-alipay": {

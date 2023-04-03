@@ -1,75 +1,53 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
-import { baseApi, productApi } from '@/api'
+import { userApi } from '@/api'
 import { getImgFullPath, getDistances } from '@/utils/index'
 
 const list = ref([])
 const loaded = ref(false)
-const choosedId = ref()
 const type = ref()
-function loadData() {
-  // user_address_list({ page: 1, limit: 20 }).then((res) => {
-  //   if (res) {
-  //     this.list = []
-  //     this.list = res.data
-  //     this.loaded = true
-  //   }
-  // })
+async function loadData() {
+  const { data } = await userApi.getAddressList({
+    noPaging: true,
+    detail: true
+  })
+  list.value = data
+  loaded.value = true
 }
 // 选择地址
-function chooseAddress(item: { id: any }) {
+function chooseAddress(item: any) {
   if (type.value === 'setAddress') {
-    if (choosedId.value !== item.id) {
-      const pages = getCurrentPages() // 当前页面栈
-      if (pages.length > 1) {
-        const beforePage = pages[pages.length - 2] // 获取上一个页面实例对象
-        beforePage.$vm.setAddress(item)
-      }
+    const pages = getCurrentPages() // 当前页面栈
+    if (pages.length > 1) {
+      const beforePage = pages[pages.length - 2] // 获取上一个页面实例对象
+      beforePage.$vm.setAddress(item)
     }
-    uni.navigateBack()
-  } else if (type.value === 'editOrderAddress') {
-    // changeOrderAddress({ address_id: item.id, order_id: this.orderId }).then(
-    //   (res: any) => {
-    //     if (res) {
-    //       uni.showToast({
-    //         title: '修改地址成功',
-    //         icon: 'none',
-    //         duration: 2000
-    //       })
-    //       setTimeout(() => {
-    //         uni.navigateBack()
-    //       }, 1000)
-    //     }
-    //   }
-    // )
   }
+  uni.navigateBack()
 }
 
 // 删除地址
-function delAddress(index: number) {
-  const addressId = list.value[index].id
-  // remove_user_address({ addressId: addressId }).then((res: any) => {
-  //   if (res) {
-  //     uni.showToast({
-  //       title: '删除成功',
-  //       icon: 'none',
-  //       duration: 2000
-  //     })
-  //     list.value.splice(index, 1)
-  //     const pages = getCurrentPages() // 当前页面栈
-  //     if (pages.length > 1) {
-  //       const beforePage = pages[pages.length - 2] // 获取上一个页面实例对象
-  //       if (beforePage.$vm.addressData.id === addressId) {
-  //         beforePage.$vm.setAddress({})
-  //       }
-  //     }
-  //   }
-  // })
+async function delAddress(index: number) {
+  const { addressId, id, userId } = list.value[index]
+  await userApi.deleteAddressInfo({ addressId, id, userId })
+  uni.showToast({
+    title: '删除成功',
+    icon: 'none',
+    duration: 2000
+  })
+  list.value.splice(index, 1)
+  const pages = getCurrentPages() // 当前页面栈
+  if (pages.length > 1) {
+    const beforePage = pages[pages.length - 2] // 获取上一个页面实例对象
+    if (beforePage.$vm.addressData.id === addressId) {
+      beforePage.$vm.setAddress({})
+    }
+  }
 }
 function delAddressConfirm(index: any) {
   uni.showModal({
-    content: '确定要删除该收获地址吗？',
+    content: '确定要删除该地址吗？',
     success: (e) => {
       if (e.confirm) {
         delAddress(index)
@@ -83,7 +61,7 @@ function addAddress(_type = 'add', data: any) {
   if (_type === 'edit') {
     uni.setStorageSync('routerParam', data)
   }
-  let url = `/pages/addressAdd/index?type=${_type}`
+  let url = `/pages/addressEdit/index?type=${_type}`
   if (list.value.length === 0) {
     url = `${url}&isFirst=true`
   }
@@ -95,24 +73,20 @@ function addAddress(_type = 'add', data: any) {
 function getWXAddressFn() {
   loaded.value = false
   uni.chooseAddress({
-    success(res) {
+    async success(res) {
       const item = {
-        city: res.cityName,
-        detail: res.detailInfo,
-        district: res.countyName,
+        cityName: res.cityName,
+        street: res.detailInfo,
+        districtName: res.countyName,
         phone: res.telNumber,
-        is_default: 0,
-        province: res.provinceName,
-        real_name: res.userName
+        provinceName: res.provinceName,
+        name: res.userName
       }
-      if (list.value.length === 0) {
-        item.is_default = 1
-      }
-      // edit_user_address(item).then((res: any) => {
-      //   if (res) {
-      //     loadData()
-      //   }
-      // })
+      await userApi.addressAdd({
+        address: item,
+        defaultAddress: list.value.length === 0
+      })
+      loadData()
     },
     fail(_res) {
       uni.showToast({
@@ -126,7 +100,10 @@ function getWXAddressFn() {
     }
   })
 }
-onLoad((_option) => {})
+onLoad((option) => {
+  type.value = option?.type
+  loadData()
+})
 </script>
 <template>
   <div class="container">
@@ -140,19 +117,19 @@ onLoad((_option) => {})
     <view class="item" v-for="(item, index) in list" :key="index">
       <view @click="chooseAddress(item)">
         <view class="row-name">
-          <text class="f-m">{{ item.real_name }}</text>
-          <text class="tel">{{ item.phone }}</text>
+          <text class="f-m">{{ item.address.name }}</text>
+          <text class="tel">{{ item.address.phone }}</text>
         </view>
         <view class="row-adddress">
           <text
-            >{{ item.province }} {{ item.city }} {{ item.district }}
-            {{ item.detail }}</text
+            >{{ item.address.provinceName }} {{ item.address.cityName }}
+            {{ item.address.districtName }} {{ item.address.street }}</text
           >
         </view>
       </view>
       <view class="row-edit b-t">
         <view class="default">
-          <text v-if="item.is_default == 1">默认地址</text>
+          <text v-if="item.defaultAddress">默认地址</text>
         </view>
 
         <view class="op-item" @tap="delAddressConfirm(index)" v-if="!orderId">
