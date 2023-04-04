@@ -162,6 +162,7 @@ class RequestHttp {
           return Promise.reject(data)
         } // 全局错误信息拦截（防止下载文件得时候返回数据流，没有code，直接报错）
         if (data.code !== RequestEnums.SUCCESS) {
+          this.handleCode(data.code, data.msg)
           return Promise.reject(data)
         }
         return data
@@ -169,18 +170,24 @@ class RequestHttp {
       (error: AxiosError) => {
         const { response } = error
         if (response) {
-          this.handleCode(response.status)
+          this.handleCode(response.data.code)
         }
       }
     )
   }
 
-  handleCode(code: number): void {
+  handleCode(code: number, msg?: string): void {
     switch (code) {
       case 401:
         uni.showToast({
-          type: 'warn',
-          message: '登录过期，请重新登录'
+          icon: 'error',
+          title: '登录过期，请重新登录'
+        })
+        break
+      case 500:
+        uni.showToast({
+          icon: 'none',
+          title: msg
         })
         break
       default:

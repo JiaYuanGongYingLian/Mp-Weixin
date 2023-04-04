@@ -122,11 +122,7 @@ onLoad((option) => {
       </view>
       <view class="yt-list-cell">
         <text class="cell-tit clamp">运费</text>
-        <text class="cell-tip num">{{
-          orderData.priceGroup.storePostage > 0
-            ? '￥' + orderData.priceGroup.storePostage
-            : '免运费'
-        }}</text>
+        <text class="cell-tip num">{{ '免运费' }}</text>
       </view>
       <!-- <view class="yt-list-cell desc-cell">
         <text class="cell-tit clamp">备注信息</text>

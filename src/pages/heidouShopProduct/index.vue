@@ -1,17 +1,21 @@
+<!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onShareAppMessage } from '@dcloudio/uni-app'
+import { storeToRefs } from 'pinia'
 import { productApi } from '@/api'
-import { getImgFullPath, previewImage } from '@/utils/index'
+import { getImgFullPath, previewImage, checkLoginState } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
+import { useUserStore } from '@/store'
 
+const store = useUserStore()
+const { hasLogin } = storeToRefs(store)
 const loadingSkeleton = ref(false)
 const productData = ref({})
 const productId = ref()
 const shopId = ref()
 const skuList = reactive<object[]>([])
-const skuCheckedList = ref<object[]>([])
-const skuCheckedItem = ref({})
+const shopProductSkuSelected = ref({})
 const buyNumber = ref()
 
 async function getProductInfo() {
@@ -27,32 +31,56 @@ async function getProductInfo() {
         return getImgFullPath(element.resourceUrl)
       }
     )
+    data.saleCount = shopProductSkus.reduce((pre: any, cur: any) => {
+      return pre + cur.saleCount
+    }, 0)
     data.count = shopProductSkus.reduce((pre: any, cur: any) => {
       return pre + cur.productSku.count
     }, 0)
     productData.value = data
-    const skus = shopProductSkus.reduce((pre: any, cur: any) => {
-      pre.push(cur.productSku)
-      return pre
-    }, [])
     skuList.push({
       name: '规格',
-      skus
+      shopProductSkus
     })
-    // selectSpec(skuList[0][0], 0)
+    selectSpec(skuList[0].shopProductSkus, skuList[0].shopProductSkus[0])
     setTimeout(() => {
       loadingSkeleton.value = false
     }, 500)
   } catch (err) {}
 }
-function shareGroupFn() {}
+async function getFavoriteInfo() {
+  if (!hasLogin.value) return
+  const { code } = await productApi.productFavoriteInfo({
+    shopProductSkuId: shopProductSkuSelected.value.id,
+    shopId: shopId.value
+  })
+  productData.value.userCollect = code === 200
+}
 
-function toFavorite() {}
+// 收藏
+async function toggleFavorite(flag) {
+  if (!checkLoginState()) return
+  const executor = flag
+    ? productApi.productFavoriteDelete
+    : productApi.productFavoriteAdd
+  const { data } = executor({
+    shopProductSkuId: shopProductSkuSelected.value.id,
+    shopId: shopId.value
+  })
+}
 
-// 立即购买或者加入购物车
+// 关闭规格-模态层弹窗
 const skuPopUp = ref(false)
-function chooseSku() {
-  if (productData.value.stock === 0) {
+function togglePopupFn(flag: boolean) {
+  skuPopUp.value = flag
+}
+// 立即购买或者加入购物车
+const actionType = ref()
+function chooseSku(type: number) {
+  if (!checkLoginState()) return
+  const typeMap = ['toCart', 'toBuyNow']
+  actionType.value = typeMap[type]
+  if (productData.value.count === 0) {
     uni.showToast({
       icon: 'none',
       title: '太火爆了，该商品当前暂无库存',
@@ -60,12 +88,9 @@ function chooseSku() {
     })
     return
   }
-  skuPopUp.value = true
+  togglePopupFn(true)
 }
-// 关闭规格-模态层弹窗
-function closePopupFn(flag: boolean) {
-  skuPopUp.value = flag
-}
+
 // 获取购物车数据
 const totalCartNum = ref()
 function getCartProductNumFn() {
@@ -73,52 +98,87 @@ function getCartProductNumFn() {
 }
 getCartProductNumFn()
 function numberChange() {}
+
 // 选择规格
-function selectSpec(item: any, skuIndex: number) {
-  const skuItem = skuList[skuIndex]
-  // 取消同规格以选中属性
-  skuItem.skus.forEach((sku: { checked: boolean }) => {
-    // eslint-disable-next-line no-param-reassign
+function selectSpec(
+  shopProductSkus: { checked: boolean }[],
+  activeSku: { checked: boolean }
+) {
+  shopProductSkus.forEach((sku: { checked: boolean }) => {
     sku.checked = false
   })
-  item.checked = true
-
-  // 设置以选中规格
-  // eslint-disable-next-line no-shadow
-  const skuCheckedList_temp: any[] = []
-  let checkSkuIds = ''
-  // eslint-disable-next-line no-shadow
-  skuList.forEach((skuObj) => {
-    skuObj.skus.forEach((sku: { checked: any; name: string }) => {
-      if (sku.checked) {
-        skuCheckedList_temp.push(sku)
-        checkSkuIds += checkSkuIds === '' ? skuObj.name : `,${sku.name}`
+  activeSku.checked = true
+  shopProductSkuSelected.value = activeSku
+}
+// 添加商品到购物车
+async function addToCart() {
+  const { data } = await productApi.productCartAdd({
+    shopId: shopId.value,
+    shopProductSkuId: shopProductSkuSelected.value.id
+  })
+  uni.showToast({
+    icon: 'none',
+    title: '添加购物车成功！'
+  })
+}
+// 完成提交
+async function confirm() {
+  let shopProductSkuWalletRule
+  if (shopProductSkuSelected.value.shopProductSkuWalletRules) {
+    shopProductSkuWalletRule =
+      shopProductSkuSelected.value.shopProductSkuWalletRules.find(
+        (item: { uniqueness: any }) => {
+          return item.uniqueness
+        }
+      )
+  }
+  const orderData = {
+    orderProductSkus: [
+      {
+        shopProductSku: shopProductSkuSelected.value,
+        name: productData.value.name,
+        skuName: shopProductSkuSelected.value.productSku.name,
+        skuImage: shopProductSkuSelected.value.productSku.image,
+        money: shopProductSkuSelected.value.money,
+        moneyUnit: shopProductSkuWalletRule.moneyUnit || null,
+        count: 1,
+        shopProductSkuId: shopProductSkuSelected.value.id,
+        status: 0
       }
+    ],
+    status: 0
+  }
+  const orderJson = JSON.stringify(orderData)
+  togglePopupFn(false)
+  if (actionType.value === 'toBuyNow') {
+    uni.navigateTo({
+      url: `/pages/heidouShopCheckout/index?orderData=${orderJson}`
     })
-  })
-
-  skuCheckedList.value = skuCheckedList_temp
-  if (skuCheckedList.value.length === 0) {
-    skuCheckedItem.value.checked = false
-    return
-  }
-
-  // 获取sku库存、价格信息
-  skuCheckedItem.value = item
-  if (buyNumber.value > skuCheckedItem.value.count) {
-    buyNumber.value = skuCheckedItem.value.count
+  } else {
+    addToCart()
   }
 }
-function confirm() {
-  uni.navigateTo({
-    url: '/pages/heidouShopCheckout/index'
-  })
-}
-onLoad((option) => {
+
+onLoad(async (option) => {
   productId.value = option.productId
   shopId.value = option.shopId
   loadingSkeleton.value = true
-  getProductInfo()
+  await getProductInfo()
+  await getFavoriteInfo()
+})
+onShareAppMessage((res) => {
+  const inviteCode = ''
+  const title = productData.value.name
+  const imageUrl = getImgFullPath(productData.value.image)
+  const sourceTime = new Date().getTime()
+  const pages = getCurrentPages()
+  const currentPage = pages[pages.length - 1]
+  const path = `${currentPage.$page.fullPath}?inviteCode${inviteCode}&sourceTime=${sourceTime}`
+  return {
+    title,
+    imageUrl,
+    path
+  }
 })
 </script>
 <template>
@@ -128,7 +188,7 @@ onLoad((option) => {
     <u-swiper
       class="swiper"
       indicator-dots
-      circular="true"
+      :circular="true"
       duration="400"
       height="750"
       mode="number"
@@ -152,24 +212,17 @@ onLoad((option) => {
         <view>
           <view class="title f-m">{{ productData.name }}</view>
         </view>
-
-        <view class="share-content" @tap="shareGroupFn">
+        <view class="share-content">
           <image
             class="img"
             src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/share01.png"
           ></image>
           <view class="text">分享</view>
+          <button open-type="share" class="btn"></button>
         </view>
       </view>
     </view>
     <view class="c-list section yhq">
-      <view class="c-row">
-        <view class="tit">选择</view>
-        <view class="bz-list con">
-          <view class="text"> {{ skuCheckedItem.name || '' }}</view>
-          <view class="text"></view>
-        </view>
-      </view>
       <view class="c-row">
         <view class="tit">服务</view>
         <view class="bz-list con">
@@ -200,7 +253,7 @@ onLoad((option) => {
         <view
           class="p-b-btn"
           :class="{ active: productData.userCollect }"
-          @tap="toFavorite(productData.userCollect)"
+          @tap="toggleFavorite(productData.userCollect)"
         >
           <image
             class="pic"
@@ -224,36 +277,35 @@ onLoad((option) => {
         </view>
       </view>
       <view class="action-btn-group">
-        <view class="action-btn carBtn" @click="chooseSku()">加入购物车</view>
-        <view class="action-btn buyNowBtn" @tap="chooseSku()">立即购买</view>
+        <view class="action-btn carBtn" @click="chooseSku(0)">加入购物车</view>
+        <view class="action-btn buyNowBtn" @tap="chooseSku(1)">立即购买</view>
       </view>
     </view>
     <!-- 规格-模态层弹窗 -->
-    <view class="sku-popup" v-if="skuPopUp" @tap.stop="closePopupFn(false)">
-      <view class="attr-content" @tap.stop="closePopupFn(true)">
+    <view class="sku-popup" v-if="skuPopUp" @tap.stop="togglePopupFn(false)">
+      <view class="attr-content" @tap.stop="togglePopupFn(true)">
         <view class="a-t">
           <image
-            :src="getImgFullPath(skuCheckedItem.image || productData.image)"
+            :src="
+              getImgFullPath(
+                shopProductSkuSelected.productSku.image || productData.image
+              )
+            "
           ></image>
           <view class="right">
             <view class="price"
-              >{{
-                skuCheckedItem.checked
-                  ? skuCheckedItem.money
-                  : productData.money
+              >{{ shopProductSkuSelected.productSku.money || productData.money
               }}<text class="symbol">黑豆</text></view
             >
             <view class="stock"
               >库存：{{
-                skuCheckedItem.checked
-                  ? skuCheckedItem.count
-                  : productData.count
+                shopProductSkuSelected.productSku.count || productData.count
               }}件</view
             >
             <view class="selected">
-              {{ skuCheckedList.length === 0 ? '' : '已选：' }}
+              已选：
               <view class="selected-text" style="display: inline-block">
-                {{ skuCheckedItem.name || '' }}
+                {{ shopProductSkuSelected.productSku.name || '' }}
               </view>
             </view>
           </view>
@@ -266,13 +318,13 @@ onLoad((option) => {
           <view class="f-m">{{ skuItem.name }}</view>
           <view class="item-list">
             <view
-              v-for="(item, index) in skuItem.skus"
+              v-for="(item, index) in skuItem.shopProductSkus"
               :key="index"
               class="text tit"
               :class="{ selected: item.checked }"
-              @click="selectSpec(item, skuIndex)"
+              @click="selectSpec(skuItem.shopProductSkus, item)"
             >
-              {{ item.name }}
+              {{ item.productSku.name }}
             </view>
           </view>
         </view>
@@ -284,7 +336,9 @@ onLoad((option) => {
             :input-height="60"
             :min="1"
             :max="
-              skuCheckedItem.checked ? skuCheckedItem.count : productData.count
+              shopProductSkuSelected.checked
+                ? shopProductSkuSelected.productSku.count
+                : productData.count
             "
             @change="numberChange"
           ></u-number-box>
@@ -293,9 +347,10 @@ onLoad((option) => {
           class="common-btn red btn"
           :disabled="
             skuList.length > 0 &&
-            (!skuCheckedItem.checked || skuCheckedItem.count == 0)
+            (!shopProductSkuSelected.checked ||
+              shopProductSkuSelected.count == 0)
           "
-          @tap="confirm"
+          @click.stop="confirm"
         >
           完成
         </button>
@@ -355,9 +410,19 @@ onLoad((option) => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    top: 30rpx;
-    flex-shrink: 0;
-
+    position: relative;
+    .btn {
+      background-color: transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      &::after {
+        border: none;
+      }
+    }
     .img {
       width: 64rpx;
       height: 64rpx;
@@ -392,7 +457,7 @@ onLoad((option) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-
+  overflow: hidden;
   &.price {
     margin-bottom: 16rpx;
   }
