@@ -155,9 +155,10 @@ function tabsChange(index: any) {
 function toProductDetail(id: any) {
   if (!id) return
   uni.navigateTo({
-    url: `/pages/physicalShopProduct/index?shopId=${shopId.value}&productId=${id}`
+    url: `/pages/heidouShopProduct/index?shopId=${shopId.value}&productId=${id}`
   })
 }
+
 // scroll-view到底部加载更多
 function onreachBottom() {
   console.log('bottom')

@@ -4,7 +4,7 @@ import http from '../http'
  * 订单新增
  */
 function orderAdd(data: any) {
-  return http.get('/order/api/v1/order/add', data)
+  return http.post('/order/api/v1/order/add', data)
 }
 /**
  * 订单删除
@@ -28,13 +28,13 @@ function orderList(data: any) {
  * 订单金额
  */
 function orderMoney(data: any) {
-  return http.get('/order/api/v1/order/money', data)
+  return http.post('/order/api/v1/order/money', data)
 }
 /**
  * 订单支付
  */
 function orderPay(data: any) {
-  return http.get('/order/api/v1/order/pay', data)
+  return http.post('/order/api/v1/order/pay', data)
 }
 /**
  * 微信支付回调

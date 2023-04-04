@@ -1,11 +1,38 @@
 <script setup lang="ts">
+import { userApi } from '@/api'
 import logo from '@/static/ic_launcher.png'
+import { onLoad } from '@dcloudio/uni-app'
 
-setTimeout(() => {
-  uni.reLaunch({
-    url: '/pages/index/index'
+function toTargetPage(url = '/pages/index/index', duration = 0) {
+  setTimeout(() => {
+    uni.reLaunch({
+      url
+    })
+  }, duration)
+}
+
+async function getNewOpenIdFn() {
+  const { data } = await userApi.wxlogin()
+}
+
+onLoad((option) => {
+  uni.login({
+    provider: 'weixin',
+    success: async (res) => {
+      uni.setStorageSync('wxCode', res.code)
+      await getNewOpenIdFn()
+      toTargetPage()
+    },
+    fail: () => {
+      uni.hideLoading()
+      uni.showToast({
+        title: '请检查网络，退出后重新进入！',
+        icon: 'none',
+        duration: 2000
+      })
+    }
   })
-}, 2000)
+})
 </script>
 
 <template>

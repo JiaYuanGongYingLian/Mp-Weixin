@@ -16,7 +16,7 @@ const productId = ref()
 const shopId = ref()
 const skuList = reactive<object[]>([])
 const shopProductSkuSelected = ref({})
-const buyNumber = ref()
+const buyNumber = ref(1)
 
 async function getProductInfo() {
   try {
@@ -123,7 +123,7 @@ async function addToCart() {
 }
 // 完成提交
 async function confirm() {
-  let shopProductSkuWalletRule
+  let shopProductSkuWalletRule = {}
   if (shopProductSkuSelected.value.shopProductSkuWalletRules) {
     shopProductSkuWalletRule =
       shopProductSkuSelected.value.shopProductSkuWalletRules.find(
@@ -141,7 +141,7 @@ async function confirm() {
         skuImage: shopProductSkuSelected.value.productSku.image,
         money: shopProductSkuSelected.value.money,
         moneyUnit: shopProductSkuWalletRule.moneyUnit || null,
-        count: 1,
+        count: buyNumber.value,
         shopProductSkuId: shopProductSkuSelected.value.id,
         status: 0
       }
@@ -294,7 +294,7 @@ onShareAppMessage((res) => {
           ></image>
           <view class="right">
             <view class="price"
-              >{{ shopProductSkuSelected.productSku.money || productData.money
+              >{{ shopProductSkuSelected.money || productData.money
               }}<text class="symbol">黑豆</text></view
             >
             <view class="stock"

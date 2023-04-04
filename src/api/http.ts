@@ -119,9 +119,13 @@ class RequestHttp {
     this.service.interceptors.request.use(
       (config: AxiosRequestConfig) => {
         const token = uni.getStorageSync('accessToken') || ''
+        const wxCode = uni.getStorageSync('wxCode') || ''
         config.headers.platform = 'CLIENT'
         if (token) {
           config.headers.Authorization = `Bearer ${token}`
+        }
+        if (wxCode) {
+          config.headers.code = wxCode
         }
         return config
       },

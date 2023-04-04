@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
-import { baseApi, productApi } from '@/api'
+import { baseApi, productApi, orderApi } from '@/api'
 import icon_wechat from '@/static/pay_icon_wechat.png'
 // import icon_ali from "@/static/pay_icon_alipay.png"
 import icon_hy from '@/static/pay_icon_money.png'
@@ -9,7 +9,10 @@ import icon_select from '@/static/ic_pop_select_normal.png'
 import icon_selected from '@/static/ic_pop_select_selected.png'
 import icon_verify from '@/static/icon_verify.png'
 
-const info = reactive({})
+const order = ref()
+const info = reactive({
+  money: ''
+})
 const payWay = reactive([
   {
     name: '微信支付',
@@ -25,6 +28,13 @@ const payWay = reactive([
 const code = ref()
 const timer = ref<NodeJS.Timer | null>(null)
 const countDown = ref(60)
+
+async function getWalletRuleLis() {
+  const { data } = await productApi.walletRuleList({
+    noPaging: true,
+    orderId: order.value.id
+  })
+}
 
 function handleSlect(way: { selected: boolean }) {
   payWay.forEach((item) => {
@@ -43,21 +53,6 @@ function getCode() {
   }, 1000)
 }
 
-//支付成功回调
-function paySuccess(_orderId) {}
-// 支付失败回调
-function payFail(orderId: string) {
-  uni.showToast({
-    icon: 'none',
-    title: '支付失败',
-    duration: 2000
-  })
-  setTimeout(() => {
-    uni.redirectTo({
-      url: `/packageA/order/detail?id=${orderId}`
-    })
-  }, 1000)
-}
 // 调用支付
 function weChatPaymentApp(config: { [x: string]: any }, orderId: any) {
   uni.requestPayment({
@@ -82,10 +77,38 @@ function weChatPaymentApp(config: { [x: string]: any }, orderId: any) {
     }
   })
 }
-function onSubmit() {}
+// 支付成功回调
+function paySuccess(orderId) {}
+// 支付失败回调
+function payFail(orderId: string) {
+  uni.showToast({
+    icon: 'none',
+    title: '支付失败',
+    duration: 2000
+  })
+  // setTimeout(() => {
+  //   uni.redirectTo({
+  //     url: `/packageA/order/detail?id=${orderId}`
+  //   })
+  // }, 1000)
+}
+function onSubmit() {
+  orderApi.orderPay({
+    orderId: order.value.id,
+    // openId: '',
+    payPlatform: 3,
+    payWay: 3
+  })
+}
 onLoad((option) => {
-  const { money } = option
-  info.money = money
+  if (option?.money) {
+    info.money = option.money
+  }
+  if (option?.order) {
+    order.value = JSON.parse(option.order)
+    info.money = order.value.money
+  }
+  getWalletRuleLis()
 })
 </script>
 <template>

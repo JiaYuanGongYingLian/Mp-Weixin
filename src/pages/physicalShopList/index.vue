@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app';
-import { storeToRefs } from 'pinia';
-import { baseApi, productApi } from '@/api';
-import { getImgFullPath, getDistances, handleMapLocation } from '@/utils/index';
-import { useUserStore } from '@/store';
+import { reactive, ref } from 'vue'
+import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { storeToRefs } from 'pinia'
+import { baseApi, productApi } from '@/api'
+import { getImgFullPath, getDistances, handleMapLocation } from '@/utils/index'
+import { useUserStore } from '@/store'
 
-const store = useUserStore();
-const { hasLogin } = storeToRefs(store);
-const shopList = ref<object[]>([]);
-const tabs = ref([]);
-const currentTab = ref(0);
-const currentLocation = ref();
-const keyword = ref('小舒娱乐');
+const store = useUserStore()
+const { hasLogin } = storeToRefs(store)
+const shopList = ref<object[]>([])
+const tabs = ref([])
+const currentTab = ref(0)
+const currentLocation = ref()
+const keyword = ref('小舒娱乐')
 function initData() {
   return tabs.value.map((item) => {
     return {
@@ -22,28 +22,28 @@ function initData() {
       finished: false,
       pageIndex: 1,
       pageSize: 20
-    };
-  });
+    }
+  })
 }
 async function getTabs() {
   await baseApi
     .getCategoryList({ pageSize: 1000, type: 1, parentId: 0 })
     .then((res: { data: any }) => {
-      const { data } = res;
-      tabs.value = data.records;
+      const { data } = res
+      tabs.value = data.records
       tabs.value.unshift({
         name: '全部',
         id: ''
-      });
-      shopList.value = initData();
+      })
+      shopList.value = initData()
     })
-    .catch((err: any) => {});
+    .catch((err: any) => {})
 }
 async function getShopList() {
-  const item = shopList.value[currentTab.value];
-  const tab = tabs.value[currentTab.value];
-  const { pageIndex, pageSize, finished } = item;
-  if (finished) return;
+  const item = shopList.value[currentTab.value]
+  const tab = tabs.value[currentTab.value]
+  const { pageIndex, pageSize, finished } = item
+  if (finished) return
   const { data } = await productApi.getShopList({
     pageIndex,
     pageSize,
@@ -52,51 +52,50 @@ async function getShopList() {
     shopType: 3,
     categoryId: tab.id,
     keywords: keyword.value
-  });
-  const { records, current, pages } = data;
+  })
+  const { records, current, pages } = data
   records.forEach((shop: object) => {
-    const { provinceName, cityName, districtName, street, other } =
-      shop.address;
-    shop.addr = provinceName + cityName + districtName + street + other;
+    const { provinceName, cityName, districtName, street, other } = shop.address
+    shop.addr = provinceName + cityName + districtName + street + other
     shop.shopMoneyRule = shop.shopMoneyRules
       ? shop.shopMoneyRules.find((item: { selected: any }) => item.selected)
-      : {};
+      : {}
     if (currentLocation.value) {
-      const { latitude, longitude } = currentLocation.value;
+      const { latitude, longitude } = currentLocation.value
       shop.distance = getDistances(
         latitude,
         longitude,
         shop.latitude,
         shop.longitude
-      ).distance_str;
+      ).distance_str
     }
-  });
-  item.list.push(...records);
+  })
+  item.list.push(...records)
   if (current < pages) {
-    item.pageIndex++;
+    item.pageIndex++
   } else {
-    item.finished = true;
+    item.finished = true
   }
 }
 function tabsChange(index: any) {
-  currentTab.value = index;
-  const item = shopList.value[currentTab.value];
+  currentTab.value = index
+  const item = shopList.value[currentTab.value]
   if (!item.list.length) {
-    getShopList();
+    getShopList()
   }
-  keyword.value = '';
+  keyword.value = ''
 }
 function doSearch() {
-  const item = shopList.value[currentTab.value];
-  item.pageIndex = 1;
-  item.list = [];
-  item.finished = false;
-  getShopList();
+  const item = shopList.value[currentTab.value]
+  item.pageIndex = 1
+  item.list = []
+  item.finished = false
+  getShopList()
 }
 // scroll-view到底部加载更多
 function onreachBottom() {
-  console.log('bottom');
-  getShopList();
+  console.log('bottom')
+  getShopList()
 }
 function getLocation() {
   // 获取定位信息
@@ -105,11 +104,11 @@ function getLocation() {
     // 用户允许获取定位
     success(res) {
       if (res.errMsg == 'getLocation:ok') {
-        const { latitude, longitude } = res;
+        const { latitude, longitude } = res
         currentLocation.value = {
           latitude,
           longitude
-        };
+        }
         shopList.value.forEach((item) => {
           item.list.forEach(
             (shop: { distance: string; latitude: any; longitude: any }) => {
@@ -118,15 +117,15 @@ function getLocation() {
                 longitude,
                 shop.latitude,
                 shop.longitude
-              ).distance_str;
+              ).distance_str
             }
-          );
-        });
+          )
+        })
       }
     },
     // 用户拒绝获取定位后 再次点击触发
     fail(res) {
-      console.log(res);
+      console.log(res)
       if (res.errMsg == 'getLocation:fail auth deny') {
         uni.showModal({
           content: '检测到您没打开获取信息功能权限，是否去设置打开？',
@@ -136,47 +135,47 @@ function getLocation() {
             if (res.confirm) {
               uni.openSetting({
                 success: (res) => {
-                  console.log('确定');
+                  console.log('确定')
                 }
-              });
+              })
             } else {
-              console.log('取消');
-              return false;
+              console.log('取消')
+              return false
             }
           }
-        });
+        })
       }
     }
-  });
+  })
 }
 function checkLoginState() {
   if (!hasLogin.value) {
     uni.navigateTo({
       url: '/pages/login/index'
-    });
-    return false;
+    })
+    return false
   }
-  return true;
+  return true
 }
 function toShopDetail(id: any) {
-  checkLoginState();
+  checkLoginState()
   uni.navigateTo({
     url: `/pages/physicalShop/index?shopId=${id}`
-  });
+  })
 }
 function handleCheck(shop: { name: any; id: any }) {
-  checkLoginState();
-  const { name, id } = shop;
+  checkLoginState()
+  const { name, id } = shop
   uni.navigateTo({
     url: `/pages/physicalShopCheck/index?name=${name}&shopId=${id}`
-  });
+  })
 }
-onLoad(() => {});
+onLoad(() => {})
 onReady(async () => {
-  await getTabs();
-  await getShopList();
-  getLocation();
-});
+  await getTabs()
+  await getShopList()
+  getLocation()
+})
 </script>
 
 <template>

@@ -72,6 +72,13 @@ function productFavoriteDelete(data: any) {
 function productReviewAdd(data: any) {
   return http.post('/product/api/v1/product/review/add', data)
 }
+/**
+ * 门店商品钱包使用配置列表接口
+ */
+function walletRuleList(data: any) {
+  return http.get('/product/api/v1/shop/product/sku/wallet/rule/list', data)
+}
+
 export default {
   getShopList,
   getShopInfo,
@@ -86,5 +93,6 @@ export default {
   productFavoriteList,
   productFavoriteInfo,
   productFavoriteDelete,
-  productReviewAdd
+  productReviewAdd,
+  walletRuleList
 }
