@@ -44,7 +44,7 @@ const getHeidouProductList = async () => {
 const toProductDetail = (product: { shopId: any; productId: any }) => {
   const { shopId, productId } = product
   uni.navigateTo({
-    url: `/pages/heidouShopProduct/index?shopId=${shopId}&productId=${productId}`
+    url: `/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
   })
 }
 onReady(async () => {

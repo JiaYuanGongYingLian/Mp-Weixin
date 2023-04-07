@@ -70,24 +70,6 @@
 			}
 		},
 		{
-			"path": "pages/physicalShopCheck/index",
-			"style": {
-				"navigationBarTitleText": "店铺结算"
-			}
-		},
-		{
-			"path": "pages/payment/index",
-			"style": {
-				"navigationBarTitleText": "订单支付"
-			}
-		},
-		{
-			"path": "pages/physicalShopProduct/index",
-			"style": {
-				"navigationBarTitleText": "商品详情"
-			}
-		},
-		{
 			"path": "pages/heidouShop/index",
 			"style": {
 				"navigationBarTitleText": "黑豆商城"
@@ -100,15 +82,21 @@
 			}
 		},
 		{
-			"path": "pages/heidouShopProduct/index",
+			"path": "pages/productDetail/index",
 			"style": {
 				"navigationBarTitleText": "商品详情"
 			}
 		},
 		{
-			"path": "pages/heidouShopCheckout/index",
+			"path": "pages/productCheckout/index",
 			"style": {
 				"navigationBarTitleText": "创建订单"
+			}
+		},
+		{
+			"path": "pages/payment/index",
+			"style": {
+				"navigationBarTitleText": "订单支付"
 			}
 		},
 		{
@@ -121,6 +109,30 @@
 			"path": "pages/addressEdit/index",
 			"style": {
 				"navigationBarTitleText": "地址编辑"
+			}
+		},
+		{
+			"path": "pages/mine/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/setting/index",
+			"style": {
+				"navigationBarTitleText": "设置"
+			}
+		},
+		{
+			"path": "pages/about/index",
+			"style": {
+				"navigationBarTitleText": "关于我们"
+			}
+		},
+		{
+			"path": "pages/userWallet/index",
+			"style": {
+				"navigationBarTitleText": "用户钱包"
 			}
 		}
 	],
@@ -144,7 +156,7 @@
 				"text": "首页"
 			},
 			{
-				"pagePath": "pages/pinia/index",
+				"pagePath": "pages/mine/index",
 				"iconPath": "static/ic_bar_mine.png",
 				"selectedIconPath": "static/ic_bar_mine_checked.png",
 				"text": "我的"

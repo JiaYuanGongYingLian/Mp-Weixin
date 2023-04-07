@@ -1,7 +1,7 @@
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady, onShareAppMessage } from '@dcloudio/uni-app'
+import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { productApi } from '@/api'
 import { getImgFullPath, previewImage, checkLoginState } from '@/utils/index'
@@ -152,7 +152,7 @@ async function confirm() {
   togglePopupFn(false)
   if (actionType.value === 'toBuyNow') {
     uni.navigateTo({
-      url: `/pages/heidouShopCheckout/index?orderData=${orderJson}`
+      url: `/pages/productCheckout/index?orderData=${orderJson}`
     })
   } else {
     addToCart()

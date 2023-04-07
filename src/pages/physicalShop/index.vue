@@ -155,7 +155,7 @@ function tabsChange(index: any) {
 function toProductDetail(id: any) {
   if (!id) return
   uni.navigateTo({
-    url: `/pages/heidouShopProduct/index?shopId=${shopId.value}&productId=${id}`
+    url: `/pages/productDetail/index?shopId=${shopId.value}&productId=${id}`
   })
 }
 
