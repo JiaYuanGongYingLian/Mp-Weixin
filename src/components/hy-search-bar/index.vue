@@ -49,7 +49,6 @@ const clientInfo = reactive({
 })
 // #ifdef MP-WEIXIN
 const obj = wx.getMenuButtonBoundingClientRect()
-// #endif
 uni.getSystemInfo({
   success: (res) => {
     clientInfo.width = obj.left || res.windowWidth
@@ -59,6 +58,8 @@ uni.getSystemInfo({
       : res.statusBarHeight + 7
   }
 })
+// #endif
+
 // 扫一扫
 const link = () => {
   const _this = this

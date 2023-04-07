@@ -16,6 +16,7 @@ async function getNewOpenIdFn() {
 }
 
 onLoad((option) => {
+  // #ifdef MP-WEIXIN
   uni.login({
     provider: 'weixin',
     success: async (res) => {
@@ -32,6 +33,10 @@ onLoad((option) => {
       })
     }
   })
+  // #endif
+  // #ifdef H5
+  toTargetPage()
+  // #endif
 })
 </script>
 
