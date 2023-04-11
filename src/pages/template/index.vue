@@ -1,12 +1,18 @@
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { storeToRefs } from 'pinia'
 import { baseApi, productApi } from '@/api'
 import { getImgFullPath, getDistances } from '@/utils/index'
+import { useUserStore } from '@/store'
 
+const store = useUserStore()
+const { hasLogin } = storeToRefs(store)
 const bannerList = ref([])
 const info = ref()
-onLoad((option) => { })
+
+onLoad((option) => {})
 </script>
 <template>
   <div class="physicalShop"></div>

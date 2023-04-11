@@ -8,8 +8,8 @@ import { getImgFullPath, previewImage, checkLoginState } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 import { useUserStore } from '@/store'
 
-const store = useUserStore()
-const { hasLogin } = storeToRefs(store)
+const storeUser = useUserStore()
+const { hasLogin } = storeToRefs(storeUser)
 const loadingSkeleton = ref(false)
 const productData = ref({})
 const productId = ref()
@@ -78,7 +78,7 @@ function togglePopupFn(flag: boolean) {
 const actionType = ref()
 function chooseSku(type: number) {
   if (!checkLoginState()) return
-  const typeMap = ['toCart', 'toBuyNow']
+  const typeMap = ['toCart', 'toBuyNow', 'default']
   actionType.value = typeMap[type]
   if (productData.value.count === 0) {
     uni.showToast({
@@ -97,6 +97,14 @@ function getCartProductNumFn() {
   totalCartNum.value = 2
 }
 getCartProductNumFn()
+
+// 跳转至购物车页面
+function toCart() {
+  uni.navigateTo({
+    url: '/pages/cart/index'
+  })
+}
+
 function numberChange() {}
 
 // 选择规格
@@ -154,7 +162,8 @@ async function confirm() {
     uni.navigateTo({
       url: `/pages/productCheckout/index?orderData=${orderJson}`
     })
-  } else {
+  }
+  if (actionType.value === 'toCart') {
     addToCart()
   }
 }
@@ -201,7 +210,9 @@ onShareAppMessage((res) => {
     <view class="introduce-section section">
       <view class="intro-top price">
         <view class="price-box">
-          <view class="price">{{ productData.money }} </view>
+          <view class="price"
+            >{{ shopProductSkuSelected.money || productData.money }}
+          </view>
           <view class="price-tip">黑豆</view>
         </view>
         <view class="bot-row">
@@ -223,6 +234,13 @@ onShareAppMessage((res) => {
       </view>
     </view>
     <view class="c-list section yhq">
+      <view class="c-row">
+        <view class="tit">选项</view>
+        <view class="bz-list con">
+          <view class="text">{{ shopProductSkuSelected.name }}</view>
+        </view>
+        <text class="iconfont hy-icon-more" @click="chooseSku(2)"></text>
+      </view>
       <view class="c-row">
         <view class="tit">服务</view>
         <view class="bz-list con">
@@ -267,7 +285,7 @@ onShareAppMessage((res) => {
           ></image>
           <view>收藏</view>
         </view>
-        <view class="car" data-url="/packageB/car" @click="goUrlFn">
+        <view class="car" data-url="/packageB/car" @click="toCart">
           <image
             class="pic"
             src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newHome/buyCar.png"
@@ -477,7 +495,13 @@ onShareAppMessage((res) => {
     align-items: center;
     padding: 28rpx 30rpx;
     position: relative;
-
+    .hy-icon-more {
+      &::before {
+        color: #333;
+        font-size: 36rpx;
+        font-weight: bold;
+      }
+    }
     .osx-you {
       image {
         width: 15rpx;
@@ -531,6 +555,7 @@ onShareAppMessage((res) => {
       line-height: 40rpx;
       height: 40rpx;
       font-size: 28rpx;
+      max-width: 85%;
       &:last-child {
         margin: 0;
       }
@@ -550,7 +575,7 @@ onShareAppMessage((res) => {
 /*  图文详情 */
 .detail-desc {
   margin-top: 16rpx;
-
+  padding-bottom: 120rpx;
   .d-header {
     display: flex;
     justify-content: center;

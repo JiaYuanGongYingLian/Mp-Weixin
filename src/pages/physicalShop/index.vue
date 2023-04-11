@@ -67,30 +67,36 @@ function handleCheck(shop: { name: any; id: any }) {
   })
 }
 async function getShopInfo() {
-  const { data } = await productApi.getShopInfo({
-    id: shopId.value,
-    detail: true
-  })
-  const { bannerResources } = data
-  shop = data
-  bannerResources.forEach((item: { image: string; resourceUrl: string }) => {
-    // eslint-disable-next-line no-param-reassign
-    item.image = getImgFullPath(item.resourceUrl)
-  })
-  bannerList.value = bannerResources
-  const { provinceName, cityName, districtName, street, other } = shop.address
-  shop.addr = provinceName + cityName + districtName + street + other
-  shop.shopMoneyRule = shop.shopMoneyRules
-    ? shop.shopMoneyRules.find((item: { selected: any }) => item.selected)
-    : {}
-  if (currentLocation.value) {
-    const { latitude, longitude } = currentLocation.value
-    shop.distance = getDistances(
-      latitude,
-      longitude,
-      shop.latitude,
-      shop.longitude
-    ).distance_str
+  try {
+    const { data } = await productApi.getShopInfo({
+      id: shopId.value,
+      detail: true
+    })
+    const { bannerResources } = data
+    shop = data
+    bannerList.value = bannerResources.map(
+      (item: { image: string; resourceUrl: string }) => {
+        // eslint-disable-next-line no-param-reassign
+        item.image = getImgFullPath(item.resourceUrl)
+        return item
+      }
+    )
+    const { provinceName, cityName, districtName, street, other } = shop.address
+    shop.addr = provinceName + cityName + districtName + street + other
+    shop.shopMoneyRule = shop.shopMoneyRules
+      ? shop.shopMoneyRules.find((item: { selected: any }) => item.selected)
+      : {}
+    if (currentLocation.value) {
+      const { latitude, longitude } = currentLocation.value
+      shop.distance = getDistances(
+        latitude,
+        longitude,
+        shop.latitude,
+        shop.longitude
+      ).distance_str
+    }
+  } catch (err) {
+    console.log(err)
   }
 }
 function initData() {
@@ -398,6 +404,7 @@ onLoad(async (option) => {
     width: 100%;
     height: calc(100vh - 140rpx);
   }
+
   .container {
     display: flex;
     justify-content: space-between;
@@ -410,6 +417,7 @@ onLoad(async (option) => {
     background: $uni-bg-color-white;
     margin-bottom: $uni-spacing-col-lg;
     overflow: hidden;
+
     .contentBox {
       .imgCover {
         position: relative;
@@ -426,6 +434,7 @@ onLoad(async (option) => {
 
       .content {
         padding: $uni-spacing-row-lg;
+
         .name {
           @include ellipsis;
           font-size: 28rpx;

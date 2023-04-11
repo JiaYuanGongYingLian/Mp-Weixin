@@ -134,6 +134,12 @@
 			"style": {
 				"navigationBarTitleText": "用户钱包"
 			}
+		},
+		{
+			"path": "pages/cart/index",
+			"style": {
+				"navigationBarTitleText": "购物车"
+			}
 		}
 	],
 	"globalStyle": {

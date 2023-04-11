@@ -39,10 +39,13 @@ function getShopProductSkuList(data: any) {
  * 购物车
  */
 function productCartList(data: any) {
-  return http.post('/product/api/v1/product/cart/list', data)
+  return http.get('/product/api/v1/product/cart/list', data)
 }
 function productCartAdd(data: any) {
   return http.post('/product/api/v1/product/cart/add', data)
+}
+function productCartUpdate(data: any) {
+  return http.post('/product/api/v1/product/cart/update', data)
 }
 function productCartDelete(data: any) {
   return http.post('/product/api/v1/product/cart/delete', data)
@@ -87,6 +90,7 @@ export default {
   getShopProductInfo,
   productCartList,
   productCartAdd,
+  productCartUpdate,
   productCartDelete,
   productCartInfo,
   productFavoriteAdd,
