@@ -2,9 +2,10 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi } from '@/api'
+import { baseApi, productApi, couponApi } from '@/api'
 import { getImgFullPath, getDistances, handleMapLocation } from '@/utils/index'
 import { useUserStore } from '@/store'
+import { makePhoneCall } from '@/utils'
 
 const store = useUserStore()
 const { hasLogin } = storeToRefs(store)
@@ -48,7 +49,7 @@ async function getShopList() {
     pageIndex,
     pageSize,
     detail: 'true',
-    otherColumns: 'moneyRuleDetails',
+    otherColumns: 'moneyRuleDetails,vipReserveRoleCount,coupons',
     shopType: 3,
     categoryId: tab.id,
     keywords: keyword.value
@@ -170,6 +171,16 @@ function handleCheck(shop: { name: any; id: any }) {
     url: `/pages/physicalShopCheck/index?name=${name}&shopId=${id}`
   })
 }
+// 领券
+async function couponAdd(coupon: { id: any }) {
+  const { data } = await couponApi.userCouponAdd({
+    couponId: coupon.id
+  })
+  uni.showToast({
+    icon: 'none',
+    title: data.msg
+  })
+}
 onLoad(() => {})
 onReady(async () => {
   await getTabs()
@@ -235,6 +246,34 @@ onReady(async () => {
                   </view>
                   <text class="distance">{{ shop.distance }}</text>
                 </view>
+                <text class="vip" v-if="shop.vipReserveRoleCount > 0"
+                  >消费领会员</text
+                >
+              </view>
+            </view>
+            <view class="couponBox">
+              <view
+                class="coupon_voucher"
+                v-for="item in shop.coupons"
+                :key="item.id"
+              >
+                <view class="coupon_voucher_main">
+                  <view class="price">
+                    <text class="unit">￥</text>
+                    <text class="num"> {{ item.money }}</text></view
+                  >
+                  <view class="name">{{ item.name }}</view>
+                </view>
+                <view class="coupon_voucher_foot">
+                  <u-button
+                    class="btn"
+                    size="mini"
+                    type="primary"
+                    ripple
+                    @click="couponAdd(item)"
+                    >立即领取</u-button
+                  >
+                </view>
               </view>
             </view>
             <view class="actionBox">
@@ -264,7 +303,17 @@ onReady(async () => {
                   size="mini"
                   shape="circle"
                   @click="handleCheck(shop)"
-                  >买单</u-button
+                  v-if="shop.supportDynamicPrice"
+                  >付款</u-button
+                >
+                <u-button
+                  type="primary"
+                  ripple-bg-color="#909399"
+                  size="mini"
+                  shape="circle"
+                  @click="makePhoneCall(shop.address.phone)"
+                  ><text class="iconfont hy-icon-dianhua"></text>
+                  电话咨询</u-button
                 >
               </view>
             </view>
@@ -318,8 +367,11 @@ onReady(async () => {
       }
 
       .content {
+        position: relative;
         .name {
           font-size: 32rpx;
+          width: 75%;
+          display: inline-block;
         }
 
         .remark {
@@ -355,6 +407,81 @@ onReady(async () => {
             margin-left: 10rpx;
           }
         }
+        .vip {
+          position: absolute;
+          right: 0;
+          top: 0;
+          border: 1px solid $uni-text-color-red;
+          color: $uni-text-color-red;
+          font-size: 18rpx;
+          padding: 5rpx;
+          border-radius: 10rpx;
+        }
+      }
+    }
+    .couponBox {
+      display: flex;
+      overflow-y: scroll;
+      align-items: flex-start;
+      .coupon_voucher {
+        border-radius: 6px;
+        box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
+        color: $uni-text-color-orange;
+        margin: 20rpx 20rpx 20rpx 6rpx;
+        padding: 7px 10px 10px;
+        position: relative;
+        width: 250rpx;
+        flex-shrink: 0;
+        &_main {
+          // min-height: 100rpx;
+          .price {
+            .unit {
+              font-size: 20rpx;
+            }
+            .num {
+              font-size: 40rpx;
+              font-weight: bold;
+            }
+          }
+          .name {
+            font-size: 22rpx;
+          }
+        }
+        &_foot {
+          border-top: 1px dashed $uni-border-color-orange;
+          margin-top: 10px;
+          padding-top: 8px;
+          position: relative;
+          &::before,
+          &::after {
+            background-color: #fff;
+            border-color: transparent transparent rgba(232, 232, 237, 0.7)
+              rgba(232, 232, 237, 0.7);
+            border-radius: 50%;
+            border-style: solid;
+            border-width: 1px;
+            content: '';
+            height: 7px;
+            position: absolute;
+            top: -4px;
+            width: 7px;
+          }
+          &::before {
+            left: -15px;
+            transform: rotate(-135deg);
+          }
+          &::after {
+            right: -15px;
+            transform: rotate(35deg);
+          }
+          :deep(.btn) {
+            button {
+              padding: 8rpx 0;
+              font-size: 20rpx;
+              height: 40rpx;
+            }
+          }
+        }
       }
     }
 
@@ -376,6 +503,10 @@ onReady(async () => {
 
         :deep(.u-btn--primary) {
           background: $bg-primary;
+        }
+        .hy-icon-dianhua {
+          margin-right: 5rpx;
+          font-size: 26rpx;
         }
       }
     }

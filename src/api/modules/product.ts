@@ -48,7 +48,7 @@ function productCartUpdate(data: any) {
   return http.post('/product/api/v1/product/cart/update', data)
 }
 function productCartDelete(data: any) {
-  return http.post('/product/api/v1/product/cart/delete', data)
+  return http.get('/product/api/v1/product/cart/delete', data)
 }
 function productCartInfo(data: any) {
   return http.post('/product/api/v1/product/cart/info', data)

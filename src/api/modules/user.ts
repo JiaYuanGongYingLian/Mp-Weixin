@@ -19,6 +19,12 @@ function getCode(phone: string): Promise<{ num: number }> {
   })
 }
 /**
+ * 用户信息
+ */
+function userInfo() {
+  return http.get('/ups/api/v1/user/info')
+}
+/**
  * 地址
  */
 function getAddressList(data: any) {
@@ -45,5 +51,6 @@ export default {
   getAddressInfo,
   updateAddressInfo,
   deleteAddressInfo,
-  addressAdd
+  addressAdd,
+  userInfo
 }

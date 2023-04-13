@@ -142,6 +142,7 @@ export function previewImage(pics: any, current?: any) {
     indicator: 'default'
   })
 }
+// 检查登录态
 export function checkLoginState() {
   if (!hasLogin.value) {
     uni.navigateTo({
@@ -151,11 +152,19 @@ export function checkLoginState() {
   }
   return true
 }
+// 调用电话
+export function makePhoneCall(phoneNumber: any) {
+  if (!phoneNumber) return
+  uni.makePhoneCall({
+    phoneNumber
+  })
+}
 export default {
   getPrePage,
   log,
   getImgFullPath,
   getDistances,
   previewImage,
-  checkLoginState
+  checkLoginState,
+  makePhoneCall
 }

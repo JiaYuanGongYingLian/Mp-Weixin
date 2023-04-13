@@ -3,13 +3,13 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { productApi } from '@/api'
+import { productApi, couponApi } from '@/api';
 import { getImgFullPath, previewImage, checkLoginState } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 import { useUserStore } from '@/store'
 
 const storeUser = useUserStore()
-const { hasLogin } = storeToRefs(storeUser)
+const { hasLogin, userInfo } = storeToRefs(storeUser)
 const loadingSkeleton = ref(false)
 const productData = ref({})
 const productId = ref()
@@ -57,8 +57,17 @@ async function getFavoriteInfo() {
   productData.value.userCollect = code === 200
 }
 
+// 获取用户已有卷
+async function getUserCouponList(couponId: any) {
+  const { data } = await couponApi.userCouponList({
+    couponId,
+    userId: userInfo.id,
+    status: 1
+  })
+}
+
 // 收藏
-async function toggleFavorite(flag) {
+async function toggleFavorite(flag: any) {
   if (!checkLoginState()) return
   const executor = flag
     ? productApi.productFavoriteDelete
@@ -74,7 +83,7 @@ const skuPopUp = ref(false)
 function togglePopupFn(flag: boolean) {
   skuPopUp.value = flag
 }
-// 立即购买或者加入购物车
+// 选择sku
 const actionType = ref()
 function chooseSku(type: number) {
   if (!checkLoginState()) return
@@ -121,6 +130,7 @@ function selectSpec(
 // 添加商品到购物车
 async function addToCart() {
   const { data } = await productApi.productCartAdd({
+    userId: userInfo.value.id,
     shopId: shopId.value,
     shopProductSkuId: shopProductSkuSelected.value.id
   })
@@ -210,10 +220,14 @@ onShareAppMessage((res) => {
     <view class="introduce-section section">
       <view class="intro-top price">
         <view class="price-box">
+          <view class="price-tip" v-if="!productData.moneyUnit">￥</view>
           <view class="price"
             >{{ shopProductSkuSelected.money || productData.money }}
+            <text class="origin" v-if="productData.couponSku"
+              >￥{{ productData.originalMoney }}</text
+            >
           </view>
-          <view class="price-tip">黑豆</view>
+          <view class="price-tip" v-if="productData.moneyUnit">黑豆</view>
         </view>
         <view class="bot-row">
           <view class="text">销量 {{ productData.saleCount || 0 }}</view>
@@ -236,14 +250,33 @@ onShareAppMessage((res) => {
     <view class="c-list section yhq">
       <view class="c-row">
         <view class="tit">选项</view>
-        <view class="bz-list con">
+        <view class="bz-list">
           <view class="text">{{ shopProductSkuSelected.name }}</view>
         </view>
         <text class="iconfont hy-icon-more" @click="chooseSku(2)"></text>
       </view>
+      <view class="c-row start" v-if="productData.couponSku">
+        <view class="tit">套餐内容</view>
+        <view class="bz-list con">
+          <view v-for="item in productData.shopProductSkus" :key="item.id">
+            <view class="con_name">
+              <view class="name">{{ item.name }}</view>
+              <view class="price">￥{{ item.money }}</view>
+            </view>
+            <view
+              class="con_con"
+              v-for="con in item.shopProductSkuContents"
+              :key="con.id"
+            >
+              <text>{{ con.content }}</text> x {{ con.count }}
+              <text class="money">￥{{ con.money }}</text>
+            </view>
+          </view>
+        </view>
+      </view>
       <view class="c-row">
         <view class="tit">服务</view>
-        <view class="bz-list con">
+        <view class="bz-list">
           <view class="text">48小时内发货 <text>·</text></view>
           <view class="text">下单两小时不可修改订单信息 <text>·</text></view>
         </view>
@@ -285,7 +318,7 @@ onShareAppMessage((res) => {
           ></image>
           <view>收藏</view>
         </view>
-        <view class="car" data-url="/packageB/car" @click="toCart">
+        <view class="car" v-if="!productData.couponSku" @click="toCart">
           <image
             class="pic"
             src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newHome/buyCar.png"
@@ -295,8 +328,21 @@ onShareAppMessage((res) => {
         </view>
       </view>
       <view class="action-btn-group">
-        <view class="action-btn carBtn" @click="chooseSku(0)">加入购物车</view>
-        <view class="action-btn buyNowBtn" @tap="chooseSku(1)">立即购买</view>
+        <view
+          class="action-btn carBtn"
+          v-if="!productData.couponSku"
+          @click="chooseSku(0)"
+          >加入购物车</view
+        >
+        <view
+          class="action-btn buyNowBtn single"
+          v-if="productData.couponSku"
+          @tap="chooseSku(1)"
+          >立即核券</view
+        >
+        <view v-else class="action-btn buyNowBtn" @tap="chooseSku(1)"
+          >立即购买</view
+        >
       </view>
     </view>
     <!-- 规格-模态层弹窗 -->
@@ -312,8 +358,11 @@ onShareAppMessage((res) => {
           ></image>
           <view class="right">
             <view class="price"
+              ><text class="symbol" v-if="!productData.moneyUnit">￥</text
               >{{ shopProductSkuSelected.money || productData.money
-              }}<text class="symbol">黑豆</text></view
+              }}<text class="symbol" v-if="productData.moneyUnit"
+                >黑豆</text
+              ></view
             >
             <view class="stock"
               >库存：{{
@@ -403,6 +452,12 @@ onShareAppMessage((res) => {
     font-size: 40rpx;
     font-weight: bold;
     margin-right: 10rpx;
+    .origin {
+      font-size: 28rpx;
+      font-weight: bold;
+      text-decoration: line-through;
+      color: $uni-text-color-grey;
+    }
   }
   .m-price {
     margin: 0 12rpx;
@@ -495,27 +550,14 @@ onShareAppMessage((res) => {
     align-items: center;
     padding: 28rpx 30rpx;
     position: relative;
+    &.start {
+      align-items: flex-start;
+    }
     .hy-icon-more {
       &::before {
         color: #333;
         font-size: 36rpx;
         font-weight: bold;
-      }
-    }
-    .osx-you {
-      image {
-        width: 15rpx;
-        height: 20rpx;
-      }
-      .getCoupon {
-        color: #f74e3f;
-        font-size: 26rpx;
-        width: 70rpx;
-        height: 40rpx;
-        line-height: 40rpx;
-        text-align: center;
-        border-radius: 4rpx;
-        border: 1px solid #f74e3f;
       }
     }
   }
@@ -524,31 +566,9 @@ onShareAppMessage((res) => {
     width: 140rpx;
   }
 
-  .con {
-    flex: 1;
-    color: #303133;
-
-    .selected-text {
-      margin-right: 10rpx;
-    }
-
-    &.disabled {
-      color: #a6abad;
-    }
-
-    &.sku-con {
-      display: flex;
-      align-items: centerm;
-      justify-content: space-between;
-
-      .num {
-        margin-right: 10rpx;
-      }
-    }
-  }
-
   .bz-list {
     color: #303133;
+    flex: 1;
     .text {
       display: inline-block;
       margin-right: 30rpx;
@@ -564,6 +584,25 @@ onShareAppMessage((res) => {
         color: #c4cacc;
         font-size: 40rpx;
         margin-left: 10rpx;
+      }
+    }
+    &.con {
+      color: #303133;
+      font-size: $uni-font-size-base;
+      .con_name {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        .name {
+          font-weight: bold;
+          margin-top: 5rpx;
+        }
+        .price {
+          font-weight: bold;
+        }
+      }
+      .con_con {
+        margin: 20rpx 0;
       }
     }
   }
@@ -628,6 +667,7 @@ onShareAppMessage((res) => {
   box-sizing: border-box;
   background: #fff;
   border-radius: 0;
+  box-shadow: 0 0 6rpx 0 rgba(0, 0, 0, 0.1);
 
   .leftBox {
     display: flex;
@@ -709,6 +749,10 @@ onShareAppMessage((res) => {
       color: #fff;
       padding: 0;
       border-radius: 0;
+      &.single {
+        width: 100%;
+        border-radius: 78rpx !important;
+      }
     }
 
     .buyNowBtn {

@@ -1,3 +1,4 @@
+<!-- eslint-disable no-use-before-define -->
 <!-- eslint-disable no-shadow -->
 <!-- eslint-disable no-console -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -10,7 +11,7 @@ import { getImgFullPath, getDistances } from '@/utils/index'
 import { useUserStore } from '@/store'
 
 const storeUser = useUserStore()
-const { hasLogin } = storeToRefs(storeUser)
+const { hasLogin, userInfo } = storeToRefs(storeUser)
 const cartList = ref()
 const allChecked = ref(false) // 全选状态  true|false
 const empty = ref(false) // 空白页现实  true|false
@@ -19,10 +20,12 @@ const money = ref(0) // 价格
 async function loadData() {
   try {
     const { data } = await productApi.productCartList({
+      userId: userInfo.value.id,
       detail: true,
       noPaging: true
     })
     cartList.value = data
+    calcTotal()
   } catch (err) {
     console.log(err)
   }
@@ -177,14 +180,18 @@ onLoad((option) => {
       <!-- 列表 -->
       <view class="cart-list">
         <block v-for="(item, index) in cartList" :key="item.id">
-          <view
-            class="cart-item"
-            :class="{ 'b-b': index !== cartList.length - 1 }"
-          >
+          <view class="cart-item">
             <view class="image-wrapper">
               <image
-                class="loaded"
-                :src="getImgFullPath(item.skuImage)"
+                class="radio"
+                @click="click_btnSelectedItem(item)"
+                :src="`https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newHome/${
+                  item.checked ? 'carChecked' : 'carNoChecked'
+                }.png`"
+              ></image>
+              <image
+                class="image"
+                :src="getImgFullPath(item.shopProductSku.productSku.image)"
                 mode="aspectFill"
               />
               <view
@@ -194,27 +201,33 @@ onLoad((option) => {
               ></view>
             </view>
             <view class="item-right">
-              <text class="clamp title">{{ item.name }}</text>
-              <text class="attr">{{ item.skuName }}</text>
-              <text class="price">¥{{ item.money }}</text>
-              <text class="price red">{{
-                item.installationMoney
-                  ? `安装费：¥${item.installationMoney}`
-                  : ''
+              <text class="title">{{ item.shopProductSku.name }}</text>
+              <text class="attr">{{
+                item.shopProductSku.productSku.name
               }}</text>
-              <uni-number-box
-                class="step"
-                :min="1"
-                :max="item.skuCount"
-                :value="item.count > item.skuCount ? item.skuCount : item.count"
-                :isMax="item.count >= item.skuCount ? true : false"
-                :isMin="item.count === 1"
-                :index="index"
-                @eventChange="numberChange"
-              ></uni-number-box>
+              <view class="price red">
+                <text
+                  class="unit l"
+                  v-if="!item.shopProductSku.shopProductSkuWalletRules"
+                  >¥</text
+                >
+                <text>{{ item.shopProductSku.productSku.money }} </text>
+                <text class="unit r">{{
+                  item.shopProductSku.shopProductSkuWalletRules[0].moneyUnit
+                }}</text>
+                <u-number-box
+                  class="step"
+                  :min="1"
+                  :max="item.shopProductSku.productSku.count"
+                  v-model="item.count"
+                  :index="index"
+                  @change="numberChange"
+                  size="20"
+                ></u-number-box>
+              </view>
             </view>
             <text
-              class="del-btn yticon icon-fork"
+              class="iconfont hy-icon-delete"
               @click="deleteCartItem(item)"
             ></text>
           </view>
@@ -224,7 +237,9 @@ onLoad((option) => {
       <view class="action-section">
         <view class="checkbox">
           <image
-            :src="allChecked ? '/static/selected.png' : '/static/select.png'"
+            :src="`https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newHome/${
+              allChecked ? 'carChecked' : 'carNoChecked'
+            }.png`"
             mode="aspectFit"
             @click="click_btnSelectedAll()"
           ></image>
@@ -257,7 +272,9 @@ onLoad((option) => {
 </template>
 
 <style lang="scss" scoped>
+@import '@/styles/helper.scss';
 .container {
+  padding: 30rpx;
   padding-bottom: 134rpx;
   /* 空白页 */
   .empty {
@@ -292,14 +309,27 @@ onLoad((option) => {
 .cart-item {
   display: flex;
   position: relative;
-  padding: 30rpx 40rpx;
+  padding: 30rpx 20rpx;
+  background-color: #fff;
+  border-radius: 10rpx;
+  margin-bottom: 20rpx;
   .image-wrapper {
-    width: 230rpx;
-    height: 230rpx;
     flex-shrink: 0;
     position: relative;
-    image {
+    padding-left: 60rpx;
+    .radio {
+      display: block;
+      width: 42rpx;
+      height: 42rpx;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      margin-top: -22rpx;
+    }
+    .image {
       border-radius: 8rpx;
+      width: 180rpx;
+      height: 180rpx;
     }
   }
   .checkbox {
@@ -320,18 +350,30 @@ onLoad((option) => {
     flex: 1;
     overflow: hidden;
     position: relative;
-    padding-left: 30rpx;
+    padding-left: 20rpx;
     .title {
       font-size: $uni-font-size-base + 2rpx;
       color: $uni-text-color-dark;
-      height: 40rpx;
       line-height: 40rpx;
     }
     .price {
-      font-size: $uni-font-size-base - 2rpx;
+      font-size: $uni-font-size-base + 2rpx;
       color: $uni-text-color-dark;
-      height: 35rpx;
-      line-height: 35rpx;
+      font-weight: bold;
+      margin-top: 10rpx;
+      display: flex;
+      align-items: center;
+      .unit {
+        font-weight: normal;
+        flex-shrink: 0;
+        font-size: 22rpx;
+        &.r {
+          margin-left: 8rpx;
+        }
+      }
+      .step {
+        margin-left: 20rpx;
+      }
     }
     .red {
       color: red;
@@ -339,15 +381,12 @@ onLoad((option) => {
     .attr {
       font-size: $uni-font-size-sm + 2rpx;
       color: $uni-text-color-light;
-      height: 40rpx;
-      line-height: 40rpx;
+      margin-top: 10rpx;
+      @include ellipsis(2);
     }
   }
-  .del-btn {
-    padding: 4rpx 10rpx;
-    font-size: 34rpx;
-    height: 50rpx;
-    color: $uni-text-color-light;
+  .hy-icon-delete {
+    font-size: 36rpx;
   }
 }
 /* 底部栏 */

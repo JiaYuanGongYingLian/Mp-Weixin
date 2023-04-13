@@ -1,3 +1,4 @@
+<!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
@@ -6,6 +7,7 @@ import { Md5 } from 'ts-md5'
 import { useUserStore } from '@/store'
 import { userApi } from '@/api'
 import logo from '@/static/ic_launcher.png'
+import user from '@/api/modules/user'
 
 onLoad((option) => {})
 const store = useUserStore()
@@ -35,16 +37,26 @@ function clearFn() {
   form.username = ''
 }
 async function submit() {
-  const { data } = await userApi.login({
-    type: 10,
-    username: form.username,
-    code: Md5.hashStr(form.password)
-  })
-  store.$patch((v) => {
-    v.accessToken = data.accessToken
-    uni.setStorageSync('accessToken', data.accessToken)
-  })
+  try {
+    const { data } = await userApi.login({
+      type: 10,
+      username: form.username,
+      code: Md5.hashStr(form.password)
+    })
+    store.$patch((v) => {
+      v.accessToken = data.accessToken
+      uni.setStorageSync('accessToken', data.accessToken)
+    })
+    await getUserInfo()
+  } catch {}
   uni.navigateBack()
+}
+async function getUserInfo() {
+  const { data } = await user.userInfo()
+  store.$patch((v) => {
+    v.userInfo = data
+    uni.setStorageSync('userInfo', data)
+  })
 }
 </script>
 <template>

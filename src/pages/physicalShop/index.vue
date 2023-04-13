@@ -2,7 +2,12 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, productApi } from '@/api'
-import { getImgFullPath, getDistances, handleMapLocation } from '@/utils/index'
+import {
+  getImgFullPath,
+  getDistances,
+  handleMapLocation,
+  makePhoneCall
+} from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 
 const loadingSkeleton = ref(false)
@@ -72,15 +77,21 @@ async function getShopInfo() {
       id: shopId.value,
       detail: true
     })
-    const { bannerResources } = data
+    const { bannerResources, avatar } = data
     shop = data
-    bannerList.value = bannerResources.map(
-      (item: { image: string; resourceUrl: string }) => {
-        // eslint-disable-next-line no-param-reassign
-        item.image = getImgFullPath(item.resourceUrl)
-        return item
-      }
-    )
+    if (bannerResources && bannerResources.length > 0) {
+      bannerList.value = bannerResources.map(
+        (item: { image: string; resourceUrl: string }) => {
+          // eslint-disable-next-line no-param-reassign
+          item.image = getImgFullPath(item.resourceUrl)
+          return item
+        }
+      )
+    } else {
+      const image = getImgFullPath(avatar)
+      bannerList.value.push(image)
+    }
+
     const { provinceName, cityName, districtName, street, other } = shop.address
     shop.addr = provinceName + cityName + districtName + street + other
     shop.shopMoneyRule = shop.shopMoneyRules
@@ -244,8 +255,17 @@ onLoad(async (option) => {
             ripple-bg-color="#909399"
             size="mini"
             shape="circle"
+            v-if="shop.supportDynamicPrice"
             @click="handleCheck(shop)"
-            >买单</u-button
+            >付款</u-button
+          >
+          <u-button
+            type="primary"
+            ripple-bg-color="#909399"
+            size="mini"
+            shape="circle"
+            @click="makePhoneCall(shop.address.phone)"
+            ><text class="iconfont hy-icon-dianhua"></text> 电话咨询</u-button
           >
         </view>
       </view>

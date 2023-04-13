@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { onLoad } from '@dcloudio/uni-app'
 import { userApi } from '@/api'
 import logo from '@/static/ic_launcher.png'
-import { onLoad } from '@dcloudio/uni-app'
 
 function toTargetPage(url = '/pages/index/index', duration = 0) {
   setTimeout(() => {
