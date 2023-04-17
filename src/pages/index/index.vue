@@ -63,9 +63,10 @@ onReachBottom(() => {
   status.value = 'loading'
   getHeidouProductList()
 })
-const toPhysicalStore = (path = '/pages/physicalShopList/index') => {
+// 跳转线下店列表页面
+const toPhysicalStore = (content: any) => {
   uni.navigateTo({
-    url: path
+    url: `/pages/physicalShopList/index?categoryData= ${content}`
   })
 }
 const toHeidouShop = () => {
@@ -87,7 +88,7 @@ const handleClick = (adv: { webUrl: any; objectType: any }) => {
         toShopProduct()
         break
       case 13:
-        toPhysicalStore()
+        toPhysicalStore(adv.content)
         break
       case 100:
         toDevice()

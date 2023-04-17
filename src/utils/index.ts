@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-param-reassign */
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/store'
 
@@ -22,6 +24,35 @@ export const log = (title: object) => {
   }
 }
 
+export const dateFormat = (date: Date, fmt: string) => {
+  if (/(y+)/.test(fmt)) {
+    fmt = fmt.replace(
+      RegExp.$1,
+      `${date.getFullYear()}`.substr(4 - RegExp.$1.length)
+    )
+  }
+  const o = {
+    'M+': date.getMonth() + 1,
+    'd+': date.getDate(),
+    'h+': date.getHours(),
+    'm+': date.getMinutes(),
+    's+': date.getSeconds()
+  }
+  for (const k in o) {
+    if (new RegExp(`(${k})`).test(fmt)) {
+      const str = `${o[k]}`
+      fmt = fmt.replace(
+        RegExp.$1,
+        RegExp.$1.length === 1 ? str : padLeftZero(str)
+      )
+    }
+  }
+  return fmt
+}
+function padLeftZero(str: string | any[]) {
+  return `00${str}`.substr(str.length)
+}
+
 /**
  * 拼接图片地址
  * @param {String} suffix
@@ -36,47 +67,79 @@ export const getImgFullPath = (suffix: string) => {
 }
 
 // 计算距离的方法实现
-function rad(d) {
+function rad(d: number) {
   return (d * Math.PI) / 180.0
 }
 
 // 根据经纬度计算距离，参数分别为第一点的纬度，经度；第二点的纬度，经度
-export function getDistances(lat1: any, lng1: any, lat2: any, lng2: any) {
-  const radLat1 = rad(lat1)
-  const radLat2 = rad(lat2)
-  const a = radLat1 - radLat2
-  const b = rad(lng1) - rad(lng2)
-  let s =
-    2 *
-    Math.asin(
-      Math.sqrt(
-        Math.sin(a / 2) ** 2 +
-          Math.cos(radLat1) * Math.cos(radLat2) * Math.sin(b / 2) ** 2
+export function getDistance(lat1: any, lng1: any, lat2: any, lng2: any) {
+  return new Promise((resolve, reject) => {
+    const radLat1 = rad(lat1)
+    const radLat2 = rad(lat2)
+    const a = radLat1 - radLat2
+    const b = rad(lng1) - rad(lng2)
+    let s =
+      2 *
+      Math.asin(
+        Math.sqrt(
+          Math.sin(a / 2) ** 2 +
+            Math.cos(radLat1) * Math.cos(radLat2) * Math.sin(b / 2) ** 2
+        )
       )
-    )
-  s *= 6378.137 // EARTH_RADIUS;
-  // 输出为公里
-  s = Math.round(s * 10000) / 10000
+    s *= 6378.137 // EARTH_RADIUS;
+    // 输出为公里
+    s = Math.round(s * 10000) / 10000
 
-  const distance = s
-  let distance_str = ''
+    const distance = s
+    let distance_str = ''
 
-  if (parseInt(distance, 10) >= 1) {
-    // distance_str = distance.toFixed(1) + "km";
-    distance_str = `${distance.toFixed(2)} km`
-  } else {
-    // distance_str = distance * 1000 + "m";
-    distance_str = `${(distance * 1000).toFixed(2)} m`
-  }
-  // s=s.toFixed(4);
-  // console.info('距离是', s);
-  // console.info('距离是', distance_str);
-  // return s;
-  const objData = {
-    distance,
-    distance_str
-  }
-  return objData
+    if (parseInt(distance, 10) >= 1) {
+      // distance_str = distance.toFixed(1) + "km";
+      distance_str = `${distance.toFixed(2)} km`
+    } else {
+      // distance_str = distance * 1000 + "m";
+      distance_str = `${(distance * 1000).toFixed(2)} m`
+    }
+    const objData = {
+      distance,
+      distance_str
+    }
+    resolve(objData)
+  })
+}
+export function getDistanceMatrix(lat1: any, lng1: any, lat2: any, lng2: any) {
+  return new Promise((resolve, reject) => {
+    uni.request({
+      url: 'https://apis.map.qq.com/ws/distance/v1/matrix',
+      method: 'GET',
+      data: {
+        mode: 'walking',
+        from: `${lat1},${lng1}`,
+        to: `${lat2},${lng2}`,
+        key: 'WZUBZ-XKZ3W-EXIRA-3IAU7-MHXY7-ARBJO'
+      },
+      success: (res) => {
+        let { distance } = res.data.result.rows[0].elements[0] // 拿到距离(米)
+        let distance_str = ''
+        if (distance && distance !== -1) {
+          if (distance < 1000) {
+            distance_str = `${distance}m`
+          }
+          // 转换成公里
+          else {
+            distance_str = `${(distance / 2 / 500).toFixed(2)}km`
+          }
+        } else {
+          distance = '距离太近或请刷新重试'
+        }
+        const objData = {
+          distance,
+          distance_str
+        }
+        resolve(objData)
+      }
+    })
+  })
 }
 
 export function handleMapLocation(shop: {
@@ -163,8 +226,10 @@ export default {
   getPrePage,
   log,
   getImgFullPath,
-  getDistances,
+  getDistance,
+  getDistanceMatrix,
   previewImage,
   checkLoginState,
-  makePhoneCall
+  makePhoneCall,
+  dateFormat
 }

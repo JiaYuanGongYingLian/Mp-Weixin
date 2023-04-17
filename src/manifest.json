@@ -66,6 +66,18 @@
     "requiredPrivateInfos" : [ "getLocation","chooseLocation","chooseAddress" ],
     "usingComponents": true
   },
+  "h5" : {
+    "uniStatistics" : {
+        "enable" : false
+    },
+    "sdkConfigs" : {
+        "maps" : {
+            "qqmap" : {
+                "key" : "WZUBZ-XKZ3W-EXIRA-3IAU7-MHXY7-ARBJO"
+            }
+        }
+    }
+  },
   "mp-alipay": {
     "usingComponents": true
   },

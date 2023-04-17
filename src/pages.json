@@ -52,6 +52,12 @@
 			}
 		},
 		{
+			"path": "pages/physicalShopCheck/index",
+			"style": {
+				"navigationBarTitleText": "店铺付款"
+			}
+		},
+		{
 			"path": "pages/wxAuth/index",
 			"style": {
 				"navigationStyle": "custom"
@@ -139,6 +145,12 @@
 			"path": "pages/cart/index",
 			"style": {
 				"navigationBarTitleText": "购物车"
+			}
+		},
+		{
+			"path": "pages/couponQrcode/index",
+			"style": {
+				"navigationBarTitleText": "票券使用"
 			}
 		}
 	],

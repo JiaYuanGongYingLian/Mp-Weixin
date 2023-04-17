@@ -4,7 +4,7 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, productApi } from '@/api'
 import {
   getImgFullPath,
-  getDistances,
+  getDistance,
   handleMapLocation,
   makePhoneCall
 } from '@/utils/index'
@@ -31,7 +31,7 @@ function getLocation() {
           longitude
         }
         if (!shop.latitude) return
-        shop.distance = getDistances(
+        shop.distance = getDistance(
           latitude,
           longitude,
           shop.latitude,
@@ -99,7 +99,7 @@ async function getShopInfo() {
       : {}
     if (currentLocation.value) {
       const { latitude, longitude } = currentLocation.value
-      shop.distance = getDistances(
+      shop.distance = getDistance(
         latitude,
         longitude,
         shop.latitude,

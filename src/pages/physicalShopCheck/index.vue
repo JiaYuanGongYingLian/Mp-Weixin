@@ -2,7 +2,7 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, productApi } from '@/api'
-import { getImgFullPath, getDistances } from '@/utils/index'
+import { getImgFullPath, getDistance } from '@/utils/index'
 
 const info = reactive({})
 const money = ref()
@@ -46,7 +46,8 @@ onLoad((option) => {
   text-align: center;
 
   .name {
-    font-size: 36rpx;
+    font-size: 32rpx;
+    font-weight: bold;
   }
 
   .inptBox {
@@ -54,10 +55,10 @@ onLoad((option) => {
     justify-content: center;
     align-items: center;
     padding: 20rpx 0;
-    border-top: 1px solid $uni-border-color-light;
-    border-bottom: 1px solid $uni-border-color-light;
+    border-top: 1px solid #8080802e;
+    border-bottom: 1px solid #8080802e;
     position: relative;
-    margin-top: 30rpx;
+    margin-top: 40rpx;
 
     .unit {
       position: absolute;

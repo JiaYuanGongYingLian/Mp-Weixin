@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, couponApi } from '@/api'
-import { getImgFullPath, getDistances, handleMapLocation } from '@/utils/index'
+import {
+  getImgFullPath,
+  getDistance,
+  handleMapLocation,
+  getDistanceMatrix
+} from '@/utils/index'
 import { useUserStore } from '@/store'
 import { makePhoneCall } from '@/utils'
 
@@ -13,7 +18,8 @@ const shopList = ref<object[]>([])
 const tabs = ref([])
 const currentTab = ref(0)
 const currentLocation = ref()
-const keyword = ref('小舒娱乐')
+const keyword = ref('')
+const status = ref('loadmore')
 function initData() {
   return tabs.value.map((item) => {
     return {
@@ -26,15 +32,15 @@ function initData() {
     }
   })
 }
-async function getTabs() {
+async function getTabs(parentId = 0) {
   await baseApi
-    .getCategoryList({ pageSize: 1000, type: 1, parentId: 0 })
+    .getCategoryList({ pageSize: 1000, type: 1, parentId })
     .then((res: { data: any }) => {
       const { data } = res
       tabs.value = data.records
       tabs.value.unshift({
         name: '全部',
-        id: ''
+        id: parentId || ''
       })
       shopList.value = initData()
     })
@@ -44,7 +50,10 @@ async function getShopList() {
   const item = shopList.value[currentTab.value]
   const tab = tabs.value[currentTab.value]
   const { pageIndex, pageSize, finished } = item
-  if (finished) return
+  if (finished) {
+    status.value = 'nomore'
+    return
+  }
   const { data } = await productApi.getShopList({
     pageIndex,
     pageSize,
@@ -63,19 +72,20 @@ async function getShopList() {
       : {}
     if (currentLocation.value) {
       const { latitude, longitude } = currentLocation.value
-      shop.distance = getDistances(
-        latitude,
-        longitude,
-        shop.latitude,
-        shop.longitude
-      ).distance_str
+      getDistance(latitude, longitude, shop.latitude, shop.longitude).then(
+        (res) => {
+          const { distance_str } = res
+          shop.distance = distance_str
+        }
+      )
     }
   })
   item.list.push(...records)
-  if (current < pages) {
+  if (current < pages && pages !== 0) {
     item.pageIndex++
   } else {
     item.finished = true
+    status.value = 'nomore'
   }
 }
 function tabsChange(index: any) {
@@ -93,11 +103,7 @@ function doSearch() {
   item.finished = false
   getShopList()
 }
-// scroll-view到底部加载更多
-function onreachBottom() {
-  console.log('bottom')
-  getShopList()
-}
+
 function getLocation() {
   // 获取定位信息
   uni.getLocation({
@@ -113,12 +119,15 @@ function getLocation() {
         shopList.value.forEach((item) => {
           item.list.forEach(
             (shop: { distance: string; latitude: any; longitude: any }) => {
-              shop.distance = getDistances(
+              getDistance(
                 latitude,
                 longitude,
                 shop.latitude,
                 shop.longitude
-              ).distance_str
+              ).then((res) => {
+                const { distance_str } = res
+                shop.distance = distance_str
+              })
             }
           )
         })
@@ -126,7 +135,7 @@ function getLocation() {
     },
     // 用户拒绝获取定位后 再次点击触发
     fail(res) {
-      console.log(res)
+      console.log(res, 130)
       if (res.errMsg == 'getLocation:fail auth deny') {
         uni.showModal({
           content: '检测到您没打开获取信息功能权限，是否去设置打开？',
@@ -181,12 +190,24 @@ async function couponAdd(coupon: { id: any }) {
     title: data.msg
   })
 }
-onLoad(() => {})
-onReady(async () => {
-  await getTabs()
+onLoad(async (option) => {
+  if (option?.categoryData) {
+    const obj = JSON.parse(option?.categoryData)
+    await getTabs(obj.categoryId)
+  } else {
+    await getTabs()
+  }
   await getShopList()
   getLocation()
 })
+onReachBottom(() => {
+  status.value = 'loading'
+  getShopList()
+})
+const navBarHeight = ref(0)
+// #ifdef H5
+navBarHeight.value = 86
+// #endif
 </script>
 
 <template>
@@ -197,32 +218,34 @@ onReady(async () => {
         v-model="currentTab"
         @change="tabsChange"
         :is-scroll="true"
+        v-if="tabs.length > 1"
       ></u-tabs>
     </view>
-    <u-search
+    <view
       class="search"
-      shape="round"
-      :clearabled="true"
-      :show-action="true"
-      action-text="搜索"
-      :animation="false"
-      bg-color="#fff"
-      border-color="#288cca"
-      margin="20rpx 30rpx"
-      v-model="keyword"
-      @search="doSearch"
-      @custom="doSearch"
-      @clear="doSearch"
-    ></u-search>
+      :style="{
+        top:
+          tabs.length > 1 ? `${86 + navBarHeight}rpx` : `${0 + navBarHeight}rpx`
+      }"
+    >
+      <u-search
+        shape="round"
+        :clearabled="true"
+        :show-action="true"
+        action-text="搜索"
+        :animation="false"
+        bg-color="#fff"
+        border-color="#288cca"
+        margin="20rpx 30rpx"
+        v-model="keyword"
+        @search="doSearch"
+        @custom="doSearch"
+        @clear="doSearch"
+      ></u-search>
+    </view>
     <view class="swiper">
       <view class="swiper-item" v-for="(item, index) in shopList" :key="index">
-        <scroll-view
-          class="scorll-view"
-          of
-          v-if="index === currentTab"
-          scroll-y
-          @scrolltolower="onreachBottom"
-        >
+        <view v-if="index === currentTab">
           <view class="shop" v-for="shop in item.list" :key="item.tab">
             <view class="contentBox" @click="toShopDetail(shop.id)">
               <view class="imgCover">
@@ -318,7 +341,14 @@ onReady(async () => {
               </view>
             </view>
           </view>
-        </scroll-view>
+          <u-empty
+            v-if="item.list.length < 1 && status === 'nomore'"
+            text="暂无数据"
+            mode="list"
+            margin-top="200"
+          ></u-empty>
+          <u-loadmore v-if="item.list.length > 3" :status="status" />
+        </view>
       </view>
     </view>
   </div>
@@ -516,6 +546,9 @@ onReady(async () => {
 .tabs {
   position: sticky;
   top: 0;
+  // #ifdef H5
+  top: 84rpx;
+  // #endif
   background: #fff;
   z-index: 2;
 }
@@ -523,7 +556,11 @@ onReady(async () => {
 .search {
   position: sticky;
   top: 86rpx;
+  // #ifdef H5
+  top: 172rpx;
+  // #endif
   background: #fff;
   z-index: 2;
+  flex: 0;
 }
 </style>

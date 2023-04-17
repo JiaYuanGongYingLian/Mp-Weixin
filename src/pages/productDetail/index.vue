@@ -1,9 +1,11 @@
+<!-- eslint-disable no-unused-expressions -->
+<!-- eslint-disable no-param-reassign -->
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { productApi, couponApi } from '@/api';
+import { productApi, couponApi } from '@/api'
 import { getImgFullPath, previewImage, checkLoginState } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 import { useUserStore } from '@/store'
@@ -17,6 +19,8 @@ const shopId = ref()
 const skuList = reactive<object[]>([])
 const shopProductSkuSelected = ref({})
 const buyNumber = ref(1)
+const userCoupons = ref([])
+const couponSkuId = ref()
 
 async function getProductInfo() {
   try {
@@ -42,12 +46,14 @@ async function getProductInfo() {
       name: '规格',
       shopProductSkus
     })
+    // 默认选中第一个sku
     selectSpec(skuList[0].shopProductSkus, skuList[0].shopProductSkus[0])
     setTimeout(() => {
       loadingSkeleton.value = false
     }, 500)
   } catch (err) {}
 }
+// 获取收藏状态
 async function getFavoriteInfo() {
   if (!hasLogin.value) return
   const { code } = await productApi.productFavoriteInfo({
@@ -61,9 +67,10 @@ async function getFavoriteInfo() {
 async function getUserCouponList(couponId: any) {
   const { data } = await couponApi.userCouponList({
     couponId,
-    userId: userInfo.id,
+    userId: userInfo.value.id,
     status: 1
   })
+  userCoupons.value = data.records
 }
 
 // 收藏
@@ -100,6 +107,28 @@ function chooseSku(type: number) {
   togglePopupFn(true)
 }
 
+// 点击去核券
+function showCoupon() {
+  if (!userCoupons.value.length) {
+    couponAdd()
+    return
+  }
+  const coupon = JSON.stringify(userCoupons.value[0])
+  uni.navigateTo({ url: `/pages/couponQrcode/index?coupon=${coupon}` })
+}
+// 领券
+async function couponAdd() {
+  const { data } = await couponApi.userCouponAdd({
+    couponId: couponSkuId.value
+  })
+  uni.showToast({
+    icon: 'none',
+    title: data.msg
+  })
+  await getUserCouponList(couponSkuId.value)
+  await showCoupon()
+}
+
 // 获取购物车数据
 const totalCartNum = ref()
 function getCartProductNumFn() {
@@ -119,13 +148,29 @@ function numberChange() {}
 // 选择规格
 function selectSpec(
   shopProductSkus: { checked: boolean }[],
-  activeSku: { checked: boolean }
+  activeSku: {
+    [x: string]: any
+    checked: boolean
+  }
 ) {
   shopProductSkus.forEach((sku: { checked: boolean }) => {
     sku.checked = false
   })
   activeSku.checked = true
   shopProductSkuSelected.value = activeSku
+  if (activeSku.couponSku) {
+    if (activeSku.coupons && activeSku.coupons.length > 0) {
+      const tempObj = activeSku.coupons.find(
+        (item: { nameType: string }) =>
+          item.nameType === 'coupon_shop_product_sku_id'
+      )
+      if (tempObj) {
+        const couponId = tempObj.id
+        couponSkuId.value = couponId
+        getUserCouponList(couponId)
+      }
+    }
+  }
 }
 // 添加商品到购物车
 async function addToCart() {
@@ -337,8 +382,9 @@ onShareAppMessage((res) => {
         <view
           class="action-btn buyNowBtn single"
           v-if="productData.couponSku"
-          @tap="chooseSku(1)"
-          >立即核券</view
+          @click="showCoupon"
+        >
+          {{ userCoupons.length > 0 ? '立即核券' : '领券核券' }}</view
         >
         <view v-else class="action-btn buyNowBtn" @tap="chooseSku(1)"
           >立即购买</view

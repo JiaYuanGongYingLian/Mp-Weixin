@@ -2,7 +2,7 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { userApi } from '@/api'
-import { getImgFullPath, getDistances } from '@/utils/index'
+import { getImgFullPath, getDistance } from '@/utils/index'
 
 const list = ref([])
 const loaded = ref(false)

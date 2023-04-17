@@ -2,7 +2,7 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, productApi } from '@/api'
-import { getImgFullPath, getDistances, checkLoginState } from '@/utils/index'
+import { getImgFullPath, getDistance, checkLoginState } from '@/utils/index'
 
 const bannerList = ref([])
 const info = ref()

@@ -116,21 +116,23 @@ onReachBottom(() => {
         :is-scroll="true"
       ></u-tabs>
     </view>
-    <u-search
-      class="search"
-      shape="round"
-      :clearabled="true"
-      :show-action="true"
-      action-text="搜索"
-      :animation="false"
-      bg-color="#fff"
-      border-color="#288cca"
-      margin="20rpx 30rpx"
-      v-model="keyword"
-      @search="doSearch"
-      @custom="doSearch"
-      @clear="doSearch"
-    ></u-search>
+    <view class="search">
+      <u-search
+        shape="round"
+        :clearabled="true"
+        :show-action="true"
+        action-text="搜索"
+        :animation="false"
+        bg-color="#fff"
+        border-color="#288cca"
+        margin="20rpx 30rpx"
+        v-model="keyword"
+        @search="doSearch"
+        @custom="doSearch"
+        @clear="doSearch"
+      ></u-search>
+    </view>
+
     <view class="swiper">
       <view
         class="swiper-item"
@@ -225,6 +227,9 @@ onReachBottom(() => {
 .tabs {
   position: sticky;
   top: 0;
+  // ifdef H5
+  top: 84rpx;
+  // enif
   background: #fff;
   z-index: 2;
 }
@@ -232,7 +237,11 @@ onReachBottom(() => {
 .search {
   position: sticky;
   top: 86rpx;
+  // ifdef H5
+  top: 172rpx;
+  // enif
   background: #fff;
   z-index: 2;
+  height: 100rpx;
 }
 </style>

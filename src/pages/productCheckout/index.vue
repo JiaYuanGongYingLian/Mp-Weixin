@@ -2,7 +2,7 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { userApi, orderApi } from '@/api'
-import { getImgFullPath, getDistances } from '@/utils/index'
+import { getImgFullPath, getDistance } from '@/utils/index'
 
 const addressData = ref({})
 let orderData = reactive({})

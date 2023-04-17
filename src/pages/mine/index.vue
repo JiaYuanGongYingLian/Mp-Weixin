@@ -4,7 +4,7 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/store'
 import { baseApi, productApi } from '@/api'
-import { getImgFullPath, getDistances, checkLoginState } from '@/utils/index'
+import { getImgFullPath, getDistance, checkLoginState } from '@/utils/index'
 
 const store = useUserStore()
 const { userInfo, wxUserInfo, hasLogin } = storeToRefs(store)

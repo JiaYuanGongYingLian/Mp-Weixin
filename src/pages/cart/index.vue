@@ -7,7 +7,7 @@ import { reactive, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, productApi } from '@/api'
-import { getImgFullPath, getDistances } from '@/utils/index'
+import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 
 const storeUser = useUserStore()
@@ -24,6 +24,12 @@ async function loadData() {
       detail: true,
       noPaging: true
     })
+    data.forEach((item: { count: number; selected: boolean }) => {
+      if (!item.count) {
+        item.count = 1
+        item.selected = false
+      }
+    })
     cartList.value = data
     calcTotal()
   } catch (err) {
@@ -35,7 +41,7 @@ function toLogin() {
     url: '/pages/login/index'
   })
 }
-// 选中状态处理
+// 更新购物车
 async function productCartUpdate(item: {
   id: any
   selected: any
@@ -48,23 +54,30 @@ async function productCartUpdate(item: {
     count: item.count
   })
   uni.hideLoading()
-  loadData()
+  // loadData()
 }
 // 单选
 function click_btnSelectedItem(item: { selected: boolean; id: any }) {
   item.selected = !item.selected
-  productCartUpdate(item)
+  // productCartUpdate(item)
+  calcTotal()
 }
 // 全选
 function click_btnSelectedAll() {
+  allChecked.value = !allChecked.value
   const selected = !allChecked.value
-  productCartUpdate({ id: null, selected })
+  // productCartUpdate({ id: null, selected })
+  cartList.value.forEach((item: { selected: boolean }) => {
+    item.selected = allChecked.value
+  })
+  calcTotal()
 }
 // 数量
-function numberChange(data: { index: string | number; number: any }) {
+function numberChange(data: { index: string | number; value: any }) {
   const item = cartList.value[data.index]
-  item.count = data.number
-  productCartUpdate({ id: item.id, selected: null, count: item.count })
+  item.count = data.value
+  productCartUpdate(item)
+  calcTotal()
 }
 // 删除
 function deleteCartItem(item) {
@@ -104,19 +117,16 @@ function calcTotal() {
     return
   }
   let totalMoneyTemp = 0
-  let moneyTemp = 0
   let selected = true
   list.forEach((item: any) => {
     if (item.selected === true) {
-      totalMoneyTemp += item.totalMoneyTemp * item.count
-      moneyTemp += item.money * item.count
+      totalMoneyTemp += item.shopProductSku.money * item.count
     } else if (selected === true) {
       selected = false
     }
   })
   allChecked.value = selected
   totalMoney.value = Number(totalMoneyTemp.toFixed(2))
-  money.value = Number(moneyTemp.toFixed(2))
 }
 // 创建订单
 function createOrder() {
@@ -186,7 +196,7 @@ onLoad((option) => {
                 class="radio"
                 @click="click_btnSelectedItem(item)"
                 :src="`https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newHome/${
-                  item.checked ? 'carChecked' : 'carNoChecked'
+                  item.selected ? 'carChecked' : 'carNoChecked'
                 }.png`"
               ></image>
               <image
@@ -194,11 +204,6 @@ onLoad((option) => {
                 :src="getImgFullPath(item.shopProductSku.productSku.image)"
                 mode="aspectFill"
               />
-              <view
-                class="yticon icon-xuanzhong2 checkbox"
-                :class="{ checked: item.selected }"
-                @click="click_btnSelectedItem(item)"
-              ></view>
             </view>
             <view class="item-right">
               <text class="title">{{ item.shopProductSku.name }}</text>
@@ -206,15 +211,17 @@ onLoad((option) => {
                 item.shopProductSku.productSku.name
               }}</text>
               <view class="price red">
-                <text
-                  class="unit l"
-                  v-if="!item.shopProductSku.shopProductSkuWalletRules"
-                  >¥</text
-                >
-                <text>{{ item.shopProductSku.productSku.money }} </text>
-                <text class="unit r">{{
-                  item.shopProductSku.shopProductSkuWalletRules[0].moneyUnit
-                }}</text>
+                <view class="money">
+                  <text
+                    class="unit l"
+                    v-if="!item.shopProductSku.shopProductSkuWalletRules"
+                    >¥</text
+                  >
+                  <text>{{ item.shopProductSku.money }} </text>
+                  <text class="unit r">{{
+                    item.shopProductSku.shopProductSkuWalletRules[0].moneyUnit
+                  }}</text>
+                </view>
                 <u-number-box
                   class="step"
                   :min="1"
@@ -313,10 +320,11 @@ onLoad((option) => {
   background-color: #fff;
   border-radius: 10rpx;
   margin-bottom: 20rpx;
+  align-items: center;
   .image-wrapper {
     flex-shrink: 0;
     position: relative;
-    padding-left: 60rpx;
+    padding-left: 58rpx;
     .radio {
       display: block;
       width: 42rpx;
@@ -328,8 +336,8 @@ onLoad((option) => {
     }
     .image {
       border-radius: 8rpx;
-      width: 180rpx;
-      height: 180rpx;
+      width: 160rpx;
+      height: 160rpx;
     }
   }
   .checkbox {
@@ -363,6 +371,10 @@ onLoad((option) => {
       margin-top: 10rpx;
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      .money {
+        flex-shrink: 0;
+      }
       .unit {
         font-weight: normal;
         flex-shrink: 0;
@@ -387,6 +399,7 @@ onLoad((option) => {
   }
   .hy-icon-delete {
     font-size: 36rpx;
+    align-self: start;
   }
 }
 /* 底部栏 */
@@ -442,7 +455,7 @@ onLoad((option) => {
     padding-right: 40rpx;
     .price {
       font-size: $uni-font-size-lg;
-      color: $uni-text-color-dark;
+      color: $uni-text-color-red;
     }
     .coupon {
       font-size: $uni-font-size-sm;
