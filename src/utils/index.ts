@@ -94,10 +94,8 @@ export function getDistance(lat1: any, lng1: any, lat2: any, lng2: any) {
     let distance_str = ''
 
     if (parseInt(distance, 10) >= 1) {
-      // distance_str = distance.toFixed(1) + "km";
       distance_str = `${distance.toFixed(2)} km`
     } else {
-      // distance_str = distance * 1000 + "m";
       distance_str = `${(distance * 1000).toFixed(2)} m`
     }
     const objData = {
@@ -142,28 +140,22 @@ export function getDistanceMatrix(lat1: any, lng1: any, lat2: any, lng2: any) {
   })
 }
 
-export function handleMapLocation(shop: {
+export function handleMapLocation(to: {
   latitude: any
   longitude: any
   addr: any
 }) {
-  const { latitude, longitude, addr } = shop
+  const { latitude, longitude, addr } = to
   console.log('进入导航')
   // 获取定位信息
   uni.getLocation({
     type: 'wgs84',
     success(res) {
       if (res.errMsg == 'getLocation:ok') {
-        console.log(latitude)
-        console.log(longitude)
         uni.openLocation({
-          // 传入你要去的纬度
           latitude,
-          // 传入你要去的经度
           longitude,
-          // 传入你要去的地址信息 不填则为空
           address: addr,
-          // 缩放大小
           scale: 18,
           success() {
             console.log('成功的回调success')
@@ -222,6 +214,7 @@ export function makePhoneCall(phoneNumber: any) {
     phoneNumber
   })
 }
+
 export default {
   getPrePage,
   log,

@@ -1,6 +1,6 @@
 {
 	"pages": [
-		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		// pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
 			"path": "pages/launch/index",
 			"style": {
@@ -48,7 +48,9 @@
 		{
 			"path": "pages/physicalShop/index",
 			"style": {
-				"navigationBarTitleText": "店铺详情"
+				"navigationBarTitleText": "店铺详情",
+				"navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
 			}
 		},
 		{

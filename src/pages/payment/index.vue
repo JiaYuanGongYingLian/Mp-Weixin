@@ -1,7 +1,10 @@
+<!-- eslint-disable no-shadow -->
+<!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, productApi, orderApi } from '@/api'
+import { isWeChat } from '@/utils/common'
 import icon_wechat from '@/static/pay_icon_wechat.png'
 // import icon_ali from "@/static/pay_icon_alipay.png"
 import icon_hy from '@/static/pay_icon_money.png'
@@ -18,14 +21,15 @@ const payWay = reactive([
     name: '微信支付',
     icon: icon_wechat,
     selected: true
-  },
-  {
-    name: '黑银积分',
-    icon: icon_hy,
-    selected: false
   }
+  // {
+  //   name: '黑银积分',
+  //   icon: icon_hy,
+  //   selected: false
+  // }
 ])
 const code = ref()
+const sms_code = ref()
 const timer = ref<NodeJS.Timer | null>(null)
 const countDown = ref(60)
 
@@ -92,13 +96,76 @@ function payFail(orderId: string) {
   //   })
   // }, 1000)
 }
-function onSubmit() {
-  orderApi.orderPay({
+// eslint-disable-next-line no-shadow
+enum payway_enum {
+  miniProgram = 2,
+  H5 = 3
+}
+async function onSubmit() {
+  const { data } = await orderApi.orderPay({
     orderId: order.value.id,
     // openId: '',
-    payPlatform: 3,
+    payPlatform: payway_enum.H5,
     payWay: 3
   })
+  if (data) {
+    if (typeof WeixinJSBridge === 'undefined') {
+      if (document.addEventListener) {
+        document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
+      } else if (document.attachEvent) {
+        document.attachEvent('WeixinJSBridgeReady', onBridgeReady)
+        document.attachEvent('onWeixinJSBridgeReady', onBridgeReady)
+      }
+    } else {
+      onBridgeReady(JSON.parse(data))
+    }
+  }
+}
+function onBridgeReady(data: any) {
+  WeixinJSBridge.invoke(
+    'getBrandWCPayRequest',
+    {
+      appId: data.appId,
+      timeStamp: data.timeStamp,
+      nonceStr: data.nonceStr,
+      package: data.package,
+      signType: data.signType,
+      paySign: data.paySign
+    },
+    (res: { err_msg: string }) => {
+      if (res.err_msg === 'get_brand_wcpay_request:ok') {
+        // 使用以上方式判断前端返回,微信团队郑重提示：
+        // res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+        uni.redirectTo({
+          url: '/pages/payment/success'
+        })
+      }
+    }
+  )
+}
+function init(param: any) {
+  const wechatFlag = isWeChat()
+  const { code, orderNumber } = param
+  if (wechatFlag) {
+    // 当前在微信内部,判断是否有授权code
+    if (code == null || code === '') {
+      redirectPage() // 重定向获取code
+    } else {
+      code.value = code
+    }
+  } else if (orderNumber) {
+    // 外部浏览器跳转重定向
+    // 从微信里重定向回来
+    // this.getOrderInfo();//请求订单数据
+  }
+}
+function redirectPage() {
+  // 微信内部则重定向页面
+  const local = window.location.href // 当前地址
+  const appId = 'thisistheappid' // 公众号APPID
+  window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${encodeURIComponent(
+    local
+  )}&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect` // 跳转授权链接
 }
 onLoad((option) => {
   if (option?.money) {
@@ -109,6 +176,7 @@ onLoad((option) => {
     info.money = order.value.money
   }
   getWalletRuleLis()
+  init(option)
 })
 </script>
 <template>
@@ -138,7 +206,7 @@ onLoad((option) => {
           :left-icon-style="{ with: 40 }"
           v-if="item.name === '黑银积分' && item.selected"
         >
-          <u-input v-model="code" placeholder="请填写验证码" />
+          <u-input v-model="sms_code" placeholder="请填写验证码" />
           <template v-slot:right>
             <u-button
               type="success"

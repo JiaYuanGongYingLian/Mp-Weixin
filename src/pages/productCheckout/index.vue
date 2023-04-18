@@ -2,10 +2,10 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { userApi, orderApi } from '@/api'
-import { getImgFullPath, getDistance } from '@/utils/index'
+import { getImgFullPath, getDistances } from '@/utils/index'
 
 const addressData = ref({})
-let orderData = reactive({})
+const orderData = ref({})
 async function getAddressList() {
   const { data } = await userApi.getAddressList({
     noPaging: true,
@@ -16,24 +16,24 @@ async function getAddressList() {
     {}
 }
 async function getOrderMoney() {
-  const { data } = await orderApi.orderMoney(orderData)
+  const { data } = await orderApi.orderMoney(orderData.value)
   const { orderMonies, totalMoney, payMoney, money, moneyUnit } = data
-  orderData.orderMonies = orderMonies
-  orderData.totalMoney = totalMoney
-  orderData.payMoney = payMoney
-  orderData.money = money
-  orderData.moneyUnit = moneyUnit
+  orderData.value.orderMonies = orderMonies
+  orderData.value.totalMoney = totalMoney
+  orderData.value.payMoney = payMoney
+  orderData.value.money = money
+  orderData.value.moneyUnit = moneyUnit
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function setAddress(data: { address: {} }) {
   addressData.value = data.address
-  orderData.addressId = data.address.id
+  orderData.value.addressId = data.address.id
   getOrderMoney()
 }
 // 数量
 function numberChange(data) {
-  orderData.orderProductSkus[data.index].count = data.number
+  orderData.value.orderProductSkus[data.index].count = data.number
 }
 defineExpose({
   setAddress
@@ -41,14 +41,14 @@ defineExpose({
 
 // 创建订单
 async function creatOrder() {
-  const { data } = await orderApi.orderAdd(orderData)
+  const { data } = await orderApi.orderAdd(orderData.value)
   uni.redirectTo({
     url: `/pages/payment/index?order=${JSON.stringify(data)}`
   })
 }
 
 function onSubmit() {
-  if (!orderData.addressId) {
+  if (!orderData.value.addressId) {
     uni.showToast({
       icon: 'none',
       title: '请填写收货地址！'
@@ -59,7 +59,7 @@ function onSubmit() {
 }
 
 onLoad(async (option) => {
-  orderData = reactive(JSON.parse(option?.orderData))
+  orderData.value = JSON.parse(option?.orderData)
   await getAddressList()
   await getOrderMoney()
 })

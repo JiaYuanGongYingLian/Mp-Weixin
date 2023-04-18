@@ -20,7 +20,7 @@ export default defineConfig({
         rewrite: (p) => p.replace(/^\/api/, '')
       },
       '/api-prod/': {
-        target: 'http://localhost:3001',
+        target: 'https://api.blacksilverscore.com',
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/api-prod/, '')
       }
@@ -42,5 +42,10 @@ export default defineConfig({
         additionalData: '@import "@/styles/vars/_base.less";'
       }
     }
+  },
+  base: 'hyLife',
+  build: {
+    assetsDir: 'assets',
+    outDir: 'hyLife'
   }
 })

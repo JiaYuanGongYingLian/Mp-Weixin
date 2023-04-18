@@ -1,6 +1,9 @@
+<!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onPageScroll } from '@dcloudio/uni-app'
+import { storeToRefs } from 'pinia'
+import { useConfigStore, useUserStore } from '@/store'
 import { baseApi, productApi } from '@/api'
 import {
   getImgFullPath,
@@ -10,14 +13,35 @@ import {
 } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 
+const configStore = useConfigStore()
+const userStore = useUserStore()
+const { hasLogin } = storeToRefs(userStore)
 const loadingSkeleton = ref(false)
 const bannerList = ref([])
-let shop = reactive({})
+const shop = ref({})
 const shopId = ref()
 const currentLocation = ref()
 const productList = ref<object[]>([])
 const tabs = ref([])
 const currentTab = ref(0)
+const scrollTop = ref(0)
+const tabList = ref([
+  {
+    iconPath: 'home',
+    selectedIconPath: 'home-fill',
+    text: '首页',
+    pagePath: '/pages/physicalShop/index'
+  },
+  {
+    iconPath: 'account',
+    selectedIconPath: 'account-fill',
+    pagePath: '/pages/mine/index',
+    text: '我的'
+  }
+])
+const currentTabbar = ref(0)
+const pageTitle = ref('')
+
 function getLocation() {
   // 获取定位信息
   uni.getLocation({
@@ -30,13 +54,16 @@ function getLocation() {
           latitude,
           longitude
         }
-        if (!shop.latitude) return
-        shop.distance = getDistance(
+        if (!shop.value.latitude) return
+        getDistance(
           latitude,
           longitude,
-          shop.latitude,
-          shop.longitude
-        ).distance_str
+          shop.value.latitude,
+          shop.value.longitude
+        ).then((res) => {
+          const { distance_str } = res
+          shop.value.distance = distance_str
+        })
       }
     },
     // 用户拒绝获取定位后 再次点击触发
@@ -77,8 +104,9 @@ async function getShopInfo() {
       id: shopId.value,
       detail: true
     })
-    const { bannerResources, avatar } = data
-    shop = data
+    const { bannerResources, avatar, name } = data
+    setTitle(name)
+    shop.value = data
     if (bannerResources && bannerResources.length > 0) {
       bannerList.value = bannerResources.map(
         (item: { image: string; resourceUrl: string }) => {
@@ -92,19 +120,25 @@ async function getShopInfo() {
       bannerList.value.push(image)
     }
 
-    const { provinceName, cityName, districtName, street, other } = shop.address
-    shop.addr = provinceName + cityName + districtName + street + other
-    shop.shopMoneyRule = shop.shopMoneyRules
-      ? shop.shopMoneyRules.find((item: { selected: any }) => item.selected)
+    const { provinceName, cityName, districtName, street, other } =
+      shop.value.address
+    shop.value.addr = provinceName + cityName + districtName + street + other
+    shop.value.shopMoneyRule = shop.value.shopMoneyRules
+      ? shop.value.shopMoneyRules.find(
+          (item: { selected: any }) => item.selected
+        )
       : {}
     if (currentLocation.value) {
       const { latitude, longitude } = currentLocation.value
-      shop.distance = getDistance(
+      getDistance(
         latitude,
         longitude,
-        shop.latitude,
-        shop.longitude
-      ).distance_str
+        shop.value.latitude,
+        shop.value.longitude
+      ).then((res) => {
+        const { distance_str } = res
+        shop.value.distance = distance_str
+      })
     }
   } catch (err) {
     console.log(err)
@@ -164,9 +198,13 @@ function tabsChange(index: any) {
   if (!item.list.length) {
     getShopProduct()
   }
+  let scrollTop = 400
+  // #ifdef H5
+  scrollTop -= configStore.navBarHeight - 20
+  // #endif
   uni.pageScrollTo({
-    scrollTop: 400,
-    duration: 500
+    scrollTop,
+    duration: 300
   })
 }
 function toProductDetail(id: any) {
@@ -181,6 +219,14 @@ function onreachBottom() {
   console.log('bottom')
   getShopProduct()
 }
+
+// H5页面动态设置title
+function setTitle(title = '') {
+  pageTitle.value = title
+  // #ifdef H5
+  document.title = title
+  // #endif
+}
 onLoad(async (option) => {
   shopId.value = option.shopId
   loadingSkeleton.value = true
@@ -191,11 +237,21 @@ onLoad(async (option) => {
   setTimeout(() => {
     loadingSkeleton.value = false
   }, 500)
+  // #ifdef H5
+  if (!hasLogin) {
+    userStore.wxAuth()
+  }
+  // #endif
+})
+onPageScroll((e) => {
+  scrollTop.value = e.scrollTop
 })
 </script>
 <template>
-  <page-skeleton :loading="loadingSkeleton" :type="2"></page-skeleton>
   <div class="physicalShop">
+    <u-navbar back-text="返回" :title="pageTitle"></u-navbar>
+    <page-skeleton :loading="loadingSkeleton" :type="2"></page-skeleton>
+    <u-back-top :scroll-top="scrollTop"></u-back-top>
     <u-swiper
       height="400"
       :list="bannerList"
@@ -317,6 +373,13 @@ onLoad(async (option) => {
         </scroll-view>
       </view>
     </view>
+    <!-- #ifdef H5 -->
+    <u-tabbar
+      v-model="currentTabbar"
+      :list="tabList"
+      :mid-button="false"
+    ></u-tabbar>
+    <!-- #endif -->
   </div>
 </template>
 
@@ -412,7 +475,10 @@ onLoad(async (option) => {
 .tabs {
   position: sticky;
   top: 0;
-  background: #fff;
+  // #ifdef H5
+  top: calc(44px + env(safe-area-inset-top));
+  // #endif
+  background: hsl(0, 0%, 100%);
   z-index: 2;
 }
 

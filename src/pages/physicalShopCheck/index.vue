@@ -17,7 +17,7 @@ async function toPayment() {
   const { data } = await productApi.getShopSkuList({
     detail: true,
     dynamicPrice: true,
-    shopId: info.shopId,
+    shopId: info.shopId
   })
   uni.navigateTo({
     url: `/pages/payment/index?money=${money.value}`
@@ -33,10 +33,18 @@ onLoad((option) => {
   <div class="physicalShopCheck">
     <text class="name">{{ info.name }}</text>
     <view class="inptBox">
-      <u-input v-model="money" type="number" :border="false" placeholder="请输入支付金额" input-align="center" />
+      <u-input
+        v-model="money"
+        type="number"
+        :border="false"
+        placeholder="请输入支付金额"
+        input-align="center"
+      />
       <text class="unit">(元)</text>
     </view>
-    <u-button class="hy-btn" type="primary" ripple @click="toPayment"> 结算 </u-button>
+    <u-button class="hy-btn" type="primary" ripple @click="toPayment">
+      结算
+    </u-button>
   </div>
 </template>
 

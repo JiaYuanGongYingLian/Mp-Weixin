@@ -9,6 +9,21 @@ import { getImgFullPath, getDistance, checkLoginState } from '@/utils/index'
 const store = useUserStore()
 const { userInfo, wxUserInfo, hasLogin } = storeToRefs(store)
 const info = ref()
+const tabList = ref([
+  {
+    iconPath: 'home',
+    selectedIconPath: 'home-fill',
+    pagePath: '/pages/mine/index',
+    text: '首页'
+  },
+  {
+    iconPath: 'account',
+    selectedIconPath: 'account-fill',
+    pagePath: '/pages/mine/index',
+    text: '我的'
+  }
+])
+const currentTabbar = ref(0)
 function goUrlFn(e: { currentTarget: { dataset: { url: any } } }) {
   const { url } = e.currentTarget.dataset
   if (checkLoginState()) {
@@ -29,40 +44,13 @@ onLoad((option) => {})
         mode="widthFix"
         src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/extension_bg_01.png"
       ></image>
-      <view class="city">
-        <view class="areaBox">
-          <view class="left">
-            <image
-              class="extensionIcon"
-              src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/extension_icon_01.png"
-            ></image>
-            <view class="extensionText">升级城市推广大使，享受最高权益…</view>
-          </view>
-          <view class="right">
-            <view>去咨询</view>
-            <image
-              class="pic"
-              src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/icon_43.png"
-            ></image>
-            <button class="service" open-type="contact">客服</button>
-          </view>
-        </view>
-      </view>
+      <view class="city"></view>
     </view>
     <view class="contentBox">
       <view class="user">
         <!--已登录-->
         <view class="top">
-          <view
-            class="imgBox"
-            @tap="goUrlFn"
-            :data-url="
-              '/pages/mine/patientInfo?id=' +
-              userInfo.userId +
-              '&type=' +
-              userNowType
-            "
-          >
+          <view class="imgBox" @tap="goUrlFn">
             <image
               mode="aspectFill"
               :src="
@@ -150,6 +138,13 @@ onLoad((option) => {})
         </view>
       </view>
     </view>
+    <!-- #ifdef H5 -->
+    <u-tabbar
+      v-model="currentTabbar"
+      :list="tabList"
+      :mid-button="false"
+    ></u-tabbar>
+    <!-- #endif -->
   </div>
 </template>
 

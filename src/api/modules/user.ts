@@ -4,6 +4,10 @@ function wxlogin() {
   return http.post('/auth/api/v1/auth/wxMiniLogin')
 }
 
+function wxWebLogin() {
+  return http.post('/auth/api/v1/auth/wxWebLogin')
+}
+
 function login(data: any) {
   return http.post('/auth/api/v1/auth/login', data)
 }
@@ -46,6 +50,7 @@ function addressAdd(data: any) {
 export default {
   login,
   wxlogin,
+  wxWebLogin,
   getCode,
   getAddressList,
   getAddressInfo,

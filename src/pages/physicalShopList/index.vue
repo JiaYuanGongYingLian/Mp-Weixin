@@ -12,8 +12,8 @@ import {
 import { useUserStore } from '@/store'
 import { makePhoneCall } from '@/utils'
 
-const store = useUserStore()
-const { hasLogin } = storeToRefs(store)
+const userStore = useUserStore()
+const { hasLogin } = storeToRefs(userStore)
 const shopList = ref<object[]>([])
 const tabs = ref([])
 const currentTab = ref(0)
@@ -167,6 +167,7 @@ function checkLoginState() {
   }
   return true
 }
+// 点击进入店铺
 function toShopDetail(id: any) {
   checkLoginState()
   uni.navigateTo({
@@ -187,7 +188,7 @@ async function couponAdd(coupon: { id: any }) {
   })
   uni.showToast({
     icon: 'none',
-    title: data.msg
+    title: data.msg ? data.msg : '领取成功'
   })
 }
 onLoad(async (option) => {
@@ -199,6 +200,11 @@ onLoad(async (option) => {
   }
   await getShopList()
   getLocation()
+  // #ifdef H5
+  if (!hasLogin.value) {
+    userStore.wxAuth()
+  }
+  // #endif
 })
 onReachBottom(() => {
   status.value = 'loading'
@@ -292,6 +298,7 @@ navBarHeight.value = 86
                     class="btn"
                     size="mini"
                     type="primary"
+                    plain
                     ripple
                     @click="couponAdd(item)"
                     >立即领取</u-button
@@ -482,6 +489,8 @@ navBarHeight.value = 86
           margin-top: 10px;
           padding-top: 8px;
           position: relative;
+          display: flex;
+          justify-content: center;
           &::before,
           &::after {
             background-color: #fff;
@@ -505,10 +514,12 @@ navBarHeight.value = 86
             transform: rotate(35deg);
           }
           :deep(.btn) {
+            flex: 1;
             button {
               padding: 8rpx 0;
               font-size: 20rpx;
               height: 40rpx;
+              width: 100%;
             }
           }
         }
