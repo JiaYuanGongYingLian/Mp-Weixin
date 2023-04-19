@@ -35,7 +35,6 @@ const userStore = defineStore('storeId', {
       })
     },
     wxAuth() {
-      debugger
       const APPID = 'wx1fddd052cbd8fec2'
       const SCOPE = 'snsapi_userinfo'
       const CODE = getQueryVariable('code')

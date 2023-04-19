@@ -10,7 +10,7 @@ import {
   getDistanceMatrix
 } from '@/utils/index'
 import { useUserStore } from '@/store'
-import { makePhoneCall } from '@/utils'
+import { makePhoneCall, checkLoginState } from '@/utils'
 
 const userStore = useUserStore()
 const { hasLogin } = storeToRefs(userStore)
@@ -158,38 +158,32 @@ function getLocation() {
     }
   })
 }
-function checkLoginState() {
-  if (!hasLogin.value) {
-    uni.navigateTo({
-      url: '/pages/login/index'
-    })
-    return false
-  }
-  return true
-}
 // 点击进入店铺
 function toShopDetail(id: any) {
-  checkLoginState()
   uni.navigateTo({
     url: `/pages/physicalShop/index?shopId=${id}`
   })
 }
+// 点击付款按钮
 function handleCheck(shop: { name: any; id: any }) {
-  checkLoginState()
-  const { name, id } = shop
-  uni.navigateTo({
-    url: `/pages/physicalShopCheck/index?name=${name}&shopId=${id}`
-  })
+  if (checkLoginState()) {
+    const { name, id } = shop
+    uni.navigateTo({
+      url: `/pages/physicalShopCheck/index?name=${name}&shopId=${id}`
+    })
+  }
 }
 // 领券
 async function couponAdd(coupon: { id: any }) {
-  const { data } = await couponApi.userCouponAdd({
-    couponId: coupon.id
-  })
-  uni.showToast({
-    icon: 'none',
-    title: data.msg ? data.msg : '领取成功'
-  })
+  if (checkLoginState()) {
+    const { data } = await couponApi.userCouponAdd({
+      couponId: coupon.id
+    })
+    uni.showToast({
+      icon: 'none',
+      title: data.msg ? data.msg : '领取成功'
+    })
+  }
 }
 onLoad(async (option) => {
   if (option?.categoryData) {
@@ -200,11 +194,6 @@ onLoad(async (option) => {
   }
   await getShopList()
   getLocation()
-  // #ifdef H5
-  if (!hasLogin.value) {
-    userStore.wxAuth()
-  }
-  // #endif
 })
 onReachBottom(() => {
   status.value = 'loading'

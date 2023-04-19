@@ -9,9 +9,11 @@ import {
   getImgFullPath,
   getDistance,
   handleMapLocation,
-  makePhoneCall
+  makePhoneCall,
+  checkLoginState
 } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
+import { isWeChat } from '@/utils/common'
 
 const configStore = useConfigStore()
 const userStore = useUserStore()
@@ -27,20 +29,26 @@ const currentTab = ref(0)
 const scrollTop = ref(0)
 const tabList = ref([
   {
-    iconPath: 'home',
-    selectedIconPath: 'home-fill',
+    iconPath: '/static/ic_bar_main_pg.png',
+    selectedIconPath: '/static/ic_bar_main_page_checked.png',
     text: '首页',
     pagePath: '/pages/physicalShop/index'
   },
   {
-    iconPath: 'account',
-    selectedIconPath: 'account-fill',
+    iconPath: '/static/ic_bar_mine.png',
+    selectedIconPath: '/static/ic_bar_mine_checked.png',
     pagePath: '/pages/mine/index',
     text: '我的'
   }
 ])
 const currentTabbar = ref(0)
 const pageTitle = ref('')
+const isWeChatOfficial = ref(true)
+const tabsStyleTop = ref('')
+// #ifdef MP-WEIXIN
+isWeChatOfficial.value = false
+// #endif
+const enterByStoreQrcode = ref(false) // 是否通过商家二维码链接进入此页面
 
 function getLocation() {
   // 获取定位信息
@@ -91,12 +99,15 @@ function getLocation() {
     }
   })
 }
+// 付款
 // eslint-disable-next-line no-shadow
 function handleCheck(shop: { name: any; id: any }) {
-  const { name, id } = shop
-  uni.navigateTo({
-    url: `/pages/physicalShopCheck/index?name=${name}&shopId=${id}`
-  })
+  if (checkLoginState()) {
+    const { name, id } = shop
+    uni.navigateTo({
+      url: `/pages/physicalShopCheck/index?name=${name}&shopId=${id}`
+    })
+  }
 }
 async function getShopInfo() {
   try {
@@ -105,6 +116,7 @@ async function getShopInfo() {
       detail: true
     })
     const { bannerResources, avatar, name } = data
+    // 设置页面title
     setTitle(name)
     shop.value = data
     if (bannerResources && bannerResources.length > 0) {
@@ -208,10 +220,12 @@ function tabsChange(index: any) {
   })
 }
 function toProductDetail(id: any) {
-  if (!id) return
-  uni.navigateTo({
-    url: `/pages/productDetail/index?shopId=${shopId.value}&productId=${id}`
-  })
+  if (checkLoginState()) {
+    if (!id) return
+    uni.navigateTo({
+      url: `/pages/productDetail/index?shopId=${shopId.value}&productId=${id}`
+    })
+  }
 }
 
 // scroll-view到底部加载更多
@@ -225,6 +239,15 @@ function setTitle(title = '') {
   pageTitle.value = title
   // #ifdef H5
   document.title = title
+  const i = document.createElement('iframe')
+  i.src = '/favicon.ico'
+  i.style.display = 'none'
+  i.onload = () => {
+    setTimeout(() => {
+      i.remove()
+    }, 9)
+  }
+  document.body.appendChild(i)
   // #endif
 }
 onLoad(async (option) => {
@@ -238,9 +261,9 @@ onLoad(async (option) => {
     loadingSkeleton.value = false
   }, 500)
   // #ifdef H5
-  if (!hasLogin) {
-    userStore.wxAuth()
-  }
+  isWeChatOfficial.value = isWeChat()
+  tabsStyleTop.value = isWeChatOfficial.value ? '0px' : '44px'
+  enterByStoreQrcode.value = !!option?.qrcode
   // #endif
 })
 onPageScroll((e) => {
@@ -249,7 +272,14 @@ onPageScroll((e) => {
 </script>
 <template>
   <div class="physicalShop">
-    <u-navbar back-text="返回" :title="pageTitle"></u-navbar>
+    <u-navbar
+      back-text=""
+      :title="pageTitle"
+      :title-bold="true"
+      :is-back="!enterByStoreQrcode"
+      v-if="!isWeChatOfficial"
+      color="#333"
+    ></u-navbar>
     <page-skeleton :loading="loadingSkeleton" :type="2"></page-skeleton>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
     <u-swiper
@@ -375,6 +405,7 @@ onPageScroll((e) => {
     </view>
     <!-- #ifdef H5 -->
     <u-tabbar
+      v-if="enterByStoreQrcode"
       v-model="currentTabbar"
       :list="tabList"
       :mid-button="false"
@@ -476,7 +507,7 @@ onPageScroll((e) => {
   position: sticky;
   top: 0;
   // #ifdef H5
-  top: calc(44px + env(safe-area-inset-top));
+  top: calc(v-bind(tabsStyleTop) + env(safe-area-inset-top));
   // #endif
   background: hsl(0, 0%, 100%);
   z-index: 2;

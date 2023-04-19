@@ -30,7 +30,7 @@ export const getQueryVariable = (variable: string) => {
 export function isWeChat() {
   const ua = window.navigator.userAgent.toLowerCase()
   const env = ua.match(/MicroMessenger/i)
-  return env[0] === 'micromessenger'
+  return env ? env[0] === 'micromessenger' : false
 }
 export default {
   getQueryObject,

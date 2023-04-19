@@ -8,10 +8,19 @@ import { useUserStore } from '@/store'
 import { userApi } from '@/api'
 import logo from '@/static/ic_launcher.png'
 import user from '@/api/modules/user'
+import { isWeChat } from '@/utils/common'
 
-onLoad((option) => {})
+onLoad((option) => {
+  // #ifdef H5
+  isWeChatOfficial.value = isWeChat()
+  // #endif
+})
 const store = useUserStore()
 const { count } = storeToRefs(store)
+const isWeChatOfficial = ref(true)
+// #ifdef MP-WEIXIN
+isWeChatOfficial.value = false
+// #endif
 const form = reactive({
   username: '17628281574',
   password: '123456'
@@ -58,46 +67,104 @@ async function getUserInfo() {
     uni.setStorageSync('userInfo', data)
   })
 }
+function getUserProfileFn() {
+  uni.getUserProfile({
+    desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+    lang: 'zh_CN',
+    success: (res) => {
+      console.log(res)
+    }
+  })
+}
+function getPhoneNumber(res) {
+  console.log(res)
+}
+function handleWxWebLogin() {
+  store.wxAuth()
+}
 </script>
 <template>
-  <image class="logo" :src="logo" mode="widthFix" />
-  <view class="form">
-    <view class="inputBox">
-      <!--                <view class="label">手机号</view>-->
-      <input
-        class="inpt phone"
-        type="number"
-        v-model="form.username"
-        maxlength="11"
-        @blur="mobileBlurFn"
-        placeholder-class="placeholderStyle"
-        placeholder-style="color: #D3DBE0;font-size: 34rpx;font-weight: normal;"
-        placeholder="请输入手机号"
-      />
-      <cover-image
-        v-if="form.username"
-        @tap="clearFn"
-        class="close"
-        src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/close.png"
-      ></cover-image>
+  <view class="container">
+    <u-navbar
+      back-text=""
+      title="登录"
+      v-if="!isWeChatOfficial"
+      :title-bold="true"
+      color="#333"
+    ></u-navbar>
+    <image class="logo" :src="logo" mode="widthFix" />
+    <view class="form">
+      <view class="inputBox">
+        <!--                <view class="label">手机号</view>-->
+        <input
+          class="inpt phone"
+          type="number"
+          v-model="form.username"
+          maxlength="11"
+          @blur="mobileBlurFn"
+          placeholder-class="placeholderStyle"
+          placeholder-style="color: #D3DBE0;font-size: 34rpx;font-weight: normal;"
+          placeholder="请输入手机号"
+        />
+        <cover-image
+          v-if="form.username"
+          @tap="clearFn"
+          class="close"
+          src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/close.png"
+        ></cover-image>
+      </view>
+      <view class="inputBox">
+        <!--                <view class="label">验证码</view>-->
+        <input
+          class="inpt code"
+          type="text"
+          maxlength="20"
+          v-model="form.password"
+          placeholder-class="placeholderStyle"
+          placeholder-style="color: #D3DBE0;font-size: 34rpx;font-weight: normal;"
+          placeholder="请输入密码"
+        />
+      </view>
+      <u-button type="primary" class="hy-btn" :ripple="true" @click="submit"
+        >登录</u-button
+      >
+      <!-- <view style="text-align: center; color: #ccc">or</view> -->
+      <view>
+        <!-- #ifdef MP-WEIXIN -->
+        <u-button
+          type="primary"
+          class="hy-btn wx"
+          open-type="getPhoneNumber"
+          ripple
+          @getphonenumber="getPhoneNumber"
+        >
+          <text class="iconfont hy-icon-wechat"></text>
+          微信快捷登录
+        </u-button>
+        <!-- #endif -->
+        <!-- #ifdef H5 -->
+        <u-button
+          type="primary"
+          class="hy-btn wx"
+          open-type="getPhoneNumber"
+          ripple
+          @click="handleWxWebLogin"
+        >
+          <text class="iconfont hy-icon-wechat"></text>
+          微信快捷登录
+        </u-button>
+        <!-- #endif -->
+      </view>
     </view>
-    <view class="inputBox">
-      <!--                <view class="label">验证码</view>-->
-      <input
-        class="inpt code"
-        type="text"
-        maxlength="20"
-        v-model="form.password"
-        placeholder-class="placeholderStyle"
-        placeholder-style="color: #D3DBE0;font-size: 34rpx;font-weight: normal;"
-        placeholder="请输入密码"
-      />
-    </view>
-    <u-button class="hy-btn" :ripple="true" @click="submit">登录</u-button>
   </view>
 </template>
 
 <style lang="scss" scoped>
+.container {
+  background: #fff;
+  overflow: hidden;
+  min-height: 100vh;
+}
 .placeholderStyle {
   color: #d3dbe0;
   font-size: 34rpx;
@@ -151,5 +218,13 @@ async function getUserInfo() {
 
 .hy-btn {
   margin: 70rpx 0 30rpx 0;
+  &.wx {
+    margin-top: 40rpx;
+  }
+  .hy-icon-wechat {
+    color: #fff;
+    margin-right: 15rpx;
+    font-size: 36rpx;
+  }
 }
 </style>
