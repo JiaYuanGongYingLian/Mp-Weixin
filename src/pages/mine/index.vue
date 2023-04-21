@@ -23,7 +23,7 @@ const tabList = ref([
     text: '我的'
   }
 ])
-const currentTabbar = ref(0)
+const currentTabbar = ref(1)
 function goUrlFn(e: { currentTarget: { dataset: { url: any } } }) {
   const { url } = e.currentTarget.dataset
   if (checkLoginState()) {
@@ -54,7 +54,7 @@ onLoad((option) => {})
             <image
               mode="aspectFill"
               :src="
-                userInfo.avatar ||
+                userInfo?.avatar ||
                 wxUserInfo.avatarUrl ||
                 'https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/img_user.png'
               "

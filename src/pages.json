@@ -156,6 +156,12 @@
 			"style": {
 				"navigationBarTitleText": "票券使用"
 			}
+		},
+		{
+			"path": "pages/order/index",
+			"style": {
+				"navigationBarTitleText": "订单列表"
+			}
 		}
 	],
 	"globalStyle": {

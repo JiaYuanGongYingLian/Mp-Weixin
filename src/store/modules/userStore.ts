@@ -35,7 +35,7 @@ const userStore = defineStore('storeId', {
       })
     },
     wxAuth() {
-      const APPID = 'wx1fddd052cbd8fec2'
+      const APPID = 'wx0ffaafd066438895'
       const SCOPE = 'snsapi_userinfo'
       const CODE = getQueryVariable('code')
       const REDIRECT_URL = encodeURIComponent(window.location.href)
