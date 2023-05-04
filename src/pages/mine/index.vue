@@ -5,20 +5,21 @@ import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/store'
 import { baseApi, productApi } from '@/api'
 import { getImgFullPath, getDistance, checkLoginState } from '@/utils/index'
+import hyTabBar from '@/components/hy-tabbar/index.vue'
 
 const store = useUserStore()
 const { userInfo, wxUserInfo, hasLogin } = storeToRefs(store)
 const info = ref()
 const tabList = ref([
   {
-    iconPath: 'home',
-    selectedIconPath: 'home-fill',
-    pagePath: '/pages/mine/index',
+    iconPath: '/static/ic_bar_main_pg.png',
+    selectedIconPath: '/static/ic_bar_main_page_checked.png',
+    path: '/pages/physicalShop/index',
     text: '首页'
   },
   {
-    iconPath: 'account',
-    selectedIconPath: 'account-fill',
+    iconPath: '/static/ic_bar_mine.png',
+    selectedIconPath: '/static/ic_bar_mine_checked.png',
     pagePath: '/pages/mine/index',
     text: '我的'
   }
@@ -32,6 +33,23 @@ function goUrlFn(e: { currentTarget: { dataset: { url: any } } }) {
         url
       })
     }
+  }
+}
+// 切换tab
+function handleTabBarChange(index: any) {
+  const toPage = tabList.value[index]
+  if (toPage.pagePath) {
+    uni.switchTab({
+      url: toPage.pagePath
+    })
+  } else if (uni.getStorageSync('shopFullPath')) {
+    uni.redirectTo({
+      url: uni.getStorageSync('shopFullPath')
+    })
+  } else {
+    uni.redirectTo({
+      url: toPage.path
+    })
   }
 }
 onLoad((option) => {})
@@ -85,31 +103,19 @@ onLoad((option) => {})
 
       <view class="myBox myOrder">
         <view class="box">
-          <view
-            class="bar"
-            @tap="goUrlFn"
-            data-url="/packageA/order/order?id=1"
-          >
+          <view class="bar" @tap="goUrlFn" data-url="/pages/order/index?id=1">
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_01.png"
             ></image>
             待付款
           </view>
-          <view
-            class="bar"
-            @tap="goUrlFn"
-            data-url="/packageA/order/order?id=2"
-          >
+          <view class="bar" @tap="goUrlFn" data-url="/pages/order/index?id=2">
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_02.png"
             ></image>
             待发货
           </view>
-          <view
-            class="bar"
-            @tap="goUrlFn"
-            data-url="/packageA/order/order?id=3"
-          >
+          <view class="bar" @tap="goUrlFn" data-url="/pages/order/index?id=3">
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_03.png"
             ></image>
@@ -118,7 +124,7 @@ onLoad((option) => {})
           <view
             class="bar commentBox"
             @tap="goUrlFn"
-            data-url="/packageA/order/order?id=0"
+            data-url="/pages/order/index?id=0"
           >
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_04.png"
@@ -139,11 +145,12 @@ onLoad((option) => {})
       </view>
     </view>
     <!-- #ifdef H5 -->
-    <u-tabbar
+    <hyTabBar
       v-model="currentTabbar"
       :list="tabList"
       :mid-button="false"
-    ></u-tabbar>
+      @change="handleTabBarChange"
+    ></hyTabBar>
     <!-- #endif -->
   </div>
 </template>
@@ -276,7 +283,7 @@ onLoad((option) => {})
   .contentBox {
     position: relative;
     z-index: 2;
-    top: -248rpx;
+    top: -368rpx;
   }
 
   .user {

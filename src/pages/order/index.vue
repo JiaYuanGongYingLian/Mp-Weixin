@@ -355,11 +355,11 @@ onLoad((option) => {
     align-items: center;
     height: 100%;
     font-size: 15px;
-    color: $font-color-dark;
+    color: #333;
     position: relative;
 
     &.current {
-      color: $base-color;
+      color: #333;
 
       &:after {
         content: '';
@@ -369,7 +369,7 @@ onLoad((option) => {
         transform: translateX(-50%);
         width: 44px;
         height: 0;
-        border-bottom: 2px solid $base-color;
+        border-bottom: 2px solid #333;
       }
     }
   }
@@ -391,8 +391,8 @@ onLoad((option) => {
     align-items: center;
     height: 80upx;
     padding-right: 30upx;
-    font-size: $font-base;
-    color: $font-color-dark;
+    font-size: 24rpx;
+    color: #333;
     position: relative;
 
     .time {
@@ -400,20 +400,20 @@ onLoad((option) => {
     }
 
     .state {
-      color: $base-color;
+      color: #333;
     }
 
     .del-btn {
       padding: 10upx 0 10upx 36upx;
-      font-size: $font-lg;
-      color: $font-color-light;
+      font-size: 36rpx;
+      color: #f0f0f0;
       position: relative;
 
       &:after {
         content: '';
         width: 0;
         height: 30upx;
-        border-left: 1px solid $border-color-dark;
+        border-left: 1px solid #333;
         position: absolute;
         left: 20upx;
         top: 50%;
@@ -461,24 +461,24 @@ onLoad((option) => {
       overflow: hidden;
 
       .title {
-        font-size: $font-base + 2upx;
-        color: $font-color-dark;
+        font-size: 26rpx;
+        color: #333;
         line-height: 1;
       }
 
       .attr-box {
-        font-size: $font-sm + 2upx;
-        color: $font-color-light;
+        font-size: 26rpx;
+        color: #f0f0f0;
         padding: 10upx 0upx;
       }
 
       .price {
-        font-size: $font-base + 2upx;
-        color: $font-color-dark;
+        font-size: 26rpx;
+        color: #333;
 
         &:before {
           content: '￥';
-          font-size: $font-sm;
+          font-size: 24rpx;
           margin: 0 2upx 0 0;
         }
       }
@@ -490,21 +490,21 @@ onLoad((option) => {
     justify-content: flex-end;
     align-items: baseline;
     padding: 20upx 30upx;
-    font-size: $font-sm + 2upx;
-    color: $font-color-light;
+    font-size: 26rpx;
+    color: #f0f0f0;
 
     .num {
       margin: 0 8upx;
-      color: $font-color-dark;
+      color: #333;
     }
 
     .price {
-      font-size: $font-lg;
-      color: $font-color-dark;
+      font-size: 36rpx;
+      color: #333;
 
       &:before {
         content: '￥';
-        font-size: $font-sm;
+        font-size: 24rpx;
         margin: 0 2upx 0 8upx;
       }
     }
@@ -527,8 +527,8 @@ onLoad((option) => {
     padding: 0;
     text-align: center;
     line-height: 60upx;
-    font-size: $font-sm + 2upx;
-    color: $font-color-dark;
+    font-size: 26rpx;
+    color: #333;
     background: #fff;
     border-radius: 100px;
 
@@ -538,7 +538,7 @@ onLoad((option) => {
 
     &.recom {
       background: #fff9f9;
-      color: $base-color;
+      color: #333;
 
       &:after {
         border-color: #f7bcc8;

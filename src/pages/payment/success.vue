@@ -50,7 +50,7 @@ export default {
   justify-content: center;
   width: 600upx;
   height: 80upx;
-  font-size: $font-lg;
+  font-size: 36rpx;
   color: #fff;
   background-color: $base-color;
   border-radius: 10upx;

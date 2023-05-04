@@ -13,6 +13,7 @@ import {
   checkLoginState
 } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
+import hyTabBar from '@/components/hy-tabbar/index.vue'
 import { isWeChat } from '@/utils/common'
 
 const configStore = useConfigStore()
@@ -32,7 +33,7 @@ const tabList = ref([
     iconPath: '/static/ic_bar_main_pg.png',
     selectedIconPath: '/static/ic_bar_main_page_checked.png',
     text: '首页',
-    pagePath: '/pages/physicalShop/index'
+    path: '/pages/physicalShop/index'
   },
   {
     iconPath: '/static/ic_bar_mine.png',
@@ -250,6 +251,20 @@ function setTitle(title = '') {
   document.body.appendChild(i)
   // #endif
 }
+// 切换tab
+function handleTabBarChange(index: any) {
+  if (index === 0) return
+  const toPage = tabList.value[index]
+  if (toPage.pagePath) {
+    uni.switchTab({
+      url: toPage.pagePath
+    })
+  } else {
+    uni.redirectTo({
+      url: toPage.path
+    })
+  }
+}
 onLoad(async (option) => {
   shopId.value = option.shopId
   loadingSkeleton.value = true
@@ -264,6 +279,8 @@ onLoad(async (option) => {
   isWeChatOfficial.value = isWeChat()
   tabsStyleTop.value = isWeChatOfficial.value ? '0px' : '44px'
   enterByStoreQrcode.value = !!option?.qrcode
+  const pages = getCurrentPages()
+  uni.setStorageSync('shopFullPath', pages[pages.length - 1].$page.fullPath)
   // #endif
 })
 onPageScroll((e) => {
@@ -404,12 +421,13 @@ onPageScroll((e) => {
       </view>
     </view>
     <!-- #ifdef H5 -->
-    <u-tabbar
+    <hyTabBar
       v-if="enterByStoreQrcode"
       v-model="currentTabbar"
       :list="tabList"
       :mid-button="false"
-    ></u-tabbar>
+      @change="handleTabBarChange"
+    ></hyTabBar>
     <!-- #endif -->
   </div>
 </template>
