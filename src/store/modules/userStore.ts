@@ -68,9 +68,11 @@ const userStore = defineStore('storeId', {
       })
     },
     async getUserInfo() {
-      const { data } = await userApi.userInfo()
-      this.userInfo = data
-      uni.setStorageSync('userInfo', data)
+      try {
+        const { data } = await userApi.userInfo()
+        this.userInfo = data
+        uni.setStorageSync('userInfo', data)
+      } catch (err) {}
     }
   }
 })
