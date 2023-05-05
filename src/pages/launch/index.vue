@@ -12,7 +12,7 @@ function toTargetPage(url = '/pages/index/index', duration = 0) {
 }
 
 async function getNewOpenIdFn() {
-  const { data } = await userApi.wxlogin()
+  const { data } = await userApi.wxMiniLogin()
 }
 
 onLoad((option) => {

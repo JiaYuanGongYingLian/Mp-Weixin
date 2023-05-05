@@ -4,13 +4,13 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi } from '@/api'
-import { getImgFullPath, getDistance } from '@/utils/index'
+import { baseApi, productApi, orderApi } from '@/api'
+import { getImgFullPath, dateFormat } from '@/utils/index'
+import $orderStatus from '@/utils/order'
 import { useUserStore } from '@/store'
 
 const store = useUserStore()
 const { hasLogin } = storeToRefs(store)
-const bannerList = ref([])
 const tabCurrentIndex = ref(0)
 const navList = reactive([
   {
@@ -55,14 +55,13 @@ const navList = reactive([
   }
 ])
 function reloadData() {
-  // 这里是将订单挂载到tab列表下
-  let index = tabCurrentIndex.value
-  let navItem = navList[index]
+  const index = tabCurrentIndex.value
+  const navItem = navList[index]
   navItem.pageIndex = 1
   loadData()
 }
 // 获取订单列表
-function loadData(source?: string | undefined) {
+async function loadData(source?: string | undefined) {
   // 这里是将订单挂载到tab列表下
   const index = tabCurrentIndex.value
   const navItem = navList[index]
@@ -70,40 +69,32 @@ function loadData(source?: string | undefined) {
     // tab切换只有第一次需要加载数据
     return
   }
-  if (navItem.loadingType === 'loading') {
-    // 防止重复加载
+  if (navItem.loadingType === 'loading' || navItem.loadingType === 'noMore') {
     return
   }
   navItem.loadingType = 'loading'
-
-  this.$httpApi
-    .list('/order/api/v1/order', {
-      pageIndex: navItem.pageIndex,
-      detail: true,
-      statuses: getOrderStatuses(navItem.status)
-    })
-    .then((ret) => {
-      if (navItem.pageIndex === 1) {
-        navItem.orderList = []
-      }
-      const orderList = ret.data.records
-      orderList.forEach((item) => {
-        navItem.orderList.push(item)
-      })
-      // loaded新字段用于表示数据加载完毕，如果为空可以显示空白页
-      this.$set(navItem, 'loaded', true)
-      // 判断是否还有数据， 有改为 more， 没有改为noMore
-      navItem.loadingType =
-        ret.data.pages > ret.data.current ? 'more' : 'noMore'
-    })
-    .catch((error) => {
-      this.$set(navItem, 'loaded', true)
-      navItem.loadingType = 'noMore'
-    })
+  const { data } = await orderApi.orderList({
+    pageIndex: navItem.pageIndex,
+    detail: true,
+    statuses: getOrderStatuses(navItem.status)
+  })
+  if (navItem.pageIndex === 1) {
+    navItem.orderList = []
+  }
+  const { records, current, pages } = data
+  navItem.orderList.push(...records)
+  if (current < pages && pages !== 0) {
+    navItem.pageIndex += 1
+    navItem.loadingType = 'more'
+  } else {
+    console.log(current,pages,'nomore')
+    navItem.loaded = true
+    navItem.loadingType = 'nomore'
+  }
 }
 // swiper 切换
-function changeTab(e: { target: { current: any } }) {
-  tabCurrentIndex.value = e.target.current
+function changeTab(e: { detail: { current: any } }) {
+  tabCurrentIndex.value = e.detail.current
   loadData('tabChange')
 }
 // 顶部tab点击
@@ -111,50 +102,39 @@ function tabClick(index: any) {
   tabCurrentIndex.value = index
 }
 // 删除订单
-function deleteOrder(item: { id: any }) {
+async function deleteOrder(item: { id: any }) {
   uni.showLoading({
     title: '请稍后'
   })
-  this.$httpApi
-    .update('/order/api/v1/order', {
-      id: item.id,
-      status: this.$orderStatus.getDeletedStatus().type
-    })
-    .then((ret) => {
-      uni.hideLoading()
-      reloadData()
-    })
-    .catch((error) => {
-      uni.hideLoading()
-    })
+  const { data } = await orderApi.orderDelete({
+    id: item.id,
+    status: $orderStatus.getDeletedStatus().type
+  })
+  uni.hideLoading()
+  reloadData()
 }
 // 取消订单
-function cancelOrder(item) {
+async function cancelOrder(item: { id: any }) {
   uni.showLoading({
     title: '请稍后'
   })
-  this.$httpApi
-    .update('/order/api/v1/order', {
-      id: item.id,
-      status: this.$orderStatus.getCancelStatus().type
-    })
-    .then((ret) => {
-      uni.hideLoading()
-      reloadData()
-    })
-    .catch((error) => {
-      uni.hideLoading()
-    })
+  const { data } = await orderApi.orderUpdate({
+    id: item.id,
+    status: $orderStatus.getCancelStatus().type
+  })
+  uni.hideLoading()
+  reloadData()
 }
-function payOrder(item) {
+function payOrder(item: any) {
   uni.navigateTo({
-    url: `/pages/money/pay?type=orderList&order=${JSON.stringify(item)}`
+    url: `/pages/payment/index?type=orderList&order=${JSON.stringify(item)}`
   })
 }
 function getOrderProductSkusCount(order: {
   orderProductSkus: { count: number }[]
 }) {
   let count = 0
+  if (!order.orderProductSkus) return count
   order.orderProductSkus.forEach((item: { count: number }) => {
     count += item.count
   })
@@ -173,12 +153,12 @@ function getStatusColor(order: { status: any }) {
   }
   return ret
 }
-function getOrderStatuses(status) {
-  return this.$orderStatus.getStatuses(status)
+function getOrderStatuses(status: number) {
+  return $orderStatus.getStatuses(status)
 }
 
 onLoad((option) => {
-  if (option.status) {
+  if (option?.status) {
     const status = option.status - 0
     for (let i = 0; i < navList.length; i += 1) {
       const item = navList[i]
@@ -189,8 +169,8 @@ onLoad((option) => {
       console.log(`${i}:----item.status:${item.status}  ---status:${status}`)
     }
   }
-  console.log(`status:${options.status}`)
-  console.log(`tabCurrentIndex:${this.tabCurrentIndex}`)
+  console.log(`status:${option?.status}`)
+  console.log(`tabCurrentIndex:${tabCurrentIndex.value}`)
   loadData()
 })
 </script>
@@ -225,9 +205,9 @@ onLoad((option) => {
           @scrolltolower="loadData"
         >
           <!-- 空白页 -->
-          <empty
+          <u-empty
             v-if="tabItem.loaded === true && tabItem.orderList.length === 0"
-          ></empty>
+          ></u-empty>
 
           <!-- 订单列表 -->
           <view
@@ -237,7 +217,7 @@ onLoad((option) => {
           >
             <view class="i-top b-b">
               <text class="time">{{
-                $util.formatDateTime(item.createTime * 1000)
+                dateFormat(new Date(item.createTime * 1000), 'yyyy-MM-dd hh:mm')
               }}</text>
               <text class="state" :style="{ color: getStatusColor(item) }">{{
                 $orderStatus.getStatusTitle(item.status)
@@ -245,7 +225,7 @@ onLoad((option) => {
             </view>
 
             <scroll-view
-              v-if="item.orderProductSkus.length > 1"
+              v-if="item.orderProductSkus && item.orderProductSkus.length > 1"
               class="goods-box"
               scroll-x
             >
@@ -258,20 +238,20 @@ onLoad((option) => {
               >
                 <image
                   class="goods-img"
-                  :src="$util.getImageUrl(orderProductSkuItem.skuImage)"
+                  :src="getImgFullPath(orderProductSkuItem.skuImage)"
                   mode="aspectFill"
                 ></image>
               </view>
             </scroll-view>
             <view
-              v-if="item.orderProductSkus.length === 1"
+              v-if="item.orderProductSkus && item.orderProductSkus.length === 1"
               class="goods-box-single"
               v-for="(orderProductSkuItem, goodsIndex) in item.orderProductSkus"
               :key="goodsIndex"
             >
               <image
                 class="goods-img"
-                :src="$util.getImageUrl(orderProductSkuItem.skuImage)"
+                :src="getImgFullPath(orderProductSkuItem.skuImage)"
                 mode="aspectFill"
               ></image>
               <view
@@ -323,7 +303,11 @@ onLoad((option) => {
               </button>
             </view>
           </view>
-          <uni-load-more :status="tabItem.loadingType"></uni-load-more>
+          <u-loadmore
+            margin-top="30"
+            margin-bottom="30"
+            :status="tabItem.loadingType"
+          ></u-loadmore>
         </scroll-view>
       </swiper-item>
     </swiper>
@@ -331,12 +315,17 @@ onLoad((option) => {
 </template>
 
 <style lang="scss" scoped>
+.container {
+  height: 100vh;
+  padding: 0 20rpx;
+}
 .swiper-box {
   height: calc(100% - 40px);
 }
 
 .list-scroll-content {
   height: 100%;
+  padding-bottom: 1px;
 }
 
 .navbar {
@@ -369,7 +358,7 @@ onLoad((option) => {
         transform: translateX(-50%);
         width: 44px;
         height: 0;
-        border-bottom: 2px solid #333;
+        border-bottom: 2px solid $uni-color-primary;
       }
     }
   }
@@ -377,12 +366,13 @@ onLoad((option) => {
 
 .uni-swiper-item {
   height: auto;
+  padding-bottom: 20rpx;
 }
 
 .order-item {
   display: flex;
   flex-direction: column;
-  padding-left: 30upx;
+  padding: 0 30rpx;
   background: #fff;
   margin-top: 16upx;
 
@@ -390,10 +380,10 @@ onLoad((option) => {
     display: flex;
     align-items: center;
     height: 80upx;
-    padding-right: 30upx;
     font-size: 24rpx;
     color: #333;
     position: relative;
+    border-color: $uni-border-color-light;
 
     .time {
       flex: 1;
@@ -461,14 +451,13 @@ onLoad((option) => {
       overflow: hidden;
 
       .title {
-        font-size: 26rpx;
+        font-size: 28rpx;
         color: #333;
-        line-height: 1;
       }
 
       .attr-box {
         font-size: 26rpx;
-        color: #f0f0f0;
+        color: $uni-text-color-grey;
         padding: 10upx 0upx;
       }
 
@@ -491,7 +480,7 @@ onLoad((option) => {
     align-items: baseline;
     padding: 20upx 30upx;
     font-size: 26rpx;
-    color: #f0f0f0;
+    color: $uni-text-color-grey;
 
     .num {
       margin: 0 8upx;
@@ -517,6 +506,7 @@ onLoad((option) => {
     height: 100upx;
     position: relative;
     padding-right: 30upx;
+    border-color: $uni-border-color-light;
   }
 
   .action-btn {

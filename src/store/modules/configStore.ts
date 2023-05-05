@@ -2,12 +2,18 @@ import { defineStore } from 'pinia'
 
 const useStore = defineStore('config', {
   state: () => ({
-    navBarHeight: 44
+    navBarHeight: 44,
+    enterType: null,
+    enterByStoreQrcode: false
   }),
   getters: {
-    isEven: (state) => state.count % 2 === 0
+    enterByStoreQrcode: (state) => state.enterType === 'storeQrcode' // 是否通过商家二维码链接进入页面
   },
-  actions: {}
+  actions: {
+    setEnterType(type: any) {
+      this.enterType = type
+    }
+  }
 })
 
 export default useStore

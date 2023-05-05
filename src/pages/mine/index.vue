@@ -2,14 +2,15 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/store'
+import { useUserStore, useConfigStore } from '@/store'
 import { baseApi, productApi } from '@/api'
-import { getImgFullPath, getDistance, checkLoginState } from '@/utils/index'
+import { getImgFullPath, checkLoginState } from '@/utils/index'
 import hyTabBar from '@/components/hy-tabbar/index.vue'
 
-const store = useUserStore()
-const { userInfo, wxUserInfo, hasLogin } = storeToRefs(store)
-const info = ref()
+const userStore = useUserStore()
+const configStore = useConfigStore()
+const { userInfo, wxUserInfo, hasLogin } = storeToRefs(userStore)
+const { enterByStoreQrcode } = storeToRefs(configStore)
 const tabList = ref([
   {
     iconPath: '/static/ic_bar_main_pg.png',
@@ -80,7 +81,7 @@ onLoad((option) => {})
           </view>
           <view class="right">
             <view class="name" v-if="hasLogin">
-              <view class="leftName">{{ userInfo.nickName }} </view>
+              <view class="leftName">{{ userInfo?.username }} </view>
             </view>
             <view v-else class="name" @tap="goUrlFn" :data-url="false">{{
               '点击登录'
@@ -103,28 +104,40 @@ onLoad((option) => {})
 
       <view class="myBox myOrder">
         <view class="box">
-          <view class="bar" @tap="goUrlFn" data-url="/pages/order/index?id=1">
+          <view
+            class="bar"
+            @tap="goUrlFn"
+            data-url="/pages/order/index?status=10"
+          >
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_01.png"
             ></image>
             待付款
           </view>
-          <view class="bar" @tap="goUrlFn" data-url="/pages/order/index?id=2">
-            <image
-              src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_02.png"
-            ></image>
-            待发货
-          </view>
-          <view class="bar" @tap="goUrlFn" data-url="/pages/order/index?id=3">
+          <view
+            class="bar"
+            @tap="goUrlFn"
+            data-url="/pages/order/index?status=20"
+          >
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_03.png"
             ></image>
             待收货
           </view>
           <view
+            class="bar"
+            @tap="goUrlFn"
+            data-url="/pages/order/index?status=60"
+          >
+            <image
+              src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_02.png"
+            ></image>
+            已完成
+          </view>
+          <view
             class="bar commentBox"
             @tap="goUrlFn"
-            data-url="/pages/order/index?id=0"
+            data-url="/pages/order/index?status=0"
           >
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_04.png"
@@ -146,6 +159,7 @@ onLoad((option) => {})
     </view>
     <!-- #ifdef H5 -->
     <hyTabBar
+      v-if="enterByStoreQrcode"
       v-model="currentTabbar"
       :list="tabList"
       :mid-button="false"
@@ -297,7 +311,7 @@ onLoad((option) => {})
 
     .top {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: center;
       position: relative;
       z-index: 3;
@@ -316,7 +330,7 @@ onLoad((option) => {})
       }
 
       .right {
-        width: calc(100% - 240rpx);
+        width: calc(100% - 100rpx);
         margin-left: 30rpx;
         position: relative;
 
@@ -488,7 +502,8 @@ onLoad((option) => {})
       margin-top: 34rpx;
 
       .item {
-        max-width: 25%;
+        width: 45%;
+        max-width: 45%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

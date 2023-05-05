@@ -1,6 +1,6 @@
 import http from '../http'
 
-function wxlogin() {
+function wxMiniLogin() {
   return http.post('/auth/api/v1/auth/wxMiniLogin')
 }
 
@@ -49,7 +49,7 @@ function addressAdd(data: any) {
 
 export default {
   login,
-  wxlogin,
+  wxMiniLogin,
   wxWebLogin,
   getCode,
   getAddressList,

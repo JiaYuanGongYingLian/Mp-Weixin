@@ -2,11 +2,10 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, productApi } from '@/api'
-import { getImgFullPath, getDistance, checkLoginState } from '@/utils/index'
+import { checkLoginState } from '@/utils/index'
+import { useUserStore } from '@/store'
 
-const bannerList = ref([])
-const info = ref()
-onLoad((option) => {})
+const userStore = useUserStore()
 function goUrlFn(e: { currentTarget: { dataset: { url: any } } }) {
   const { url } = e.currentTarget.dataset
   if (checkLoginState()) {
@@ -19,17 +18,14 @@ function goUrlFn(e: { currentTarget: { dataset: { url: any } } }) {
 }
 function loginOutFn() {
   uni.showLoading({ title: '', mask: true })
-  uni.setStorage({ key: 'localUserInfo', data: '[]', success: () => {} })
-  uni.setStorage({
-    key: 'localSourceToken',
-    data: '[]',
-    success: () => {
-      uni.reLaunch({
-        url: '/pages/mine/index'
-      })
-    }
+  userStore.syncClearToken()
+  userStore.syncClearUserInfo()
+  uni.reLaunch({
+    url: '/pages/mine/index'
   })
+  uni.hideLoading()
 }
+onLoad((option) => {})
 </script>
 <template>
   <div class="container">

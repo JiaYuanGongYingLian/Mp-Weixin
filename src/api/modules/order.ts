@@ -10,7 +10,7 @@ function orderAdd(data: any) {
  * 订单删除
  */
 function orderDelete(data: any) {
-  return http.get('/order/api/v1/order/add', data)
+  return http.get('/order/api/v1/order/delete', data)
 }
 /**
  * 订单详情
@@ -37,10 +37,10 @@ function orderPay(data: any) {
   return http.post('/order/api/v1/order/pay', data)
 }
 /**
- * 微信支付回调
+ * 订单更新
  */
 function orderUpdate(data: any) {
-  return http.get('/order/api/v1/order/weixinPayHandle', data)
+  return http.post('/order/api/v1/order/update', data)
 }
 
 export default {

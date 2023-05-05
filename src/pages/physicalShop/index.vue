@@ -19,6 +19,7 @@ import { isWeChat } from '@/utils/common'
 const configStore = useConfigStore()
 const userStore = useUserStore()
 const { hasLogin } = storeToRefs(userStore)
+const { enterByStoreQrcode } = storeToRefs(configStore)
 const loadingSkeleton = ref(false)
 const bannerList = ref([])
 const shop = ref({})
@@ -49,7 +50,6 @@ const tabsStyleTop = ref('')
 // #ifdef MP-WEIXIN
 isWeChatOfficial.value = false
 // #endif
-const enterByStoreQrcode = ref(false) // 是否通过商家二维码链接进入此页面
 
 function getLocation() {
   // 获取定位信息
@@ -278,7 +278,9 @@ onLoad(async (option) => {
   // #ifdef H5
   isWeChatOfficial.value = isWeChat()
   tabsStyleTop.value = isWeChatOfficial.value ? '0px' : '44px'
-  enterByStoreQrcode.value = !!option?.qrcode
+  if (option?.qrcode) {
+    configStore.setEnterType('storeQrcode')
+  }
   const pages = getCurrentPages()
   uni.setStorageSync('shopFullPath', pages[pages.length - 1].$page.fullPath)
   // #endif

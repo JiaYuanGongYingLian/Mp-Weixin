@@ -8,15 +8,10 @@ import { useUserStore } from '@/store'
 import { userApi } from '@/api'
 import logo from '@/static/ic_launcher.png'
 import user from '@/api/modules/user'
-import { isWeChat } from '@/utils/common'
+import { isWeChat, getQueryVariable } from '@/utils/common'
 
-onLoad((option) => {
-  // #ifdef H5
-  isWeChatOfficial.value = isWeChat()
-  // #endif
-})
-const store = useUserStore()
-const { count } = storeToRefs(store)
+const userStore = useUserStore()
+const { hasLogin } = storeToRefs(userStore)
 const isWeChatOfficial = ref(true)
 // #ifdef MP-WEIXIN
 isWeChatOfficial.value = false
@@ -28,7 +23,7 @@ const form = reactive({
 // 手机号验证
 function mobileBlurFn() {
   const telReg = /^1[3456789]\d{9}$/
-  if (form.username != '') {
+  if (form.username !== '') {
     if (!telReg.test(form.username)) {
       uni.showToast({
         title: '请输入正确的手机号',
@@ -52,7 +47,7 @@ async function submit() {
       username: form.username,
       code: Md5.hashStr(form.password)
     })
-    store.$patch((v) => {
+    userStore.$patch((v) => {
       v.accessToken = data.accessToken
       uni.setStorageSync('accessToken', data.accessToken)
     })
@@ -62,7 +57,7 @@ async function submit() {
 }
 async function getUserInfo() {
   const { data } = await user.userInfo()
-  store.$patch((v) => {
+  userStore.$patch((v) => {
     v.userInfo = data
     uni.setStorageSync('userInfo', data)
   })
@@ -80,8 +75,16 @@ function getPhoneNumber(res) {
   console.log(res)
 }
 function handleWxWebLogin() {
-  store.wxAuth()
+  userStore.wxAuth()
 }
+onLoad((option) => {
+  // #ifdef H5
+  isWeChatOfficial.value = isWeChat()
+  if (getQueryVariable('code')) {
+    userStore.wxAuth()
+  }
+  // #endif
+})
 </script>
 <template>
   <view class="container">
