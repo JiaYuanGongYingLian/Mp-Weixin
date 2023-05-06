@@ -52,14 +52,38 @@ const userStore = defineStore('storeId', {
         url: `${BASEURL}/auth/api/v1/auth/login`,
         method: 'POST',
         data: {
+          // #ifdef H5
           type: 32,
+          // #endif
           code: openId
         },
         success: (res) => {
-          const { data } = res
-          if (data) {
-            this.accessToken = data.accessToken
+          const { code, data } = res
+          if (code === 200) {
+            this.syncSetToken(data.accessToken)
+          } else {
+            uni.navigateTo({
+              url: '/pages/register/bindPhone'
+            })
           }
+        }
+      })
+    },
+    wxWebLogin(code: any) {
+      const BASEURL = import.meta.env.VITE_APP_AXIOS_BASE_URL
+      uni.request({
+        url: `${BASEURL}/auth/api/v1/auth/wxWebLogin`,
+        method: 'POST',
+        header: {
+          code
+        },
+        success: (res) => {
+          const { data } = res.data
+          this.wxUserInfo = data
+          this.loginByOpenId(data.openid)
+          this.syncSetWxToken(data.access_token)
+          this.syncSetOpenid(data.openid)
+          this.syncSetUnionid(data.unionid)
         }
       })
     },
@@ -75,21 +99,7 @@ const userStore = defineStore('storeId', {
         )
         return
       }
-      const BASEURL = import.meta.env.VITE_APP_AXIOS_BASE_URL
-      uni.request({
-        url: `${BASEURL}/auth/api/v1/auth/wxWebLogin`,
-        method: 'POST',
-        header: {
-          code: CODE
-        },
-        success: (res) => {
-          const { data } = res.data
-          this.wxUserInfo = data
-          console.log(64, data)
-          this.loginByOpenId(data.openid)
-          this.getuserphonenumber(data.openid, data.access_token)
-        }
-      })
+      this.wxWebLogin(CODE)
     },
     getuserphonenumber(token: any, code: any) {
       return new Promise((resolve, _reject) => {

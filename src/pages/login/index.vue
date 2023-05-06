@@ -17,8 +17,8 @@ const isWeChatOfficial = ref(true)
 isWeChatOfficial.value = false
 // #endif
 const form = reactive({
-  username: '17628281574',
-  password: '123456'
+  username: '',
+  password: ''
 })
 // 手机号验证
 function mobileBlurFn() {

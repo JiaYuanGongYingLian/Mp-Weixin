@@ -74,14 +74,15 @@ onLoad((option) => {})
               mode="aspectFill"
               :src="
                 userInfo?.avatar ||
-                wxUserInfo.avatarUrl ||
+                wxUserInfo?.headimgurl ||
+                wxUserInfo?.avatarUrl ||
                 'https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/img_user.png'
               "
             ></image>
           </view>
           <view class="right">
             <view class="name" v-if="hasLogin">
-              <view class="leftName">{{ userInfo?.username }} </view>
+              <view class="leftName">{{ userInfo?.username || wxUserInfo.nickname }} </view>
             </view>
             <view v-else class="name" @tap="goUrlFn" :data-url="false">{{
               '点击登录'
