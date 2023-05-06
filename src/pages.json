@@ -68,6 +68,22 @@
 			}
 		},
 		{
+			"path": "pages/register/bindPhone",
+			"style": {
+				"navigationBarTitleText": "验证手机号",
+				"navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/register/index",
+			"style": {
+				"navigationBarTitleText": "注册",
+				"navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
 			"path": "pages/heidouShop/index",
 			"style": {
 				"navigationBarTitleText": "黑豆商城"
@@ -149,6 +165,12 @@
 			"path": "pages/order/index",
 			"style": {
 				"navigationBarTitleText": "订单列表"
+			}
+		},
+		{
+			"path": "pages/register",
+			"style": {
+				"navigationBarTitleText": "register"
 			}
 		}
 	],

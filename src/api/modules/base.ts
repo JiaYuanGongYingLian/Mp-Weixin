@@ -1,5 +1,10 @@
 import http from '../http'
-
+/**
+ * 发送验证码
+ */
+function smsSend(data: any) {
+  return http.post('/base/api/v1/sms/send', data)
+}
 /**
  * 获取行业分类
  */
@@ -31,5 +36,6 @@ function getAdvertisingList(data: any) {
 export default {
   getCategoryList,
   getAdvertisingList,
-  advertising_enum
+  advertising_enum,
+  smsSend
 }

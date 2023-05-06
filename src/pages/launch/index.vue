@@ -1,8 +1,13 @@
+<!-- eslint-disable no-param-reassign -->
+<!-- eslint-disable no-empty -->
+<!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app'
 import { userApi } from '@/api'
 import logo from '@/static/ic_launcher.png'
+import { useUserStore } from '@/store'
 
+const userStore = useUserStore()
 function toTargetPage(url = '/pages/index/index', duration = 0) {
   setTimeout(() => {
     uni.reLaunch({
@@ -12,7 +17,25 @@ function toTargetPage(url = '/pages/index/index', duration = 0) {
 }
 
 async function getNewOpenIdFn() {
-  const { data } = await userApi.wxMiniLogin()
+  try {
+    const { data } = await userApi.wxMiniLogin()
+    userStore.syncSetWxToken(data.access_token)
+    userStore.syncSetOpenid(data.openid)
+    userStore.syncSetUnionid(data.unionid)
+    loginByOpenId(data.openid)
+  } catch {}
+}
+async function loginByOpenId(openId: any) {
+  const { data } = await userApi.login({
+    type: 33,
+    code: openId
+  })
+  userStore.syncSetToken(data.accessToken)
+  getUserInfo()
+}
+async function getUserInfo() {
+  const { data } = await userApi.userInfo()
+  userStore.syncSetUserInfo(data)
 }
 
 onLoad((option) => {

@@ -9,8 +9,8 @@ import { getImgFullPath, dateFormat } from '@/utils/index'
 import $orderStatus from '@/utils/order'
 import { useUserStore } from '@/store'
 
-const store = useUserStore()
-const { hasLogin } = storeToRefs(store)
+const userStore = useUserStore()
+const { hasLogin } = storeToRefs(userStore)
 const tabCurrentIndex = ref(0)
 const navList = reactive([
   {
@@ -76,7 +76,8 @@ async function loadData(source?: string | undefined) {
   const { data } = await orderApi.orderList({
     pageIndex: navItem.pageIndex,
     detail: true,
-    statuses: getOrderStatuses(navItem.status)
+    statuses: getOrderStatuses(navItem.status),
+    userId: userStore.userInfo.id
   })
   if (navItem.pageIndex === 1) {
     navItem.orderList = []

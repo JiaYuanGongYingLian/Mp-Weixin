@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 import { defineStore } from 'pinia'
 import { getQueryVariable } from '@/utils/common'
 import { userApi } from '@/api'
@@ -7,15 +8,38 @@ const userStore = defineStore('storeId', {
     isAuthorize: false, // 是否授权
     isBindPhone: false, // 是否绑定手机
     userInfo: {},
-    accessToken: null,
+    accessToken: '',
+    wxAccessToken: '',
+    unionid: '',
+    openid: '',
     wxUserInfo: {}
   }),
   getters: {
     hasLogin: (state) => Boolean(state.accessToken)
   },
   actions: {
+    syncSetOpenid(openid: string) {
+      this.openid = openid
+      uni.setStorageSync('openid', openid)
+    },
+    syncSetUnionid(unionid: string) {
+      this.unionid = unionid
+      uni.setStorageSync('unionid', unionid)
+    },
+    syncSetToken(token: string) {
+      this.accessToken = token
+      uni.setStorageSync('accessToken', token)
+    },
+    syncSetWxToken(token: string) {
+      this.wxAccessToken = token
+      uni.setStorageSync('wxAccessToken', token)
+    },
+    syncSetUserInfo(data: object) {
+      this.userInfo = data
+      uni.setStorageSync('userInfo', data)
+    },
     syncClearToken() {
-      this.accessToken = null
+      this.accessToken = ''
       uni.removeStorageSync('accessToken')
     },
     syncClearUserInfo() {
@@ -59,20 +83,31 @@ const userStore = defineStore('storeId', {
           code: CODE
         },
         success: (res) => {
-          const { data } = res
-          if (data) {
-            this.wxUserInfo = data
-            this.loginByOpenId(data.openid)
-          }
+          const { data } = res.data
+          this.wxUserInfo = data
+          console.log(64, data)
+          this.loginByOpenId(data.openid)
+          this.getuserphonenumber(data.openid, data.access_token)
         }
       })
     },
-    async getUserInfo() {
-      try {
-        const { data } = await userApi.userInfo()
-        this.userInfo = data
-        uni.setStorageSync('userInfo', data)
-      } catch (err) {}
+    getuserphonenumber(token: any, code: any) {
+      return new Promise((resolve, _reject) => {
+        uni.request({
+          url: `https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=${token}`,
+          method: 'POST',
+          data: {
+            code
+          },
+          success: (res) => {
+            const { data } = res
+            const { phoneNumber } = data.phone_info
+            resolve({
+              phone: phoneNumber
+            })
+          }
+        })
+      })
     }
   }
 })

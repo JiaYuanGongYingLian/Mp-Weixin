@@ -3,28 +3,24 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { storeToRefs } from 'pinia'
-import { Md5 } from 'ts-md5'
-import { useUserStore } from '@/store'
-import { userApi } from '@/api'
-import logo from '@/static/ic_launcher.png'
-import { isWeChat, getQueryVariable } from '@/utils/common'
+import { baseApi } from '@/api'
+import { isWeChat } from '@/utils/common'
 
-const userStore = useUserStore()
-const { hasLogin } = storeToRefs(userStore)
 const isWeChatOfficial = ref(true)
 // #ifdef MP-WEIXIN
 isWeChatOfficial.value = false
 // #endif
 const form = reactive({
-  username: '17628281574',
-  password: '123456'
+  phone: '',
+  sms_code: ''
 })
+const codeText = ref('')
+const uCode = ref()
 // 手机号验证
 function mobileBlurFn() {
   const telReg = /^1[3456789]\d{9}$/
-  if (form.username !== '') {
-    if (!telReg.test(form.username)) {
+  if (form.phone !== '') {
+    if (!telReg.test(form.phone)) {
       uni.showToast({
         title: '请输入正确的手机号',
         icon: 'none'
@@ -38,51 +34,48 @@ function mobileBlurFn() {
   }
 }
 function clearFn() {
-  form.username = ''
+  form.phone = ''
 }
-async function submit() {
-  try {
-    const { data } = await userApi.login({
-      type: 10,
-      username: form.username,
-      code: Md5.hashStr(form.password)
+function handleClick() {
+  const { phone, sms_code } = form
+  if (!phone) {
+    uni.showToast({
+      title: '请输入手机号',
+      icon: 'none'
     })
-    userStore.syncSetToken(data.accessToken)
-    await getUserInfo()
-  } catch {}
-  uni.navigateBack()
-}
-async function getUserInfo() {
-  const { data } = await userApi.userInfo()
-  userStore.syncSetUserInfo(data)
-}
-function getUserProfileFn() {
-  uni.getUserProfile({
-    desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-    lang: 'zh_CN',
-    success: (res) => {
-      console.log(res)
-    }
-  })
-}
-async function getPhoneNumber(res: { detail: { code: any } }) {
-  const { phone } = await userStore.getuserphonenumber(
-    userStore.wxAccessToken,
-    res.detail.code
-  )
+    return
+  }
+  if (!sms_code) {
+    uni.showToast({
+      title: '请输入验证码',
+      icon: 'none'
+    })
+    return
+  }
   uni.navigateTo({
-    url: `/pages/register/bindPhone?phone=${phone}`
+    url: `/pages/register/index?phone=${phone}&code=${sms_code}`
   })
 }
-function handleWxWebLogin() {
-  userStore.wxAuth()
+async function sendSmsCode() {
+  if (uCode.value.canGetCode) {
+    try {
+      const { data } = await baseApi.smsSend({
+        type: 1,
+        phone: form.phone
+      })
+      uCode.value.start()
+    } catch {}
+  }
+}
+function codeChange(text: string) {
+  codeText.value = text
 }
 onLoad((option) => {
+  if (option?.phone) {
+    form.phone = option.phone
+  }
   // #ifdef H5
   isWeChatOfficial.value = isWeChat()
-  if (getQueryVariable('code')) {
-    userStore.wxAuth()
-  }
   // #endif
 })
 </script>
@@ -90,19 +83,17 @@ onLoad((option) => {
   <view class="container">
     <u-navbar
       back-text=""
-      title="登录"
+      title="验证手机号"
       v-if="!isWeChatOfficial"
       :title-bold="true"
       color="#333"
     ></u-navbar>
-    <image class="logo" :src="logo" mode="widthFix" />
     <view class="form">
       <view class="inputBox">
-        <!--                <view class="label">手机号</view>-->
         <input
           class="inpt phone"
           type="number"
-          v-model="form.username"
+          v-model="form.phone"
           maxlength="11"
           @blur="mobileBlurFn"
           placeholder-class="placeholderStyle"
@@ -110,54 +101,38 @@ onLoad((option) => {
           placeholder="请输入手机号"
         />
         <cover-image
-          v-if="form.username"
+          v-if="form.phone"
           @tap="clearFn"
           class="close"
           src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/close.png"
         ></cover-image>
       </view>
-      <view class="inputBox">
+      <view class="inputBox flex">
         <!--                <view class="label">验证码</view>-->
         <input
           class="inpt code"
           type="text"
-          maxlength="20"
-          v-model="form.password"
+          maxlength="6"
+          v-model="form.sms_code"
           placeholder-class="placeholderStyle"
           placeholder-style="color: #D3DBE0;font-size: 34rpx;font-weight: normal;"
-          placeholder="请输入密码"
+          placeholder="请输入验证码"
         />
+        <u-button size="mini" type="success" @click="sendSmsCode">
+          {{ codeText }}</u-button
+        >
+        <u-verification-code
+          ref="uCode"
+          @change="codeChange"
+        ></u-verification-code>
       </view>
-      <u-button type="primary" class="hy-btn" :ripple="true" @click="submit"
-        >登录</u-button
+      <u-button
+        type="primary"
+        class="hy-btn"
+        :ripple="true"
+        @click="handleClick"
+        >下一步</u-button
       >
-      <!-- <view style="text-align: center; color: #ccc">or</view> -->
-      <view>
-        <!-- #ifdef MP-WEIXIN -->
-        <u-button
-          type="primary"
-          class="hy-btn wx"
-          open-type="getPhoneNumber"
-          ripple
-          @getphonenumber="getPhoneNumber"
-        >
-          <text class="iconfont hy-icon-wechat"></text>
-          微信快捷登录
-        </u-button>
-        <!-- #endif -->
-        <!-- #ifdef H5 -->
-        <u-button
-          type="primary"
-          class="hy-btn wx"
-          open-type="getPhoneNumber"
-          ripple
-          @click="handleWxWebLogin"
-        >
-          <text class="iconfont hy-icon-wechat"></text>
-          微信快捷登录
-        </u-button>
-        <!-- #endif -->
-      </view>
     </view>
   </view>
 </template>
@@ -168,6 +143,7 @@ onLoad((option) => {
   overflow: hidden;
   min-height: 100vh;
 }
+
 .placeholderStyle {
   color: #d3dbe0;
   font-size: 34rpx;
@@ -191,7 +167,11 @@ onLoad((option) => {
   position: relative;
   border-bottom: 2rpx solid #e6ecf0;
   margin-bottom: 20rpx;
-
+  &.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
   .label {
     font-size: 36rpx;
     color: #333;
@@ -221,9 +201,11 @@ onLoad((option) => {
 
 .hy-btn {
   margin: 70rpx 0 30rpx 0;
+
   &.wx {
     margin-top: 40rpx;
   }
+
   .hy-icon-wechat {
     color: #fff;
     margin-right: 15rpx;

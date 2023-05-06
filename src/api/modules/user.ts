@@ -11,6 +11,10 @@ function wxWebLogin() {
 function login(data: any) {
   return http.post('/auth/api/v1/auth/login', data)
 }
+
+function register(data: any) {
+  return http.post('/auth/api/v1/auth/register', data)
+}
 /**
  * 获取验证码
  * @param phone 手机号
@@ -49,6 +53,7 @@ function addressAdd(data: any) {
 
 export default {
   login,
+  register,
   wxMiniLogin,
   wxWebLogin,
   getCode,

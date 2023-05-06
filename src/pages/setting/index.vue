@@ -59,7 +59,7 @@ onLoad((option) => {})
         ></image>
       </view>
     </view>
-    <view class="btn" @tap="loginOutFn">退出登录</view>
+    <!-- <view class="btn" @tap="loginOutFn">退出登录</view> -->
   </div>
 </template>
 
