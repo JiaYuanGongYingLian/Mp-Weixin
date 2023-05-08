@@ -1,8 +1,8 @@
 /* eslint-disable no-empty */
 import { defineStore } from 'pinia'
 import { getQueryVariable } from '@/utils/common'
-import { userApi } from '@/api'
 
+const BASEURL = 'https://api.blacksilverscore.com'
 const userStore = defineStore('storeId', {
   state: () => ({
     isAuthorize: false, // 是否授权
@@ -46,31 +46,51 @@ const userStore = defineStore('storeId', {
       this.userInfo = {}
       uni.removeStorageSync('userInfo')
     },
-    loginByOpenId(openId: any) {
-      const BASEURL = import.meta.env.VITE_APP_AXIOS_BASE_URL
+    getUserInfo() {
       uni.request({
-        url: `${BASEURL}/auth/api/v1/auth/login`,
-        method: 'POST',
-        data: {
-          // #ifdef H5
-          type: 32,
-          // #endif
-          code: openId
+        url: `${BASEURL}/ups/api/v1/user/info`,
+        method: 'GET',
+        header: {
+          Authorization: `Bearer ${this.accessToken}`
         },
         success: (res) => {
-          const { code, data } = res
-          if (code === 200) {
-            this.syncSetToken(data.accessToken)
-          } else {
-            uni.navigateTo({
-              url: '/pages/register/bindPhone'
-            })
-          }
+          const { data } = res.data
+          this.syncSetUserInfo(data)
         }
       })
     },
+    loginByOpenId(openid?: any) {
+      let type = 32
+      // #ifdef H5
+      type = 32
+      // #endif
+      // #ifdef MP-WEIXIN
+      type = 33
+      // #endif
+      return new Promise((resolve, _reject) => {
+        uni.request({
+          url: `${BASEURL}/auth/api/v1/auth/login`,
+          method: 'POST',
+          data: {
+            type,
+            code: openid || this.wxUserInfo.openid
+          },
+          success: (res) => {
+            const { code, data } = res.data
+            if (code === 200) {
+              this.syncSetToken(data.accessToken)
+              this.getUserInfo()
+            } else {
+              uni.navigateTo({
+                url: '/pages/register/bindPhone'
+              })
+            }
+            resolve(true)
+          }
+        })
+      })
+    },
     wxWebLogin(code: any) {
-      const BASEURL = import.meta.env.VITE_APP_AXIOS_BASE_URL
       uni.request({
         url: `${BASEURL}/auth/api/v1/auth/wxWebLogin`,
         method: 'POST',
@@ -87,19 +107,40 @@ const userStore = defineStore('storeId', {
         }
       })
     },
+    wxMiniLogin(code: any) {
+      return new Promise((resolve, _reject) => {
+        uni.request({
+          url: `${BASEURL}/auth/api/v1/auth/wxMiniLogin`,
+          method: 'POST',
+          header: {
+            code
+          },
+          success: (res) => {
+            const { data } = res.data
+            this.wxUserInfo = data
+            this.syncSetWxToken(data.access_token)
+            this.syncSetOpenid(data.openid)
+            this.syncSetUnionid(data.unionid)
+            resolve(true)
+          }
+        })
+      })
+    },
     wxAuth() {
-      const APPID = 'wx0ffaafd066438895'
-      const SCOPE = 'snsapi_userinfo'
-      const CODE = getQueryVariable('code')
-      const REDIRECT_URL = encodeURIComponent(window.location.href)
-      if (this.hasLogin) return
-      if (!CODE) {
-        window.open(
-          `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${REDIRECT_URL}&response_type=code&scope=${SCOPE}&state=STATE#wechat_redirect`
-        )
-        return
-      }
-      this.wxWebLogin(CODE)
+      return new Promise((resolve, _reject) => {
+        const APPID = 'wx0ffaafd066438895'
+        const SCOPE = 'snsapi_userinfo'
+        const CODE = getQueryVariable('code')
+        const REDIRECT_URL = encodeURIComponent(window.location.href)
+        if (this.hasLogin) return
+        if (!CODE) {
+          window.open(
+            `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${REDIRECT_URL}&response_type=code&scope=${SCOPE}&state=STATE#wechat_redirect`
+          )
+          return
+        }
+        resolve({ code: CODE })
+      })
     },
     getuserphonenumber(token: any, code: any) {
       return new Promise((resolve, _reject) => {
