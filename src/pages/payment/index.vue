@@ -6,7 +6,7 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, productApi, orderApi } from '@/api'
 import { isWeChat } from '@/utils/common'
 import icon_wechat from '@/static/pay_icon_wechat.png'
-// import icon_ali from "@/static/pay_icon_alipay.png"
+import icon_ali from "@/static/pay_icon_alipay.png"
 import icon_hy from '@/static/pay_icon_money.png'
 import icon_select from '@/static/ic_pop_select_normal.png'
 import icon_selected from '@/static/ic_pop_select_selected.png'
@@ -20,15 +20,22 @@ const payWay = reactive([
   {
     name: '微信支付',
     icon: icon_wechat,
-    selected: true
+    selected: true,
+    available: true
+  },
+  {
+    name: '支付宝支付',
+    icon: icon_ali,
+    selected: false,
+    available: true
+  },
+  {
+    name: '黑银积分',
+    icon: icon_hy,
+    selected: false,
+    available: false
   }
-  // {
-  //   name: '黑银积分',
-  //   icon: icon_hy,
-  //   selected: false
-  // }
 ])
-const code = ref()
 const sms_code = ref()
 const timer = ref<NodeJS.Timer | null>(null)
 const countDown = ref(60)
@@ -58,57 +65,69 @@ function getCode() {
 }
 
 // 调用支付
-function weChatPaymentApp(config: { [x: string]: any }, orderId: any) {
+function weChatPaymentApp(config: any) {
   uni.requestPayment({
     provider: 'wxpay',
     // #ifdef APP-PLUS
     orderInfo: JSON.stringify(config),
     // #endif
     // #ifdef MP-WEIXIN
-    timeStamp: config.timestamp, // 时间戳
+    timeStamp: config.timeStamp, // 时间戳
     nonceStr: config.nonceStr, // 随机字符串，长度为32个字符以下。
     package: config.package, // 统一下单接口返回的 prepay_id 参数值，提交格式如：prepay_id=xx。
-    signType: 'MD5', // 签名算法，暂支持 MD5。
+    signType: config.signType, // 签名算法，暂支持 MD5。
     paySign: config.paySign, // 签名
     // #endif
     success: (_res) => {
-      // Toast(JSON.stringify(res))
-      paySuccess(orderId)
+      paySuccess()
     },
     fail: (_err) => {
-      // Toast(JSON.stringify(err))
-      payFail(orderId)
+      payFail()
     }
   })
 }
 // 支付成功回调
-function paySuccess(orderId) {}
+function paySuccess() {
+  uni.showToast({
+    icon: 'none',
+    title: '支付成功',
+    duration: 2000
+  })
+  setTimeout(() => {
+    uni.redirectTo({
+      url: `/packageA/order/detail?id=${order.value.id}`
+    })
+  }, 1000)
+}
 // 支付失败回调
-function payFail(orderId: string) {
+function payFail() {
   uni.showToast({
     icon: 'none',
     title: '支付失败',
     duration: 2000
   })
-  // setTimeout(() => {
-  //   uni.redirectTo({
-  //     url: `/packageA/order/detail?id=${orderId}`
-  //   })
-  // }, 1000)
 }
-// eslint-disable-next-line no-shadow
 enum payway_enum {
-  miniProgram = 2,
+  MP = 2,
   H5 = 3
 }
 async function onSubmit() {
   const { data } = await orderApi.orderPay({
     orderId: order.value.id,
-    // openId: '',
+    openId: uni.getStorageSync('openid'),
+    // #ifdef H5
     payPlatform: payway_enum.H5,
+    // #endif
+    // #ifdef MP-WEIXIN
+    payPlatform: payway_enum.MP,
+    // #endif
     payWay: 3
   })
   if (data) {
+    // #ifdef MP-WEIXIN
+    weChatPaymentApp(JSON.parse(data))
+    // #endif
+    // #ifdef H5
     if (typeof WeixinJSBridge === 'undefined') {
       if (document.addEventListener) {
         document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
@@ -119,6 +138,7 @@ async function onSubmit() {
     } else {
       onBridgeReady(JSON.parse(data))
     }
+    // #endif
   }
 }
 function onBridgeReady(data: any) {
@@ -143,30 +163,6 @@ function onBridgeReady(data: any) {
     }
   )
 }
-function init(param: any) {
-  const wechatFlag = isWeChat()
-  const { code, orderNumber } = param
-  if (wechatFlag) {
-    // 当前在微信内部,判断是否有授权code
-    if (code == null || code === '') {
-      redirectPage() // 重定向获取code
-    } else {
-      code.value = code
-    }
-  } else if (orderNumber) {
-    // 外部浏览器跳转重定向
-    // 从微信里重定向回来
-    // this.getOrderInfo();//请求订单数据
-  }
-}
-function redirectPage() {
-  // 微信内部则重定向页面
-  const local = window.location.href // 当前地址
-  const appId = 'thisistheappid' // 公众号APPID
-  window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${encodeURIComponent(
-    local
-  )}&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect` // 跳转授权链接
-}
 onLoad((option) => {
   if (option?.money) {
     info.money = option.money
@@ -174,51 +170,47 @@ onLoad((option) => {
   if (option?.order) {
     order.value = JSON.parse(option.order)
     info.money = order.value.money
+    getWalletRuleLis()
   }
-  getWalletRuleLis()
-  init(option)
 })
 </script>
 <template>
   <div class="payment">
     <view class="money">￥{{ info.money }} </view>
     <view class="payWay">
-      <view
-        class="options"
-        v-for="item in payWay"
-        :key="item.name"
-        @click="handleSlect(item)"
-      >
-        <view class="option">
-          <view class="nameBox">
-            <u-icon :name="item.icon" size="50"></u-icon>
-            <text class="name">{{ item.name }}</text>
+      <view v-for="item in payWay" :key="item.name">
+        <view class="options" v-if="item.available" @click="handleSlect(item)">
+          <view class="option">
+            <view class="nameBox">
+              <u-icon :name="item.icon" size="50"></u-icon>
+              <text class="name">{{ item.name }}</text>
+            </view>
+            <u-icon
+              :name="item.selected ? icon_selected : icon_select"
+              size="40"
+            ></u-icon>
           </view>
-          <u-icon
-            :name="item.selected ? icon_selected : icon_select"
-            size="40"
-          ></u-icon>
+          <u-form-item
+            label=""
+            prop="name"
+            :left-icon="icon_verify"
+            :left-icon-style="{ with: 40 }"
+            v-if="item.name === '黑银积分' && item.selected"
+          >
+            <u-input v-model="sms_code" placeholder="请填写验证码" />
+            <template v-slot:right>
+              <u-button
+                type="success"
+                size="mini"
+                :ripple="true"
+                :disabled="Boolean(timer)"
+                @click="getCode"
+              >
+                {{ timer ? `验证(${countDown}s)` : '获取验证码' }}
+              </u-button>
+            </template>
+          </u-form-item>
         </view>
-        <u-form-item
-          label=""
-          prop="name"
-          :left-icon="icon_verify"
-          :left-icon-style="{ with: 40 }"
-          v-if="item.name === '黑银积分' && item.selected"
-        >
-          <u-input v-model="sms_code" placeholder="请填写验证码" />
-          <template v-slot:right>
-            <u-button
-              type="success"
-              size="mini"
-              :ripple="true"
-              :disabled="Boolean(timer)"
-              @click="getCode"
-            >
-              {{ timer ? `验证(${countDown}s)` : '获取验证码' }}
-            </u-button>
-          </template>
-        </u-form-item>
       </view>
     </view>
     <u-button class="hy-btn" type="primary" ripple @click="onSubmit">

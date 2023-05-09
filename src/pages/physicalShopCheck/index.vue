@@ -1,11 +1,20 @@
+<!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
-import { baseApi, productApi } from '@/api'
+import { baseApi, orderApi, productApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 
 const info = reactive({})
 const money = ref()
+const orderData = ref({})
+// 创建订单
+async function creatOrder() {
+  const { data } = await orderApi.orderAdd(orderData.value)
+  uni.redirectTo({
+    url: `/pages/payment/index?order=${JSON.stringify(data)}`
+  })
+}
 async function toPayment() {
   if (!money.value) {
     uni.showToast({
@@ -14,15 +23,26 @@ async function toPayment() {
     })
     return
   }
-  const { data } = await productApi.getShopSkuList({
-    detail: true,
+  const { data } = await productApi.getShopProductSkuList({
+    detail: false,
     dynamicPrice: true,
     shopId: info.shopId
   })
-  uni.navigateTo({
-    url: `/pages/payment/index?money=${money.value}`
-  })
+  if (data.records) {
+    const productSku = data.records[0]
+    orderData.value.orderProductSkus = [
+      {
+        count: 1,
+        money: money.value,
+        shopProductSkuId: productSku.id,
+        moneyRuleId: productSku.moneyRuleId,
+        dynamicPric: true
+      }
+    ]
+  }
+  creatOrder()
 }
+
 onLoad((option) => {
   const { name, shopId } = option
   info.name = name

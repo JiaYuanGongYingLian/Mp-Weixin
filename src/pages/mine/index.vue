@@ -53,6 +53,10 @@ function handleTabBarChange(index: any) {
     })
   }
 }
+function onChooseAvatar(e: { detail: { avatarUrl: any } }) {
+  const { avatarUrl } = e.detail
+  userInfo.value.avatar = avatarUrl
+}
 onLoad((option) => {})
 </script>
 <template>
@@ -70,19 +74,27 @@ onLoad((option) => {})
         <!--已登录-->
         <view class="top">
           <view class="imgBox" @tap="goUrlFn">
-            <image
-              mode="aspectFill"
-              :src="
-                userInfo?.avatar ||
-                wxUserInfo?.headimgurl ||
-                wxUserInfo?.avatarUrl ||
-                'https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/img_user.png'
-              "
-            ></image>
+            <button
+              class="avatar-wrapper"
+              open-type="chooseAvatar"
+              @chooseavatar="onChooseAvatar"
+            >
+              <image
+                mode="aspectFill"
+                :src="
+                  userInfo?.avatar ||
+                  wxUserInfo?.headimgurl ||
+                  wxUserInfo?.avatarUrl ||
+                  'https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/img_user.png'
+                "
+              ></image>
+            </button>
           </view>
           <view class="right">
             <view class="name" v-if="hasLogin">
-              <view class="leftName">{{ userInfo?.username || wxUserInfo.nickname }} </view>
+              <view class="leftName"
+                >{{ userInfo?.username || wxUserInfo.nickname }}
+              </view>
             </view>
             <view v-else class="name" @tap="goUrlFn" :data-url="false">{{
               '点击登录'
@@ -321,7 +333,17 @@ onLoad((option) => {})
         width: 120rpx;
         height: 120rpx;
         border-radius: 50%;
-
+        flex-shrink: 0;
+        .avatar-wrapper {
+          width: 100%;
+          height: 100%;
+          padding: 0;
+          border: 0;
+          background-color: inherit;
+          &:after {
+            border: none;
+          }
+        }
         image {
           display: block;
           width: 100%;

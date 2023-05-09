@@ -74,14 +74,24 @@ async function getPhoneNumber(res: { detail: { code: any } }) {
     url: `/pages/register/bindPhone?phone=${phone}`
   })
 }
-function handleWxWebLogin() {
-  userStore.wxAuth()
+async function handleWxWebLogin() {
+  const { code } = await userStore.wxAuth()
+  if (code) {
+    uni.reLaunch({
+      url: '/pages/launch/index'
+    })
+  }
 }
-onLoad((option) => {
+onLoad(async (option) => {
   // #ifdef H5
   isWeChatOfficial.value = isWeChat()
   if (getQueryVariable('code')) {
-    userStore.wxAuth()
+    const { code } = await userStore.wxAuth()
+    await userStore.wxWebLogin(code)
+    await userStore.loginByOpenId()
+    uni.reLaunch({
+      url: '/pages/launch/index'
+    })
   }
   // #endif
 })

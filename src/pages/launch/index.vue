@@ -5,13 +5,16 @@
 import { onLoad } from '@dcloudio/uni-app'
 import logo from '@/static/ic_launcher.png'
 import { useUserStore } from '@/store'
+import { getQueryVariable } from '@/utils/common'
 
 const userStore = useUserStore()
-function toTargetPage(url = '/pages/index/index', duration = 0) {
+function toTargetPage(URL?: any, duration = 0) {
+  const url = URL || '/pages/index/index'
   setTimeout(() => {
     uni.reLaunch({
       url
     })
+    uni.removeStorageSync('redirect_url')
   }, duration)
 }
 
@@ -36,10 +39,22 @@ onLoad(async (option) => {
   })
   // #endif
   // #ifdef H5
+  let url = getQueryVariable('redirect_url')
+  const qrcode = getQueryVariable('qrcode')
+  const shopId = getQueryVariable('shopId')
+  if (qrcode) {
+    url = `${url}?qrcode=${qrcode}&shopId=${shopId}`
+    uni.setStorageSync('redirect_url', url)
+  } else {
+    const redirect_url = uni.getStorageSync('redirect_url')
+    if (redirect_url) {
+      url = redirect_url
+    }
+  }
   const { code } = await userStore.wxAuth()
   await userStore.wxWebLogin(code)
   await userStore.loginByOpenId()
-  toTargetPage()
+  toTargetPage(url)
   // #endif
 })
 </script>

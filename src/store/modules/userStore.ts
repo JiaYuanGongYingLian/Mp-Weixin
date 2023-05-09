@@ -91,20 +91,22 @@ const userStore = defineStore('storeId', {
       })
     },
     wxWebLogin(code: any) {
-      uni.request({
-        url: `${BASEURL}/auth/api/v1/auth/wxWebLogin`,
-        method: 'POST',
-        header: {
-          code
-        },
-        success: (res) => {
-          const { data } = res.data
-          this.wxUserInfo = data
-          this.loginByOpenId(data.openid)
-          this.syncSetWxToken(data.access_token)
-          this.syncSetOpenid(data.openid)
-          this.syncSetUnionid(data.unionid)
-        }
+      return new Promise((resolve, _reject) => {
+        uni.request({
+          url: `${BASEURL}/auth/api/v1/auth/wxWebLogin`,
+          method: 'POST',
+          header: {
+            code
+          },
+          success: (res) => {
+            const { data } = res.data
+            this.wxUserInfo = data
+            this.syncSetWxToken(data.access_token)
+            this.syncSetOpenid(data.openid)
+            this.syncSetUnionid(data.unionid)
+            resolve(true)
+          }
+        })
       })
     },
     wxMiniLogin(code: any) {
@@ -132,7 +134,6 @@ const userStore = defineStore('storeId', {
         const SCOPE = 'snsapi_userinfo'
         const CODE = getQueryVariable('code')
         const REDIRECT_URL = encodeURIComponent(window.location.href)
-        if (this.hasLogin) return
         if (!CODE) {
           window.open(
             `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${REDIRECT_URL}&response_type=code&scope=${SCOPE}&state=STATE#wechat_redirect`
