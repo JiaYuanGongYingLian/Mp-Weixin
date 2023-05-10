@@ -52,7 +52,7 @@ function handleClick() {
     })
     return
   }
-  uni.navigateTo({
+  uni.redirectTo({
     url: `/pages/register/index?phone=${phone}&code=${sms_code}`
   })
 }

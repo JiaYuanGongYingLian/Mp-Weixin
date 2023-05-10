@@ -12,6 +12,7 @@ import axios, {
   AxiosResponse
 } from 'axios'
 import { useUserStore } from '@/store'
+import { isWeChat } from '@/utils/common'
 
 const store = useUserStore()
 type ParamsSerializer = AxiosRequestConfig['paramsSerializer']
@@ -154,9 +155,22 @@ class RequestHttp {
             showCancel: true,
             success: ({ confirm, cancel }) => {
               if (confirm) {
-                uni.navigateTo({
-                  url: '/pages/login/index'
+                // #ifdef MP-WEIXIN
+                uni.reLaunch({
+                  url: '/pages/launch/index'
                 })
+                // #endif
+                // #ifdef H5
+                const isWeChatBrowser = isWeChat()
+                if (isWeChatBrowser) {
+                  const { pathname } = window.location
+                  window.location.href = pathname
+                } else {
+                  uni.navigateTo({
+                    url: '/pages/login/index'
+                  })
+                }
+                // #endif
               }
             },
             complete: () => {

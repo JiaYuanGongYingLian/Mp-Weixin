@@ -176,6 +176,7 @@ onLoad((option) => {})
       v-model="currentTabbar"
       :list="tabList"
       :mid-button="false"
+      :icon-size="34"
       @change="handleTabBarChange"
     ></hyTabBar>
     <!-- #endif -->

@@ -47,16 +47,19 @@ const userStore = defineStore('storeId', {
       uni.removeStorageSync('userInfo')
     },
     getUserInfo() {
-      uni.request({
-        url: `${BASEURL}/ups/api/v1/user/info`,
-        method: 'GET',
-        header: {
-          Authorization: `Bearer ${this.accessToken}`
-        },
-        success: (res) => {
-          const { data } = res.data
-          this.syncSetUserInfo(data)
-        }
+      return new Promise((resolve, _reject) => {
+        uni.request({
+          url: `${BASEURL}/ups/api/v1/user/info`,
+          method: 'GET',
+          header: {
+            Authorization: `Bearer ${this.accessToken}`
+          },
+          success: (res) => {
+            const { data } = res.data
+            this.syncSetUserInfo(data)
+            resolve(data)
+          }
+        })
       })
     },
     loginByOpenId(openid?: any) {
@@ -67,7 +70,7 @@ const userStore = defineStore('storeId', {
       // #ifdef MP-WEIXIN
       type = 33
       // #endif
-      return new Promise((resolve, _reject) => {
+      return new Promise((resolve, reject) => {
         uni.request({
           url: `${BASEURL}/auth/api/v1/auth/login`,
           method: 'POST',
@@ -80,12 +83,10 @@ const userStore = defineStore('storeId', {
             if (code === 200) {
               this.syncSetToken(data.accessToken)
               this.getUserInfo()
+              resolve(true)
             } else {
-              uni.navigateTo({
-                url: '/pages/register/bindPhone'
-              })
+              resolve(false)
             }
-            resolve(true)
           }
         })
       })
@@ -100,10 +101,12 @@ const userStore = defineStore('storeId', {
           },
           success: (res) => {
             const { data } = res.data
-            this.wxUserInfo = data
-            this.syncSetWxToken(data.access_token)
-            this.syncSetOpenid(data.openid)
-            this.syncSetUnionid(data.unionid)
+            if (data && data.access_token) {
+              this.wxUserInfo = data
+              this.syncSetWxToken(data.access_token)
+              this.syncSetOpenid(data.openid)
+              this.syncSetUnionid(data.unionid)
+            }
             resolve(true)
           }
         })
@@ -135,6 +138,7 @@ const userStore = defineStore('storeId', {
         const CODE = getQueryVariable('code')
         const REDIRECT_URL = encodeURIComponent(window.location.href)
         if (!CODE) {
+          console.log('跳转微信auth')
           window.open(
             `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${REDIRECT_URL}&response_type=code&scope=${SCOPE}&state=STATE#wechat_redirect`
           )

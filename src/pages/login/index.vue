@@ -3,7 +3,6 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { storeToRefs } from 'pinia'
 import { Md5 } from 'ts-md5'
 import { useUserStore } from '@/store'
 import { userApi } from '@/api'
@@ -11,7 +10,6 @@ import logo from '@/static/ic_launcher.png'
 import { isWeChat, getQueryVariable } from '@/utils/common'
 
 const userStore = useUserStore()
-const { hasLogin } = storeToRefs(userStore)
 const isWeChatOfficial = ref(true)
 // #ifdef MP-WEIXIN
 isWeChatOfficial.value = false
@@ -70,28 +68,36 @@ async function getPhoneNumber(res: { detail: { code: any } }) {
     userStore.wxAccessToken,
     res.detail.code
   )
-  uni.navigateTo({
+  uni.redirectTo({
     url: `/pages/register/bindPhone?phone=${phone}`
   })
 }
 async function handleWxWebLogin() {
-  const { code } = await userStore.wxAuth()
-  if (code) {
-    uni.reLaunch({
-      url: '/pages/launch/index'
-    })
-  }
+  await userStore.wxAuth()
 }
 onLoad(async (option) => {
   // #ifdef H5
   isWeChatOfficial.value = isWeChat()
-  if (getQueryVariable('code')) {
-    const { code } = await userStore.wxAuth()
-    await userStore.wxWebLogin(code)
-    await userStore.loginByOpenId()
-    uni.reLaunch({
-      url: '/pages/launch/index'
-    })
+  if (isWeChatOfficial.value) {
+    const code = getQueryVariable('code')
+    if (code) {
+      console.log('重定向的login', code)
+    } else {
+      console.log('首次进入login', code)
+    }
+    if (code) {
+      await userStore.wxWebLogin(code)
+      const login_success = await userStore.loginByOpenId()
+      if (login_success) {
+        uni.redirectTo({
+          url: '/pages/launch/index'
+        })
+      } else {
+        uni.redirectTo({
+          url: '/pages/register/bindPhone'
+        })
+      }
+    }
   }
   // #endif
 })
@@ -162,6 +168,7 @@ onLoad(async (option) => {
           open-type="getPhoneNumber"
           ripple
           @click="handleWxWebLogin"
+          v-if="isWeChatOfficial"
         >
           <text class="iconfont hy-icon-wechat"></text>
           微信快捷登录

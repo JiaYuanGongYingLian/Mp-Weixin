@@ -5,11 +5,12 @@
 import { onLoad } from '@dcloudio/uni-app'
 import logo from '@/static/ic_launcher.png'
 import { useUserStore } from '@/store'
-import { getQueryVariable } from '@/utils/common'
+import { getQueryVariable, isWeChat } from '@/utils/common'
 
 const userStore = useUserStore()
 function toTargetPage(URL?: any, duration = 0) {
   const url = URL || '/pages/index/index'
+  console.log('启动页跳转至：', url)
   setTimeout(() => {
     uni.reLaunch({
       url
@@ -51,10 +52,8 @@ onLoad(async (option) => {
       url = redirect_url
     }
   }
-  const { code } = await userStore.wxAuth()
-  await userStore.wxWebLogin(code)
-  await userStore.loginByOpenId()
   toTargetPage(url)
+
   // #endif
 })
 </script>

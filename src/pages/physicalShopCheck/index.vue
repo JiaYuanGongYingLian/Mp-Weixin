@@ -55,8 +55,10 @@ onLoad((option) => {
     <view class="inptBox">
       <u-input
         v-model="money"
-        type="number"
-        :border="false"
+        type="digit"
+        inputmode="decimal"
+        focus
+        pattern="number"
         placeholder="请输入支付金额"
         input-align="center"
       />

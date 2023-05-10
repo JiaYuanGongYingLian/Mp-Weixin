@@ -6,7 +6,7 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, productApi, orderApi } from '@/api'
 import { isWeChat } from '@/utils/common'
 import icon_wechat from '@/static/pay_icon_wechat.png'
-import icon_ali from "@/static/pay_icon_alipay.png"
+import icon_ali from '@/static/pay_icon_alipay.png'
 import icon_hy from '@/static/pay_icon_money.png'
 import icon_select from '@/static/ic_pop_select_normal.png'
 import icon_selected from '@/static/ic_pop_select_selected.png'
@@ -27,7 +27,7 @@ const payWay = reactive([
     name: '支付宝支付',
     icon: icon_ali,
     selected: false,
-    available: true
+    available: false
   },
   {
     name: '黑银积分',
@@ -95,7 +95,7 @@ function paySuccess() {
   })
   setTimeout(() => {
     uni.redirectTo({
-      url: `/packageA/order/detail?id=${order.value.id}`
+      url: `/pages/order/detail?id=${order.value.id}`
     })
   }, 1000)
 }
@@ -107,7 +107,7 @@ function payFail() {
     duration: 2000
   })
 }
-enum payway_enum {
+enum payPlatform_enum {
   MP = 2,
   H5 = 3
 }
@@ -116,31 +116,44 @@ async function onSubmit() {
     orderId: order.value.id,
     openId: uni.getStorageSync('openid'),
     // #ifdef H5
-    payPlatform: payway_enum.H5,
+    payPlatform: payPlatform_enum.H5,
     // #endif
     // #ifdef MP-WEIXIN
-    payPlatform: payway_enum.MP,
+    payPlatform: payPlatform_enum.MP,
     // #endif
     payWay: 3
   })
   if (data) {
-    // #ifdef MP-WEIXIN
-    weChatPaymentApp(JSON.parse(data))
-    // #endif
-    // #ifdef H5
-    if (typeof WeixinJSBridge === 'undefined') {
-      if (document.addEventListener) {
-        document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
-      } else if (document.attachEvent) {
-        document.attachEvent('WeixinJSBridgeReady', onBridgeReady)
-        document.attachEvent('onWeixinJSBridgeReady', onBridgeReady)
-      }
+    const jsonData = JSON.parse(data)
+    const selected = payWay.find((item) => item.selected)
+    if (selected?.name === '微信支付') {
+      wxPay(jsonData)
+    } else if (selected?.name === '支付宝支付') {
+      aliPay(jsonData)
     } else {
-      onBridgeReady(JSON.parse(data))
+      jfPay(jsonData)
     }
-    // #endif
   }
 }
+function wxPay(data: object) {
+  // #ifdef MP-WEIXIN
+  weChatPaymentApp(data)
+  // #endif
+  // #ifdef H5
+  if (typeof WeixinJSBridge === 'undefined') {
+    if (document.addEventListener) {
+      document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
+    } else if (document.attachEvent) {
+      document.attachEvent('WeixinJSBridgeReady', onBridgeReady)
+      document.attachEvent('onWeixinJSBridgeReady', onBridgeReady)
+    }
+  } else {
+    onBridgeReady(data)
+  }
+  // #endif
+}
+function aliPay(data: object) {}
+function jfPay(data: object) {}
 function onBridgeReady(data: any) {
   WeixinJSBridge.invoke(
     'getBrandWCPayRequest',

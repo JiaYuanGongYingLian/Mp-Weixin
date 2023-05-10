@@ -3,14 +3,12 @@
 <script setup lang="ts">
 import { reactive, ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { storeToRefs } from 'pinia'
 import { Md5 } from 'ts-md5'
 import { useUserStore } from '@/store'
 import { userApi } from '@/api'
-import { isWeChat, getQueryVariable } from '@/utils/common'
+import { isWeChat } from '@/utils/common'
 
 const userStore = useUserStore()
-const { hasLogin } = storeToRefs(userStore)
 const isWeChatOfficial = ref(true)
 // #ifdef MP-WEIXIN
 isWeChatOfficial.value = false
@@ -60,6 +58,10 @@ async function submit() {
     return
   }
   try {
+    uni.showLoading({
+      title: '提交中',
+      mask: true
+    })
     const { data } = await userApi.register({
       loginType: 33,
       phone: form.phone,
@@ -69,13 +71,12 @@ async function submit() {
       unionId: userStore.unionid
     })
     userStore.syncSetToken(data.accessToken)
-    await getUserInfo()
+    await userStore.getUserInfo()
+    uni.navigateBack()
+    uni.hideLoading()
   } catch {}
 }
-async function getUserInfo() {
-  const { data } = await userApi.userInfo()
-  userStore.syncSetUserInfo(data)
-}
+
 onLoad((option) => {
   if (option?.phone) {
     form.phone = option.phone

@@ -271,10 +271,10 @@ onLoad(async (option) => {
   getLocation()
   await getShopInfo()
   await getTabs()
-  await getShopProduct()
   setTimeout(() => {
     loadingSkeleton.value = false
-  }, 500)
+  }, 100)
+  await getShopProduct()
   // #ifdef H5
   isWeChatOfficial.value = isWeChat()
   tabsStyleTop.value = isWeChatOfficial.value ? '0px' : '44px'
@@ -428,6 +428,7 @@ onPageScroll((e) => {
       v-model="currentTabbar"
       :list="tabList"
       :mid-button="false"
+      :icon-size="34"
       @change="handleTabBarChange"
     ></hyTabBar>
     <!-- #endif -->
