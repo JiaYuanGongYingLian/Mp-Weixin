@@ -47,8 +47,12 @@ async function submit() {
     })
     userStore.syncSetToken(data.accessToken)
     await getUserInfo()
+    uni.navigateBack()
+    if (!uni.getStorageSync('openid')) {
+      await userStore.wxAuth()
+      uni.setStorageSync('onlyGetOpenid', 'yes')
+    }
   } catch {}
-  uni.navigateBack()
 }
 async function getUserInfo() {
   const { data } = await userApi.userInfo()
@@ -87,6 +91,10 @@ onLoad(async (option) => {
     }
     if (code) {
       await userStore.wxWebLogin(code)
+      if (uni.getStorageSync('onlyGetOpenid')) {
+        uni.removeStorageSync('onlyGetOpenid')
+        return
+      }
       const login_success = await userStore.loginByOpenId()
       if (login_success) {
         uni.redirectTo({
@@ -113,8 +121,7 @@ onLoad(async (option) => {
     ></u-navbar>
     <image class="logo" :src="logo" mode="widthFix" />
     <view class="form">
-      <view class="inputBox">
-        <!--                <view class="label">手机号</view>-->
+      <!-- <view class="inputBox">
         <input
           class="inpt phone"
           type="number"
@@ -133,7 +140,6 @@ onLoad(async (option) => {
         ></cover-image>
       </view>
       <view class="inputBox">
-        <!--                <view class="label">验证码</view>-->
         <input
           class="inpt code"
           type="text"
@@ -146,7 +152,7 @@ onLoad(async (option) => {
       </view>
       <u-button type="primary" class="hy-btn" :ripple="true" @click="submit"
         >登录</u-button
-      >
+      > -->
       <!-- <view style="text-align: center; color: #ccc">or</view> -->
       <view>
         <!-- #ifdef MP-WEIXIN -->

@@ -3,7 +3,7 @@ import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { useUserStore, useConfigStore } from '@/store'
-import { baseApi, productApi } from '@/api'
+import { baseApi, moneyApi, productApi } from '@/api'
 import { getImgFullPath, checkLoginState } from '@/utils/index'
 import hyTabBar from '@/components/hy-tabbar/index.vue'
 
@@ -11,6 +11,10 @@ const userStore = useUserStore()
 const configStore = useConfigStore()
 const { userInfo, wxUserInfo, hasLogin } = storeToRefs(userStore)
 const { enterByStoreQrcode } = storeToRefs(configStore)
+const info = ref({
+  money: 0,
+  jf: 0
+})
 const tabList = ref([
   {
     iconPath: '/static/ic_bar_main_pg.png',
@@ -57,7 +61,17 @@ function onChooseAvatar(e: { detail: { avatarUrl: any } }) {
   const { avatarUrl } = e.detail
   userInfo.value.avatar = avatarUrl
 }
-onLoad((option) => {})
+async function getMoney() {
+  if (userStore.hasLogin) {
+    const { data } = await moneyApi.walletList({})
+    if (data) {
+      const res = await moneyApi.walletInfo({})
+    }
+  }
+}
+onLoad((option) => {
+  getMoney()
+})
 </script>
 <template>
   <div class="mine">
@@ -103,13 +117,13 @@ onLoad((option) => {})
         </view>
         <view class="labelBox">
           <view class="item" data-url="/pages/mine/myBalance" @tap="goUrlFn">
-            <view class="con">{{ 11 }}</view>
+            <view class="con">{{ info.money || '--' }}</view>
             <view class="name">余额</view>
           </view>
           <view class="border"></view>
 
           <view class="item" data-url="/packageB/myCoupon" @tap="goUrlFn">
-            <view class="con">{{ 11 }}</view>
+            <view class="con">{{ info.jf || '--' }}</view>
             <view class="name">黑银积分</view>
           </view>
         </view>
@@ -177,6 +191,7 @@ onLoad((option) => {})
       :list="tabList"
       :mid-button="false"
       :icon-size="34"
+      active-color="#5098ff"
       @change="handleTabBarChange"
     ></hyTabBar>
     <!-- #endif -->

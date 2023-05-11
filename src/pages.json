@@ -114,6 +114,12 @@
 			}
 		},
 		{
+			"path": "pages/payment/success",
+			"style": {
+				"navigationBarTitleText": "支付成功"
+			}
+		},
+		{
 			"path": "pages/addressList/index",
 			"style": {
 				"navigationBarTitleText": "我的地址"

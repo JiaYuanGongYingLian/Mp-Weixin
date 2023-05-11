@@ -100,10 +100,15 @@ const handleClick = (adv: { webUrl: any; objectType: any }) => {
     toWebview(adv.webUrl)
   }
 }
+const onSearch = () => {
+  uni.navigateTo({
+    url: '/pages/physicalShopList/index'
+  })
+}
 </script>
 <template>
   <view class="index-page">
-    <searchBar />
+    <searchBar @on-search="onSearch" />
     <view class="section">
       <view class="tit">线下好店</view>
       <view class="actions">

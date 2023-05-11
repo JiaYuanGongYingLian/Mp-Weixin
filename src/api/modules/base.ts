@@ -33,9 +33,15 @@ enum advertising_enum {
 function getAdvertisingList(data: any) {
   return http.get('/base/api/v1/advertising/list', data)
 }
+
+function reverseGeocoding(data: any) {
+  return http.get('/base/api/v1/qq/reverse/geocoding/info', data)
+}
+
 export default {
   getCategoryList,
   getAdvertisingList,
   advertising_enum,
-  smsSend
+  smsSend,
+  reverseGeocoding
 }

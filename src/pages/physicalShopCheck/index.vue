@@ -3,8 +3,9 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, orderApi, productApi } from '@/api'
-import { getImgFullPath, getDistance } from '@/utils/index'
+import { useUserStore } from '@/store'
 
+const userStore = useUserStore()
 const info = reactive({})
 const money = ref()
 const orderData = ref({})
@@ -43,7 +44,7 @@ async function toPayment() {
   creatOrder()
 }
 
-onLoad((option) => {
+onLoad(async (option) => {
   const { name, shopId } = option
   info.name = name
   info.shopId = shopId

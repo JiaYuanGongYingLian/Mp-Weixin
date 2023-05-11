@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3983494 */
-  src: url('//at.alicdn.com/t/c/font_3983494_5y2j6rrrhru.woff2?t=1681869325886') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3983494_5y2j6rrrhru.woff?t=1681869325886') format('woff'),
-       url('//at.alicdn.com/t/c/font_3983494_5y2j6rrrhru.ttf?t=1681869325886') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3983494_pp0tqetm6rj.woff2?t=1683794210949') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3983494_pp0tqetm6rj.woff?t=1683794210949') format('woff'),
+       url('//at.alicdn.com/t/c/font_3983494_pp0tqetm6rj.ttf?t=1683794210949') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.hy-icon-paySuccess:before {
+  content: "\e663";
 }
 
 .hy-icon-wechat:before {

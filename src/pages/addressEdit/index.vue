@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
-import { userApi } from '@/api'
+import { userApi, baseApi } from '@/api'
 
 const routerParam = ref({})
 let addressData = reactive({
@@ -26,10 +26,6 @@ function changeRegionFn(e: { detail: { value: any } }) {
 
 // 提交
 async function confirm() {
-  const [p, c, d] = regionArr.value
-  addressData.provinceName = p
-  addressData.cityName = c
-  addressData.districtName = d
   if (!addressData.name) {
     uni.showToast({
       title: '请填联系人人姓名',
@@ -108,6 +104,28 @@ async function confirm() {
     uni.navigateBack()
   }, 1000)
 }
+// 地图选择地址
+function chooseLocation() {
+  uni.chooseLocation({
+    success: async (data) => {
+      const { latitude, longitude } = data
+      if (!latitude || !longitude) {
+        return
+      }
+      const street = data.address ? data.address : ''
+      const res = await baseApi.reverseGeocoding({ latitude, longitude })
+      if (res.code !== 200) return
+      const { provinceName, cityName, districtName } = res.data
+      addressData.provinceName = provinceName
+      addressData.cityName = cityName
+      addressData.districtName = districtName
+      addressData.street = street
+    },
+    fail: (error) => {
+      console.log('error',error)
+    }
+  })
+}
 
 onLoad((option) => {
   type.value = option?.type
@@ -145,13 +163,18 @@ onLoad((option) => {
     </view>
     <view class="row icon-row b-b">
       <view class="tit">选择地区</view>
-      <view class="input">
-        <picker @change="changeRegionFn" mode="region" :value="regionArr">
+      <view class="input" @click="chooseLocation">
+        <view class="uni-input"
+          >{{ addressData.provinceName }}{{ addressData.cityName
+          }}{{ addressData.districtName }}
+          <view class="place" v-if="!addressData.provinceName">请选择地址</view>
+        </view>
+        <!-- <picker @change="changeRegionFn" mode="region" :value="regionArr">
           <view class="uni-input"
             >{{ regionArr[0] }}{{ regionArr[1] }}{{ regionArr[2]
             }}<view class="place" v-if="!regionArr[0]">请选择地址</view>
           </view>
-        </picker>
+        </picker> -->
       </view>
       <image
         class="rightImg"

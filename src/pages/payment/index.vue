@@ -5,6 +5,7 @@ import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, productApi, orderApi } from '@/api'
 import { isWeChat } from '@/utils/common'
+import { useUserStore } from '@/store'
 import icon_wechat from '@/static/pay_icon_wechat.png'
 import icon_ali from '@/static/pay_icon_alipay.png'
 import icon_hy from '@/static/pay_icon_money.png'
@@ -12,6 +13,7 @@ import icon_select from '@/static/ic_pop_select_normal.png'
 import icon_selected from '@/static/ic_pop_select_selected.png'
 import icon_verify from '@/static/icon_verify.png'
 
+const userStore = useUserStore()
 const order = ref()
 const info = reactive({
   money: ''
@@ -112,6 +114,13 @@ enum payPlatform_enum {
   H5 = 3
 }
 async function onSubmit() {
+  // if (!uni.getStorageSync('openid')) {
+  //   const { code } = await userStore.wxAuth()
+  //   if (code) {
+  //     await userStore.wxMiniLogin(code)
+  //   }
+  //   return
+  // }
   const { data } = await orderApi.orderPay({
     orderId: order.value.id,
     openId: uni.getStorageSync('openid'),
@@ -176,7 +185,7 @@ function onBridgeReady(data: any) {
     }
   )
 }
-onLoad((option) => {
+onLoad(async (option) => {
   if (option?.money) {
     info.money = option.money
   }

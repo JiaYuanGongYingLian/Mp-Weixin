@@ -6,7 +6,7 @@ import { useUserStore } from '@/store'
 const store = useUserStore()
 const { hasLogin } = storeToRefs(store)
 
-export const getPrePage = (index: any) => {
+export const getPrePage = (index?: any) => {
   const pages = getCurrentPages()
   const prePage = pages[pages.length - (index || 2)]
   // #ifdef H5

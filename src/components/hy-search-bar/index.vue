@@ -32,10 +32,11 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 
+const emit = defineEmits(['onSearch'])
 const props = withDefaults(
   defineProps<{
-    placeholder?: string;
-    icon?: string;
+    placeholder?: string
+    icon?: string
   }>(),
   {
     placeholder: '热门搜索',
@@ -69,6 +70,16 @@ uni.getSystemInfo({
 // 扫一扫
 const link = () => {
   const _this = this
+  // #ifdef H5
+  jWeixin.scanQRCode({
+    needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+    scanType: ['qrCode', 'barCode'], // 可以指定扫二维码还是一维码，默认二者都有
+    success(res) {
+      console.log(res)
+      const result = res.resultStr // 当needResult 为 1 时，扫码返回的结果
+    }
+  })
+  // #endif
   uni.scanCode({
     success(res) {
       console.log(res)
@@ -76,10 +87,8 @@ const link = () => {
     fail(_res) {}
   })
 }
-const toSearch = async () => {
-  // await this.$emit('search', {
-  // 	searchValue: this.searchValue
-  // });
+const toSearch = () => {
+  emit('onSearch')
 }
 </script>
 

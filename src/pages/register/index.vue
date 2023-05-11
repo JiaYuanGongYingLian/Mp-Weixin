@@ -72,7 +72,12 @@ async function submit() {
     })
     userStore.syncSetToken(data.accessToken)
     await userStore.getUserInfo()
+    // #ifdef MP-WEIXIN
     uni.navigateBack()
+    // #endif
+    // #ifdef H5
+    uni.redirectTo({ url: '/pages/launch/index' })
+    // #endif
     uni.hideLoading()
   } catch {}
 }

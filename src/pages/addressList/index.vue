@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { userApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
+import { getPrePage } from '@/utils/common'
 
 const list = ref([])
 const loaded = ref(false)
@@ -15,14 +16,14 @@ async function loadData() {
   list.value = data
   loaded.value = true
 }
+defineExpose({
+  loadData
+})
 // 选择地址
 function chooseAddress(item: any) {
   if (type.value === 'setAddress') {
-    const pages = getCurrentPages() // 当前页面栈
-    if (pages.length > 1) {
-      const beforePage = pages[pages.length - 2] // 获取上一个页面实例对象
-      beforePage.$vm.setAddress(item)
-    }
+    const prePage = getPrePage()
+    prePage.setAddress(item)
   }
   uni.navigateBack()
 }
@@ -37,12 +38,9 @@ async function delAddress(index: number) {
     duration: 2000
   })
   list.value.splice(index, 1)
-  const pages = getCurrentPages() // 当前页面栈
-  if (pages.length > 1) {
-    const beforePage = pages[pages.length - 2] // 获取上一个页面实例对象
-    if (beforePage.$vm.addressData.id === addressId) {
-      beforePage.$vm.setAddress({})
-    }
+  const prePage = getPrePage()
+  if (prePage.addressData.id === addressId) {
+    prePage.setAddress({})
   }
 }
 function delAddressConfirm(index: any) {
@@ -56,7 +54,7 @@ function delAddressConfirm(index: any) {
   })
 }
 // 添加地址
-function addAddress(_type = 'add', data: any) {
+function addAddress(_type = 'add', data?: any) {
   loaded.value = true
   if (_type === 'edit') {
     uni.setStorageSync('routerParam', data)
@@ -148,9 +146,14 @@ onLoad((option) => {
         </view>
       </view>
     </view>
-
-    <view class="common-btn red add" @tap="addAddress('add')">添加新地址</view>
-    <view class="common-btn red wx" @tap="getWXAddressFn">使用微信地址</view>
+    <div class="action-btn">
+      <view class="common-btn red add" @tap="addAddress('add')"
+        >添加新地址</view
+      >
+      <!-- #ifdef MP-WEIXIN -->
+      <view class="common-btn red wx" @tap="getWXAddressFn">使用微信地址</view>
+      <!-- #endif -->
+    </div>
   </div>
 </template>
 
@@ -230,13 +233,21 @@ onLoad((option) => {
       }
     }
   }
-
-  .common-btn {
+  .action-btn {
     position: fixed;
+    left: 0;
     bottom: calc(16rpx + env(safe-area-inset-bottom));
     z-index: 95;
     margin: 0;
-    width: 300rpx;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 30rpx;
+    padding: 0 20rpx;
+    box-sizing: border-box;
+  }
+  .common-btn {
+    flex: 1;
     height: 80rpx;
     line-height: 80rpx;
     text-align: center;
@@ -244,12 +255,6 @@ onLoad((option) => {
     font-size: 32rpx;
     background: linear-gradient(to right, #f74f43, #f74f43);
     box-shadow: 4rpx 4rpx 8rpx rgba(255, 86, 177, 0.4);
-  }
-  .common-btn.add {
-    left: 30rpx;
-  }
-  .common-btn.wx {
-    right: 30rpx;
   }
 }
 </style>

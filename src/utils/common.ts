@@ -32,8 +32,43 @@ export function isWeChat() {
   const env = ua.match(/MicroMessenger/i)
   return env ? env[0] === 'micromessenger' : false
 }
+
+/**
+ * vue3 调用上一个路由页面的方法
+ * @param {router}  页面调用useRouter
+ * @param {functionName}  调用函数名称
+ */
+export function callPreviousRouteMethod(
+  router: {
+    currentRoute: { value: { matched: any } }
+  },
+  functionName: string
+) {
+  const matchedRoutes = router.currentRoute.value.matched
+  const currentRouteIndex = matchedRoutes.length - 1
+  if (currentRouteIndex >= 1) {
+    const previousRoute = matchedRoutes[currentRouteIndex - 1]
+    if (
+      previousRoute &&
+      typeof previousRoute.components.default.methods[functionName] ===
+        'function'
+    ) {
+      previousRoute.components.default.methods[functionName]()
+    }
+  }
+}
+export const getPrePage = () => {
+  const pages = getCurrentPages()
+  const prePage = pages[pages.length - 2]
+  // #ifdef H5
+  return prePage
+  // #endif
+  return prePage.$vm
+}
 export default {
   getQueryObject,
   getQueryVariable,
-  isWeChat
+  isWeChat,
+  getPrePage,
+  callPreviousRouteMethod
 }

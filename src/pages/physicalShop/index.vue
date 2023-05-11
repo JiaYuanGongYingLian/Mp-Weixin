@@ -429,6 +429,7 @@ onPageScroll((e) => {
       :list="tabList"
       :mid-button="false"
       :icon-size="34"
+      active-color="#5098ff"
       @change="handleTabBarChange"
     ></hyTabBar>
     <!-- #endif -->
