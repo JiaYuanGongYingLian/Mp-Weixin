@@ -49,7 +49,7 @@ const wallet = ref({})
 // 获取订单的钱包规则
 async function getWalletRuleList() {
   try {
-    const { data } = await moneyApi.walletList({})
+    const { data } = await moneyApi.walletList({ noPaging: true })
     const res = await productApi.walletRuleList({
       noPaging: true,
       orderId: order.value.id
@@ -89,10 +89,9 @@ function handleSlect(way: { selected: boolean }) {
 const uCode1 = ref()
 const codeText = ref('')
 async function sendSmsCode() {
-  debugger
-  if (uCode1.value.canGetCode) {
+  if (uCode1.value[0].canGetCode) {
     try {
-      uCode1.value.start()
+      uCode1.value[0].start()
       await baseApi.smsSend({
         type: 6,
         phone: userStore.userInfo.phone
@@ -195,7 +194,9 @@ function wxPay(data: object) {
   // #endif
 }
 function aliPay(data: object) {}
-function jfPay(data: object) {}
+function jfPay(data: object) {
+  paySuccess()
+}
 function onBridgeReady(data: any) {
   WeixinJSBridge.invoke(
     'getBrandWCPayRequest',

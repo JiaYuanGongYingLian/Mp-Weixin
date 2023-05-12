@@ -1,3 +1,4 @@
+<!-- eslint-disable no-param-reassign -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
@@ -11,10 +12,18 @@ const userStore = useUserStore()
 const configStore = useConfigStore()
 const { userInfo, wxUserInfo, hasLogin } = storeToRefs(userStore)
 const { enterByStoreQrcode } = storeToRefs(configStore)
-const info = ref({
-  money: 0,
-  jf: 0
-})
+const moneyInfo = ref([
+  {
+    money: 0,
+    walletRuleId: 1,
+    name: '余额钱包'
+  },
+  {
+    money: 0,
+    walletRuleId: 7,
+    name: '黑银积分'
+  }
+])
 const tabList = ref([
   {
     iconPath: '/static/ic_bar_main_pg.png',
@@ -62,10 +71,16 @@ function onChooseAvatar(e: { detail: { avatarUrl: any } }) {
   userInfo.value.avatar = avatarUrl
 }
 async function getMoney() {
-  if (userStore.hasLogin) {
-    const { data } = await moneyApi.walletList({})
+  if (hasLogin.value) {
+    const { data } = await moneyApi.walletList({ noPaging: true })
     if (data) {
-      const res = await moneyApi.walletInfo({})
+      moneyInfo.value.forEach(async (item) => {
+        const wallet = data.find(
+          (w: { walletRuleId: any }) => w.walletRuleId === item.walletRuleId
+        )
+        const res = await moneyApi.walletInfo({ id: wallet.id })
+        item.money = res.data.money
+      })
     }
   }
 }
@@ -117,13 +132,13 @@ onLoad((option) => {
         </view>
         <view class="labelBox">
           <view class="item" data-url="/pages/mine/myBalance" @tap="goUrlFn">
-            <view class="con">{{ info.money || '--' }}</view>
+            <view class="con">{{ hasLogin ? moneyInfo[0].money : '--' }}</view>
             <view class="name">余额</view>
           </view>
           <view class="border"></view>
 
           <view class="item" data-url="/packageB/myCoupon" @tap="goUrlFn">
-            <view class="con">{{ info.jf || '--' }}</view>
+            <view class="con">{{ hasLogin ? moneyInfo[1].money : '--' }}</view>
             <view class="name">黑银积分</view>
           </view>
         </view>
