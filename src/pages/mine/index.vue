@@ -78,8 +78,10 @@ async function getMoney() {
         const wallet = data.find(
           (w: { walletRuleId: any }) => w.walletRuleId === item.walletRuleId
         )
-        const res = await moneyApi.walletInfo({ id: wallet.id })
-        item.money = res.data.money
+        if (wallet) {
+          const res = await moneyApi.walletInfo({ id: wallet.id })
+          item.money = res.data.money
+        }
       })
     }
   }

@@ -68,9 +68,12 @@ async function getWalletRuleList() {
       }
       if (data && data.length) {
         // 当前钱包信息
-        wallet.value = data.find((item: { walletRuleId: any }) => {
+        const w = data.find((item: { walletRuleId: any }) => {
           return item.walletRuleId === wallet_temp.walletRuleId
         })
+        if (w) {
+          wallet.value = w
+        }
         console.log(wallet.value)
       }
     }
