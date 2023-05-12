@@ -22,8 +22,7 @@ defineExpose({
 // 选择地址
 function chooseAddress(item: any) {
   if (type.value === 'setAddress') {
-    const prePage = getPrePage()
-    prePage.setAddress(item)
+    uni.$emit('/pages/productCheckout/index', item)
   }
   uni.navigateBack()
 }
@@ -40,7 +39,7 @@ async function delAddress(index: number) {
   list.value.splice(index, 1)
   const prePage = getPrePage()
   if (prePage.addressData.id === addressId) {
-    prePage.setAddress({})
+    uni.$emit('/pages/productCheckout/index', {})
   }
 }
 function delAddressConfirm(index: any) {
@@ -130,7 +129,7 @@ onLoad((option) => {
           <text v-if="item.defaultAddress">默认地址</text>
         </view>
 
-        <view class="op-item" @tap="delAddressConfirm(index)" v-if="!orderId">
+        <view class="op-item" @tap="delAddressConfirm(index)">
           <image
             class="osx"
             src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/del.png"

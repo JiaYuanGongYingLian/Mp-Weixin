@@ -1,9 +1,11 @@
+<!-- eslint-disable no-param-reassign -->
+<!-- eslint-disable no-console -->
 <!-- eslint-disable no-shadow -->
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
-import { baseApi, productApi, orderApi } from '@/api'
+import { baseApi, productApi, orderApi, moneyApi } from '@/api'
 import { isWeChat } from '@/utils/common'
 import { useUserStore } from '@/store'
 import icon_wechat from '@/static/pay_icon_wechat.png'
@@ -23,47 +25,83 @@ const payWay = reactive([
     name: '微信支付',
     icon: icon_wechat,
     selected: true,
-    available: true
+    available: true,
+    payWay: 3
   },
   {
     name: '支付宝支付',
     icon: icon_ali,
     selected: false,
-    available: false
+    available: false,
+    payWay: 2
   },
   {
-    name: '黑银积分',
+    name: '余额支付', // 余额支付通过钱包动态获取，钱包名称可能多样
     icon: icon_hy,
     selected: false,
-    available: false
+    available: false,
+    payWay: 1
   }
 ])
 const sms_code = ref()
-const timer = ref<NodeJS.Timer | null>(null)
-const countDown = ref(60)
+const wallet = ref({})
 
-async function getWalletRuleLis() {
-  const { data } = await productApi.walletRuleList({
-    noPaging: true,
-    orderId: order.value.id
-  })
+// 获取订单的钱包规则
+async function getWalletRuleList() {
+  try {
+    const { data } = await moneyApi.walletList({})
+    const res = await productApi.walletRuleList({
+      noPaging: true,
+      orderId: order.value.id
+    })
+    if (res.data && res.data.length > 0) {
+      const wallet_temp = res.data[0]
+      payWay[2].name = wallet_temp.walletRuleName
+      if (wallet_temp.uniqueness) {
+        // 唯一可用的支付方式uniqueness为true,只显示余额支付
+        payWay.forEach((item) => {
+          item.available = false
+          item.selected = false
+        })
+        payWay[2].available = true
+        payWay[2].selected = true
+      }
+      if (data && data.length) {
+        // 当前钱包信息
+        wallet.value = data.find((item: { walletRuleId: any }) => {
+          return item.walletRuleId === wallet_temp.walletRuleId
+        })
+        console.log(wallet.value)
+      }
+    }
+  } catch (err) {
+    console.log(err)
+  }
 }
-
+// 单选选择支付方式
 function handleSlect(way: { selected: boolean }) {
   payWay.forEach((item) => {
     item.selected = false
   })
   way.selected = true
 }
-function getCode() {
-  if (timer.value) return
-  timer.value = setInterval(() => {
-    countDown.value -= 1
-    if (countDown.value === 0) {
-      clearInterval(timer.value)
-      timer.value = null
-    }
-  }, 1000)
+// 发送验证码
+const uCode1 = ref()
+const codeText = ref('')
+async function sendSmsCode() {
+  debugger
+  if (uCode1.value.canGetCode) {
+    try {
+      uCode1.value.start()
+      await baseApi.smsSend({
+        type: 6,
+        phone: userStore.userInfo.phone
+      })
+    } catch {}
+  }
+}
+function codeChange(text: string) {
+  codeText.value = text
 }
 
 // 调用支付
@@ -114,13 +152,7 @@ enum payPlatform_enum {
   H5 = 3
 }
 async function onSubmit() {
-  // if (!uni.getStorageSync('openid')) {
-  //   const { code } = await userStore.wxAuth()
-  //   if (code) {
-  //     await userStore.wxMiniLogin(code)
-  //   }
-  //   return
-  // }
+  const selectedPayWay = payWay.find((item) => item.selected)
   const { data } = await orderApi.orderPay({
     orderId: order.value.id,
     openId: uni.getStorageSync('openid'),
@@ -130,14 +162,15 @@ async function onSubmit() {
     // #ifdef MP-WEIXIN
     payPlatform: payPlatform_enum.MP,
     // #endif
-    payWay: 3
+    payWay: selectedPayWay?.payWay,
+    walletId: wallet.value.id || '',
+    code: sms_code.value
   })
   if (data) {
     const jsonData = JSON.parse(data)
-    const selected = payWay.find((item) => item.selected)
-    if (selected?.name === '微信支付') {
+    if (selectedPayWay?.payWay === 3) {
       wxPay(jsonData)
-    } else if (selected?.name === '支付宝支付') {
+    } else if (selectedPayWay?.payWay === 2) {
       aliPay(jsonData)
     } else {
       jfPay(jsonData)
@@ -192,13 +225,17 @@ onLoad(async (option) => {
   if (option?.order) {
     order.value = JSON.parse(option.order)
     info.money = order.value.money
-    getWalletRuleLis()
+    info.moneyUnit = order.value.moneyUnit
+    getWalletRuleList()
   }
 })
 </script>
 <template>
   <div class="payment">
-    <view class="money">￥{{ info.money }} </view>
+    <view class="money"
+      ><text v-if="!info.moneyUnit">￥</text> {{ info.money }}
+      <text class="unit" v-if="info.moneyUnit"> {{ info.moneyUnit }}</text>
+    </view>
     <view class="payWay">
       <view v-for="item in payWay" :key="item.name">
         <view class="options" v-if="item.available" @click="handleSlect(item)">
@@ -217,20 +254,18 @@ onLoad(async (option) => {
             prop="name"
             :left-icon="icon_verify"
             :left-icon-style="{ with: 40 }"
-            v-if="item.name === '黑银积分' && item.selected"
+            v-if="item.payWay === 1 && item.selected"
           >
             <u-input v-model="sms_code" placeholder="请填写验证码" />
             <template v-slot:right>
-              <u-button
-                type="success"
-                size="mini"
-                :ripple="true"
-                :disabled="Boolean(timer)"
-                @click="getCode"
+              <u-button size="mini" type="success" @click="sendSmsCode">
+                {{ codeText }}</u-button
               >
-                {{ timer ? `验证(${countDown}s)` : '获取验证码' }}
-              </u-button>
             </template>
+            <u-verification-code
+              ref="uCode1"
+              @change="codeChange"
+            ></u-verification-code>
           </u-form-item>
         </view>
       </view>
@@ -249,6 +284,9 @@ onLoad(async (option) => {
   .money {
     font-size: 60rpx;
     margin-bottom: 40rpx;
+    .unit {
+      font-size: 30rpx;
+    }
   }
 
   .payWay {

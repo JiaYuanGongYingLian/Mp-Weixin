@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onReady, onShow, onLoad, onReachBottom } from '@dcloudio/uni-app'
+import {
+  onReady,
+  onShow,
+  onLoad,
+  onReachBottom,
+  onPageScroll
+} from '@dcloudio/uni-app'
 import { baseApi, productApi } from '@/api'
 import { getImgFullPath } from '@/utils'
 import searchBar from '@/components/hy-search-bar/index.vue'
@@ -18,6 +24,10 @@ const productList = reactive({
   list: []
 })
 const status = ref('loadmore')
+const scrollTop = ref(0)
+onPageScroll((e) => {
+  scrollTop.value = e.scrollTop
+})
 const getBaseDataFn = async (type: any, callback: (arg0: any) => void) => {
   const { data } = await baseApi.getAdvertisingList({
     pageIndex: 1,
@@ -188,6 +198,7 @@ const onSearch = () => {
       </view>
     </view>
     <u-loadmore :status="status" />
+    <u-back-top :scroll-top="scrollTop"></u-back-top>
   </view>
 </template>
 

@@ -267,7 +267,7 @@ onLoad((option) => {
                   orderProductSkuItem.shopProductSku.product.name
                 }}</text>
                 <text class="attr-box"
-                  >{{ orderProductSkuItem.shopProductSku.productSku.name }} x
+                  >{{ orderProductSkuItem.skuName }} x
                   {{ orderProductSkuItem.count }}</text
                 >
                 <text class="price">{{ orderProductSkuItem.money }}</text>

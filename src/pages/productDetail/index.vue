@@ -36,7 +36,7 @@ async function getProductInfo() {
       }
     )
     data.saleCount = shopProductSkus.reduce((pre: any, cur: any) => {
-      return pre + cur.saleCount
+      return pre + Math.abs(cur.saleCount)
     }, 0)
     data.count = shopProductSkus.reduce((pre: any, cur: any) => {
       return pre + cur.productSku.count
@@ -58,7 +58,8 @@ async function getFavoriteInfo() {
   if (!hasLogin.value) return
   const { code } = await productApi.productFavoriteInfo({
     shopProductSkuId: shopProductSkuSelected.value.id,
-    shopId: shopId.value
+    shopId: shopId.value,
+    userId: userInfo.value.id
   })
   productData.value.userCollect = code === 200
 }
@@ -81,7 +82,8 @@ async function toggleFavorite(flag: any) {
     : productApi.productFavoriteAdd
   const { data } = executor({
     shopProductSkuId: shopProductSkuSelected.value.id,
-    shopId: shopId.value
+    shopId: shopId.value,
+    userId: userInfo.value.id
   })
 }
 
@@ -131,15 +133,31 @@ async function couponAdd() {
 
 // 获取购物车数据
 const totalCartNum = ref()
-function getCartProductNumFn() {
-  totalCartNum.value = 2
+async function getCartProductNumFn() {
+  try {
+    const { data } = await productApi.productCartList({
+      userId: userInfo.value.id,
+      detail: false,
+      noPaging: true
+    })
+    if (data) {
+      totalCartNum.value = data.length
+    }
+  } catch (err) {
+    console.log(err)
+  }
 }
 getCartProductNumFn()
 
 // 跳转至购物车页面
 function toCart() {
   uni.navigateTo({
-    url: '/pages/cart/index'
+    url: '/pages/cart/index',
+    success: () => {
+      uni.$on('cartNum', (num) => {
+        totalCartNum.value = num
+      })
+    }
   })
 }
 
@@ -174,15 +192,21 @@ function selectSpec(
 }
 // 添加商品到购物车
 async function addToCart() {
-  const { data } = await productApi.productCartAdd({
-    userId: userInfo.value.id,
-    shopId: shopId.value,
-    shopProductSkuId: shopProductSkuSelected.value.id
-  })
-  uni.showToast({
-    icon: 'none',
-    title: '添加购物车成功！'
-  })
+  try {
+    const { data } = await productApi.productCartAdd({
+      userId: userInfo.value.id,
+      shopId: shopId.value,
+      shopProductSkuId: shopProductSkuSelected.value.id,
+      count: 1
+    })
+    getCartProductNumFn()
+    uni.showToast({
+      icon: 'none',
+      title: '添加购物车成功！'
+    })
+  } catch (err) {
+    console.log(err)
+  }
 }
 // 完成提交
 async function confirm() {

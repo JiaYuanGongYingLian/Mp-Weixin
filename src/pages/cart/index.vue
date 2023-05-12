@@ -1,3 +1,4 @@
+<!-- eslint-disable no-param-reassign -->
 <!-- eslint-disable no-use-before-define -->
 <!-- eslint-disable no-shadow -->
 <!-- eslint-disable no-console -->
@@ -32,6 +33,7 @@ async function loadData() {
     })
     cartList.value = data
     calcTotal()
+    uni.$emit('cartNum', cartList.value.length)
   } catch (err) {
     console.log(err)
   }
@@ -57,8 +59,11 @@ async function productCartUpdate(item: {
   // loadData()
 }
 // 单选
-function click_btnSelectedItem(item: { selected: boolean; id: any }) {
-  item.selected = !item.selected
+function click_btnSelectedItem(product: { selected: boolean; id: any }) {
+  cartList.value.forEach((item: { selected: boolean }) => {
+    item.selected = false
+  })
+  product.selected = !product.selected
   // productCartUpdate(item)
   calcTotal()
 }
@@ -147,9 +152,9 @@ function createOrder() {
     }
     const orderProductSku = {
       shopProductSku,
-      name: cartItem.name,
-      skuName: cartItem.skuName,
-      skuImage: cartItem.skuImage,
+      name: shopProductSku.name,
+      skuName: shopProductSku.name,
+      skuImage: shopProductSku.productSku.image,
       money: shopProductSku.money,
       moneyUnit: shopProductSkuWalletRule.moneyUnit,
       count: cartItem.count,
@@ -171,6 +176,9 @@ function createOrder() {
     url: `/pages/productCheckout/index?orderData=${orderJson}`
   })
 }
+function back() {
+  uni.navigateBack()
+}
 onLoad((option) => {
   loadData()
 })
@@ -179,12 +187,8 @@ onLoad((option) => {
   <div class="container">
     <!-- 空白页 -->
     <view v-if="!hasLogin || empty === true" class="empty">
-      <image src="/static/emptyCart.jpg" mode="aspectFit"></image>
-      <view v-if="hasLogin" class="empty-tips"> 空空如也 </view>
-      <view v-else class="empty-tips">
-        空空如也
-        <view class="navigator" @click="toLogin">去登陆></view>
-      </view>
+      <u-empty text="购物车为空" mode="car"> </u-empty>
+      <u-button type="primary" size="mini" @click="back">返回上一页</u-button>
     </view>
     <view v-else>
       <!-- 列表 -->
@@ -217,10 +221,14 @@ onLoad((option) => {
                     v-if="!item.shopProductSku.shopProductSkuWalletRules"
                     >¥</text
                   >
-                  <text>{{ item.shopProductSku.money }} </text>
-                  <text class="unit r">{{
-                    item.shopProductSku.shopProductSkuWalletRules[0].moneyUnit
-                  }}</text>
+                  <text> {{ ' ' + item.shopProductSku.money }} </text>
+                  <text
+                    class="unit r"
+                    v-if="item.shopProductSku.shopProductSkuWalletRules"
+                    >{{
+                      item.shopProductSku.shopProductSkuWalletRules[0].moneyUnit
+                    }}</text
+                  >
                 </view>
                 <u-number-box
                   class="step"
@@ -243,7 +251,7 @@ onLoad((option) => {
       <!-- 底部菜单栏 -->
       <view class="action-section">
         <view class="checkbox">
-          <image
+          <!-- <image
             :src="`https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newHome/${
               allChecked ? 'carChecked' : 'carNoChecked'
             }.png`"
@@ -256,7 +264,7 @@ onLoad((option) => {
             @click="clearCart"
           >
             清空
-          </view>
+          </view> -->
         </view>
         <view class="total-box">
           <text class="price">{{ totalMoney ? `¥${totalMoney}` : '' }}</text>
@@ -405,7 +413,7 @@ onLoad((option) => {
 /* 底部栏 */
 .action-section {
   /* #ifdef H5 */
-  margin-bottom: 100rpx;
+  margin-bottom: env(safe-area-inset-bottom);
   /* #endif */
   position: fixed;
   left: 0;

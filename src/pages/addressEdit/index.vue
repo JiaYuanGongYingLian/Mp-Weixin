@@ -4,29 +4,19 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { userApi, baseApi } from '@/api'
 
 const routerParam = ref({})
-let addressData = reactive({
-  cityName: '',
-  street: '',
-  districtName: '',
-  phone: '',
-  provinceName: '',
-  name: ''
-})
-const regionArr = ref([])
+const addressData = ref({})
 const defaultAddress = ref(false)
 const type = ref()
 // 默认地址选择
 function switchChange(e: { detail: { value: boolean } }) {
   defaultAddress.value = e.detail.value
 }
-// 地址选择
-function changeRegionFn(e: { detail: { value: any } }) {
-  regionArr.value = e.detail.value
-}
 
 // 提交
 async function confirm() {
-  if (!addressData.name) {
+  const { provinceName, cityName, districtName, street, phone, name } =
+    addressData.value
+  if (!name) {
     uni.showToast({
       title: '请填联系人人姓名',
       icon: 'none',
@@ -34,7 +24,7 @@ async function confirm() {
     })
     return
   }
-  if (addressData.phone === '') {
+  if (!phone) {
     uni.showToast({
       title: '请填写手机号码',
       icon: 'none',
@@ -42,7 +32,7 @@ async function confirm() {
     })
     return
   }
-  if (!/(^1[3|4|5|6|7|8|9][0-9]{9}$)/.test(addressData.phone)) {
+  if (!/(^1[3|4|5|6|7|8|9][0-9]{9}$)/.test(phone)) {
     uni.showToast({
       title: '请填写正确的手机号码',
       icon: 'none',
@@ -50,11 +40,7 @@ async function confirm() {
     })
     return
   }
-  if (
-    !addressData.provinceName ||
-    !addressData.cityName ||
-    !addressData.districtName
-  ) {
+  if (!provinceName || !cityName || !districtName) {
     uni.showToast({
       title: '请选择所在地',
       icon: 'none',
@@ -62,7 +48,7 @@ async function confirm() {
     })
     return
   }
-  if (!addressData.street) {
+  if (!street) {
     uni.showToast({
       title: '请填写您的详细地址',
       icon: 'none',
@@ -71,8 +57,6 @@ async function confirm() {
     return
   }
   uni.showLoading({ title: '', mask: true })
-  const { provinceName, cityName, districtName, street, phone, name } =
-    addressData
   const { id, addressId, userId } = routerParam.value
   const executor =
     type.value === 'edit' ? userApi.updateAddressInfo : userApi.addressAdd
@@ -116,10 +100,10 @@ function chooseLocation() {
       const res = await baseApi.reverseGeocoding({ latitude, longitude })
       if (res.code !== 200) return
       const { provinceName, cityName, districtName } = res.data
-      addressData.provinceName = provinceName
-      addressData.cityName = cityName
-      addressData.districtName = districtName
-      addressData.street = street
+      addressData.value.provinceName = provinceName
+      addressData.value.cityName = cityName
+      addressData.value.districtName = districtName
+      addressData.value.street = street
     },
     fail: (error) => {
       console.log('error',error)
@@ -131,9 +115,8 @@ onLoad((option) => {
   type.value = option?.type
   if (type.value === 'edit') {
     routerParam.value = uni.getStorageSync('routerParam')
-    addressData = reactive(routerParam.value.address)
-    const { provinceName, cityName, districtName } = addressData
-    regionArr.value = [provinceName, cityName, districtName]
+    addressData.value = routerParam.value.address
+    defaultAddress.value = routerParam.value.defaultAddress
   }
 })
 </script>
@@ -169,12 +152,6 @@ onLoad((option) => {
           }}{{ addressData.districtName }}
           <view class="place" v-if="!addressData.provinceName">请选择地址</view>
         </view>
-        <!-- <picker @change="changeRegionFn" mode="region" :value="regionArr">
-          <view class="uni-input"
-            >{{ regionArr[0] }}{{ regionArr[1] }}{{ regionArr[2]
-            }}<view class="place" v-if="!regionArr[0]">请选择地址</view>
-          </view>
-        </picker> -->
       </view>
       <image
         class="rightImg"

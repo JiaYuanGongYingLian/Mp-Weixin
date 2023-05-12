@@ -48,6 +48,7 @@ async function submit() {
     userStore.syncSetToken(data.accessToken)
     await getUserInfo()
     uni.navigateBack()
+    if (!isWeChatOfficial.value) return
     if (!uni.getStorageSync('openid')) {
       await userStore.wxAuth()
       uni.setStorageSync('onlyGetOpenid', 'yes')
@@ -121,39 +122,43 @@ onLoad(async (option) => {
     ></u-navbar>
     <image class="logo" :src="logo" mode="widthFix" />
     <view class="form">
-      <!-- <view class="inputBox">
-        <input
-          class="inpt phone"
-          type="number"
-          v-model="form.username"
-          maxlength="11"
-          @blur="mobileBlurFn"
-          placeholder-class="placeholderStyle"
-          placeholder-style="color: #D3DBE0;font-size: 34rpx;font-weight: normal;"
-          placeholder="请输入手机号"
-        />
-        <cover-image
-          v-if="form.username"
-          @tap="clearFn"
-          class="close"
-          src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/close.png"
-        ></cover-image>
+      <!-- #ifdef H5 -->
+      <view v-if="!isWeChatOfficial">
+        <view class="inputBox">
+          <input
+            class="inpt phone"
+            type="number"
+            v-model="form.username"
+            maxlength="11"
+            @blur="mobileBlurFn"
+            placeholder-class="placeholderStyle"
+            placeholder-style="color: #D3DBE0;font-size: 34rpx;font-weight: normal;"
+            placeholder="请输入手机号"
+          />
+          <cover-image
+            v-if="form.username"
+            @tap="clearFn"
+            class="close"
+            src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/close.png"
+          ></cover-image>
+        </view>
+        <view class="inputBox">
+          <input
+            class="inpt code"
+            type="text"
+            maxlength="20"
+            v-model="form.password"
+            placeholder-class="placeholderStyle"
+            placeholder-style="color: #D3DBE0;font-size: 34rpx;font-weight: normal;"
+            placeholder="请输入密码"
+          />
+        </view>
+        <u-button type="primary" class="hy-btn" :ripple="true" @click="submit"
+          >登录</u-button
+        >
       </view>
-      <view class="inputBox">
-        <input
-          class="inpt code"
-          type="text"
-          maxlength="20"
-          v-model="form.password"
-          placeholder-class="placeholderStyle"
-          placeholder-style="color: #D3DBE0;font-size: 34rpx;font-weight: normal;"
-          placeholder="请输入密码"
-        />
-      </view>
-      <u-button type="primary" class="hy-btn" :ripple="true" @click="submit"
-        >登录</u-button
-      > -->
-      <!-- <view style="text-align: center; color: #ccc">or</view> -->
+      <!-- #endif -->
+
       <view>
         <!-- #ifdef MP-WEIXIN -->
         <u-button
