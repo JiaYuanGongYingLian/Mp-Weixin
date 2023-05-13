@@ -16,6 +16,13 @@ function register(data: any) {
   return http.post('/auth/api/v1/auth/register', data)
 }
 /**
+ * 获取微信电话号码(小程序)
+ * @param phone 手机号
+ */
+function wxUserPhoneNumber(data: any) {
+  return http.post('/auth/api/v1/auth/wxUserPhoneNumber', data)
+}
+/**
  * 获取验证码
  * @param phone 手机号
  */
@@ -62,5 +69,6 @@ export default {
   updateAddressInfo,
   deleteAddressInfo,
   addressAdd,
-  userInfo
+  userInfo,
+  wxUserPhoneNumber
 }

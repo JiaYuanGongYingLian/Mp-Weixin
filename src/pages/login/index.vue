@@ -69,13 +69,17 @@ function getUserProfileFn() {
   })
 }
 async function getPhoneNumber(res: { detail: { code: any } }) {
-  const { phone } = await userStore.getuserphonenumber(
-    userStore.wxAccessToken,
-    res.detail.code
-  )
-  uni.redirectTo({
-    url: `/pages/register/bindPhone?phone=${phone}`
-  })
+  try {
+    const { data } = await userApi.wxUserPhoneNumber({
+      accessToken: userStore.wxAccessToken,
+      code: res.detail.code
+    })
+    uni.redirectTo({
+      url: `/pages/register/bindPhone?phone=${data.phoneNumber}`
+    })
+  } catch (err) {
+    console.log('getNumber', err)
+  }
 }
 async function handleWxWebLogin() {
   await userStore.wxAuth()

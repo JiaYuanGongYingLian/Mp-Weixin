@@ -13,6 +13,10 @@ const tabs = ref([])
 const currentTab = ref(0)
 const keyword = ref('')
 const status = ref('loadmore')
+const navBarHeight = ref(0)
+// #ifdef H5
+navBarHeight.value = 86
+// #endif
 function initData() {
   return tabs.value.map((item) => {
     return {
@@ -116,7 +120,13 @@ onReachBottom(() => {
         :is-scroll="true"
       ></u-tabs>
     </view>
-    <view class="search">
+    <view
+      class="search"
+      :style="{
+        top:
+          tabs.length > 1 ? `${86 + navBarHeight}rpx` : `${0 + navBarHeight}rpx`
+      }"
+    >
       <u-search
         shape="round"
         :clearabled="true"
@@ -227,9 +237,9 @@ onReachBottom(() => {
 .tabs {
   position: sticky;
   top: 0;
-  // ifdef H5
+  /* #ifdef H5 */
   top: 84rpx;
-  // enif
+  /* #endif */
   background: #fff;
   z-index: 2;
 }
@@ -237,9 +247,9 @@ onReachBottom(() => {
 .search {
   position: sticky;
   top: 86rpx;
-  // ifdef H5
+  /* #ifdef H5 */
   top: 172rpx;
-  // enif
+  /* #endif */
   background: #fff;
   z-index: 2;
   height: 100rpx;

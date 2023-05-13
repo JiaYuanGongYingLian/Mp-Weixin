@@ -155,7 +155,7 @@ enum payPlatform_enum {
 }
 async function onSubmit() {
   const selectedPayWay = payWay.find((item) => item.selected)
-  const { data } = await orderApi.orderPay({
+  const {code, data } = await orderApi.orderPay({
     orderId: order.value.id,
     openId: uni.getStorageSync('openid'),
     // #ifdef H5
@@ -168,8 +168,8 @@ async function onSubmit() {
     walletId: wallet.value.id || '',
     code: sms_code.value
   })
-  if (data) {
-    const jsonData = JSON.parse(data)
+  if (code === 200) {
+    const jsonData = data ? JSON.parse(data) : {}
     if (selectedPayWay?.payWay === 3) {
       wxPay(jsonData)
     } else if (selectedPayWay?.payWay === 2) {

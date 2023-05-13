@@ -546,7 +546,7 @@ navBarHeight.value = 86
 .tabs {
   position: sticky;
   top: 0;
-  // #ifdef H5
+  /* #ifdef H5 */
   top: 84rpx;
   // #endif
   background: #fff;

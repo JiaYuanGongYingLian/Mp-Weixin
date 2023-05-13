@@ -12,7 +12,8 @@ const userStore = defineStore('storeId', {
     wxAccessToken: '',
     unionid: '',
     openid: '',
-    wxUserInfo: {}
+    wxUserInfo: {},
+    walletList: []
   }),
   getters: {
     hasLogin: (state) => Boolean(state.accessToken)
@@ -145,24 +146,6 @@ const userStore = defineStore('storeId', {
           return
         }
         resolve({ code: CODE })
-      })
-    },
-    getuserphonenumber(token: any, code: any) {
-      return new Promise((resolve, _reject) => {
-        uni.request({
-          url: `https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=${token}`,
-          method: 'POST',
-          data: {
-            code
-          },
-          success: (res) => {
-            const { data } = res
-            const { phoneNumber } = data.phone_info
-            resolve({
-              phone: phoneNumber
-            })
-          }
-        })
       })
     }
   }

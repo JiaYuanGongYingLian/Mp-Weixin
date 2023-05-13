@@ -88,7 +88,7 @@ async function loadData(source?: string | undefined) {
     navItem.pageIndex += 1
     navItem.loadingType = 'more'
   } else {
-    console.log(current,pages,'nomore')
+    console.log(current, pages, 'nomore')
     navItem.loaded = true
     navItem.loadingType = 'nomore'
   }
@@ -157,6 +157,12 @@ function getStatusColor(order: { status: any }) {
 function getOrderStatuses(status: number) {
   return $orderStatus.getStatuses(status)
 }
+function toOrderDetail(order: { orderId: any }) {
+  const { id } = order
+  uni.navigateTo({
+    url: `/pages/order/detail?orderId=${id}`
+  })
+}
 
 onLoad((option) => {
   if (option?.status) {
@@ -215,6 +221,7 @@ onLoad((option) => {
             v-for="(item, index) in tabItem.orderList"
             :key="index"
             class="order-item"
+            @click="toOrderDetail(item)"
           >
             <view class="i-top b-b">
               <text class="time">{{

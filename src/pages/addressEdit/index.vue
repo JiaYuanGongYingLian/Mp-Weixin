@@ -14,7 +14,7 @@ function switchChange(e: { detail: { value: boolean } }) {
 
 // 提交
 async function confirm() {
-  const { provinceName, cityName, districtName, street, phone, name } =
+  const { provinceName, cityName, districtName, street, phone, name, other } =
     addressData.value
   if (!name) {
     uni.showToast({
@@ -48,14 +48,6 @@ async function confirm() {
     })
     return
   }
-  if (!street) {
-    uni.showToast({
-      title: '请填写您的详细地址',
-      icon: 'none',
-      duration: 2000
-    })
-    return
-  }
   uni.showLoading({ title: '', mask: true })
   const { id, addressId, userId } = routerParam.value
   const executor =
@@ -66,6 +58,7 @@ async function confirm() {
       cityName,
       districtName,
       street,
+      other,
       phone,
       name
     },
@@ -96,10 +89,9 @@ function chooseLocation() {
       if (!latitude || !longitude) {
         return
       }
-      const street = data.address ? data.address : ''
       const res = await baseApi.reverseGeocoding({ latitude, longitude })
       if (res.code !== 200) return
-      const { provinceName, cityName, districtName } = res.data
+      const { provinceName, cityName, districtName, street } = res.data
       addressData.value.provinceName = provinceName
       addressData.value.cityName = cityName
       addressData.value.districtName = districtName
@@ -149,7 +141,7 @@ onLoad((option) => {
       <view class="input" @click="chooseLocation">
         <view class="uni-input"
           >{{ addressData.provinceName }}{{ addressData.cityName
-          }}{{ addressData.districtName }}
+          }}{{ addressData.districtName }} {{ addressData.street }}
           <view class="place" v-if="!addressData.provinceName">请选择地址</view>
         </view>
       </view>
@@ -163,7 +155,7 @@ onLoad((option) => {
       <input
         class="input"
         type="text"
-        v-model="addressData.street"
+        v-model="addressData.other"
         maxlength="50"
         placeholder="楼号、门牌等"
         placeholder-class="placeholder"

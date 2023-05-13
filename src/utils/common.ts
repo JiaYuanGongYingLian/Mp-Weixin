@@ -28,9 +28,15 @@ export const getQueryVariable = (variable: string) => {
 
 // 判断是否为微信内部浏览器
 export function isWeChat() {
+  // #ifdef H5
   const ua = window.navigator.userAgent.toLowerCase()
   const env = ua.match(/MicroMessenger/i)
   return env ? env[0] === 'micromessenger' : false
+  // #endif
+  // #ifdef MP-WEIXIN
+  return false
+  // #endif
+ 
 }
 
 /**
