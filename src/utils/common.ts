@@ -1,6 +1,7 @@
+/* eslint-disable no-param-reassign */
 // url所有传参获取
-export function getQueryObject(url: string | null) {
-  url = url == null ? window.location.href : url
+export function getQueryObject(url: string) {
+  url = url || window.location.href
   const search = url.substring(url.lastIndexOf('?') + 1)
   const obj = {}
   const reg = /([^?&=]+)=([^?&=]*)/g

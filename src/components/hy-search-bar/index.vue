@@ -31,6 +31,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
+import { getQueryObject } from '@/utils/common'
 
 const emit = defineEmits(['onSearch'])
 const props = withDefaults(
@@ -80,12 +81,23 @@ const link = () => {
     }
   })
   // #endif
+  // #ifdef MP-WEIXIN
   uni.scanCode({
     success(res) {
-      console.log(res)
+      const { result } = res
+      if (result) {
+        const params = getQueryObject(result)
+        const { redirect_url,shopId } = params
+        if (redirect_url) {
+          uni.navigateTo({
+            url: `${redirect_url}?shopId=${shopId}`
+          })
+        }
+      }
     },
     fail(_res) {}
   })
+  // #endif
 }
 const toSearch = () => {
   emit('onSearch')

@@ -15,7 +15,7 @@ const orderData = ref({})
 async function creatOrder() {
   try {
     const { data } = await orderApi.orderAdd(orderData.value)
-    uni.redirectTo({
+    uni.navigateTo({
       url: `/pages/payment/index?order=${JSON.stringify(data)}`
     })
   } catch (err) {
