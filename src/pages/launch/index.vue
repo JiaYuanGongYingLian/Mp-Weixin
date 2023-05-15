@@ -4,10 +4,11 @@
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app'
 import logo from '@/static/ic_launcher.png'
-import { useUserStore } from '@/store'
+import { useUserStore, useConfigStore } from '@/store'
 import { getQueryVariable, isWeChat } from '@/utils/common'
 
 const userStore = useUserStore()
+const configStore = useConfigStore()
 function toTargetPage(URL?: any, duration = 0) {
   const url = URL || '/pages/index/index'
   console.log('启动页跳转至：', url)
@@ -40,12 +41,20 @@ onLoad(async (option) => {
   })
   // #endif
   // #ifdef H5
-  let url = getQueryVariable('redirect_url')
+  let url = ''
+  const origin_url = getQueryVariable('redirect_url')
   const qrcode = getQueryVariable('qrcode')
   const shopId = getQueryVariable('shopId')
   if (qrcode) {
-    url = `${url}?qrcode=${qrcode}&shopId=${shopId}`
-    uni.setStorageSync('redirect_url', url)
+    configStore.setEnterType('storeQrcode')
+    url = `${origin_url}?qrcode=${qrcode}&shopId=${shopId}`
+    if (origin_url === '/pages/physicalShopCheck/index') {
+      // 扫店铺结算二维码的特殊处理，使结算完成跳转首页为店铺首页
+      const url_rewirte = `/pages/physicalShop/index?qrcode=${qrcode}&shopId=${shopId}`
+      uni.setStorageSync('redirect_url', url_rewirte)
+    } else {
+      uni.setStorageSync('redirect_url', url)
+    }
   } else {
     const redirect_url = uni.getStorageSync('redirect_url')
     if (redirect_url) {

@@ -121,7 +121,12 @@ class RequestHttp {
       (config: AxiosRequestConfig) => {
         const token = uni.getStorageSync('accessToken') || ''
         const wxCode = uni.getStorageSync('wxCode') || ''
-        config.headers.platform = 'CLIENT'
+        // #ifdef H5
+        config.headers.platform = 50
+        // #endif
+        // #ifdef MP-WEIXIN
+        config.headers.platform = 40
+        // #endif
         if (token) {
           config.headers.Authorization = `Bearer ${token}`
         }
@@ -161,15 +166,18 @@ class RequestHttp {
                 })
                 // #endif
                 // #ifdef H5
-                const isWeChatBrowser = isWeChat()
-                if (isWeChatBrowser) {
-                  const { pathname } = window.location
-                  window.location.href = pathname
-                } else {
-                  uni.navigateTo({
-                    url: '/pages/login/index'
-                  })
-                }
+                // const isWeChatBrowser = isWeChat()
+                // if (isWeChatBrowser) {
+                //   const { pathname } = window.location
+                //   window.location.href = pathname
+                // } else {
+                //   uni.navigateTo({
+                //     url: '/pages/login/index'
+                //   })
+                // }
+                uni.navigateTo({
+                  url: '/pages/login/index'
+                })
                 // #endif
               }
             },

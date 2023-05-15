@@ -1,20 +1,27 @@
+<!-- eslint-disable no-console -->
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
-import { baseApi, orderApi, productApi } from '@/api'
-import { useUserStore } from '@/store'
+import { orderApi, productApi } from '@/api'
 
-const userStore = useUserStore()
-const info = reactive({})
+const info = reactive({
+  name: '',
+  shopId: ''
+})
 const money = ref()
 const orderData = ref({})
 // 创建订单
 async function creatOrder() {
-  const { data } = await orderApi.orderAdd(orderData.value)
-  uni.redirectTo({
-    url: `/pages/payment/index?order=${JSON.stringify(data)}`
-  })
+  try {
+    const { data } = await orderApi.orderAdd(orderData.value)
+    uni.redirectTo({
+      url: `/pages/payment/index?order=${JSON.stringify(data)}`
+    })
+  } catch (err) {
+    console.log(err)
+  }
+  uni.hideLoading()
 }
 async function toPayment() {
   if (!money.value) {
@@ -24,6 +31,7 @@ async function toPayment() {
     })
     return
   }
+  uni.showLoading({ title: '', mask: true })
   const { data } = await productApi.getShopProductSkuList({
     detail: false,
     dynamicPrice: true,
@@ -44,10 +52,25 @@ async function toPayment() {
   creatOrder()
 }
 
-onLoad(async (option) => {
-  const { name, shopId } = option
+async function getShopInfo() {
+  const { data } = await productApi.getShopInfo({
+    id: info.shopId,
+    detail: false
+  })
+  const { name } = data
   info.name = name
-  info.shopId = shopId
+}
+
+onLoad(async (option) => {
+  if (option) {
+    const { name, shopId } = option
+    info.shopId = shopId
+    if (name) {
+      info.name = name
+    } else {
+      getShopInfo()
+    }
+  }
 })
 </script>
 <template>
