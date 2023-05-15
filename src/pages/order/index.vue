@@ -221,7 +221,6 @@ onLoad((option) => {
             v-for="(item, index) in tabItem.orderList"
             :key="index"
             class="order-item"
-            @click="toOrderDetail(item)"
           >
             <view class="i-top b-b">
               <text class="time">{{
@@ -231,53 +230,58 @@ onLoad((option) => {
                 $orderStatus.getStatusTitle(item.status)
               }}</text>
             </view>
-
-            <scroll-view
-              v-if="item.orderProductSkus && item.orderProductSkus.length > 1"
-              class="goods-box"
-              scroll-x
-            >
+            <view @click="toOrderDetail(item)">
+              <scroll-view
+                v-if="item.orderProductSkus && item.orderProductSkus.length > 1"
+                class="goods-box"
+                scroll-x
+              >
+                <view
+                  v-for="(
+                    orderProductSkuItem, goodsIndex
+                  ) in item.orderProductSkus"
+                  :key="goodsIndex"
+                  class="goods-item"
+                >
+                  <image
+                    class="goods-img"
+                    :src="getImgFullPath(orderProductSkuItem.skuImage)"
+                    mode="aspectFill"
+                  ></image>
+                </view>
+              </scroll-view>
               <view
+                v-if="
+                  item.orderProductSkus && item.orderProductSkus.length === 1
+                "
+                class="goods-box-single"
                 v-for="(
                   orderProductSkuItem, goodsIndex
                 ) in item.orderProductSkus"
                 :key="goodsIndex"
-                class="goods-item"
               >
                 <image
                   class="goods-img"
                   :src="getImgFullPath(orderProductSkuItem.skuImage)"
                   mode="aspectFill"
                 ></image>
-              </view>
-            </scroll-view>
-            <view
-              v-if="item.orderProductSkus && item.orderProductSkus.length === 1"
-              class="goods-box-single"
-              v-for="(orderProductSkuItem, goodsIndex) in item.orderProductSkus"
-              :key="goodsIndex"
-            >
-              <image
-                class="goods-img"
-                :src="getImgFullPath(orderProductSkuItem.skuImage)"
-                mode="aspectFill"
-              ></image>
-              <view
-                class="right"
-                v-if="
-                  orderProductSkuItem &&
-                  orderProductSkuItem.shopProductSku &&
-                  orderProductSkuItem.shopProductSku.product
-                "
-              >
-                <text class="title clamp">{{
-                  orderProductSkuItem.shopProductSku.product.name
-                }}</text>
-                <text class="attr-box"
-                  >{{ orderProductSkuItem.skuName }} x
-                  {{ orderProductSkuItem.count }}</text
+                <view
+                  class="right"
+                  v-if="
+                    orderProductSkuItem &&
+                    orderProductSkuItem.shopProductSku &&
+                    orderProductSkuItem.shopProductSku.product
+                  "
                 >
-                <text class="price">{{ orderProductSkuItem.money }}</text>
+                  <text class="title clamp">{{
+                    orderProductSkuItem.shopProductSku.product.name
+                  }}</text>
+                  <text class="attr-box"
+                    >{{ orderProductSkuItem.skuName }} x
+                    {{ orderProductSkuItem.count }}</text
+                  >
+                  <text class="price">{{ orderProductSkuItem.money }}</text>
+                </view>
               </view>
             </view>
 
