@@ -39,6 +39,9 @@ function getCode(phone: string): Promise<{ num: number }> {
 function userInfo() {
   return http.get('/ups/api/v1/user/info')
 }
+function userInfoUpdate(data: any) {
+  return http.post('/ups/api/v1/user/update', data)
+}
 /**
  * 地址
  */
@@ -70,5 +73,6 @@ export default {
   deleteAddressInfo,
   addressAdd,
   userInfo,
+  userInfoUpdate,
   wxUserPhoneNumber
 }

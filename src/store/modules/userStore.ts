@@ -47,6 +47,11 @@ const userStore = defineStore('storeId', {
       this.userInfo = {}
       uni.removeStorageSync('userInfo')
     },
+    syncSetWalletList(data: never[]) {
+      if (data && data.length) {
+        this.walletList = data
+      }
+    },
     getUserInfo() {
       return new Promise((resolve, _reject) => {
         uni.request({

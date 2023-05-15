@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import {
   onReady,
   onShow,
@@ -7,11 +7,15 @@ import {
   onReachBottom,
   onPageScroll
 } from '@dcloudio/uni-app'
-import { baseApi, productApi } from '@/api'
+import { storeToRefs } from 'pinia'
+import { baseApi, moneyApi, productApi } from '@/api'
 import { getImgFullPath } from '@/utils'
+import { useUserStore } from '@/store'
 import searchBar from '@/components/hy-search-bar/index.vue'
 import icon_heidou from '@/static/mine_hei_dou.png'
 
+const userStore = useUserStore()
+const { hasLogin, walletList } = storeToRefs(userStore)
 const categoryList = reactive({
   list1: [],
   list2: []
@@ -36,7 +40,7 @@ const getBaseDataFn = async (type: any, callback: (arg0: any) => void) => {
   })
   callback(data)
 }
-
+// 黑豆商品列表
 const getHeidouProductList = async () => {
   const { data } = await productApi.getShopProductList({
     pageIndex: productList.pageIndex,
@@ -57,22 +61,7 @@ const toProductDetail = (product: { shopId: any; productId: any }) => {
     url: `/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
   })
 }
-onReady(async () => {
-  // 线下好店
-  getBaseDataFn(baseApi.advertising_enum.ADV_HOME_LIST2, (data) => {
-    categoryList.list1 = data.records
-  })
-  // banner
-  getBaseDataFn(baseApi.advertising_enum.ADV_HOME_BANNER1, (data) => {
-    bannerList.value = data.records
-  })
-  // 黑豆商品
-  getHeidouProductList()
-})
-onReachBottom(() => {
-  status.value = 'loading'
-  getHeidouProductList()
-})
+
 // 跳转线下店列表页面
 const toPhysicalStore = (content: any) => {
   uni.navigateTo({
@@ -115,6 +104,46 @@ const onSearch = () => {
     url: '/pages/physicalShopList/index'
   })
 }
+
+const moneyInfo = ref([
+  {
+    money: 0,
+    walletRuleId: 6,
+    name: '黑豆钱包'
+  }
+])
+moneyInfo.value.forEach((e) => {
+  e.money = computed(() => {
+    const money = walletList.value.find(
+      (item) => item.walletRuleId === e.walletRuleId
+    )?.money
+    return money || 0
+  })
+})
+async function getMoney() {
+  if (hasLogin.value && !walletList.value.length) {
+    const { data } = await moneyApi.walletList({ noPaging: true })
+    userStore.syncSetWalletList(data)
+  }
+}
+onReady(async () => {
+  // 线下好店
+  getBaseDataFn(baseApi.advertising_enum.ADV_HOME_LIST2, (data) => {
+    categoryList.list1 = data.records
+  })
+  // banner
+  getBaseDataFn(baseApi.advertising_enum.ADV_HOME_BANNER1, (data) => {
+    bannerList.value = data.records
+  })
+  // 黑豆商品
+  getHeidouProductList()
+  // 查询黑豆余额
+  getMoney()
+})
+onReachBottom(() => {
+  status.value = 'loading'
+  getHeidouProductList()
+})
 </script>
 <template>
   <view class="index-page">
@@ -171,7 +200,9 @@ const onSearch = () => {
         <text class="name">黑豆兑换中心</text>
         <text class="iconfont hy-icon-arrow-right"></text>
       </view>
-      <view class="rest">可用黑豆：<text class="num">0.0</text> </view>
+      <view class="rest"
+        >可用黑豆：<text class="num">{{ moneyInfo[0].money }}</text>
+      </view>
     </view>
     <view class="container">
       <view

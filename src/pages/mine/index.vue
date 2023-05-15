@@ -1,16 +1,16 @@
 <!-- eslint-disable no-param-reassign -->
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { useUserStore, useConfigStore } from '@/store'
-import { baseApi, moneyApi, productApi } from '@/api'
+import { moneyApi, userApi } from '@/api'
 import { getImgFullPath, checkLoginState } from '@/utils/index'
 import hyTabBar from '@/components/hy-tabbar/index.vue'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
-const { userInfo, wxUserInfo, hasLogin } = storeToRefs(userStore)
+const { userInfo, wxUserInfo, hasLogin, walletList } = storeToRefs(userStore)
 const { enterByStoreQrcode } = storeToRefs(configStore)
 const moneyInfo = ref([
   {
@@ -24,6 +24,14 @@ const moneyInfo = ref([
     name: '黑银积分'
   }
 ])
+moneyInfo.value.forEach((e) => {
+  e.money = computed(() => {
+    const money = walletList.value.find(
+      (item) => item.walletRuleId === e.walletRuleId
+    )?.money
+    return money || 0
+  })
+})
 const tabList = ref([
   {
     iconPath: '/static/ic_bar_main_pg.png',
@@ -66,24 +74,18 @@ function handleTabBarChange(index: any) {
     })
   }
 }
-function onChooseAvatar(e: { detail: { avatarUrl: any } }) {
+async function onChooseAvatar(e: { detail: { avatarUrl: any } }) {
   const { avatarUrl } = e.detail
   userInfo.value.avatar = avatarUrl
+  console.log('url',e, avatarUrl)
+  const { data } = await userApi.userInfoUpdate({
+    avatar: avatarUrl
+  })
 }
 async function getMoney() {
-  if (hasLogin.value) {
+  if (hasLogin.value && !walletList.value.length) {
     const { data } = await moneyApi.walletList({ noPaging: true })
-    if (data) {
-      moneyInfo.value.forEach(async (item) => {
-        const wallet = data.find(
-          (w: { walletRuleId: any }) => w.walletRuleId === item.walletRuleId
-        )
-        if (wallet) {
-          const res = await moneyApi.walletInfo({ id: wallet.id })
-          item.money = res.data.money
-        }
-      })
-    }
+    userStore.syncSetWalletList(data)
   }
 }
 onLoad((option) => {
