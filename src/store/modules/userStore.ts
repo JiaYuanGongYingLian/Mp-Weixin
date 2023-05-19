@@ -80,6 +80,14 @@ const userStore = defineStore('storeId', {
         uni.request({
           url: `${BASEURL}/auth/api/v1/auth/login`,
           method: 'POST',
+          header: {
+             // #ifdef H5
+             platform: 50
+             // #endif
+             // #ifdef MP-WEIXIN
+             platform: 40
+             // #endif
+          },
           data: {
             type,
             code: openid || this.wxUserInfo.openid

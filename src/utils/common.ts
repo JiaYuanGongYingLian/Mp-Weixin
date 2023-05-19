@@ -37,7 +37,6 @@ export function isWeChat() {
   // #ifdef MP-WEIXIN
   return false
   // #endif
- 
 }
 
 /**
@@ -72,10 +71,75 @@ export const getPrePage = () => {
   // #endif
   return prePage.$vm
 }
+
+export const launchClientApp = () => {
+  const u = navigator.userAgent
+  const isWeixin = u.toLowerCase().indexOf('micromessenger') !== -1 // 微信内
+  const isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1 // android终端
+  const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) // ios终端
+  if (isWeixin) {
+    uni.showModal({
+      title: '请在浏览器上打开'
+    })
+  } else {
+    // android端
+    if (isAndroid) {
+      // 安卓app的scheme协议
+      window.location.href = 'taobao://'
+      setTimeout(() => {
+        const hidden =
+          window.document.hidden ||
+          window.document.mozHidden ||
+          window.document.msHidden ||
+          window.document.webkitHidden
+        if (typeof hidden === 'undefined' || hidden === false) {
+          // 应用宝下载地址 (emmm 找不到淘宝应用宝的地址，这里放的是 lucky coffee 地址)
+          window.location.href =
+            'https://a.app.qq.com/o/simple.jsp?pkgname=com.lucky.luckyclient'
+        }
+      }, 2000)
+    }
+    // ios端
+    if (isIOS) {
+      // ios的scheme协议
+      window.location.href = 'taobao://'
+      setTimeout(() => {
+        const hidden =
+          window.document.hidden ||
+          window.document.mozHidden ||
+          window.document.msHidden ||
+          window.document.webkitHidden
+        if (typeof hidden === 'undefined' || hidden === false) {
+          // App store下载地址
+          window.location.href = 'http://itunes.apple.com/app/id387682726'
+        }
+      }, 2000)
+    }
+  }
+}
+/**
+ * 生成随机id
+ * @return {String} id
+ */
+export const generateId = () => {
+  const s = [];
+  const hexDigits = "0123456789abcdef";
+  for (let i = 0; i < 36; i++) {
+    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+  }
+  s[14] = "4";
+  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);
+  s[8] = s[13] = s[18] = s[23] = "-";
+
+  const uuid = s.join("");
+  return uuid;
+};
 export default {
   getQueryObject,
   getQueryVariable,
   isWeChat,
   getPrePage,
-  callPreviousRouteMethod
+  callPreviousRouteMethod,
+  launchClientApp,
+  generateId
 }

@@ -19,8 +19,8 @@ const form = reactive({
   password: ''
 })
 // 手机号验证
+const telReg = /^1[3456789]\d{9}$/
 function mobileBlurFn() {
-  const telReg = /^1[3456789]\d{9}$/
   if (form.username !== '') {
     if (!telReg.test(form.username)) {
       uni.showToast({
@@ -39,6 +39,28 @@ function clearFn() {
   form.username = ''
 }
 async function submit() {
+  if (form.username !== '') {
+    if (!telReg.test(form.username)) {
+      uni.showToast({
+        title: '请输入正确的手机号',
+        icon: 'none'
+      })
+      return
+    }
+  } else {
+    uni.showToast({
+      title: '请输入手机号',
+      icon: 'none'
+    })
+    return
+  }
+  if (!form.password) {
+    uni.showToast({
+      title: '请输入密码',
+      icon: 'none'
+    })
+    return
+  }
   try {
     const { data } = await userApi.login({
       type: 10,
@@ -83,6 +105,11 @@ async function getPhoneNumber(res: { detail: { code: any } }) {
 }
 async function handleWxWebLogin() {
   await userStore.wxAuth()
+}
+function toRegister() {
+  uni.navigateTo({
+    url: '/pages/register/bindPhone'
+  })
 }
 onLoad(async (option) => {
   // #ifdef H5
@@ -160,6 +187,11 @@ onLoad(async (option) => {
         <u-button type="primary" class="hy-btn" :ripple="true" @click="submit"
           >登录</u-button
         >
+        <!-- #ifdef H5 -->
+        <view v-if="!isWeChatOfficial" class="signuptips" @click="toRegister"
+          >还没有账号？ <text> 点我立即注册</text></view
+        >
+        <!-- #endif -->
       </view>
       <!-- #endif -->
 
@@ -260,6 +292,15 @@ onLoad(async (option) => {
     color: #fff;
     margin-right: 15rpx;
     font-size: 36rpx;
+  }
+}
+.signuptips {
+  font-size: 24rpx;
+  margin-top: 50rpx;
+  color: #a1a1a1;
+  text-align: center;
+  text {
+    color: #2979ff;
   }
 }
 </style>

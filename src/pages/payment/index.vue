@@ -7,14 +7,17 @@ import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { baseApi, productApi, orderApi, moneyApi } from '@/api'
 import { isWeChat } from '@/utils/common'
-import { useUserStore } from '@/store'
+import { useConfigStore, useUserStore } from '@/store'
 import icon_wechat from '@/static/pay_icon_wechat.png'
 import icon_ali from '@/static/pay_icon_alipay.png'
 import icon_hy from '@/static/pay_icon_money.png'
 import icon_select from '@/static/ic_pop_select_normal.png'
 import icon_selected from '@/static/ic_pop_select_selected.png'
 import icon_verify from '@/static/icon_verify.png'
+import { storeToRefs } from 'pinia'
 
+const configStore = useConfigStore()
+const { isWeChatBrowser } = storeToRefs(configStore)
 const userStore = useUserStore()
 const order = ref()
 const info = reactive({
@@ -24,15 +27,35 @@ const payWay = reactive([
   {
     name: '微信支付',
     icon: icon_wechat,
+    // #ifdef H5
+    selected: isWeChat(),
+    // #endif
+    // #ifdef MP-WEIXIN
     selected: true,
+    // #endif
+    // #ifdef H5
+    available: isWeChat(),
+    // #endif
+    // #ifdef MP-WEIXIN
     available: true,
+    // #endif
     payWay: 3
   },
   {
     name: '支付宝支付',
     icon: icon_ali,
+    // #ifdef H5
+    selected: !isWeChat(),
+    // #endif
+    // #ifdef MP-WEIXIN
     selected: false,
+    // #endif
+    // #ifdef H5
+    available: !isWeChat(),
+    // #endif
+    // #ifdef MP-WEIXIN
     available: false,
+    // #endif
     payWay: 2
   },
   {
@@ -65,6 +88,8 @@ async function getWalletRuleList() {
         })
         payWay[2].available = true
         payWay[2].selected = true
+      } else {
+        payWay[2].available = true
       }
       if (data && data.length) {
         // 当前钱包信息
@@ -99,7 +124,7 @@ async function sendSmsCode() {
         type: 6,
         phone: userStore.userInfo.phone
       })
-    } catch {}
+    } catch { }
   }
 }
 function codeChange(text: string) {
@@ -155,7 +180,15 @@ enum payPlatform_enum {
 }
 async function onSubmit() {
   const selectedPayWay = payWay.find((item) => item.selected)
-  const {code, data } = await orderApi.orderPay({
+  if (!selectedPayWay) {
+    uni.showToast({
+      title: '请选择支付方式',
+      icon: 'none'
+    })
+    return
+  }
+  const shopId = order.value.orderProductSkus[0].shopId || ''
+  const { code, data } = await orderApi.orderPay({
     orderId: order.value.id,
     openId: uni.getStorageSync('openid'),
     // #ifdef H5
@@ -166,16 +199,21 @@ async function onSubmit() {
     // #endif
     payWay: selectedPayWay?.payWay,
     walletId: wallet.value.id || '',
-    code: sms_code.value
+    code: sms_code.value,
+    // #ifdef H5
+    returnUrl: shopId
+      ? `https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShop/index&qrcode=1&shopId=${shopId}`
+      : null
+    // #endif
   })
   if (code === 200) {
-    const jsonData = data ? JSON.parse(data) : {}
     if (selectedPayWay?.payWay === 3) {
+      const jsonData = data ? JSON.parse(data) : {}
       wxPay(jsonData)
     } else if (selectedPayWay?.payWay === 2) {
-      aliPay(jsonData)
+      aliPay(data)
     } else {
-      jfPay(jsonData)
+      jfPay(data)
     }
   }
 }
@@ -196,7 +234,15 @@ function wxPay(data: object) {
   }
   // #endif
 }
-function aliPay(data: object) {}
+function aliPay(data: string) {
+  const div = document.createElement('div')
+  div.id = 'formdata'
+  div.innerHTML = data
+  document.body.appendChild(div)
+  const form = document.getElementById('formdata')
+  document.forms[0].submit()
+  document.body.removeChild(form)
+}
 function jfPay(data: object) {
   paySuccess()
 }
@@ -228,6 +274,7 @@ onLoad(async (option) => {
   }
   if (option?.order) {
     order.value = JSON.parse(option.order)
+    console.log(order.value)
     info.money = order.value.money
     info.moneyUnit = order.value.moneyUnit
     getWalletRuleList()
@@ -236,8 +283,13 @@ onLoad(async (option) => {
 </script>
 <template>
   <div class="payment">
-    <view class="money"
-      ><text v-if="!info.moneyUnit">￥</text> {{ info.money }}
+    <u-navbar
+      back-text=""
+      :title="'订单支付'"
+      :title-bold="true"
+      v-if="!isWeChatBrowser"
+    ></u-navbar>
+    <view class="money"><text v-if="!info.moneyUnit">￥</text> {{ info.money }}
       <text class="unit" v-if="info.moneyUnit"> {{ info.moneyUnit }}</text>
     </view>
     <view class="payWay">
@@ -248,28 +300,16 @@ onLoad(async (option) => {
               <u-icon :name="item.icon" size="50"></u-icon>
               <text class="name">{{ item.name }}</text>
             </view>
-            <u-icon
-              :name="item.selected ? icon_selected : icon_select"
-              size="40"
-            ></u-icon>
+            <u-icon :name="item.selected ? icon_selected : icon_select" size="40"></u-icon>
           </view>
-          <u-form-item
-            label=""
-            prop="name"
-            :left-icon="icon_verify"
-            :left-icon-style="{ with: 40 }"
-            v-if="item.payWay === 1 && item.selected"
-          >
+          <u-form-item label="" prop="name" :left-icon="icon_verify" :left-icon-style="{ with: 40 }"
+            v-if="item.payWay === 1 && item.selected">
             <u-input v-model="sms_code" placeholder="请填写验证码" />
             <template v-slot:right>
               <u-button size="mini" type="success" @click="sendSmsCode">
-                {{ codeText }}</u-button
-              >
+                {{ codeText }}</u-button>
             </template>
-            <u-verification-code
-              ref="uCode1"
-              @change="codeChange"
-            ></u-verification-code>
+            <u-verification-code ref="uCode1" @change="codeChange"></u-verification-code>
           </u-form-item>
         </view>
       </view>
@@ -288,6 +328,7 @@ onLoad(async (option) => {
   .money {
     font-size: 60rpx;
     margin-bottom: 40rpx;
+
     .unit {
       font-size: 30rpx;
     }

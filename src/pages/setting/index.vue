@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
-import { baseApi, productApi } from '@/api'
+import { baseApi, productApi, userApi } from '@/api'
 import { checkLoginState } from '@/utils/index'
+import { upload } from '@/common/ali-oss'
 import { useUserStore } from '@/store'
+import { storeToRefs } from 'pinia'
 
 const userStore = useUserStore()
-function goUrlFn(e: { currentTarget: { dataset: { url: any } } }) {
-  const { url } = e.currentTarget.dataset
+const { userInfo } = storeToRefs(userStore)
+function goUrlFn(url: any) {
   if (checkLoginState()) {
     if (url) {
       uni.navigateTo({
@@ -25,40 +27,52 @@ function loginOutFn() {
   })
   uni.hideLoading()
 }
-onLoad((option) => {})
+async function onChooseAvatar(e: { detail: { avatarUrl: any } }) {
+  const { avatarUrl } = e.detail
+  userInfo.value.avatar = avatarUrl
+  console.log('url', e, avatarUrl)
+  const url = await upload({
+    file: avatarUrl,
+    uploadPath: '',
+    onSuccess: async () => {
+      const { data } = await userApi.userInfoUpdate({
+        avatar: url
+      })
+    },
+    onError: function (arg0: string) {
+      uni.showToast({
+        title: '上传失败'
+      })
+    }
+  })
+
+}
+onLoad((option) => { })
 </script>
 <template>
   <div class="container">
-    <view class="box">
-      <view
-        class="list"
-        @tap="goUrlFn"
-        data-url="/pages/addressList/index?type=mine&id=''"
-      >
-        <view class="left">地址管理</view>
-        <image
-          class="right"
-          src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/right-g.png"
-        ></image>
-      </view>
-    </view>
-    <view class="box">
-      <view class="list" style="border-bottom: 1px solid #f0f5f4">
-        <button class="feedback" open-type="feedback">建议反馈</button>
-        <view class="left">建议反馈</view>
-        <image
-          class="right"
-          src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/right-g.png"
-        ></image>
-      </view>
-      <view class="list" @tap="goUrlFn" data-url="/pages/about/index">
-        <view class="left">联系我们</view>
-        <image
-          class="right"
-          src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/right-g.png"
-        ></image>
-      </view>
-    </view>
+    <u-cell-group>
+      <button class="customBtn" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
+        <u-cell-item title="头像" hover-class="cell-hover-class">
+          <u-avatar :src="userInfo.avatar"></u-avatar>
+        </u-cell-item>
+      </button>
+    </u-cell-group>
+    <view class="gap"></view>
+    <u-cell-group>
+      <u-cell-item title="地址管理" hover-class="cell-hover-class"
+        @click="goUrlFn(`/pages/addressList/index?type=mine&id=''`)">
+      </u-cell-item>
+    </u-cell-group>
+    <view class="gap"></view>
+    <u-cell-group>
+      <button class="customBtn" open-type="feedback">
+        <u-cell-item title="建议反馈" hover-class="cell-hover-class">
+        </u-cell-item>
+      </button>
+      <u-cell-item title="联系我们" hover-class="cell-hover-class" @click="goUrlFn(`/pages/about/index`)">
+      </u-cell-item>
+    </u-cell-group>
     <!-- <view class="btn" @tap="loginOutFn">退出登录</view> -->
   </div>
 </template>
@@ -67,35 +81,21 @@ onLoad((option) => {})
 .container {
   min-height: 100vh;
   background-color: #f7f7f7;
-  .box {
-    margin-top: 20rpx;
-    background-color: #fff;
-    padding: 0 30rpx 0 40rpx;
-    .list {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-      padding: 35rpx 0;
-      .left {
-        font-size: 34rpx;
-        color: #242426;
-      }
-      .right {
-        width: 16rpx;
-        height: 28rpx;
-      }
-      .feedback {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        z-index: 2;
-        left: 0;
-        top: 0;
-        opacity: 0;
-      }
+
+  .gap {
+    margin-bottom: 20rpx;
+  }
+
+  .customBtn {
+    padding: 0;
+    border: 0;
+    background-color: inherit;
+
+    &:after {
+      border: none;
     }
   }
+
   .btn {
     width: 100%;
     height: 120rpx;

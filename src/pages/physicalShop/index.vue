@@ -114,7 +114,7 @@ async function getShopInfo() {
   try {
     const { data } = await productApi.getShopInfo({
       id: shopId.value,
-      detail: true
+      detail: true,
     })
     const { bannerResources, avatar, name } = data
     // 设置页面title

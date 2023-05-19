@@ -56,7 +56,9 @@
 		{
 			"path": "pages/physicalShopCheck/index",
 			"style": {
-				"navigationBarTitleText": "店铺付款"
+				"navigationBarTitleText": "店铺付款",
+				"navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
 			}
 		},
 		{
@@ -110,7 +112,9 @@
 		{
 			"path": "pages/payment/index",
 			"style": {
-				"navigationBarTitleText": "订单支付"
+				"navigationBarTitleText": "订单支付",
+				"navigationStyle": "custom",
+				"navigationBarTextStyle": "black"
 			}
 		},
 		{

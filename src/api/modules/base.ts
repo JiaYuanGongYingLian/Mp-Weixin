@@ -34,8 +34,17 @@ function getAdvertisingList(data: any) {
   return http.get('/base/api/v1/advertising/list', data)
 }
 
+/**
+ * 获取首页分类
+ */
 function reverseGeocoding(data: any) {
   return http.get('/base/api/v1/qq/reverse/geocoding/info', data)
+}
+/**
+ * 获取首页分类
+ */
+function getAliOssToken(data: any) {
+  return http.get('/base/api/v1/ali/token', data)
 }
 
 export default {
@@ -43,5 +52,6 @@ export default {
   getAdvertisingList,
   advertising_enum,
   smsSend,
-  reverseGeocoding
+  reverseGeocoding,
+  getAliOssToken
 }

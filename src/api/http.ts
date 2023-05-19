@@ -210,14 +210,11 @@ class RequestHttp {
           title: '登录过期，请重新登录'
         })
         break
-      case 500:
+      default:
         uni.showToast({
           icon: 'none',
           title: msg
         })
-        break
-      default:
-        break
     }
   }
 
