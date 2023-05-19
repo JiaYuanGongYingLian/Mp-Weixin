@@ -5,6 +5,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { storeToRefs } from 'pinia'
 import { baseApi, productApi, orderApi, moneyApi } from '@/api'
 import { isWeChat } from '@/utils/common'
 import { useConfigStore, useUserStore } from '@/store'
@@ -14,10 +15,9 @@ import icon_hy from '@/static/pay_icon_money.png'
 import icon_select from '@/static/ic_pop_select_normal.png'
 import icon_selected from '@/static/ic_pop_select_selected.png'
 import icon_verify from '@/static/icon_verify.png'
-import { storeToRefs } from 'pinia'
 
 const configStore = useConfigStore()
-const { isWeChatBrowser } = storeToRefs(configStore)
+const { isWeChatBrowser, isAlipayClient } = storeToRefs(configStore)
 const userStore = useUserStore()
 const order = ref()
 const info = reactive({
@@ -287,7 +287,7 @@ onLoad(async (option) => {
       back-text=""
       :title="'订单支付'"
       :title-bold="true"
-      v-if="!isWeChatBrowser"
+      v-if="!isWeChatBrowser && !isAlipayClient"
     ></u-navbar>
     <view class="money"><text v-if="!info.moneyUnit">￥</text> {{ info.money }}
       <text class="unit" v-if="info.moneyUnit"> {{ info.moneyUnit }}</text>

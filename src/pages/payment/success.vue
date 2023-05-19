@@ -11,6 +11,11 @@
         >查看订单</navigator
       > -->
       <u-button @click="handleClick" type="success">返回首页</u-button>
+      <!-- #ifdef H5 -->
+      <u-button @click="toDownload" type="success" style="margin-top: 40rpx"
+        >下载APP享免单</u-button
+      >
+      <!-- #endif -->
     </view>
   </view>
 </template>
@@ -20,6 +25,9 @@ function handleClick() {
   uni.redirectTo({
     url: '/pages/launch/index'
   })
+}
+function toDownload() {
+  window.open('https://www.blacksilverscore.com/download/index.html')
 }
 </script>
 

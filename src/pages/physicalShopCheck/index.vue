@@ -1,14 +1,17 @@
 <!-- eslint-disable no-console -->
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
-import { orderApi, productApi } from '@/api'
-import { useConfigStore } from '@/store'
 import { storeToRefs } from 'pinia'
+import { orderApi, productApi } from '@/api'
+import { useConfigStore, useUserStore } from '@/store'
 
 const configStore = useConfigStore()
-const { enterByStoreQrcode, isWeChatBrowser } = storeToRefs(configStore)
+const userStore = useUserStore()
+const { enterByStoreQrcode, isWeChatBrowser, isAlipayClient } =
+  storeToRefs(configStore)
+const { accessToken } = storeToRefs(userStore)
 const info = reactive({
   name: '',
   shopId: '',
@@ -38,24 +41,28 @@ async function toPayment() {
     return
   }
   uni.showLoading({ title: '', mask: true })
-  const { data } = await productApi.getShopProductSkuList({
-    detail: false,
-    dynamicPrice: true,
-    shopId: info.shopId
-  })
-  if (data.records) {
-    const productSku = data.records[0]
-    orderData.value.orderProductSkus = [
-      {
-        count: 1,
-        money: money.value,
-        shopProductSkuId: productSku.id,
-        moneyRuleId: moneyRuleId.value,
-        dynamicPric: true
-      }
-    ]
+  try {
+    const { data } = await productApi.getShopProductSkuList({
+      detail: false,
+      dynamicPrice: true,
+      shopId: info.shopId
+    })
+    if (data.records) {
+      const productSku = data.records[0]
+      orderData.value.orderProductSkus = [
+        {
+          count: 1,
+          money: money.value,
+          shopProductSkuId: productSku.id,
+          moneyRuleId: moneyRuleId.value,
+          dynamicPric: true
+        }
+      ]
+    }
+    creatOrder()
+  } catch (err) {
+    uni.hideLoading()
   }
-  creatOrder()
 }
 
 async function getShopInfo() {
@@ -66,13 +73,16 @@ async function getShopInfo() {
   })
   const { name, shopMoneyRules } = data
   info.name = name
-  if(shopMoneyRules && shopMoneyRules.length>0) {
+  if (shopMoneyRules && shopMoneyRules.length > 0) {
     info.shopMoneyRules = shopMoneyRules
     moneyRuleId.value = shopMoneyRules[0].moneyRuleId
   }
 }
+watch(accessToken, (newValue, oldValue) => {
+  getShopInfo()
+})
 function radioGroupChange(e: any) {
-  console.log(e);
+  console.log(e)
 }
 
 onLoad(async (option) => {
@@ -94,18 +104,36 @@ onLoad(async (option) => {
       :title="'店铺付款'"
       :title-bold="true"
       :is-back="!enterByStoreQrcode"
-      v-if="!isWeChatBrowser"
+      v-if="!isWeChatBrowser && !isAlipayClient"
       color="#333"
     ></u-navbar>
     <text class="name">{{ info.name }}</text>
     <view class="inptBox">
-      <u-input v-model="money" type="digit" inputmode="decimal" focus pattern="number" placeholder="请输入支付金额"
-        input-align="center" />
+      <u-input
+        v-model="money"
+        type="digit"
+        inputmode="decimal"
+        focus
+        pattern="number"
+        placeholder="请输入支付金额"
+        input-align="center"
+      />
       <text class="unit">(元)</text>
     </view>
-    <view class="radioBox" v-if="info.shopMoneyRules && info.shopMoneyRules.length>1">
-      <u-radio-group v-model="moneyRuleId" @change="radioGroupChange" :wrap="true">
-        <u-radio v-for="(item, index) in info.shopMoneyRules" :key="index" :name="item.moneyRuleId">
+    <view
+      class="radioBox"
+      v-if="info.shopMoneyRules && info.shopMoneyRules.length > 1"
+    >
+      <u-radio-group
+        v-model="moneyRuleId"
+        @change="radioGroupChange"
+        :wrap="true"
+      >
+        <u-radio
+          v-for="(item, index) in info.shopMoneyRules"
+          :key="index"
+          :name="item.moneyRuleId"
+        >
           {{ item.userMoneyRuleName }}
         </u-radio>
       </u-radio-group>

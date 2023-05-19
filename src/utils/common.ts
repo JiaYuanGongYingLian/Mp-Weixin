@@ -38,6 +38,15 @@ export function isWeChat() {
   return false
   // #endif
 }
+// 判断是否为支付宝内部浏览器
+export function isAlipayClient() {
+  // #ifdef H5
+  return /AlipayClient/.test(window.navigator.userAgent)
+  // #endif
+  // #ifdef MP-WEIXIN
+  return false
+  // #endif
+}
 
 /**
  * vue3 调用上一个路由页面的方法
@@ -122,22 +131,23 @@ export const launchClientApp = () => {
  * @return {String} id
  */
 export const generateId = () => {
-  const s = [];
-  const hexDigits = "0123456789abcdef";
+  const s = []
+  const hexDigits = '0123456789abcdef'
   for (let i = 0; i < 36; i++) {
-    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
   }
-  s[14] = "4";
-  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);
-  s[8] = s[13] = s[18] = s[23] = "-";
+  s[14] = '4'
+  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1)
+  s[8] = s[13] = s[18] = s[23] = '-'
 
-  const uuid = s.join("");
-  return uuid;
-};
+  const uuid = s.join('')
+  return uuid
+}
 export default {
   getQueryObject,
   getQueryVariable,
   isWeChat,
+  isAlipayClient,
   getPrePage,
   callPreviousRouteMethod,
   launchClientApp,
