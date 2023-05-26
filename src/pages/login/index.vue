@@ -5,7 +5,7 @@ import { reactive, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { Md5 } from 'ts-md5'
 import { useUserStore } from '@/store'
-import { userApi } from '@/api'
+import { baseApi, userApi } from '@/api'
 import logo from '@/static/ic_launcher.png'
 import { isWeChat, getQueryVariable } from '@/utils/common'
 
@@ -16,8 +16,11 @@ isWeChatOfficial.value = false
 // #endif
 const form = reactive({
   username: '',
-  password: ''
+  code: '',
+  type: 10
 })
+const codeText = ref('')
+const uCode = ref()
 // 手机号验证
 const telReg = /^1[3456789]\d{9}$/
 function mobileBlurFn() {
@@ -38,6 +41,14 @@ function mobileBlurFn() {
 function clearFn() {
   form.username = ''
 }
+const enum TYPE_ENUM {
+  sms = 20, // 短信验证码登录
+  password = 10 // 密码登录
+}
+function switchLoginType(type: string) {
+  form.type = TYPE_ENUM[type]
+  form.code = ''
+}
 async function submit() {
   if (form.username !== '') {
     if (!telReg.test(form.username)) {
@@ -54,18 +65,19 @@ async function submit() {
     })
     return
   }
-  if (!form.password) {
+  if (!form.code) {
     uni.showToast({
-      title: '请输入密码',
+      title: form.type === TYPE_ENUM.password ? '请输入密码' : '请输入验证码',
       icon: 'none'
     })
     return
   }
   try {
     const { data } = await userApi.login({
-      type: 10,
+      type: form.type,
       username: form.username,
-      code: Md5.hashStr(form.password)
+      code:
+        form.type === TYPE_ENUM.password ? Md5.hashStr(form.code) : form.code
     })
     userStore.syncSetToken(data.accessToken)
     await getUserInfo()
@@ -111,6 +123,36 @@ function toRegister() {
     url: '/pages/register/bindPhone'
   })
 }
+async function sendSmsCode() {
+  if (form.username !== '') {
+    if (!telReg.test(form.username)) {
+      uni.showToast({
+        title: '请输入正确的手机号',
+        icon: 'none'
+      })
+      return
+    }
+  } else {
+    uni.showToast({
+      title: '请输入手机号',
+      icon: 'none'
+    })
+    return
+  }
+  if (uCode.value.canGetCode) {
+    try {
+      const { data } = await baseApi.smsSend({
+        type: 2,
+        phone: form.username
+      })
+      uCode.value.start()
+    } catch {}
+  }
+}
+function codeChange(text: string) {
+  codeText.value = text
+}
+
 onLoad(async (option) => {
   // #ifdef H5
   isWeChatOfficial.value = isWeChat()
@@ -173,20 +215,46 @@ onLoad(async (option) => {
             src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/close.png"
           ></cover-image>
         </view>
-        <view class="inputBox">
+        <view class="inputBox" v-if="form.type === TYPE_ENUM['password']">
           <input
             class="inpt code"
             type="text"
             maxlength="20"
-            v-model="form.password"
+            v-model="form.code"
             placeholder-class="placeholderStyle"
             placeholder-style="color: #D3DBE0;font-size: 34rpx;font-weight: normal;"
             placeholder="请输入密码"
           />
         </view>
+        <view class="inputBox flex" v-else>
+          <input
+            class="inpt code"
+            type="text"
+            maxlength="6"
+            v-model="form.code"
+            placeholder-class="placeholderStyle"
+            placeholder-style="color: #D3DBE0;font-size: 34rpx;font-weight: normal;"
+            placeholder="请输入验证码"
+          />
+          <u-button size="mini" type="success" @click="sendSmsCode">
+            {{ codeText }}</u-button
+          >
+          <u-verification-code
+            ref="uCode"
+            @change="codeChange"
+          ></u-verification-code>
+        </view>
         <u-button type="primary" class="hy-btn" :ripple="true" @click="submit"
           >登录</u-button
         >
+        <view class="loginType">
+          <text
+            @click="switchLoginType('sms')"
+            v-if="form.type === TYPE_ENUM['password']"
+            >验证码登录
+          </text>
+          <text v-else @click="switchLoginType('password')">密码登录 </text>
+        </view>
         <!-- #ifdef H5 -->
         <view v-if="!isWeChatOfficial" class="signuptips" @click="toRegister"
           >还没有账号？ <text> 点我立即注册</text></view
@@ -250,12 +318,18 @@ onLoad(async (option) => {
 .form {
   padding: 200rpx 75rpx;
 }
-
+.loginType {
+  color: #a1a1a1;
+}
 .inputBox {
   position: relative;
   border-bottom: 2rpx solid #e6ecf0;
   margin-bottom: 20rpx;
-
+  &.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
   .label {
     font-size: 36rpx;
     color: #333;

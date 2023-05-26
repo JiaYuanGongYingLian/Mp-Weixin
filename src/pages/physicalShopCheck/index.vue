@@ -84,16 +84,11 @@ watch(accessToken, (newValue, oldValue) => {
 function radioGroupChange(e: any) {
   console.log(e)
 }
-
 onLoad(async (option) => {
   if (option) {
-    const { name, shopId } = option
+    const { shopId } = option
     info.shopId = shopId
-    if (name) {
-      info.name = name
-    } else {
-      getShopInfo()
-    }
+    getShopInfo()
   }
 })
 </script>

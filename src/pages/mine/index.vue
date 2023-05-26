@@ -74,14 +74,7 @@ function handleTabBarChange(index: any) {
     })
   }
 }
-async function onChooseAvatar(e: { detail: { avatarUrl: any } }) {
-  const { avatarUrl } = e.detail
-  userInfo.value.avatar = avatarUrl
-  console.log('url',e, avatarUrl)
-  const { data } = await userApi.userInfoUpdate({
-    avatar: avatarUrl
-  })
-}
+
 async function getMoney() {
   if (hasLogin.value && !walletList.value.length) {
     const { data } = await moneyApi.walletList({ noPaging: true })
@@ -106,23 +99,25 @@ onLoad((option) => {
       <view class="user">
         <!--已登录-->
         <view class="top">
+          <!-- #ifdef H5 -->
           <view class="imgBox" @tap="goUrlFn">
-            <button
-              class="avatar-wrapper"
-              open-type="chooseAvatar"
-              @chooseavatar="onChooseAvatar"
-            >
-              <image
-                mode="aspectFill"
-                :src="
-                  userInfo?.avatar ||
-                  wxUserInfo?.headimgurl ||
-                  wxUserInfo?.avatarUrl ||
-                  'https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/img_user.png'
-                "
-              ></image>
-            </button>
+            <image
+              mode="aspectFill"
+              :src="
+                userInfo?.avatar ||
+                wxUserInfo?.headimgurl ||
+                wxUserInfo?.avatarUrl ||
+                'https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/img_user.png'
+              "
+            ></image>
           </view>
+          <!-- #endif -->
+          <!-- #ifdef MP-WEIXIN -->
+          <u-avatar :src="userInfo.avatar" v-if="userInfo.avatar"></u-avatar>
+          <view v-else class="avatar">
+            <open-data type="userAvatarUrl"></open-data>
+          </view>
+          <!-- #endif -->
           <view class="right">
             <view class="name" v-if="hasLogin">
               <view class="leftName"
@@ -591,7 +586,13 @@ onLoad((option) => {
       }
     }
   }
-
+  .avatar {
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: 50%;
+    display: inline-block;
+    overflow: hidden;
+  }
   .myBox {
     width: 690rpx;
     margin: 0 auto;

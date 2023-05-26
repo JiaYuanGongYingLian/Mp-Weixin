@@ -46,9 +46,6 @@ export default defineConfig({
   base: '/',
   build: {
     assetsDir: 'assets',
-    outDir: 'hyLife',
-    rollupOptions: {
-      external:['crypto-js']
-    }
+    outDir: 'hyLife'
   }
 })

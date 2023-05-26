@@ -106,7 +106,7 @@ onLoad((option) => {
         <!--                <view class="label">手机号</view>-->
         <input
           class="inpt phone"
-          type="number"
+          type="text"
           v-model="form.password"
           maxlength="18"
           minlength="6"
