@@ -300,6 +300,7 @@ onLoad(async (option) => {
   overflow: hidden;
   min-height: 100vh;
 }
+
 .placeholderStyle {
   color: #d3dbe0;
   font-size: 34rpx;
@@ -318,18 +319,22 @@ onLoad(async (option) => {
 .form {
   padding: 200rpx 75rpx;
 }
+
 .loginType {
   color: #a1a1a1;
 }
+
 .inputBox {
   position: relative;
   border-bottom: 2rpx solid #e6ecf0;
   margin-bottom: 20rpx;
+
   &.flex {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
+
   .label {
     font-size: 36rpx;
     color: #333;
@@ -359,20 +364,24 @@ onLoad(async (option) => {
 
 .hy-btn {
   margin: 70rpx 0 30rpx 0;
+
   &.wx {
     margin-top: 40rpx;
   }
+
   .hy-icon-wechat {
     color: #fff;
     margin-right: 15rpx;
     font-size: 36rpx;
   }
 }
+
 .signuptips {
   font-size: 24rpx;
   margin-top: 50rpx;
   color: #a1a1a1;
   text-align: center;
+
   text {
     color: #2979ff;
   }

@@ -54,7 +54,7 @@ isWeChatOfficial.value = false
 function getLocation() {
   // 获取定位信息
   uni.getLocation({
-    type: 'wgs84', // 返回可以用于uni.openLocation的经纬度
+    type: 'gcj02', // 返回可以用于uni.openLocation的经纬度
     // 用户允许获取定位
     success(res) {
       if (res.errMsg == 'getLocation:ok') {

@@ -68,7 +68,8 @@ async function submit() {
       code: form.code,
       password: Md5.hashStr(form.password),
       openId: userStore.openid,
-      unionId: userStore.unionid
+      unionId: userStore.unionid,
+      shopCode: uni.getStorageSync('shopCode')
     })
     userStore.syncSetToken(data.accessToken)
     await userStore.getUserInfo()

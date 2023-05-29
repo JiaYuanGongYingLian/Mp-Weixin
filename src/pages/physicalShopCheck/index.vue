@@ -71,7 +71,8 @@ async function getShopInfo() {
     detail: true,
     otherColumns: 'moneyRuleDetails'
   })
-  const { name, shopMoneyRules } = data
+  const { name, shopMoneyRules, code } = data
+  uni.setStorageSync('shopCode', code)
   info.name = name
   if (shopMoneyRules && shopMoneyRules.length > 0) {
     info.shopMoneyRules = shopMoneyRules
@@ -89,6 +90,11 @@ onLoad(async (option) => {
     const { shopId } = option
     info.shopId = shopId
     getShopInfo()
+  }
+  if (!userStore.hasLogin) {
+    uni.navigateTo({
+      url: '/pages/login/index'
+    })
   }
 })
 </script>

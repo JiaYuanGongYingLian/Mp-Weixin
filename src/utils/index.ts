@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-loss-of-precision */
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-param-reassign */
 import { storeToRefs } from 'pinia'
@@ -70,14 +71,44 @@ export const getImgFullPath = (suffix: string) => {
 function rad(d: number) {
   return (d * Math.PI) / 180.0
 }
+// 腾讯/高德地图经纬度转换成百度经纬度
+export function qqMapTransBMap(lat: any, lng: any) {
+  const x_pi = (3.14159265358979324 * 3000.0) / 180.0
+  const x = lng
+  const y = lat
+  const z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi)
+  const theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi)
+  const lngs = z * Math.cos(theta) + 0.0065
+  const lats = z * Math.sin(theta) + 0.006
 
+  return {
+    lng: lngs,
+    lat: lats
+  }
+}
+// 百度经纬度转换成腾讯/高德地图经纬度
+export function bMapTransQQMap(lat: number, lng: number) {
+  const x_pi = (3.14159265358979324 * 3000.0) / 180.0
+  const x = lng - 0.0065
+  const y = lat - 0.006
+  const z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * x_pi)
+  const theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * x_pi)
+  const lngs = z * Math.cos(theta)
+  const lats = z * Math.sin(theta)
+
+  return {
+    lng: lngs,
+    lat: lats
+  }
+}
 // 根据经纬度计算距离，参数分别为第一点的纬度，经度；第二点的纬度，经度
 export function getDistance(lat1: any, lng1: any, lat2: any, lng2: any) {
+  const qqMapLocation = bMapTransQQMap(lat2, lng2)
   return new Promise((resolve, reject) => {
     const radLat1 = rad(lat1)
-    const radLat2 = rad(lat2)
+    const radLat2 = rad(qqMapLocation.lat)
     const a = radLat1 - radLat2
-    const b = rad(lng1) - rad(lng2)
+    const b = rad(lng1) - rad(qqMapLocation.lng)
     let s =
       2 *
       Math.asin(
@@ -149,12 +180,13 @@ export function handleMapLocation(to: {
   console.log('进入导航')
   // 获取定位信息
   uni.getLocation({
-    type: 'wgs84',
+    type: 'gcj02',
     success(res) {
+      // eslint-disable-next-line eqeqeq
       if (res.errMsg == 'getLocation:ok') {
         uni.openLocation({
-          latitude,
-          longitude,
+          latitude: bMapTransQQMap(latitude, longitude).lat,
+          longitude: bMapTransQQMap(latitude, longitude).lng,
           address: addr,
           scale: 18,
           success() {

@@ -589,7 +589,7 @@
         getLocation: function (e) {
           c(
             p.getLocation,
-            { type: (e = e || {}).type || 'wgs84' },
+            { type: (e = e || {}).type || 'gcj02' },
             ((e._complete = function (e) {
               delete e.type
             }),
