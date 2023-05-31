@@ -41,12 +41,9 @@ function mobileBlurFn() {
 function clearFn() {
   form.username = ''
 }
-const enum TYPE_ENUM {
-  sms = 20, // 短信验证码登录
-  password = 10 // 密码登录
-}
+
 function switchLoginType(type: string) {
-  form.type = TYPE_ENUM[type]
+  form.type = userApi.LOGIN_TYPE_ENUM[type]
   form.code = ''
 }
 async function submit() {
@@ -67,7 +64,10 @@ async function submit() {
   }
   if (!form.code) {
     uni.showToast({
-      title: form.type === TYPE_ENUM.password ? '请输入密码' : '请输入验证码',
+      title:
+        form.type === userApi.LOGIN_TYPE_ENUM.PWD
+          ? '请输入密码'
+          : '请输入验证码',
       icon: 'none'
     })
     return
@@ -77,7 +77,9 @@ async function submit() {
       type: form.type,
       username: form.username,
       code:
-        form.type === TYPE_ENUM.password ? Md5.hashStr(form.code) : form.code
+        form.type === userApi.LOGIN_TYPE_ENUM.PWD
+          ? Md5.hashStr(form.code)
+          : form.code
     })
     userStore.syncSetToken(data.accessToken)
     await getUserInfo()
@@ -215,7 +217,7 @@ onLoad(async (option) => {
             src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/close.png"
           ></cover-image>
         </view>
-        <view class="inputBox" v-if="form.type === TYPE_ENUM['password']">
+        <view class="inputBox" v-if="form.type === userApi.LOGIN_TYPE_ENUM.PWD">
           <input
             class="inpt code"
             type="text"
@@ -249,11 +251,11 @@ onLoad(async (option) => {
         >
         <view class="loginType">
           <text
-            @click="switchLoginType('sms')"
-            v-if="form.type === TYPE_ENUM['password']"
+            @click="switchLoginType('SMS_CODE')"
+            v-if="form.type === userApi.LOGIN_TYPE_ENUM.PWD"
             >验证码登录
           </text>
-          <text v-else @click="switchLoginType('password')">密码登录 </text>
+          <text v-else @click="switchLoginType('PWD')">密码登录 </text>
         </view>
         <!-- #ifdef H5 -->
         <view v-if="!isWeChatOfficial" class="signuptips" @click="toRegister"

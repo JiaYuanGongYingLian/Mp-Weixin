@@ -1,5 +1,16 @@
 import http from '../http'
 
+enum LOGIN_TYPE_ENUM {
+  SMS_CODE = 20, // 短信验证码登录
+  PWD = 10, // 密码登录
+  WECHAT = 30, // 微信登录
+  QQ = 31, // QQ登录
+  WECHATPUBLIC = 32, // 微信公众号登录
+  MINIWECHAT = 33, // 微信小程序登录
+  APPLE = 35, // apple登录
+  BAR_CODE_SCANNER = 50 // 扫码机登录
+}
+
 function wxMiniLogin() {
   return http.post('/auth/api/v1/auth/wxMiniLogin')
 }
@@ -74,5 +85,6 @@ export default {
   addressAdd,
   userInfo,
   userInfoUpdate,
-  wxUserPhoneNumber
+  wxUserPhoneNumber,
+  LOGIN_TYPE_ENUM
 }

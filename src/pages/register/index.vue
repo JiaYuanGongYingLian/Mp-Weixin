@@ -63,7 +63,7 @@ async function submit() {
       mask: true
     })
     const { data } = await userApi.register({
-      loginType: 33,
+      loginType: userApi.LOGIN_TYPE_ENUM.PWD,
       phone: form.phone,
       code: form.code,
       password: Md5.hashStr(form.password),
