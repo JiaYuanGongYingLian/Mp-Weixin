@@ -62,15 +62,19 @@ async function submit() {
       title: '提交中',
       mask: true
     })
-    const { data } = await userApi.register({
+    const params = {
       loginType: userApi.LOGIN_TYPE_ENUM.PWD,
       phone: form.phone,
       code: form.code,
       password: Md5.hashStr(form.password),
       openId: userStore.openid,
-      unionId: userStore.unionid,
-      shopCode: uni.getStorageSync('shopCode')
-    })
+      unionId: userStore.unionid
+    }
+    const shopCode = uni.getStorageSync('shopCode')
+    if (shopCode) {
+      params.shopCode = shopCode
+    }
+    const { data } = await userApi.register(params)
     userStore.syncSetToken(data.accessToken)
     await userStore.getUserInfo()
     // #ifdef MP-WEIXIN
