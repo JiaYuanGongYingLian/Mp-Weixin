@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 // url所有传参获取
 export function getQueryObject(url: string) {
@@ -72,6 +73,9 @@ export function callPreviousRouteMethod(
     }
   }
 }
+/**
+ * 获取上一个路由页面实例
+ */
 export const getPrePage = () => {
   const pages = getCurrentPages()
   const prePage = pages[pages.length - 2]
@@ -80,49 +84,58 @@ export const getPrePage = () => {
   // #endif
   return prePage.$vm
 }
-
+/**
+ * 拉起客户端APP
+ */
 export const launchClientApp = () => {
   const u = navigator.userAgent
   const isWeixin = u.toLowerCase().indexOf('micromessenger') !== -1 // 微信内
+  const isAliPay = isAlipayClient()
   const isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1 // android终端
   const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) // ios终端
-  if (isWeixin) {
+  if (isWeixin || isAliPay) {
     uni.showModal({
       title: '请在浏览器上打开'
     })
   } else {
-    // android端
-    if (isAndroid) {
-      // 安卓app的scheme协议
-      window.location.href = 'taobao://'
-      setTimeout(() => {
-        const hidden =
-          window.document.hidden ||
-          window.document.mozHidden ||
-          window.document.msHidden ||
-          window.document.webkitHidden
-        if (typeof hidden === 'undefined' || hidden === false) {
-          // 应用宝下载地址 (emmm 找不到淘宝应用宝的地址，这里放的是 lucky coffee 地址)
-          window.location.href =
-            'https://a.app.qq.com/o/simple.jsp?pkgname=com.lucky.luckyclient'
-        }
-      }, 2000)
+    const enum Android {
+      scheme = 'baixudroidapp://b2dhzj.jgshare.cn',
+      download_url = 'https://www.blacksilverscore.com/download/index.html'
     }
-    // ios端
-    if (isIOS) {
-      // ios的scheme协议
-      window.location.href = 'taobao://'
-      setTimeout(() => {
+    const enum Ios {
+      scheme = 'com.sz.heiyinjifen://',
+      download_url = 'https://apps.apple.com/cn/app/id1630271279'
+    }
+    if (isAndroid || isIOS) {
+      window.location.href = isAndroid ? Android.scheme : Ios.scheme
+      const timer = setTimeout(() => {
+        uni.showModal({
+          content: '此功能需访问黑银APP',
+          confirmText: '下载黑银APP',
+          success(res) {
+            if (res.confirm) {
+              window.location.href = isAndroid
+                ? Android.download_url
+                : Ios.download_url
+            } else if (res.cancel) {
+              console.log('用户点击取消')
+            }
+          }
+        })
+      }, 2000)
+      console.log(isAndroid ? Android.scheme : Ios.scheme)
+      window.addEventListener('visibilitychange', () => {
         const hidden =
           window.document.hidden ||
           window.document.mozHidden ||
           window.document.msHidden ||
           window.document.webkitHidden
-        if (typeof hidden === 'undefined' || hidden === false) {
-          // App store下载地址
-          window.location.href = 'http://itunes.apple.com/app/id387682726'
+        console.log(122, hidden)
+        if (hidden) {
+          // 如果页面隐藏了，则表示唤起成功，这时候需要清除下载定时器
+          clearTimeout(timer)
         }
-      }, 2000)
+      })
     }
   }
 }
@@ -143,6 +156,63 @@ export const generateId = () => {
   const uuid = s.join('')
   return uuid
 }
+/**
+ * 微信js-sdk配置
+ */
+export const jsSdkConfig = (data: {
+  appId: any
+  timestamp: any
+  nonceStr: any
+  signature: any
+}) => {
+  wx.config({
+    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: data.appId, // 必填，公众号的唯一标识
+    timestamp: data.timestamp, // 必填，生成签名的时间戳
+    nonceStr: data.nonceStr, // 必填，生成签名的随机串
+    signature: data.signature, // 必填，签名
+    jsApiList: [] // 必填，需要使用的JS接口列表
+  })
+}
+/**
+ * 微信js-sdk自定义“分享给朋友”及“分享到QQ”按钮的分享内容（1.4.0）
+ */
+export const updateAppMessageShareData = (data: {
+  title: any
+  desc: any
+  link: any
+  imgUrl: any
+}) => {
+  wx.updateAppMessageShareData({
+    title: data.title, // 分享标题
+    desc: data.desc, // 分享描述
+    link: data.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+    imgUrl: data.imgUrl, // 分享图标
+    success() {
+      // 设置成功
+    }
+  })
+}
+/**
+ * 微信js-sdk自定义“分享到朋友圈”及“分享到QQ空间”按钮的分享内容（1.4.0）
+ */
+export const updateTimelineShareData = (data: {
+  title: any
+  desc: any
+  link: any
+  imgUrl: any
+}) => {
+  wx.updateTimelineShareData({
+    title: data.title, // 分享标题
+    desc: data.desc, // 分享描述
+    link: data.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+    imgUrl: data.imgUrl, // 分享图标
+    success() {
+      // 设置成功
+    }
+  })
+}
+
 export default {
   getQueryObject,
   getQueryVariable,
@@ -151,5 +221,7 @@ export default {
   getPrePage,
   callPreviousRouteMethod,
   launchClientApp,
-  generateId
+  generateId,
+  updateAppMessageShareData,
+  updateTimelineShareData
 }

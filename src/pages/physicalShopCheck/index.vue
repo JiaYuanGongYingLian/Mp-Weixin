@@ -6,6 +6,7 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { orderApi, productApi } from '@/api'
 import { useConfigStore, useUserStore } from '@/store'
+import hyDownloadTips from '@/components/hy-download-tips/index.vue'
 
 const configStore = useConfigStore()
 const userStore = useUserStore()
@@ -143,6 +144,8 @@ onLoad(async (option) => {
     <u-button class="hy-btn" type="primary" ripple @click="toPayment">
       结算
     </u-button>
+
+    <hyDownloadTips />
   </div>
 </template>
 
