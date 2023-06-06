@@ -38,10 +38,12 @@ const props = withDefaults(
   defineProps<{
     placeholder?: string
     icon?: string
+    topDistance?: number
   }>(),
   {
     placeholder: '热门搜索',
-    icon: 'hy-icon-scan'
+    icon: 'hy-icon-scan',
+    topDistance: 0
   }
 )
 const clientInfo = reactive({
@@ -61,7 +63,9 @@ const obj = {
 uni.getSystemInfo({
   success: (res) => {
     clientInfo.width = obj.left || res.windowWidth
-    clientInfo.height = obj.top ? obj.top + obj.height : res.statusBarHeight
+    clientInfo.height = obj.top
+      ? obj.top + obj.height + props.topDistance
+      : res.statusBarHeight
     clientInfo.inputTop = obj.top
       ? obj.top + (obj.height - 30) / 2
       : res.statusBarHeight + 7

@@ -1,5 +1,5 @@
 <template>
-  <div class="tips" v-show="show">
+  <div class="tips" v-show="show" animate="iteration-1 bounce">
     <div class="btn-close flex">
       <img
         src="https://image.blacksilverscore.com/uploads/4af4c1c2-ce7b-487d-8a8d-a0cd3e0aba08.png"
@@ -28,9 +28,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, reactive } from 'vue'
+import { onPageScroll } from '@dcloudio/uni-app';
 import { launchClientApp } from '@/utils/common'
 
+const props = withDefaults(
+  defineProps<{
+    top?: string | number
+    bottom?: string | number
+  }>(),
+  {
+    top: 'auto',
+    bottom: 0
+  }
+)
 const show = ref(true)
 function close() {
   show.value = false
@@ -38,13 +49,20 @@ function close() {
 function openApp() {
   launchClientApp()
 }
+onPageScroll((e) => {
+  const { scrollTop } = e
+  if (scrollTop > 50) {
+    show.value = false
+  }
+})
 </script>
 
 <style lang="scss" scoped>
 .tips {
   position: fixed;
   width: 100%;
-  bottom: 0;
+  top: v-bind('props.top');
+  bottom: v-bind('props.bottom');
   left: 0;
   overflow: hidden;
   z-index: 20;

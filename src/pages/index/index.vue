@@ -12,7 +12,9 @@ import { baseApi, moneyApi, productApi } from '@/api'
 import { getImgFullPath } from '@/utils'
 import { useUserStore } from '@/store'
 import searchBar from '@/components/hy-search-bar/index.vue'
+import hyDownloadTips from '@/components/hy-download-tips/index.vue'
 import icon_heidou from '@/static/mine_hei_dou.png'
+import { isAlipayClient, isWeChat } from '@/utils/common'
 
 const userStore = useUserStore()
 const { hasLogin, walletList } = storeToRefs(userStore)
@@ -147,6 +149,9 @@ onReachBottom(() => {
 </script>
 <template>
   <view class="index-page">
+    <!-- #ifdef H5 -->
+    <hyDownloadTips v-if="!isWeChat() && !isAlipayClient()" :top="'0px'" />
+    <!-- #endif -->
     <searchBar @on-search="onSearch" />
     <view class="section">
       <view class="tit">线下好店</view>
