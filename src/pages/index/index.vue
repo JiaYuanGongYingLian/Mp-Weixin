@@ -128,6 +128,29 @@ async function getMoney() {
     userStore.syncSetWalletList(data)
   }
 }
+const handleBannerClick = (data: { objectType: any; webUrl: any }) => {
+  const { objectType, webUrl, content } = data
+  switch (objectType) {
+    case 0:
+      // dev const url = ''
+      if (webUrl) {
+        uni.navigateTo({
+          url: `/pages/webview/index?url=${webUrl}`
+        })
+      }
+      break
+    case 13:
+      if (content) {
+        const obj = JSON.parse(content)
+        uni.navigateTo({
+          url: `/pages/physicalShop/index?shopId=${obj.id}&shopType=${obj.shopType}`
+        })
+      }
+      break
+    default:
+      break
+  }
+}
 onReady(async () => {
   // 线下好店
   getBaseDataFn(baseApi.advertising_enum.ADV_HOME_LIST2, (data) => {
@@ -191,7 +214,11 @@ onReachBottom(() => {
       </view>
     </view>
     <swiper class="swiper" indicator-dots :autoplay="false" circular>
-      <swiper-item v-for="item in bannerList" :key="item.id">
+      <swiper-item
+        v-for="item in bannerList"
+        :key="item.id"
+        @click="handleBannerClick(item)"
+      >
         <image
           class="item"
           :src="getImgFullPath(item.imageUrl)"
