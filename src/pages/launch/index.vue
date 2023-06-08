@@ -1,6 +1,17 @@
 <!-- eslint-disable no-param-reassign -->
 <!-- eslint-disable no-empty -->
 <!-- eslint-disable no-use-before-define -->
+<!--
+h5分享的链接统一通过此页面重定向
+分享链接或生成二维码的链接有（示例）：
+1.付款链接
+https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShopCheck/index&qrcode=1&shopId=1221
+2.店铺分享链接
+https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShop/index&qrcode=1&shopId=1073
+3.商品分享链接
+https://wap.blacksilverscore.com/?redirect_url=/pages/productDetail/index&qrcode=1&shopId=1073&productId=100002907&shareCode='84DUO4'
+ -->
+
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app'
 import logo from '@/static/ic_launcher.png'
@@ -20,7 +31,9 @@ function toTargetPage(URL?: any, duration = 0) {
   }, duration)
 }
 
-onLoad(async (option) => {
+onLoad(async (option = {}) => {
+  const { productId, shareCode } = option
+  uni.setStorageSync('shareCode', shareCode)
   // #ifdef MP-WEIXIN
   uni.login({
     provider: 'weixin',
@@ -47,7 +60,7 @@ onLoad(async (option) => {
   const shopId = getQueryVariable('shopId')
   if (qrcode) {
     configStore.setEnterType('storeQrcode')
-    url = `${origin_url}?qrcode=${qrcode}&shopId=${shopId}`
+    url = `${origin_url}?qrcode=${qrcode}&shopId=${shopId}&productId=${productId}`
     if (origin_url === '/pages/physicalShopCheck/index') {
       // 扫店铺结算二维码的特殊处理，使结算完成跳转首页为店铺首页
       const url_rewirte = `/pages/physicalShop/index?qrcode=${qrcode}&shopId=${shopId}`
