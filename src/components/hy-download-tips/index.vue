@@ -21,7 +21,12 @@
       />
     </div>
     <div class="carousel">打开黑银APP，享排队免单</div>
-    <u-button class="btn" type="primary" :ripple="true" @click="openApp"
+    <u-button
+      class="btn"
+      type="primary"
+      :ripple="true"
+      :loading="loading"
+      @click="openApp"
       >立即打开</u-button
     >
   </div>
@@ -29,7 +34,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue'
-import { onPageScroll } from '@dcloudio/uni-app';
+import { onPageScroll } from '@dcloudio/uni-app'
 import { launchClientApp } from '@/utils/common'
 
 const props = withDefaults(
@@ -43,10 +48,15 @@ const props = withDefaults(
   }
 )
 const show = ref(true)
+const loading = ref(false)
 function close() {
   show.value = false
 }
 function openApp() {
+  loading.value = true
+  setTimeout(() => {
+    loading.value = false
+  }, 2000)
   launchClientApp()
 }
 onPageScroll((e) => {
@@ -83,7 +93,7 @@ onPageScroll((e) => {
     align-items: center;
   }
   .carousel {
-    width: 57%;
+    width: 55%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -91,16 +101,15 @@ onPageScroll((e) => {
     color: #fff;
   }
   .btn {
-    width: 23%;
-    background-color: #218CCD;
+    width: 25%;
+    background-color: #218ccd;
     font-size: 14px;
     color: #fff;
-    letter-spacing: 0;
     border-radius: 3px;
     height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    &:before {
+      flex-shrink: 0;
+    }
   }
 }
 

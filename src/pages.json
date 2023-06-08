@@ -94,7 +94,8 @@
 		{
 			"path": "pages/webview/index",
 			"style": {
-				"navigationBarTitleText": "webview"
+				"navigationStyle": "custom",
+				"navigationBarTitleText": ""
 			}
 		},
 		{
@@ -215,7 +216,8 @@
 	},
 	"easycom": {
 		"custom": {
-			"^u-(.*)": "vk-uview-ui/components/u-$1/u-$1.vue"
+			"^u-(.*)": "vk-uview-ui/components/u-$1/u-$1.vue",
+			"^hy-(.*)": "@/components/hy-$1/index.vue"
 		}
 	}
 }

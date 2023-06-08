@@ -95,7 +95,7 @@ export const launchClientApp = () => {
   const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) // ios终端
   if (isWeixin || isAliPay) {
     uni.showModal({
-      title: '请在浏览器上打开'
+      content: '请在浏览器上打开'
     })
   } else {
     const enum Android {
@@ -123,14 +123,12 @@ export const launchClientApp = () => {
           }
         })
       }, 2000)
-      console.log(isAndroid ? Android.scheme : Ios.scheme)
       window.addEventListener('visibilitychange', () => {
         const hidden =
           window.document.hidden ||
           window.document.mozHidden ||
           window.document.msHidden ||
           window.document.webkitHidden
-        console.log(122, hidden)
         if (hidden) {
           // 如果页面隐藏了，则表示唤起成功，这时候需要清除下载定时器
           clearTimeout(timer)
