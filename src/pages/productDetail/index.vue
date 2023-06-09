@@ -253,6 +253,7 @@ onLoad(async (option) => {
   loadingSkeleton.value = true
   await getProductInfo()
   await getFavoriteInfo()
+  // this.wxShare.updateAppMessageShareData({})
 })
 onShareAppMessage((res) => {
   const inviteCode = ''

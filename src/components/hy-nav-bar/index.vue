@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-07 15:41:52
- * @LastEditTime: 2023-06-07 17:13:17
+ * @LastEditTime: 2023-06-09 11:45:41
  * @LastEditors:  Please set LastEditors
 -->
 <template>
@@ -46,7 +46,7 @@ const props = withDefaults(
     backIconName: 'nav-back',
     background: () => {
       return {
-        backgroundColor: '#001f3f'
+        backgroundColor: '#fafafa'
         // 导航栏背景图
         // background: 'url(https://cdn.uviewui.com/uview/swiper/1.jpg) no-repeat'
         // 还可以设置背景图size属性
