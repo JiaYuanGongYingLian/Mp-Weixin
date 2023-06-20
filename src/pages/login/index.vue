@@ -277,6 +277,13 @@ onLoad(async (option) => {
           <text class="iconfont hy-icon-wechat"></text>
           微信快捷登录
         </u-button>
+        <navigator
+          open-type="navigateBack"
+          hover-class="navigator-hover"
+          style="text-align: center; color: #999"
+        >
+          取消
+        </navigator>
         <!-- #endif -->
         <!-- #ifdef H5 -->
         <u-button
