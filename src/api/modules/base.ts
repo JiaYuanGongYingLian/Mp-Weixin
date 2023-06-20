@@ -46,6 +46,12 @@ function reverseGeocoding(data: any) {
 function getAliOssToken(data: any) {
   return http.get('/base/api/v1/ali/token', data)
 }
+/**
+ * 添加资源文件
+ */
+function aliAddFile(data: any) {
+  return http.post('/base/api/v1/ali/addFile', data)
+}
 
 export default {
   getCategoryList,
@@ -53,5 +59,6 @@ export default {
   advertising_enum,
   smsSend,
   reverseGeocoding,
-  getAliOssToken
+  getAliOssToken,
+  aliAddFile
 }

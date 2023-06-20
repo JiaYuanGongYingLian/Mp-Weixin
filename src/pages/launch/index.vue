@@ -31,8 +31,8 @@ function toTargetPage(URL?: any, duration = 0) {
   }, duration)
 }
 
-onLoad(async (option = {}) => {
-  const { productId, shareCode } = option
+onLoad(async (option) => {
+  const shareCode = getQueryVariable('shareCode')
   uni.setStorageSync('shareCode', shareCode)
   // #ifdef MP-WEIXIN
   uni.login({
@@ -58,6 +58,7 @@ onLoad(async (option = {}) => {
   const origin_url = getQueryVariable('redirect_url')
   const qrcode = getQueryVariable('qrcode')
   const shopId = getQueryVariable('shopId')
+  const productId = getQueryVariable('productId')
   if (qrcode) {
     configStore.setEnterType('storeQrcode')
     url = `${origin_url}?qrcode=${qrcode}&shopId=${shopId}&productId=${productId}`

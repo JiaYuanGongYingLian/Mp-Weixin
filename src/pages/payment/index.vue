@@ -51,7 +51,7 @@ const payWay = reactive([
     selected: false,
     // #endif
     // #ifdef H5
-    available: !isWeChat(),
+    available: !isWeChat(), // !isWeChat()
     // #endif
     // #ifdef MP-WEIXIN
     available: false,
