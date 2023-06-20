@@ -1,3 +1,4 @@
+<!-- eslint-disable no-console -->
 <!-- eslint-disable no-param-reassign -->
 <!-- eslint-disable no-empty -->
 <!-- eslint-disable no-use-before-define -->
@@ -9,14 +10,19 @@ https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShopCheck/index&qr
 2.店铺分享链接
 https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShop/index&qrcode=1&shopId=1073
 3.商品分享链接
-https://wap.blacksilverscore.com/?redirect_url=/pages/productDetail/index&qrcode=1&shopId=1073&productId=100002907&shareCode='84DUO4'
+https://wap.blacksilverscore.com/?redirect_url=/pages/productDetail/index&qrcode=1&shopId=1073&productId=100003057&shareCode='84DUO4'
  -->
 
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app'
 import logo from '@/static/ic_launcher.png'
 import { useUserStore, useConfigStore } from '@/store'
-import { getQueryVariable, isWeChat } from '@/utils/common'
+import {
+  getQueryObject,
+  getQueryVariable,
+  isWeChat,
+  parseParams
+} from '@/utils/common'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
@@ -27,13 +33,10 @@ function toTargetPage(URL?: any, duration = 0) {
     uni.reLaunch({
       url
     })
-    uni.removeStorageSync('redirect_url')
   }, duration)
 }
 
 onLoad(async (option) => {
-  const shareCode = getQueryVariable('shareCode')
-  uni.setStorageSync('shareCode', shareCode)
   // #ifdef MP-WEIXIN
   uni.login({
     provider: 'weixin',
@@ -57,26 +60,36 @@ onLoad(async (option) => {
   let url = ''
   const origin_url = getQueryVariable('redirect_url')
   const qrcode = getQueryVariable('qrcode')
-  const shopId = getQueryVariable('shopId')
-  const productId = getQueryVariable('productId')
-  if (qrcode) {
-    configStore.setEnterType('storeQrcode')
-    url = `${origin_url}?qrcode=${qrcode}&shopId=${shopId}&productId=${productId}`
-    if (origin_url === '/pages/physicalShopCheck/index') {
-      // 扫店铺结算二维码的特殊处理，使结算完成跳转首页为店铺首页
-      const url_rewirte = `/pages/physicalShop/index?qrcode=${qrcode}&shopId=${shopId}`
-      uni.setStorageSync('redirect_url', url_rewirte)
-    } else {
-      uni.setStorageSync('redirect_url', url)
+  const from = getQueryVariable('from')
+  const shareCode = getQueryVariable('shareCode')
+  if (shareCode) {
+    uni.setStorageSync('shareCode', shareCode)
+  }
+  const tempParams = getQueryObject(window.location.search)
+  if (tempParams.redirect_url) {
+    delete tempParams?.redirect_url
+  }
+  if (origin_url) {
+    url = parseParams(origin_url, tempParams)
+    if (qrcode) {
+      configStore.setEnterType('storeQrcode')
+      if (origin_url === '/pages/physicalShopCheck/index') {
+        // 扫店铺结算二维码的特殊处理，使结算完成跳转首页为店铺首页
+        const url_rewirte = parseParams('/pages/physicalShop/index', tempParams)
+        uni.setStorageSync('redirect_url', url_rewirte)
+      } else {
+        uni.setStorageSync('redirect_url', url)
+      }
     }
-  } else {
+  }
+  if (from === 'login') {
     const redirect_url = uni.getStorageSync('redirect_url')
     if (redirect_url) {
       url = redirect_url
+      uni.removeStorageSync('redirect_url')
     }
   }
   toTargetPage(url)
-
   // #endif
 })
 </script>

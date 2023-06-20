@@ -90,7 +90,8 @@ const userStore = defineStore('storeId', {
           },
           data: {
             type,
-            code: openid || this.wxUserInfo.openid
+            code: openid || this.wxUserInfo.openid,
+            unionId: this.wxUserInfo.unionId
           },
           success: (res) => {
             const { code, data } = res.data

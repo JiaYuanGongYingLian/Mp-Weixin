@@ -211,6 +211,32 @@ export const updateTimelineShareData = (data: {
   })
 }
 
+// 参数拼接
+export const parseParams = (uri: string, params: { [x: string]: any }) => {
+  const paramsArray: string[] = []
+  Object.keys(params).forEach(
+    (key) => params[key] && paramsArray.push(`${key}=${params[key]}`)
+  )
+  if (uri.search(/\?/) === -1) {
+    uri += `?${paramsArray.join('&')}`
+  } else {
+    uri += `&${paramsArray.join('&')}`
+  }
+  return uri
+}
+
+// 判断空对象
+export const isEmptyObject = (value: { constructor?: any }) => {
+  return (
+    value && Object.keys(value).length === 0 && value.constructor === Object
+  )
+}
+
+// 判断手机号正确性
+export const isMObile = (value: string) => {
+  return /^1[3-9]\d{9}$/.test(value)
+}
+
 export default {
   getQueryObject,
   getQueryVariable,
@@ -221,5 +247,8 @@ export default {
   launchClientApp,
   generateId,
   updateAppMessageShareData,
-  updateTimelineShareData
+  updateTimelineShareData,
+  parseParams,
+  isEmptyObject,
+  isMObile
 }

@@ -1,3 +1,6 @@
+<!-- eslint-disable eqeqeq -->
+<!-- eslint-disable no-unused-expressions -->
+<!-- eslint-disable no-shadow -->
 <!-- eslint-disable no-console -->
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
@@ -77,7 +80,15 @@ async function getShopInfo() {
   info.name = name
   if (shopMoneyRules && shopMoneyRules.length > 0) {
     info.shopMoneyRules = shopMoneyRules
-    moneyRuleId.value = shopMoneyRules[0].moneyRuleId
+    if (moneyRuleId.value) {
+      const item = shopMoneyRules.find(
+        (item: { moneyRuleId: number | string }) =>
+          item.moneyRuleId == moneyRuleId.value
+      )
+      item && (moneyRuleId.value = item.moneyRuleId)
+    } else {
+      moneyRuleId.value = shopMoneyRules[0].moneyRuleId
+    }
   }
 }
 watch(accessToken, (newValue, oldValue) => {
@@ -90,6 +101,9 @@ onLoad(async (option) => {
   if (option) {
     const { shopId } = option
     info.shopId = shopId
+    if (option.moneyRuleId) {
+      moneyRuleId.value = option.moneyRuleId
+    }
     getShopInfo()
   }
   if (!userStore.hasLogin) {

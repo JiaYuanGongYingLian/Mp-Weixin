@@ -134,6 +134,7 @@ async function couponAdd() {
 // 获取购物车数据
 const totalCartNum = ref()
 async function getCartProductNumFn() {
+  if (!hasLogin.value) return
   try {
     const { data } = await productApi.productCartList({
       userId: userInfo.value.id,
@@ -147,10 +148,10 @@ async function getCartProductNumFn() {
     console.log(err)
   }
 }
-getCartProductNumFn()
 
 // 跳转至购物车页面
 function toCart() {
+  if (!checkLoginState()) return
   uni.navigateTo({
     url: '/pages/cart/index',
     success: () => {
@@ -253,6 +254,7 @@ onLoad(async (option) => {
   loadingSkeleton.value = true
   await getProductInfo()
   await getFavoriteInfo()
+  await getCartProductNumFn()
 })
 onShareAppMessage((res) => {
   const inviteCode = ''
