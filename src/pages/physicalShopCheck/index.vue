@@ -1,3 +1,6 @@
+<!-- eslint-disable eqeqeq -->
+<!-- eslint-disable no-unused-expressions -->
+<!-- eslint-disable no-shadow -->
 <!-- eslint-disable no-console -->
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
@@ -19,7 +22,9 @@ const info = reactive({
   shopMoneyRules: []
 })
 const money = ref()
-const orderData = ref({})
+const orderData = ref({
+  remark: ''
+})
 const moneyRuleId = ref(null)
 // 创建订单
 async function creatOrder() {
@@ -75,7 +80,7 @@ async function getShopInfo() {
   const { name, shopMoneyRules, code } = data
   uni.setStorageSync('shopCode', code)
   info.name = name
-  if (shopMoneyRules && shopMoneyRules.length > 0) {
+  if (shopMoneyRules && shopMoneyRules.length > 0 && !moneyRuleId.value) {
     info.shopMoneyRules = shopMoneyRules
     moneyRuleId.value = shopMoneyRules[0].moneyRuleId
   }
@@ -90,6 +95,9 @@ onLoad(async (option) => {
   if (option) {
     const { shopId } = option
     info.shopId = shopId
+    if (option.moneyRuleId) {
+      moneyRuleId.value = option.moneyRuleId
+    }
     getShopInfo()
   }
   if (!userStore.hasLogin) {
@@ -140,7 +148,13 @@ onLoad(async (option) => {
         </u-radio>
       </u-radio-group>
     </view>
-
+    <u-form-item
+      label-width="auto"
+      label-position="top"
+      :border-bottom="false"
+      label="备注："
+      ><u-input type="textarea" v-model="orderData.remark"
+    /></u-form-item>
     <u-button class="hy-btn" type="primary" ripple @click="toPayment">
       结算
     </u-button>

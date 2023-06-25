@@ -1,3 +1,4 @@
+<!-- eslint-disable no-console -->
 <!-- eslint-disable no-empty -->
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
@@ -162,10 +163,6 @@ onLoad(async (option) => {
     const code = getQueryVariable('code')
     if (code) {
       console.log('重定向的login', code)
-    } else {
-      console.log('首次进入login', code)
-    }
-    if (code) {
       await userStore.wxWebLogin(code)
       if (uni.getStorageSync('onlyGetOpenid')) {
         uni.removeStorageSync('onlyGetOpenid')
@@ -174,13 +171,15 @@ onLoad(async (option) => {
       const login_success = await userStore.loginByOpenId()
       if (login_success) {
         uni.redirectTo({
-          url: '/pages/launch/index'
+          url: '/pages/launch/index?from=login'
         })
       } else {
         uni.redirectTo({
           url: '/pages/register/bindPhone'
         })
       }
+    } else {
+      console.log('首次进入login', code)
     }
   }
   // #endif

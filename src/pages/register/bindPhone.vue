@@ -3,9 +3,12 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { baseApi } from '@/api'
-import { isWeChat } from '@/utils/common'
+import { Md5 } from 'ts-md5'
+import { baseApi, userApi } from '@/api'
+import { isWeChat, generateId } from '@/utils/common'
+import { useUserStore } from '@/store'
 
+const userStore = useUserStore()
 const isWeChatOfficial = ref(true)
 // #ifdef MP-WEIXIN
 isWeChatOfficial.value = false
@@ -52,9 +55,11 @@ function handleClick() {
     })
     return
   }
-  uni.redirectTo({
-    url: `/pages/register/index?phone=${phone}&code=${sms_code}`
-  })
+  doRegister()
+  // 2023/6/20 需求更改为使用随机密码，不再跳转去手动输入密码
+  // uni.redirectTo({
+  //   url: `/pages/register/index?phone=${phone}&code=${sms_code}`
+  // })
 }
 async function sendSmsCode() {
   if (uCode.value.canGetCode) {
@@ -69,6 +74,39 @@ async function sendSmsCode() {
 }
 function codeChange(text: string) {
   codeText.value = text
+}
+async function doRegister() {
+  try {
+    uni.showLoading({
+      title: '提交中',
+      mask: true
+    })
+    const params = {
+      loginType: userApi.LOGIN_TYPE_ENUM.PWD,
+      phone: form.phone,
+      code: form.sms_code,
+      password: Md5.hashStr(generateId()),
+      openId: userStore.openid,
+      unionId: userStore.unionid
+    }
+    const shopCode = uni.getStorageSync('shopCode')
+    const shareCode = uni.getStorageSync('shareCode')
+    if (shareCode) {
+      params.inviteCode = shareCode
+    } else if (shopCode) {
+      params.shopCode = shopCode
+    }
+    const { data } = await userApi.register(params)
+    userStore.syncSetToken(data.accessToken)
+    await userStore.getUserInfo()
+    // #ifdef MP-WEIXIN
+    uni.navigateBack()
+    // #endif
+    // #ifdef H5
+    uni.redirectTo({ url: '/pages/launch/index' })
+    // #endif
+    uni.hideLoading()
+  } catch {}
 }
 onLoad((option) => {
   if (option?.phone) {

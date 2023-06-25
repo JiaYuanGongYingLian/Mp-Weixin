@@ -154,6 +154,88 @@ export const generateId = () => {
   const uuid = s.join('')
   return uuid
 }
+/**
+ * 微信js-sdk配置
+ */
+export const jsSdkConfig = (data: {
+  appId: any
+  timestamp: any
+  nonceStr: any
+  signature: any
+}) => {
+  wx.config({
+    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: data.appId, // 必填，公众号的唯一标识
+    timestamp: data.timestamp, // 必填，生成签名的时间戳
+    nonceStr: data.nonceStr, // 必填，生成签名的随机串
+    signature: data.signature, // 必填，签名
+    jsApiList: [] // 必填，需要使用的JS接口列表
+  })
+}
+/**
+ * 微信js-sdk自定义“分享给朋友”及“分享到QQ”按钮的分享内容（1.4.0）
+ */
+export const updateAppMessageShareData = (data: {
+  title: any
+  desc: any
+  link: any
+  imgUrl: any
+}) => {
+  wx.updateAppMessageShareData({
+    title: data.title, // 分享标题
+    desc: data.desc, // 分享描述
+    link: data.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+    imgUrl: data.imgUrl, // 分享图标
+    success() {
+      // 设置成功
+    }
+  })
+}
+/**
+ * 微信js-sdk自定义“分享到朋友圈”及“分享到QQ空间”按钮的分享内容（1.4.0）
+ */
+export const updateTimelineShareData = (data: {
+  title: any
+  desc: any
+  link: any
+  imgUrl: any
+}) => {
+  wx.updateTimelineShareData({
+    title: data.title, // 分享标题
+    desc: data.desc, // 分享描述
+    link: data.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+    imgUrl: data.imgUrl, // 分享图标
+    success() {
+      // 设置成功
+    }
+  })
+}
+
+// 参数拼接
+export const parseParams = (uri: string, params: { [x: string]: any }) => {
+  const paramsArray: string[] = []
+  Object.keys(params).forEach(
+    (key) => params[key] && paramsArray.push(`${key}=${params[key]}`)
+  )
+  if (uri.search(/\?/) === -1) {
+    uri += `?${paramsArray.join('&')}`
+  } else {
+    uri += `&${paramsArray.join('&')}`
+  }
+  return uri
+}
+
+// 判断空对象
+export const isEmptyObject = (value: { constructor?: any }) => {
+  return (
+    value && Object.keys(value).length === 0 && value.constructor === Object
+  )
+}
+
+// 判断手机号正确性
+export const isMObile = (value: string) => {
+  return /^1[3-9]\d{9}$/.test(value)
+}
 
 export default {
   getQueryObject,
@@ -163,5 +245,10 @@ export default {
   getPrePage,
   callPreviousRouteMethod,
   launchClientApp,
-  generateId
+  generateId,
+  updateAppMessageShareData,
+  updateTimelineShareData,
+  parseParams,
+  isEmptyObject,
+  isMObile
 }
