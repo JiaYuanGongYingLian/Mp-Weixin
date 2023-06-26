@@ -185,14 +185,53 @@
 				"navigationStyle": "custom",
 				"backgroundColor": "#F5F5F5"
 			}
-		},
+		}
+	],
+	"subPackages": [
 		{
-			"path": "pages/businessCard/index",
-			"style": {
-				"navigationBarTitleText": "名人详情",
-				"navigationStyle": "custom",
-				"backgroundColor": "#F5F5F5"
-			}
+			"root": "pagesA",
+			"pages": [
+				{
+					"path": "community/index",
+					"style": {
+						"navigationBarTitleText": "社区",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "famous/index",
+					"style": {
+						"navigationBarTitleText": "名人列表",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "businessCard/detail",
+					"style": {
+						"navigationBarTitleText": "名人详情",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "businessCard/index",
+					"style": {
+						"navigationBarTitleText": "名人主页",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "shortVideo/index",
+					"style": {
+						"navigationBarTitleText": "短视频",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
+				}
+			]
 		}
 	],
 	"globalStyle": {
@@ -213,6 +252,12 @@
 				"iconPath": "static/ic_bar_main_pg.png",
 				"selectedIconPath": "static/ic_bar_main_page_checked.png",
 				"text": "首页"
+			},
+			{
+				"pagePath": "pagesA/community/index",
+				"iconPath": "static/ic_bar_circle.png",
+				"selectedIconPath": "static/ic_bar_circle_checked.png",
+				"text": "社区"
 			},
 			{
 				"pagePath": "pages/mine/index",

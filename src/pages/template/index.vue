@@ -1,3 +1,4 @@
+<!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
@@ -16,7 +17,7 @@ onLoad((option) => {})
 </script>
 <template>
   <hy-nav-bar title="title"></hy-nav-bar>
-  <div class="physicalShop"></div>
+  <view class="container"></view>
 </template>
 
 <style lang="scss" scoped></style>

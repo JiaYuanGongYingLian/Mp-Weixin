@@ -1,10 +1,11 @@
 <!--
  * @Description: Description
  * @Author: Kerwin
- * @Date: 2023-06-09 11:39:30
- * @LastEditTime: 2023-06-09 12:08:49
+ * @Date: 2023-06-26 11:51:54
+ * @LastEditTime: 2023-06-26 11:51:57
  * @LastEditors:  Please set LastEditors
 -->
+<!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
@@ -23,9 +24,7 @@ onLoad((option) => {})
 </script>
 <template>
   <hy-nav-bar title="title"></hy-nav-bar>
-  <div class="container">
-    
-  </div>
+  <view class="container"></view>
 </template>
 
 <style lang="scss" scoped></style>
