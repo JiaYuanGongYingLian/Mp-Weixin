@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-06-26 17:48:26
+ * @LastEditTime: 2023-06-27 10:49:24
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -54,7 +54,10 @@ function change(index: any) {
   currentTab.value = index
   if (index === 2) {
     uni.navigateTo({
-      url: '/pagesA/shortVideo/index'
+      url: '/pagesA/shortVideo/index',
+      success: () => {
+        currentTab.value = 1
+      }
     })
   }
 }
