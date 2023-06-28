@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-06-27 18:05:24
+ * @LastEditTime: 2023-06-28 17:57:44
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -19,8 +19,10 @@ import { useUserStore } from '@/store'
 
 const store = useUserStore()
 const { hasLogin } = storeToRefs(store)
-const bannerList = ref([])
-const info = ref()
+const buttonRect = ref({})
+// #ifdef MP-WEIXIN
+buttonRect.value = wx.getMenuButtonBoundingClientRect()
+// #endif
 const tabList = [
   {
     name: '社区'
@@ -33,7 +35,7 @@ const currentTab = ref(1)
 function change(index: any) {
   currentTab.value = index
   if (index === 0) {
-    uni.switchTab({ url: '/pagesA/community/index' })
+    uni.switchTab({ url: '/pages/community/index' })
   }
 }
 const fullScreen = ref(false)
@@ -152,7 +154,7 @@ function toBusinessCard() {
 }
 function toPublishCenter() {
   uni.navigateTo({
-    url: '/pagesA/publishCenter/detail'
+    url: '/pagesA/publish/index'
   })
 }
 function toMine() {
@@ -169,18 +171,18 @@ onLoad((option) => {})
 </script>
 <template>
   <view class="container">
-    <hy-nav-bar
-      title=""
-      :background="{ background: 'rgba(0,0,0,0)' }"
-      :isBack="false"
-      :immersive="true"
-      :borderBottom="false"
-    ></hy-nav-bar>
-    <view class="head-view">
+    <view
+      class="head-view"
+      fixed
+      :style="{
+        background: 'rgba(0,0,0,0)',
+        paddingTop: buttonRect.top ? buttonRect.top + 'px' : '0',
+        top: 0,
+        zIndex: 10
+      }"
+    >
       <u-tabs
         :list="tabList"
-        fixed
-        style="top: 0; z-index: 1000"
         v-model="currentTab"
         bg-color="rgba(0,0,0,0)"
         active-color="#fff"
@@ -218,12 +220,12 @@ onLoad((option) => {})
           @controlstoggle="controlFn"
           @fullscreenchange="fullscreenchangeFn"
         ></video>
-        <cover-image
+        <image
           v-show="!item.isPlay"
           @tap="videoPlay(index)"
           class="play"
           src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newHome/play.png"
-        ></cover-image>
+        ></image>
         <view class="sideBar">
           <view class="avatar">
             <u-image
@@ -231,15 +233,25 @@ onLoad((option) => {})
               width="80rpx"
               height="80rpx"
               shape="circle"
+              @click="toBusinessCard"
             ></u-image>
-            <u-icon class="icon" name="plus-circle-fill" color="red"></u-icon>
+            <u-image
+              width="36rpx"
+              height="36rpx"
+              shape="circle"
+              class="icon"
+              src="https://image.blacksilverscore.com/uploads/2fdc2eed-dc7a-490e-8c11-17a4668ea375.png"
+            ></u-image>
           </view>
           <view class="action">
-            <u-icon></u-icon>
+            <text class="iconfont hy-icon-yidianzan"></text>
             {{ item.like }}
           </view>
           <view class="action">
-            <u-icon></u-icon>
+            <text
+              class="iconfont hy-icon-fenxiangzhuanfa"
+              style="font-size: 60rpx"
+            ></text>
             {{ item.share }}
           </view>
         </view>
@@ -247,10 +259,11 @@ onLoad((option) => {})
           :class="showControl ? 'footer showControl' : 'footer'"
           id="footer"
           v-if="!fullScreen"
-          @click="toBusinessCard"
         >
           <view class="top">
-            <view class="name">@{{ item.nickName }}</view>
+            <view class="name" @click="toBusinessCard"
+              >@{{ item.nickName }}</view
+            >
             <view class="textBox">{{ item.title }}</view>
           </view>
         </view>
@@ -290,6 +303,7 @@ onLoad((option) => {})
         bottom: 0;
         margin: auto;
         opacity: 0.6;
+        z-index: 2;
       }
     }
   }
@@ -304,11 +318,29 @@ onLoad((option) => {})
       border: 2px solid #fff;
       border-radius: 50%;
       position: relative;
+      width: 86rpx;
+      height: 86rpx;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 40rpx;
       .icon {
         position: absolute;
         left: 50%;
         bottom: 0;
-        transform: translateY(-50%) translateX(-50%);
+        color: red;
+        z-index: 1;
+        transform: translateX(-50%) translateY(40%);
+      }
+    }
+    .action {
+      display: flex;
+      flex-direction: column;
+      font-size: 20rpx;
+      text-align: center;
+      margin-top: 30rpx;
+      .iconfont {
+        font-size: 70rpx;
       }
     }
   }
@@ -465,8 +497,16 @@ onLoad((option) => {})
   justify-content: space-around;
   align-items: center;
   color: #fff;
-  height: 90rpx;
+  /* #ifdef MP-WEIXIN */
+  height: 110rpx;
+  padding-top: 26rpx;
+  /* #endif */
+  /* #ifdef H5 */
+  height: 100rpx;
+  /* #endif */
   padding-bottom: env(safe-area-inset-bottom);
+  position: relative;
+  z-index: 1000;
   .item {
     font-size: 30rpx;
     font-weight: 500;

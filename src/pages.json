@@ -185,20 +185,20 @@
 				"navigationStyle": "custom",
 				"backgroundColor": "#F5F5F5"
 			}
+		},
+		{
+			"path": "pages/community/index",
+			"style": {
+				"navigationBarTitleText": "社区",
+				"navigationStyle": "custom",
+				"backgroundColor": "#F5F5F5"
+			}
 		}
 	],
 	"subPackages": [
 		{
 			"root": "pagesA",
 			"pages": [
-				{
-					"path": "community/index",
-					"style": {
-						"navigationBarTitleText": "社区",
-						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5"
-					}
-				},
 				{
 					"path": "famous/index",
 					"style": {
@@ -230,6 +230,14 @@
 						"navigationStyle": "custom",
 						"backgroundColor": "#F5F5F5"
 					}
+				},
+				{
+					"path": "publish/index",
+					"style": {
+						"navigationBarTitleText": "发布中心",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
 				}
 			]
 		}
@@ -254,7 +262,7 @@
 				"text": "首页"
 			},
 			{
-				"pagePath": "pagesA/community/index",
+				"pagePath": "pages/community/index",
 				"iconPath": "static/ic_bar_circle.png",
 				"selectedIconPath": "static/ic_bar_circle_checked.png",
 				"text": "社区"

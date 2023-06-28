@@ -158,8 +158,9 @@ onLoad(async (option) => {
     <u-button class="hy-btn" type="primary" ripple @click="toPayment">
       结算
     </u-button>
-
+    <!-- #ifdef H5 -->
     <hyDownloadTips />
+    <!-- #endif -->
   </div>
 </template>
 
