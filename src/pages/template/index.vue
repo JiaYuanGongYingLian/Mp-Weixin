@@ -8,8 +8,8 @@ import { baseApi, productApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 
-const store = useUserStore()
-const { hasLogin } = storeToRefs(store)
+const userStore = useUserStore()
+const { hasLogin } = storeToRefs(userStore)
 const bannerList = ref([])
 const info = ref()
 

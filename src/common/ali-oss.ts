@@ -6,7 +6,10 @@ import { Base64 } from 'js-base64'
 import { generateId } from '@/utils/common'
 import { baseApi } from '@/api'
 
-let client: { put: (arg0: string, arg1: any) => Promise<any> } | null = null
+let client: {
+  put: (arg0: string, arg1: any) => Promise<any>
+  multipartUpload: (arg0: string, arg1: any, arg2: any) => Promise<any>
+} | null = null
 const ENDPOINT = 'https://image.blacksilverscore.com/uploads'
 export const getAliOss = async () => {
   const { data } = await baseApi.getAliOssToken({ id: new Date().getTime() })
@@ -46,6 +49,43 @@ export const webUpload = async (options: {
       })
     } catch (e) {
       console.log(e)
+      options.onError && options.onError('上传失败')
+    }
+  })
+}
+
+export const webUploadVideo = async (options: {
+  file: any
+  uploadPath: string
+  onSuccess: (arg0: any) => any
+  onError: (arg0: string) => any
+  onProgress: (arg0: number) => any
+}) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await getAliOss()
+      const file = options.file || options // 拿到 file
+      const id = generateId()
+      const temp = file.name ? file.name.split('.') : ''
+      const suffixes = file.name ? temp[temp.length - 1] : 'png'
+      const fileName = `${`${id}.${suffixes}`}`
+      const path = options.uploadPath || 'dynamic/'
+      client
+        .multipartUpload(path + fileName, file, {
+          progress(p: number) {
+            // 获取进度条的值
+            options.onProgress(p * 100)
+          }
+        })
+        .then((res) => {
+          if (res.res.statusCode === 200) {
+            options.onSuccess && options.onSuccess(res)
+            resolve(res.name)
+          } else {
+            reject()
+          }
+        })
+    } catch (e) {
       options.onError && options.onError('上传失败')
     }
   })

@@ -1,10 +1,11 @@
+<!-- eslint-disable no-empty -->
 <!-- eslint-disable no-use-before-define -->
 <!-- eslint-disable no-shadow -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-06-28 17:57:44
+ * @LastEditTime: 2023-06-29 18:00:24
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -13,9 +14,10 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi } from '@/api'
+import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
+import hyNavBar from '@/components/hy-nav-bar/index.vue'
 
 const store = useUserStore()
 const { hasLogin } = storeToRefs(store)
@@ -45,60 +47,71 @@ const swiperList = ref([
   {
     nickName: 'kerwin',
     avatar: 'https://oss.wyh139.com/Uploads/null/20230529/1685354933000790.png',
-    cover:
+    previewImage:
       'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/0488fb493270835009490686338/coverBySnapshot/coverBySnapshot_10_0.jpg',
     title: '所有孩子都不想被比较我们需要多关心孩子（家庭教育）',
     share: 661,
-    video:
+    videoUrl:
       'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/0488fb493270835009490686338/v.f30.mp4',
     like: 881
   },
   {
     nickName: 'kerwin1',
     avatar: 'https://oss.wyh139.com/Uploads/null/20230518/1684380540000557.png',
-    cover:
+    previewImage:
       'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/0488fb493270835009490686338/coverBySnapshot/coverBySnapshot_10_0.jpg',
     title: '玖玖乐房车俱乐部欢迎您，新时代的房车轻奢生活，带你体验美好生活',
     share: 661,
-    video:
+    videoUrl:
       'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/afeba9213270835009088706262/v.f30.mp4',
     like: 900
   },
   {
     nickName: 'kerwin',
     avatar: 'https://oss.wyh139.com/Uploads/null/20230611/168647138800031.png',
-    cover:
+    previewImage:
       'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/0488fb493270835009490686338/coverBySnapshot/coverBySnapshot_10_0.jpg',
     title: '道德经赋能导师汉字解码解读道德经赋能老师起名赐字引领财富和好运',
     share: 1001,
-    video:
+    videoUrl:
       'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/46a4a2eb3270835009674597344/v.f30.mp4',
     like: 2500
   },
   {
     avatar: 'https://oss.wyh139.com/Uploads/null/20230615/1686806973000776.png',
-    cover:
+    previewImage:
       'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/0488fb493270835009490686338/coverBySnapshot/coverBySnapshot_10_0.jpg',
     title:
       '对接名人首席王牌新经济导师，对接名人《名人故事栏目》负责人，对接名人成都金牛运营中心负责人，成都锦城铭仁信息技术有限公司董事长',
     share: 889,
-    video:
+    videoUrl:
       'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/d022022d3270835009581248959/v.f30.mp4',
     like: 922
   },
   {
     avatar: 'https://oss.wyh139.com/Uploads/null/20230615/1686806973000776.png',
-    cover:
+    previewImage:
       'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/0488fb493270835009490686338/coverBySnapshot/coverBySnapshot_10_0.jpg',
     title:
       '对接名人首席王牌新经济导师，对接名人《名人故事栏目》负责人，对接名人成都金牛运营中心负责人，成都锦城铭仁信息技术有限公司董事长',
     share: 889,
-    video:
+    videoUrl:
       'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/7cf0d1703270835009960299469/v.f30.mp4',
     like: 922
   }
 ])
+const isPreview = ref(false)
 const footerHeight = ref(0)
+async function dynamicList() {
+  try {
+    const res1 = await socialApi.dynamicList({
+      noPaging: true,
+      type: 3,
+      detail: true
+    })
+    swiperList.value = res1.data
+  } catch {}
+}
 function videoPlay(index: any) {
   swiperList.value[index].isPlay = !swiperList.value[index].isPlay
   showControl.value = true
@@ -167,11 +180,30 @@ function toFamous() {
     url: '/pagesA/famous/index'
   })
 }
-onLoad((option) => {})
+onLoad((option) => {
+  if (option?.type === 'preview') {
+    isPreview.value = true
+    let video = localStorage.getItem('video')
+    if (video) {
+      video = JSON.parse(video)
+      swiperList.value = []
+      swiperList.value.push(video)
+    }
+  }
+  dynamicList()
+})
 </script>
 <template>
   <view class="container">
+    <hyNavBar
+      v-if="isPreview"
+      backIconColor="#fff"
+      title=""
+      :borderBottom="false"
+      :background="{ background: 'tranparent' }"
+    ></hyNavBar>
     <view
+      v-if="!isPreview"
       class="head-view"
       fixed
       :style="{
@@ -211,8 +243,8 @@ onLoad((option) => {})
           @play="item.isPlay = true"
           :autoplay="swiperCurrent === index"
           :loop="true"
-          :src="item.video"
-          :poster="item.cover"
+          :src="getImgFullPath(item.videoUrl)"
+          :poster="getImgFullPath(item.previewImage)"
           :controls="true"
           :show-fullscreen-btn="true"
           :show-play-btn="false"
@@ -226,7 +258,7 @@ onLoad((option) => {})
           class="play"
           src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newHome/play.png"
         ></image>
-        <view class="sideBar">
+        <view class="sideBar" v-if="!isPreview">
           <view class="avatar">
             <u-image
               :src="item.avatar"
@@ -269,7 +301,7 @@ onLoad((option) => {})
         </view>
       </swiper-item>
     </swiper>
-    <view class="tabbar">
+    <view class="tabbar" v-if="!isPreview">
       <view class="item" @click="toFamous">名人</view>
       <view class="item" @click="toPublishCenter"
         ><text class="iconfont hy-icon-push"></text
