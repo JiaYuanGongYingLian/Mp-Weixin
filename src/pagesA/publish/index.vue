@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-28 17:45:12
- * @LastEditTime: 2023-06-29 17:21:23
+ * @LastEditTime: 2023-06-30 14:58:05
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -19,6 +19,7 @@ import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 import { upload, webUploadVideo } from '@/common/ali-oss'
+import biography from './biography.vue'
 
 const store = useUserStore()
 const { hasLogin, userInfo } = storeToRefs(store)
@@ -178,80 +179,96 @@ onLoad((option) => {
       v-model="currentTab"
       @change="change"
     ></u-tabs>
-    <view class="upload-view" @click="chooseVideo">
-      <text class="iconfont hy-icon-yunshangchuan"></text>
-      <text class="text">点击上传 / 拍摄视频</text>
-    </view>
-    <view class="section">
-      <u-subsection :list="subList" v-model="subCurrent"></u-subsection>
-      <view class="video-view" v-if="subCurrent === 0">
-        <view class="video-item loading" v-show="progress > 0">
-          <view class="ring">
-            <view>上传中</view>
+    <Transition name="slide-fade" mode="out-in">
+      <view v-if="currentTab === 0">
+        <view class="upload-view" @click="chooseVideo">
+          <text class="iconfont hy-icon-yunshangchuan"></text>
+          <text class="text">点击上传 / 拍摄视频</text>
+        </view>
+        <view class="section">
+          <u-subsection :list="subList" v-model="subCurrent"></u-subsection>
+          <view class="video-view" v-if="subCurrent === 0">
+            <view class="video-item loading" v-show="progress > 0">
+              <view class="ring">
+                <view>上传中</view>
+                <view
+                  ><u-count-to
+                    ref="counter"
+                    :end-val="progress"
+                    :autoplay="true"
+                    :font-size="30"
+                    color="#fff000"
+                  ></u-count-to
+                  >%</view
+                >
+                <text></text>
+              </view>
+            </view>
             <view
-              ><u-count-to
-                ref="counter"
-                :end-val="progress"
-                :autoplay="true"
-                :font-size="30"
-                color="#fff000"
-              ></u-count-to
-              >%</view
+              class="video-item"
+              v-for="item in videoList1.list"
+              :key="item.id"
             >
-            <text></text>
+              <u-image
+                width="100%"
+                height="360rpx"
+                :src="getImgFullPath(item.previewImage)"
+                @click="toPreview(item)"
+              ></u-image>
+              <view class="delete">
+                <text class="iconfont hy-icon-delete"></text>
+              </view>
+              <view class="action">
+                <u-button
+                  size="mini"
+                  type="success"
+                  rapple
+                  @click="toTweetEdit(item)"
+                  >修改</u-button
+                >
+                <u-button
+                  size="mini"
+                  type="success"
+                  rapple
+                  @click="toTweetEdit(item)"
+                  >发布</u-button
+                >
+              </view>
+            </view>
           </view>
-        </view>
-        <view class="video-item" v-for="item in videoList1.list" :key="item.id">
-          <u-image
-            width="100%"
-            height="360rpx"
-            :src="getImgFullPath(item.previewImage)"
-            @click="toPreview(item)"
-          ></u-image>
-          <view class="delete">
-            <text class="iconfont hy-icon-delete"></text>
-          </view>
-          <view class="action">
-            <u-button
-              size="mini"
-              type="success"
-              rapple
-              @click="toTweetEdit(item)"
-              >修改</u-button
+          <view class="video-view" v-else>
+            <view
+              class="video-item"
+              v-for="item in videoList2.list"
+              :key="item.id"
             >
-            <u-button
-              size="mini"
-              type="success"
-              rapple
-              @click="toTweetEdit(item)"
-              >发布</u-button
-            >
-          </view>
-        </view>
-      </view>
-      <view class="video-view" v-else>
-        <view class="video-item" v-for="item in videoList2.list" :key="item.id">
-          <u-image
-            width="100%"
-            height="360rpx"
-            :src="getImgFullPath(item.previewImage)"
-            @click="toPreview(item)"
-          ></u-image>
-          <view class="delete">
-            <text class="iconfont hy-icon-delete"></text>
-          </view>
-          <view class="action">
-            <u-button
-              size="mini"
-              type="success"
-              rapple
-              @click="toTweetEdit(item)"
-              >修改</u-button
-            >
+              <u-image
+                width="100%"
+                height="360rpx"
+                :src="getImgFullPath(item.previewImage)"
+                @click="toPreview(item)"
+              ></u-image>
+              <view class="delete">
+                <text class="iconfont hy-icon-delete"></text>
+              </view>
+              <view class="action">
+                <u-button
+                  size="mini"
+                  type="success"
+                  rapple
+                  @click="toTweetEdit(item)"
+                  >修改</u-button
+                >
+              </view>
+            </view>
           </view>
         </view>
       </view>
-    </view>
+      <view v-else-if="currentTab === 1">
+        <biography />
+      </view>
+      <view v-else> 展览馆 </view>
+    </Transition>
   </view>
 </template>
 
@@ -408,5 +425,19 @@ onLoad((option) => {
   100% {
     transform: rotate(405deg);
   }
+}
+
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
 }
 </style>

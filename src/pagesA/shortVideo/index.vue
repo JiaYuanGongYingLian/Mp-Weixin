@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-06-29 18:00:24
+ * @LastEditTime: 2023-06-30 10:33:33
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -189,8 +189,9 @@ onLoad((option) => {
       swiperList.value = []
       swiperList.value.push(video)
     }
+  } else {
+    dynamicList()
   }
-  dynamicList()
 })
 </script>
 <template>
@@ -296,7 +297,8 @@ onLoad((option) => {
             <view class="name" @click="toBusinessCard"
               >@{{ item.nickName }}</view
             >
-            <view class="textBox">{{ item.title }}</view>
+            <view class="textBox">{{ item.name }}</view>
+            <view class="textBox">{{ item.content }}</view>
           </view>
         </view>
       </swiper-item>
