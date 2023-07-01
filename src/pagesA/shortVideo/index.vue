@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-06-30 10:33:33
+ * @LastEditTime: 2023-07-01 17:33:53
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -165,14 +165,19 @@ function toBusinessCard() {
     url: '/pagesA/businessCard/detail'
   })
 }
+function toBusinessCardHome() {
+  uni.navigateTo({
+    url: '/pagesA/businessCard/index'
+  })
+}
 function toPublishCenter() {
   uni.navigateTo({
     url: '/pagesA/publish/index'
   })
 }
 function toMine() {
-  uni.switchTab({
-    url: '/pages/mine/index'
+  uni.navigateTo({
+    url: '/pagesA/businessCard/index'
   })
 }
 function toFamous() {
@@ -266,7 +271,7 @@ onLoad((option) => {
               width="80rpx"
               height="80rpx"
               shape="circle"
-              @click="toBusinessCard"
+              @click="toBusinessCardHome"
             ></u-image>
             <u-image
               width="36rpx"

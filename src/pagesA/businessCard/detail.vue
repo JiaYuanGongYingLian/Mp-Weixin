@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-09 11:39:30
- * @LastEditTime: 2023-06-26 17:36:31
+ * @LastEditTime: 2023-07-01 16:01:03
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -69,6 +69,16 @@ function submit() {
     }
   })
 }
+function tabChange(index: number) {
+  if (index === 1) {
+    uni.navigateTo({
+      url: '/pagesA/businessCard/index',
+      success: () => {
+        currentTab.value = 0
+      }
+    })
+  }
+}
 onLoad((option) => {
   if (option) {
     getUserInfo()
@@ -102,6 +112,7 @@ onReady(() => {
         class="tab"
         :list="tabList"
         v-model="currentTab"
+        @change="tabChange"
       ></u-subsection>
       <view class="resume">
         <view class="video"></view>
@@ -160,7 +171,7 @@ onReady(() => {
           src="https://image.blacksilverscore.com/uploads/dc5179da-8505-4915-8f0c-7626ef9bc26a.png"
         ></u-image>
         <view>
-          对接名人平台本着开放自由自主自愿的原则，对接人付费向被对接人学习经验或请教问题等。用户自主选择对接自己需要的资源，
+          黑银平台本着开放自由自主自愿的原则，对接人付费向被对接人学习经验或请教问题等。用户自主选择对接自己需要的资源，
           被对接的人会在24小时内选择回复，
           请在［已对接］里面查看。如果同意对接，会看到联系方式，如果拒绝对接，支付的请教经验费用将会在24小时内自动退回。
           <br />
