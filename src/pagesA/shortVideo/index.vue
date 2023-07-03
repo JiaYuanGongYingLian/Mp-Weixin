@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-07-01 17:33:53
+ * @LastEditTime: 2023-07-03 16:23:52
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -17,7 +17,7 @@ import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
-import hyNavBar from '@/components/hy-nav-bar/index.vue'
+import hyNavBarSimpler from '@/components/hy-nav-bar-simpler/index.vue'
 
 const store = useUserStore()
 const { hasLogin } = storeToRefs(store)
@@ -43,65 +43,8 @@ function change(index: any) {
 const fullScreen = ref(false)
 const swiperCurrent = ref(0)
 const showControl = ref(true)
-const swiperList = ref([
-  {
-    nickName: 'kerwin',
-    avatar: 'https://oss.wyh139.com/Uploads/null/20230529/1685354933000790.png',
-    previewImage:
-      'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/0488fb493270835009490686338/coverBySnapshot/coverBySnapshot_10_0.jpg',
-    title: '所有孩子都不想被比较我们需要多关心孩子（家庭教育）',
-    share: 661,
-    videoUrl:
-      'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/0488fb493270835009490686338/v.f30.mp4',
-    like: 881
-  },
-  {
-    nickName: 'kerwin1',
-    avatar: 'https://oss.wyh139.com/Uploads/null/20230518/1684380540000557.png',
-    previewImage:
-      'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/0488fb493270835009490686338/coverBySnapshot/coverBySnapshot_10_0.jpg',
-    title: '玖玖乐房车俱乐部欢迎您，新时代的房车轻奢生活，带你体验美好生活',
-    share: 661,
-    videoUrl:
-      'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/afeba9213270835009088706262/v.f30.mp4',
-    like: 900
-  },
-  {
-    nickName: 'kerwin',
-    avatar: 'https://oss.wyh139.com/Uploads/null/20230611/168647138800031.png',
-    previewImage:
-      'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/0488fb493270835009490686338/coverBySnapshot/coverBySnapshot_10_0.jpg',
-    title: '道德经赋能导师汉字解码解读道德经赋能老师起名赐字引领财富和好运',
-    share: 1001,
-    videoUrl:
-      'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/46a4a2eb3270835009674597344/v.f30.mp4',
-    like: 2500
-  },
-  {
-    avatar: 'https://oss.wyh139.com/Uploads/null/20230615/1686806973000776.png',
-    previewImage:
-      'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/0488fb493270835009490686338/coverBySnapshot/coverBySnapshot_10_0.jpg',
-    title:
-      '对接名人首席王牌新经济导师，对接名人《名人故事栏目》负责人，对接名人成都金牛运营中心负责人，成都锦城铭仁信息技术有限公司董事长',
-    share: 889,
-    videoUrl:
-      'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/d022022d3270835009581248959/v.f30.mp4',
-    like: 922
-  },
-  {
-    avatar: 'https://oss.wyh139.com/Uploads/null/20230615/1686806973000776.png',
-    previewImage:
-      'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/0488fb493270835009490686338/coverBySnapshot/coverBySnapshot_10_0.jpg',
-    title:
-      '对接名人首席王牌新经济导师，对接名人《名人故事栏目》负责人，对接名人成都金牛运营中心负责人，成都锦城铭仁信息技术有限公司董事长',
-    share: 889,
-    videoUrl:
-      'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/7cf0d1703270835009960299469/v.f30.mp4',
-    like: 922
-  }
-])
+const swiperList = ref([])
 const isPreview = ref(false)
-const footerHeight = ref(0)
 async function dynamicList() {
   try {
     const res1 = await socialApi.dynamicList({
@@ -116,7 +59,6 @@ function videoPlay(index: any) {
   swiperList.value[index].isPlay = !swiperList.value[index].isPlay
   showControl.value = true
   const video = uni.createVideoContext(`video${index}`)
-  const isPlay = swiperList.value[index]
   if (swiperList.value[index].isPlay) {
     video.play()
   } else {
@@ -129,36 +71,25 @@ function videoPlay(index: any) {
       swiperList.value[i].isPlay = false
     }
   }
-  getFooterFn()
 }
-// 获取底部高度
-function getFooterFn() {
-  setTimeout(() => {
-    uni
-      .createSelectorQuery()
-      .select('#footer')
-      .boundingClientRect((rect) => {
-        footerHeight.value = rect.height * 2
-      })
-      .exec()
-  }, 500)
-}
-// 全屏
-function fullscreenchangeFn(e: { detail: { fullScreen: boolean } }) {
-  fullScreen.value = e.detail.fullScreen
-}
-function getNextFn(id) {}
 function animationfinishFn(e: { detail: { current: number } }) {
   if (swiperCurrent.value !== e.detail.current) {
     swiperCurrent.value = e.detail.current
     videoPlay(swiperCurrent.value)
   }
   if (swiperList.value.length - 1 === e.detail.current) {
-    getNextFn(swiperList.value[e.detail.current].id)
+    getNextFn()
   }
+}
+async function getNextFn() {
+  console.log('加载下一页数据')
 }
 function controlFn(e: { detail: { show: boolean } }) {
   showControl.value = e.detail.show
+}
+// 全屏
+function fullscreenchangeFn(e: { detail: { fullScreen: boolean } }) {
+  fullScreen.value = e.detail.fullScreen
 }
 function toBusinessCard() {
   uni.navigateTo({
@@ -185,15 +116,25 @@ function toFamous() {
     url: '/pagesA/famous/index'
   })
 }
+const type = ref('default')
+function autoShowFn(name?: string) {
+  if (name) {
+    return name === type.value
+  }
+  return ['preview', 'viewSingleUser'].includes(type.value)
+}
 onLoad((option) => {
-  if (option?.type === 'preview') {
+  type.value = option?.type
+  if (type.value === 'preview') {
+    type.value = 'preview'
     isPreview.value = true
-    let video = localStorage.getItem('video')
-    if (video) {
-      video = JSON.parse(video)
-      swiperList.value = []
-      swiperList.value.push(video)
-    }
+    const video = JSON.parse(localStorage.getItem('video') || '{}')
+    swiperList.value.push(video)
+  } else if (type.value === 'viewSingleUser') {
+    const list = JSON.parse(localStorage.getItem('videoList') || '[]')
+    swiperList.value.push(...list)
+    swiperCurrent.value = Number(option?.index)
+    videoPlay(swiperCurrent.value)
   } else {
     dynamicList()
   }
@@ -201,15 +142,15 @@ onLoad((option) => {
 </script>
 <template>
   <view class="container">
-    <hyNavBar
-      v-if="isPreview"
+    <hyNavBarSimpler
+      v-if="autoShowFn()"
       backIconColor="#fff"
       title=""
       :borderBottom="false"
       :background="{ background: 'tranparent' }"
-    ></hyNavBar>
+    ></hyNavBarSimpler>
     <view
-      v-if="!isPreview"
+      v-if="!autoShowFn()"
       class="head-view"
       fixed
       :style="{
@@ -232,7 +173,7 @@ onLoad((option) => {
     <swiper
       class="swiper"
       :current="swiperCurrent"
-      @animationfinish="animationfinishFn"
+      @change="animationfinishFn"
       interval="3000"
       duration="500"
       :vertical="true"
@@ -308,7 +249,7 @@ onLoad((option) => {
         </view>
       </swiper-item>
     </swiper>
-    <view class="tabbar" v-if="!isPreview">
+    <view class="tabbar" v-if="!autoShowFn()">
       <view class="item" @click="toFamous">名人</view>
       <view class="item" @click="toPublishCenter"
         ><text class="iconfont hy-icon-push"></text

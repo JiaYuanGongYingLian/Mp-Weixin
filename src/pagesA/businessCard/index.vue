@@ -3,14 +3,14 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-07-03 09:55:00
+ * @LastEditTime: 2023-07-03 15:36:58
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onPageScroll } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
@@ -43,19 +43,36 @@ async function dynamicList() {
       userId: userInfo.value.id,
       detail: true
     })
-    videoList.list = [...res1.data,...res1.data]
+    videoList.list = [...res1.data]
   } catch {}
 }
 function toEdit() {}
 function tabChange() {}
-function toView() {}
+function toView(index: number) {
+  localStorage.setItem('videoList', JSON.stringify(videoList.list))
+  uni.navigateTo({
+    url: `/pagesA/shortVideo/index?type=viewSingleUser&index=${index}`
+  })
+}
 onLoad((option) => {
   dynamicList()
+})
+
+const show = ref(true)
+const status = ref('loadmore')
+const scrollTop = ref(0)
+onPageScroll((e) => {
+  scrollTop.value = e.scrollTop
+  if (e.scrollTop > 50) {
+    show.value = false
+  } else {
+    show.value = true
+  }
 })
 </script>
 <template>
   <view class="container">
-    <hyNavBarSimpler />
+    <hyNavBarSimpler v-show="show" />
     <view class="topView">
       <u-image
         src="https://oss.wyh139.com/Uploads/null/20230615/1686806973000776.png"
@@ -111,16 +128,30 @@ onLoad((option) => {
         sticky
         :style="{ top: '0', zIndex: 2 }"
       ></u-tabs>
-      <view class="videoList">
-        <view class="video-item" v-for="item in videoList.list" :key="item.id">
-          <u-image
-            width="100%"
-            height="360rpx"
-            :src="getImgFullPath(item.previewImage)"
-            @click="toView(item)"
-          ></u-image>
+      <view class="zuopin" v-if="currentTab === 0">
+        <view class="videoList">
+          <view
+            class="video-item"
+            v-for="(item,index) in videoList.list"
+            :key="item.id"
+          >
+            <u-image
+              width="100%"
+              height="360rpx"
+              :src="getImgFullPath(item.previewImage)"
+              @click="toView(index)"
+            ></u-image>
+            <view class="like">
+              <text class="iconfont hy-icon-like-line"></text>
+              <text>{{ item.like || 123 }}</text>
+            </view>
+          </view>
         </view>
+        <u-loadmore :status="status" />
+        <u-back-top :scroll-top="scrollTop"></u-back-top>
       </view>
+
+      <view class="cc" v-else> 橱窗 </view>
     </view>
   </view>
 </template>
@@ -199,7 +230,7 @@ onLoad((option) => {
   font-weight: bold;
 }
 .u-tabs {
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #ccc;
   :deep(.u-tab-bar) {
     // transform: translateY(0) !important;
     bottom: -3px;
@@ -209,11 +240,25 @@ onLoad((option) => {
   display: flex;
   flex-wrap: wrap;
   gap: 1px;
+  margin-top: 2px;
   .video-item {
     width: calc((100% - 2px) / 3);
     position: relative;
     // border-radius: 8rpx;
     overflow: hidden;
+    .like {
+      display: flex;
+      position: absolute;
+      left: 20rpx;
+      bottom: 16rpx;
+      align-items: center;
+      color: #fff;
+      .hy-icon-like-line {
+        font-size: 28rpx;
+        color: #fff;
+        margin-right: 10rpx;
+      }
+    }
   }
 }
 </style>
