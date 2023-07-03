@@ -76,8 +76,8 @@ function onSubmit() {
 }
 
 onLoad(async (option) => {
-  orderData.value = JSON.parse(option?.orderData)
-  console.log( orderData.value)
+  orderData.value = JSON.parse(localStorage.getItem('orderJson') || '')
+  console.log(orderData.value)
   await getAddressList()
   await getOrderMoney()
 })
@@ -138,8 +138,8 @@ onLoad(async (option) => {
     <view class="yt-list">
       <view
         class="yt-list-cell"
-        v-for="item in orderData.orderMonies"
-        :key="item.id"
+        v-for="(item, index) in orderData.orderMonies"
+        :key="index"
       >
         <text class="cell-tit clamp">{{ item.name }}</text>
         <text class="cell-tip num">{{ item.money }}</text>
