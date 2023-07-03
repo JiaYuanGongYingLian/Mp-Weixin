@@ -1,8 +1,9 @@
+<!-- eslint-disable no-empty -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-07-01 18:05:28
+ * @LastEditTime: 2023-07-03 09:55:00
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -11,14 +12,20 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi } from '@/api'
+import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 import hyNavBarSimpler from '@/components/hy-nav-bar-simpler/index.vue'
 
 const userStore = useUserStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)
-const bannerList = ref([])
+const videoList = reactive({
+  list: [],
+  loading: true,
+  finished: false,
+  pageIndex: 1,
+  pageSize: 20
+})
 const tabList = ref([
   {
     name: '作品'
@@ -28,9 +35,23 @@ const tabList = ref([
   }
 ])
 const currentTab = ref(0)
+async function dynamicList() {
+  try {
+    const res1 = await socialApi.dynamicList({
+      noPaging: true,
+      type: 3,
+      userId: userInfo.value.id,
+      detail: true
+    })
+    videoList.list = [...res1.data,...res1.data]
+  } catch {}
+}
 function toEdit() {}
 function tabChange() {}
-onLoad((option) => {})
+function toView() {}
+onLoad((option) => {
+  dynamicList()
+})
 </script>
 <template>
   <view class="container">
@@ -87,7 +108,19 @@ onLoad((option) => {})
         bar-width="200"
         item-width="50%"
         @change="tabChange"
+        sticky
+        :style="{ top: '0', zIndex: 2 }"
       ></u-tabs>
+      <view class="videoList">
+        <view class="video-item" v-for="item in videoList.list" :key="item.id">
+          <u-image
+            width="100%"
+            height="360rpx"
+            :src="getImgFullPath(item.previewImage)"
+            @click="toView(item)"
+          ></u-image>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -137,7 +170,6 @@ onLoad((option) => {})
   background: #fff;
   flex: 1;
   box-shadow: 0rpx 30rpx 0rpx 0 rgb(255, 255, 255);
-  overflow: hidden;
   .section {
     padding: 40rpx 30rpx;
   }
@@ -171,6 +203,17 @@ onLoad((option) => {})
   :deep(.u-tab-bar) {
     // transform: translateY(0) !important;
     bottom: -3px;
+  }
+}
+.videoList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  .video-item {
+    width: calc((100% - 2px) / 3);
+    position: relative;
+    // border-radius: 8rpx;
+    overflow: hidden;
   }
 }
 </style>
