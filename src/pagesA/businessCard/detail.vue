@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-09 11:39:30
- * @LastEditTime: 2023-07-01 16:01:03
+ * @LastEditTime: 2023-07-04 17:30:47
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -253,6 +253,7 @@ onReady(() => {
 .main-view {
   background: #fff;
   padding: 20rpx;
+  padding-bottom: 130rpx;
   .tab {
     margin-top: 10rpx;
     position: sticky;
@@ -308,7 +309,7 @@ onReady(() => {
   width: 100%;
   padding: 0 30rpx;
   .btn {
-    background: #ffde27;
+    background: #e32622;
     cursor: pointer;
     width: 80%;
     color: #fff;
@@ -324,7 +325,7 @@ onReady(() => {
       color-stop(100%, rgba(0, 0, 0, 0.3))
     );
     -webkit-animation-name: orangellowPulse;
-    -webkit-animation-duration: 2s;
+    -webkit-animation-duration: 1s;
     -webkit-animation-iteration-count: infinite;
     &::after {
       border: 0;
@@ -333,19 +334,19 @@ onReady(() => {
 }
 @keyframes orangellowPulse {
   0% {
-    background-color: #ffde27;
+    background-color: #e32622;
     box-shadow: inset 0 0.3rem 0.2rem rgba(255, 255, 255, 0.2),
       inset 0 -0.3rem 0.2rem rgba(0, 0, 0, 0.2),
       0 0.2rem 0.4rem rgba(0, 0, 0, 0.2);
   }
   50% {
-    background-color: #ffde27;
+    background-color: #e32622;
     box-shadow: inset 0 0.4rem 0.3rem rgba(255, 255, 255, 0.2),
       inset 0 -0.2rem 0.2rem rgba(0, 0, 0, 0.2),
       0 0.2rem 0.6rem rgba(0, 0, 0, 0.2);
   }
   100% {
-    background-color: #ffde27;
+    background-color: #e32622;
     box-shadow: inset 0 0.5rem 0.4rem rgba(255, 255, 255, 0.2),
       inset 0 -0.1rem 0.2rem rgba(0, 0, 0, 0.2),
       0 0.2rem 0.8rem rgba(0, 0, 0, 0.2);

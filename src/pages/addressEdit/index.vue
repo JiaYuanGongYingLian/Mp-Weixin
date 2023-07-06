@@ -40,7 +40,7 @@ async function confirm() {
     })
     return
   }
-  if (!provinceName || !cityName || !districtName) {
+  if (!provinceName || !cityName) {
     uni.showToast({
       title: '请选择所在地',
       icon: 'none',

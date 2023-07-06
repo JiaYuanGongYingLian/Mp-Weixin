@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-06-28 16:27:00
+ * @LastEditTime: 2023-07-04 17:34:51
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -71,11 +71,10 @@ function handleClickCate(item: { id: any }) {
 }
 async function getCategory() {
   const { data } = await baseApi.getAdvertisingList({
-    pageIndex: 1,
-    pageSize: 10,
-    type: baseApi.advertising_enum.ADV_HOME_LIST2
+    noPaging: true,
+    type: baseApi.advertising_enum.ADV_FAMOUS_LIST
   })
-  categoryList.value = data.records
+  categoryList.value = data
 }
 // 黑豆商品列表
 const getFamousList = async () => {
@@ -144,6 +143,7 @@ onPageScroll((e) => {
     <view class="circle" v-if="currentTab === 0">
       <u-empty text="暂未开放" mode="page" style="margin-top: 100px"></u-empty>
     </view>
+    <!-- 对接名人 -->
     <view class="celebrity" v-if="currentTab === 1">
       <view class="section">
         <view class="actions">
@@ -234,8 +234,9 @@ onPageScroll((e) => {
     margin-bottom: 20rpx;
 
     .icon {
-      width: 100rpx;
-      height: 100rpx;
+      width: 80rpx;
+      height: 80rpx;
+      border-radius: 50%;
     }
     .name {
       @include ellipsis();

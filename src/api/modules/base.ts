@@ -27,15 +27,15 @@ enum advertising_enum {
   ADV_HOME_BANNER1 = 1011, // 黑银首页Banner的广告位-全城会员充值位"
   ADV_HOME_BANNER2 = 1012, // 黑银首页Banner的广告位-合伙人计划
   ADV_HOME_BANNER3 = 1021, // 黑银首页推荐的广告位
-  CONTACT_HOME_LIST1 = 3000 // 黑银社交首页最上面的广告位
+  CONTACT_HOME_LIST1 = 3000, // 黑银社交首页最上面的广告位
+  ADV_FAMOUS_LIST = 5000 // 黑银名人堂-名人分类
 }
-
 function getAdvertisingList(data: any) {
   return http.get('/base/api/v1/advertising/list', data)
 }
 
 /**
- * 获取首页分类
+ * 腾讯逆地址解析
  */
 function reverseGeocoding(data: any) {
   return http.get('/base/api/v1/qq/reverse/geocoding/info', data)
