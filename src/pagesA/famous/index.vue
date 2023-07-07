@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 13:49:44
- * @LastEditTime: 2023-06-26 17:33:25
+ * @LastEditTime: 2023-07-06 12:07:16
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -36,9 +36,9 @@ function initData() {
     }
   })
 }
-async function getTabs() {
+async function getTabs(parentId = 0) {
   await baseApi
-    .getCategoryList({ pageSize: 1000, type: 1, parentId: 0 })
+    .getCategoryList({ pageSize: 1000, type: 1, parentId })
     .then((res: { data: any }) => {
       const { data } = res
       tabs.value = data.records
@@ -95,9 +95,13 @@ function doSearch() {
   item.finished = false
   getHeidouProductList()
 }
-onLoad(() => {})
-onReady(async () => {
-  await getTabs()
+onLoad(async (option) => {
+  if (option?.categoryData) {
+    const obj = JSON.parse(option?.categoryData)
+    await getTabs(obj.categoryId)
+  } else {
+    await getTabs()
+  }
   await getHeidouProductList()
 })
 onReachBottom(() => {
