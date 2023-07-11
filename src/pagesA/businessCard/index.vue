@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-07-03 15:36:58
+ * @LastEditTime: 2023-07-10 17:52:47
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -114,7 +114,7 @@ onPageScroll((e) => {
           "人生道路，选择大于努力，格局决定结局，心态决定一切！"
         </view>
         <view class="subscribe">
-          <text>+关注</text>
+          <text class="text">+关注</text>
         </view>
       </view>
       <u-tabs
@@ -132,7 +132,7 @@ onPageScroll((e) => {
         <view class="videoList">
           <view
             class="video-item"
-            v-for="(item,index) in videoList.list"
+            v-for="(item, index) in videoList.list"
             :key="item.id"
           >
             <u-image
@@ -228,6 +228,13 @@ onPageScroll((e) => {
   text-align: center;
   line-height: 60rpx;
   font-weight: bold;
+  box-shadow: 0 0 10rpx 0 rgba(0, 0, 0, 0.3);
+  &:active {
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.5);
+    transform: translateY(0em) scale(0.99);
+    transition: background-color 150ms ease-out, box-shadow 150ms ease-out,
+      transform 150ms ease-out;
+  }
 }
 .u-tabs {
   border-bottom: 1px solid #ccc;

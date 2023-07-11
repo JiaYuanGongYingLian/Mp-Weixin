@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-07-03 16:23:52
+ * @LastEditTime: 2023-07-10 17:27:41
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -222,8 +222,11 @@ onLoad((option) => {
               src="https://image.blacksilverscore.com/uploads/2fdc2eed-dc7a-490e-8c11-17a4668ea375.png"
             ></u-image>
           </view>
-          <view class="action">
-            <text class="iconfont hy-icon-yidianzan"></text>
+          <view class="action" @click="item.like = true">
+            <text
+              class="iconfont hy-icon-yidianzan"
+              :class="{ 'is-active': item.like }"
+            ></text>
             {{ item.like }}
           </view>
           <view class="action">
@@ -321,6 +324,22 @@ onLoad((option) => {
       margin-top: 30rpx;
       .iconfont {
         font-size: 70rpx;
+      }
+      .hy-icon-yidianzan {
+        &.is-active {
+          animation: heartbeat 1s;
+        }
+      }
+      @keyframes heartbeat {
+        0% {
+          transform: scale(1);
+        }
+        10% {
+          transform: scale(1.25);
+        }
+        100% {
+          transform: scale(1);
+        }
       }
     }
   }

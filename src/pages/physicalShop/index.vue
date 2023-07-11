@@ -409,7 +409,7 @@ onPageScroll((e) => {
                     :src="getImgFullPath(product.image)"
                     height="220rpx"
                     :lazy-load="true"
-                    mode="scaleToFill"
+                    mode="aspectFill"
                   />
                 </view>
                 <view class="content">
