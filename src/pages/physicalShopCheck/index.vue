@@ -80,9 +80,20 @@ async function getShopInfo() {
   const { name, shopMoneyRules, code } = data
   uni.setStorageSync('shopCode', code)
   info.name = name
-  if (shopMoneyRules && shopMoneyRules.length > 0 && !moneyRuleId.value) {
-    info.shopMoneyRules = shopMoneyRules
-    moneyRuleId.value = shopMoneyRules[0].moneyRuleId
+  if (shopMoneyRules && shopMoneyRules.length > 0) {
+    if (moneyRuleId.value) {
+      // 判断url携带的moneyRuleId是否还存在（可能规则已删除，但是码或者链接存在滞后）
+      const rule = shopMoneyRules.find(
+        (item: { moneyRuleId: null }) => item.moneyRuleId == moneyRuleId.value
+      )
+      if (!rule) {
+        info.shopMoneyRules = shopMoneyRules
+        moneyRuleId.value = shopMoneyRules[0].moneyRuleId
+      }
+    } else {
+      info.shopMoneyRules = shopMoneyRules
+      moneyRuleId.value = shopMoneyRules[0].moneyRuleId
+    }
   }
 }
 watch(accessToken, (newValue, oldValue) => {
