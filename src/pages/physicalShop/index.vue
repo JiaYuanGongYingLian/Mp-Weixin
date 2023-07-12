@@ -114,7 +114,7 @@ async function getShopInfo() {
   try {
     const { data } = await productApi.getShopInfo({
       id: shopId.value,
-      detail: true,
+      detail: true
     })
     const { bannerResources, avatar, name } = data
     // 设置页面title
@@ -265,6 +265,8 @@ function handleTabBarChange(index: any) {
     })
   }
 }
+const imgHeight = ref('200rpx')
+const bannerHeight = ref(400)
 onLoad(async (option) => {
   shopId.value = option.shopId
   loadingSkeleton.value = true
@@ -278,6 +280,13 @@ onLoad(async (option) => {
   // #ifdef H5
   isWeChatOfficial.value = isWeChat()
   tabsStyleTop.value = isWeChatOfficial.value ? '0px' : '44px'
+  uni.getSystemInfo({
+    success: (res) => {
+      const { windowWidth } = res
+      imgHeight.value = `${(windowWidth - 10) / 2}rpx`
+      bannerHeight.value = windowWidth / 2 + 200
+    }
+  })
   if (option?.qrcode) {
     configStore.setEnterType('storeQrcode')
   }
@@ -302,7 +311,7 @@ onPageScroll((e) => {
     <page-skeleton :loading="loadingSkeleton" :type="2"></page-skeleton>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
     <u-swiper
-      height="400"
+      :height="bannerHeight"
       :list="bannerList"
       mode="number"
       indicator-pos="bottomRight"
@@ -407,7 +416,7 @@ onPageScroll((e) => {
                     class="img"
                     border-radius="0"
                     :src="getImgFullPath(product.image)"
-                    height="220rpx"
+                    :height="imgHeight"
                     :lazy-load="true"
                     mode="aspectFill"
                   />
