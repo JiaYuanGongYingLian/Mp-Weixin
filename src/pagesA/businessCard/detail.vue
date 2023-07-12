@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-09 11:39:30
- * @LastEditTime: 2023-07-04 17:30:47
+ * @LastEditTime: 2023-07-12 11:31:01
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -28,7 +28,7 @@ const tabList = ref([
     name: '主页'
   },
   {
-    name: '展览馆'
+    name: '橱窗'
   },
   {
     name: '排行榜'
