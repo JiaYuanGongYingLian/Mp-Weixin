@@ -231,7 +231,10 @@ async function confirm() {
         moneyUnit: shopProductSkuWalletRule.moneyUnit || null,
         count: buyNumber.value,
         shopProductSkuId: shopProductSkuSelected.value.id,
-        status: 0
+        status: 0,
+        externalData: {
+          userShareCode: uni.getStorageSync('shareCode')
+        }
       }
     ],
     status: 0
