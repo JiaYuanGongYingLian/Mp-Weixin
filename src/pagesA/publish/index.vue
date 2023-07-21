@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-28 17:45:12
- * @LastEditTime: 2023-06-30 14:58:05
+ * @LastEditTime: 2023-07-22 05:27:26
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -31,7 +31,7 @@ const list = [
     name: '完善传记'
   },
   {
-    name: '完善展览馆'
+    name: '完善橱窗'
   }
 ]
 const subList = [
@@ -267,7 +267,7 @@ onLoad((option) => {
       <view v-else-if="currentTab === 1">
         <biography />
       </view>
-      <view v-else> 展览馆 </view>
+      <view v-else> <u-empty text="暂无数据" mode="list" style="margin-top: 200rpx;"></u-empty> </view>
     </Transition>
   </view>
 </template>

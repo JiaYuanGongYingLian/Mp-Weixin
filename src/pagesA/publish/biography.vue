@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-30 11:32:40
- * @LastEditTime: 2023-06-30 16:53:28
+ * @LastEditTime: 2023-07-22 05:24:35
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -333,7 +333,7 @@ onLoad(async (option) => {
             @click="actionSheetCallback"
           ></u-action-sheet
         ></u-form-item>
-        <u-form-item required label="商家名称" label-width="auto" prop="name"
+        <u-form-item required label="企业名称" label-width="auto" prop="name"
           ><u-input
             v-model="formData.name"
             input-align="right"
@@ -378,20 +378,20 @@ onLoad(async (option) => {
         </u-form-item>
         <u-form-item
           required
-          label="商家简介"
+          label="企业简介"
           label-width="auto"
           prop="remark"
           label-position="top"
         >
           <u-input v-model="formData.remark" type="textarea" />
         </u-form-item>
-        <u-form-item label="客服专员电话" label-width="auto"
+        <u-form-item label="企业电话" label-width="auto"
           ><u-input
             v-model="formData.invitePhone"
             input-align="right"
-            placeholder="请填写木木客服专员电话"
+            placeholder="请填写电话"
         /></u-form-item>
-        <u-form-item label="客服专员电话" label-width="auto">
+        <u-form-item label="荣誉证书" label-width="auto">
           <u-upload
             ref="upload3"
             :action="uploadUrl"

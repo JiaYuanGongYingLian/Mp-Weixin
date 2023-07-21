@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 13:49:44
- * @LastEditTime: 2023-07-12 12:51:25
+ * @LastEditTime: 2023-07-22 06:12:45
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -12,6 +12,7 @@ import { storeToRefs } from 'pinia'
 import { baseApi, productApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { useUserStore } from '@/store'
+import { m_fcate,m_flist } from '@/common/mock.js'
 
 const store = useUserStore()
 const { hasLogin } = storeToRefs(store)
@@ -41,11 +42,12 @@ async function getTabs(parentId = 0) {
     .getCategoryList({ pageSize: 1000, type: 1, parentId })
     .then((res: { data: any }) => {
       const { data } = res
-      tabs.value = data.records
-      tabs.value.unshift({
-        name: '全部',
-        id: ''
-      })
+      // tabs.value = data.records
+      tabs.value = m_fcate
+      // tabs.value.unshift({
+      //   name: '全部',
+      //   id: ''
+      // })
       productList.value = initData()
     })
     .catch((err: any) => {})
@@ -67,7 +69,8 @@ async function getHeidouProductList() {
     keywords: keyword.value
   })
   const { records, current, pages } = data
-  item.list.push(...records)
+  // item.list.push(...records)
+  item.list.push(...m_flist)
   if (current < pages && pages !== 0) {
     item.pageIndex++
   } else {
@@ -164,7 +167,7 @@ onReachBottom(() => {
                 <u-image
                   class="img"
                   border-radius="0"
-                  :src="getImgFullPath(product.image)"
+                  :src="getImgFullPath(product.head_pic)"
                   height="300rpx"
                   :lazy-load="true"
                   mode="scaleToFill"
@@ -172,7 +175,7 @@ onReachBottom(() => {
               </view>
               <view class="content">
                 <view class="name">{{ product.name }}</view>
-                <view class="money">{{ product.money }}黑豆</view>
+                <view class="desc">{{ product.position }}</view>
               </view>
             </view>
           </view>
@@ -228,8 +231,9 @@ onReachBottom(() => {
           font-size: 28rpx;
         }
 
-        .money {
-          color: red;
+        .desc {
+          @include ellipsis(2);
+          color: #666;
           font-size: 26rpx;
           margin-top: 10rpx;
         }
