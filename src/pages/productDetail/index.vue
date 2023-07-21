@@ -236,6 +236,12 @@ async function confirm() {
     ],
     status: 0
   }
+  // 卖手推荐的商品，卖手获得收益
+  if (uni.getStorageSync('shareCode')) {
+    orderData.orderProductSkus[0].externalData = {
+      userShareCode: uni.getStorageSync('shareCode')
+    }
+  }
   const orderJson = JSON.stringify(orderData)
   togglePopupFn(false)
   if (actionType.value === 'toBuyNow') {
