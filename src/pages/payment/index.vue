@@ -124,7 +124,7 @@ async function sendSmsCode() {
         type: 6,
         phone: userStore.userInfo.phone
       })
-    } catch { }
+    } catch {}
   }
 }
 function codeChange(text: string) {
@@ -289,7 +289,8 @@ onLoad(async (option) => {
       :title-bold="true"
       v-if="!isWeChatBrowser && !isAlipayClient"
     ></u-navbar>
-    <view class="money"><text v-if="!info.moneyUnit">￥</text> {{ info.money }}
+    <view class="money"
+      ><text v-if="!info.moneyUnit">￥</text> {{ info.money }}
       <text class="unit" v-if="info.moneyUnit"> {{ info.moneyUnit }}</text>
     </view>
     <view class="payWay">
@@ -300,16 +301,28 @@ onLoad(async (option) => {
               <u-icon :name="item.icon" size="50"></u-icon>
               <text class="name">{{ item.name }}</text>
             </view>
-            <u-icon :name="item.selected ? icon_selected : icon_select" size="40"></u-icon>
+            <u-icon
+              :name="item.selected ? icon_selected : icon_select"
+              size="40"
+            ></u-icon>
           </view>
-          <u-form-item label="" prop="name" :left-icon="icon_verify" :left-icon-style="{ with: 40 }"
-            v-if="item.payWay === 1 && item.selected">
+          <u-form-item
+            label=""
+            prop="name"
+            :left-icon="icon_verify"
+            :left-icon-style="{ with: 40 }"
+            v-if="item.payWay === 1 && item.selected"
+          >
             <u-input v-model="sms_code" placeholder="请填写验证码" />
             <template v-slot:right>
               <u-button size="mini" type="success" @click="sendSmsCode">
-                {{ codeText }}</u-button>
+                {{ codeText }}</u-button
+              >
             </template>
-            <u-verification-code ref="uCode1" @change="codeChange"></u-verification-code>
+            <u-verification-code
+              ref="uCode1"
+              @change="codeChange"
+            ></u-verification-code>
           </u-form-item>
         </view>
       </view>

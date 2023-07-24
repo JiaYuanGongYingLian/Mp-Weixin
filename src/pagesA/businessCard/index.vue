@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-07-22 06:54:06
+ * @LastEditTime: 2023-07-24 10:05:15
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -39,18 +39,17 @@ const tabList = ref([
   }
 ])
 const currentTab = ref(0)
-function toEdit() { }
+function toEdit() {}
 const pop = ref()
 function contact() {
   uni.setStorageSync('businessCard', {
-    nickName:'钱祥龙',
-    cate:'亲子教育'
+    nickName: '钱祥龙',
+    cate: '亲子教育'
   })
   pop.value.openPop()
 }
-function tabChange() { }
-onLoad((option) => {
-})
+function tabChange() {}
+onLoad((option) => {})
 
 const show = ref(true)
 const scrollTop = ref(0)
@@ -67,12 +66,20 @@ onPageScroll((e) => {
   <view class="container">
     <hyNavBarSimpler v-show="show" />
     <view class="topView">
-      <u-image src="https://oss.wyh139.com/Uploads/Merchants/20230606/1686017975000501.png" width="100%"
-        height="400rpx"></u-image>
+      <u-image
+        src="https://oss.wyh139.com/Uploads/Merchants/20230606/1686017975000501.png"
+        width="100%"
+        height="400rpx"
+      ></u-image>
       <view class="headBox">
         <view class="avatar">
-          <u-image src="https://oss.wyh139.com/Uploads/Merchants/20230606/1686017975000501.png" width="180rpx"
-            height="180rpx" shape="circle" @click="toEdit"></u-image>
+          <u-image
+            src="https://oss.wyh139.com/Uploads/Merchants/20230606/1686017975000501.png"
+            width="180rpx"
+            height="180rpx"
+            shape="circle"
+            @click="toEdit"
+          ></u-image>
         </view>
         <view class="info">
           <view class="name">钱祥龙</view>
@@ -96,9 +103,7 @@ onPageScroll((e) => {
             <text class="label">粉丝</text>
           </view>
         </view>
-        <view class="remark">
-          "人生是美好的，好好珍惜每一天！"
-        </view>
+        <view class="remark"> "人生是美好的，好好珍惜每一天！" </view>
         <view class="action">
           <view class="subscribe focus">
             <text class="text">+关注</text>
@@ -106,26 +111,35 @@ onPageScroll((e) => {
           <view class="subscribe link" @click="contact">
             <text class="text">立即对接</text>
           </view>
-          <c_contact ref="pop"/>
+          <c_contact ref="pop" />
         </view>
-
       </view>
-      <u-tabs active-color="#333" :list="tabList" :is-scroll="false" v-model="currentTab" bar-width="200" item-width="50%"
-        @change="tabChange" sticky :style="{ top: '0', zIndex: 2 }"></u-tabs>
+      <u-tabs
+        active-color="#333"
+        :list="tabList"
+        :is-scroll="false"
+        v-model="currentTab"
+        bar-width="200"
+        item-width="50%"
+        @change="tabChange"
+        sticky
+        :style="{ top: '0', zIndex: 2 }"
+      ></u-tabs>
       <!-- 传记 -->
       <view class="tabBox biography" v-show="currentTab === 0">
-        <c_biography/>
+        <c_biography />
       </view>
       <!-- 视频 -->
       <view class="video" v-show="currentTab === 1">
-        <c_video/>
+        <c_video />
       </view>
       <!-- 橱窗 -->
-      <view class="shop" v-show="currentTab === 2"> 
-        <c_shop/>
+      <view class="shop" v-show="currentTab === 2">
+        <c_shop />
       </view>
-      <view class="shop" v-show="currentTab === 3"> 
-        <u-empty text="暂无数据" mode="list" style="margin-top: 30px;"></u-empty>
+      <!-- 排行榜 -->
+      <view class="shop" v-show="currentTab === 3">
+        <u-empty text="暂无数据" mode="list" style="margin-top: 30px"></u-empty>
       </view>
       <u-back-top :scroll-top="scrollTop"></u-back-top>
     </view>
@@ -252,7 +266,6 @@ onPageScroll((e) => {
     }
   }
 }
-
 
 .u-tabs {
   border-bottom: 1px solid #ccc;

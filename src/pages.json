@@ -208,14 +208,6 @@
 					}
 				},
 				{
-					"path": "businessCard/detail",
-					"style": {
-						"navigationBarTitleText": "名人详情",
-						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5"
-					}
-				},
-				{
 					"path": "businessCard/index",
 					"style": {
 						"navigationBarTitleText": "名人主页",

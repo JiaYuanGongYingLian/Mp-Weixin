@@ -1,14 +1,14 @@
 /*
- * @Description: Description
+ * @Description: 社交服务
  * @Author: Kerwin
  * @Date: 2023-06-29 15:54:59
- * @LastEditTime: 2023-06-29 17:16:23
+ * @LastEditTime: 2023-07-24 17:16:02
  * @LastEditors:  Please set LastEditors
  */
 import http from '../http'
 
 /**
- * 优惠卷
+ * 动态
  */
 function dynamicAdd(data: any) {
   return http.post('/social/api/v1/dynamic/add', data)
@@ -25,11 +25,56 @@ function dynamicInfo(data: any) {
 function dynamicUpdate(data: any) {
   return http.post('/social/api/v1/dynamic/update', data)
 }
-
+/**
+ * 朋友圈
+ */
+function circleAdd(data: any) {
+  return http.post('/social/api/v1/friend/circle/add', data)
+}
+function circleList(data: any) {
+  return http.get('/social/api/v1/friend/circle/list', data)
+}
+function circleDelete(data: any) {
+  return http.get('/social/api/v1/friend/circle/delete', data)
+}
+function circleInfo(data: any) {
+  return http.get('/social/api/v1/friend/circle/info', data)
+}
+function circleUpdate(data: any) {
+  return http.post('/social/api/v1/friend/circle/update', data)
+}
+/**
+ * 朋友圈动态
+ */
+function circleDynamicAdd(data: any) {
+  return http.post('/social/api/v1/friend/circle/dynamic/add', data)
+}
+function circleDynamicList(data: any) {
+  return http.get('/social/api/v1/friend/circle/dynamic/list', data)
+}
+function circleDynamicDelete(data: any) {
+  return http.get('/social/api/v1/friend/circle/dynamic/delete', data)
+}
+function circleDynamicInfo(data: any) {
+  return http.get('/social/api/v1/friend/circle/dynamic/info', data)
+}
+function circleDynamicUpdate(data: any) {
+  return http.post('/social/api/v1/friend/circle/dynamic/update', data)
+}
 export default {
   dynamicAdd,
   dynamicList,
   dynamicDelete,
   dynamicInfo,
-  dynamicUpdate
+  dynamicUpdate,
+  circleDynamicAdd,
+  circleDynamicList,
+  circleDynamicDelete,
+  circleDynamicInfo,
+  circleDynamicUpdate,
+  circleAdd,
+  circleList,
+  circleDelete,
+  circleInfo,
+  circleUpdate
 }
