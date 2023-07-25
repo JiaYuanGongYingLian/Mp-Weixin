@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-25 15:30:59
- * @LastEditTime: 2023-07-25 16:26:57
+ * @LastEditTime: 2023-07-25 18:12:06
  * @LastEditors:  Please set LastEditors
  */
 import { defineStore } from 'pinia'
@@ -39,6 +39,36 @@ const useStore = defineStore('config', {
           number++
         }
       }, 200)
+    },
+    jimLoginOut(ctx) {
+      jpushIM.loginOut()
+      ctx.commit('jimLoginOut')
+      utils.$toast('退出成功')
+      setTimeout(() => {
+        if (!jpushIM.isInit()) {
+          jpushIM.init()
+        }
+      }, 500)
+    },
+    jimLogin(ctx, data) {
+      utils.$setStorage('jimLoginInfo', data)
+      jpushIM.login(data).then((res) => {
+        ctx.commit('jimLogin')
+        ctx.dispatch('jimGetUserInfo', data.username)
+        ctx.dispatch('jimOnSyncConversation')
+        ctx.dispatch('jimOnMsgReceive')
+        ctx.dispatch('jimGetConversation')
+        utils.$toast('登录成功')
+      })
+    },
+    resetState() {
+      // this.hasLogin = false
+      this.jimUserInfo = {}
+      this.isJimInit = false
+      this.syncConversation = []
+      this.conversation = []
+      this.chatList = []
+      this.singleInfo = {}
     },
     jimGetSingleMsg(user: {}) {
       const chatList = jimMsg.getSingleMsg(
