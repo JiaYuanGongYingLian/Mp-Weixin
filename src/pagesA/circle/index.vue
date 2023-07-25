@@ -3,14 +3,14 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-24 14:50:01
- * @LastEditTime: 2023-07-24 17:19:12
+ * @LastEditTime: 2023-07-25 10:17:43
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
@@ -18,21 +18,39 @@ import { useUserStore } from '@/store'
 
 const userStore = useUserStore()
 const { hasLogin } = storeToRefs(userStore)
-const bannerList = ref([])
-const info = ref()
+const circleList = reactive({
+  list: [],
+  loading: true,
+  finished: false,
+  pageIndex: 1,
+  pageSize: 20
+})
+const status = ref('loadmore')
 async function getList() {
   try {
     const { data } = await socialApi.circleList({ detail: true })
+    const { records, current, pages } = data
+    circleList.list.push(...records)
+    if (current < pages && pages !== 0) {
+      circleList.pageIndex += 1
+    } else {
+      circleList.finished = true
+      status.value = 'nomore'
+    }
   } catch {}
 }
 onLoad((option) => {
+  getList()
+})
+onReachBottom(() => {
+  status.value = 'loading'
   getList()
 })
 </script>
 <template>
   <!-- <hy-nav-bar title="title"></hy-nav-bar> -->
   <view class="container">
-    <view class="circle">
+    <view class="circle" v-for="item in circleList.list" :key="item.id">
       <view class="c-top">
         <view class="left">
           <view class="name">黑银集团事业部</view>
@@ -63,6 +81,7 @@ onLoad((option) => {
         </view>
       </view>
     </view>
+    <u-loadmore v-if="circleList.list.length > 3" :status="status" />
   </view>
 </template>
 

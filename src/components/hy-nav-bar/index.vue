@@ -2,11 +2,11 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-07 15:41:52
- * @LastEditTime: 2023-06-09 11:45:41
+ * @LastEditTime: 2023-07-25 14:52:36
  * @LastEditors:  Please set LastEditors
 -->
 <template>
-  <view v-if="show" class="navBar">
+  <view v-if="show && !isWeChat()" class="navBar">
     <u-navbar
       :is-back="isBack"
       :title="title"
@@ -23,6 +23,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { isWeChat } from '@/utils/common'
 
 const props = withDefaults(
   defineProps<{
@@ -35,6 +36,7 @@ const props = withDefaults(
     borderBottom?: boolean
     backIconColor?: string
     backIconName?: string
+    show?: boolean
   }>(),
   {
     isBack: true,
@@ -44,6 +46,7 @@ const props = withDefaults(
     immersive: false,
     borderBottom: true,
     backIconName: 'nav-back',
+    show: true,
     background: () => {
       return {
         backgroundColor: '#fafafa'
@@ -57,7 +60,6 @@ const props = withDefaults(
     }
   }
 )
-const show = ref(true)
 </script>
 
 <style lang="scss" scoped>

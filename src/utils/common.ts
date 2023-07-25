@@ -237,6 +237,18 @@ export const isMObile = (value: string) => {
   return /^1[3-9]\d{9}$/.test(value)
 }
 
+export const $toast = (str: any, option: { duration?: any }) => {
+  if (!str) {
+    throw new Error('请填写正确的提示')
+  }
+  option = option || {}
+  uni.showToast({
+    title: str,
+    icon: 'none',
+    duration: option.duration ? option.duration : 2000
+  })
+}
+
 export default {
   getQueryObject,
   getQueryVariable,

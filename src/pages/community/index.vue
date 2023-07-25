@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-07-24 16:40:02
+ * @LastEditTime: 2023-07-25 10:18:28
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -44,7 +44,7 @@ const list = [
     name: '短视频'
   }
 ]
-const currentTab = ref(1)
+const currentTab = ref(0)
 const categoryList = ref([])
 const famousList = reactive({
   pageIndex: 1,
@@ -173,12 +173,12 @@ onPageScroll((e) => {
         @change="change"
       ></u-tabs>
     </view>
-    <view class="circle" v-if="currentTab === 0">
+    <view class="circle" v-show="currentTab === 0">
       <hyCircle></hyCircle>
       <!-- <u-empty text="暂未开放" mode="page" style="margin-top: 100px"></u-empty> -->
     </view>
     <!-- 对接名人 -->
-    <view class="celebrity" v-if="currentTab === 1">
+    <view class="celebrity" v-show="currentTab === 1">
       <view class="section">
         <view class="actions">
           <view
