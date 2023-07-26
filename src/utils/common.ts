@@ -237,7 +237,10 @@ export const isMObile = (value: string) => {
   return /^1[3-9]\d{9}$/.test(value)
 }
 
-export const $toast = (str: any, option: { duration?: any }) => {
+export const $toast = (
+  str: any,
+  option: { duration?: any } = { duration: 2000 }
+) => {
   if (!str) {
     throw new Error('请填写正确的提示')
   }
@@ -245,7 +248,7 @@ export const $toast = (str: any, option: { duration?: any }) => {
   uni.showToast({
     title: str,
     icon: 'none',
-    duration: option.duration ? option.duration : 2000
+    duration: option.duration
   })
 }
 
@@ -262,5 +265,6 @@ export default {
   updateTimelineShareData,
   parseParams,
   isEmptyObject,
-  isMObile
+  isMObile,
+  $toast
 }
