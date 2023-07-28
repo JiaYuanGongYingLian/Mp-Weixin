@@ -2,57 +2,69 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-07-25 18:07:21
+ * @LastEditTime: 2023-07-28 18:15:50
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, onBeforeMount } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi } from '@/api'
-import { getImgFullPath, getDistance } from '@/utils/index'
+import {
+  getImgFullPath,
+  getDistance,
+  previewImage,
+  dateFormat
+} from '@/utils/index'
 import { useUserStore, useChatStore } from '@/store'
+import $config from '@/common/jim/config.js'
+import { emojiAllJson } from '@/common/jim/emoji.js'
+import c_foot from './c_foot.vue'
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const { hasLogin } = storeToRefs(userStore)
+const {
+  chatList,
+  jimUserInfo,
+  singleInfo,
+  singleInfoAvatar,
+  jimUserInfoAvatar
+} = storeToRefs(chatStore)
 const isEmoji = ref(false)
 const isUpload = ref(false)
 const chatScrollTop = ref(99999)
 const thouUsername = ref('')
-
+const groupName = ref('群聊')
 function onChatClick() {
-  if (this.isEmoji) {
-    this.isEmoji = !this.isEmoji
+  if (isEmoji.value) {
+    isEmoji.value = !isEmoji.value
   }
-  if (this.isUpload) {
-    this.isUpload = !this.isUpload
+  if (isUpload.value) {
+    isUpload.value = !isUpload.value
   }
 }
 const isScrollHeight = computed(() => {
   return isEmoji.value && isUpload.value
 })
-onReady(() => {
-  const params = {
-    username: 'kerwin',
-    password: 123456,
-    is_md5: false
-  }
-  chatStore.jimLogin(params)
-})
+function setChatScrollTop() {
+  setTimeout(() => {
+    chatScrollTop.value += 1
+  }, 200)
+}
 onLoad((option) => {
   if (option) {
-    const { username } = option
-    thouUsername.value = username || ''
+    thouUsername.value = option.username || ''
+    groupName.value = option.groupName
     chatStore.jimGetSingleInfo(thouUsername.value)
   }
 })
 </script>
 <template>
-  <hy-nav-bar title="title"></hy-nav-bar>
   <view class="container">
+    <hy-nav-bar :title="groupName"></hy-nav-bar>
     <view class="l-chat-body" @tap="onChatClick">
       <scroll-view
         scroll-y="true"
@@ -71,7 +83,7 @@ onLoad((option) => {
             :class="{ 'l-chat-mine': s.content.from_id !== thouUsername }"
           >
             <view class="l-chat-item-time">
-              {{ s.ctime_ms | formatTime }}
+              {{ dateFormat(new Date(s.ctime_ms), 'yyyy-MM-dd hh:mm') }}
             </view>
             <view class="l-chat-item-content">
               <view class="l-chat-avatar">
@@ -135,9 +147,11 @@ onLoad((option) => {
                     <image
                       v-else
                       @tap="
-                        previewImage(jimLocalhost + s.content.msg_body.media_id)
+                        previewImage(
+                          $config.jimLocalhost + s.content.msg_body.media_id
+                        )
                       "
-                      :src="jimLocalhost + s.content.msg_body.media_id"
+                      :src="$config.jimLocalhost + s.content.msg_body.media_id"
                       :style="{
                         'max-width': '250rpx',
                         width: s.content.msg_body.width,
@@ -154,11 +168,11 @@ onLoad((option) => {
                       <view class="l-cfv-name">
                         文件名文件名文件名文件名文件名文件名文件名文件名文件名
                       </view>
-                      <image
+                      <!-- <image
                         class="l-chat-file-img"
                         src="../../static/wenjian.png"
                         mode="aspectFill"
-                      ></image>
+                      ></image> -->
                     </view>
                     <view class="l-chat-file-size"> 5.9MB </view>
                   </button>
@@ -169,7 +183,153 @@ onLoad((option) => {
         </view>
       </scroll-view>
     </view>
+    <c_foot @on-focus="setChatScrollTop" />
   </view>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.l-chat-body {
+  width: 100%;
+  flex: 1;
+}
+
+.l-char-scroll {
+  width: 100%;
+  height: 100%;
+  /* #ifdef H5 */
+  height: calc(100vh - 190rpx);
+  /* #endif */
+  /* #ifndef H5 */
+  height: calc(100vh - 110rpx);
+  /* #endif */
+  background-color: #f6f6f6;
+}
+.l-char-scroll-height {
+  /* #ifdef H5 */
+  height: calc(100vh - 190rpx - 150rpx);
+  /* #endif */
+  /* #ifndef H5 */
+  height: calc(100vh - 110rpx - 150rpx);
+  /* #endif */
+}
+
+.l-char-content {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 40rpx 20rpx 40rpx;
+}
+.l-char-scroll-content {
+  padding: 0 20rpx 20rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.l-chat-item {
+  width: 100%;
+  font-size: 32rpx;
+}
+
+.l-char-empty,
+.l-chat-item-time {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 92rpx;
+  font-size: 28rpx;
+  color: #999999;
+}
+
+.l-chat-item-content {
+  display: flex;
+}
+
+.l-chat-img-avatar,
+.l-chat-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+}
+
+.l-chat-avatar {
+  margin: 0 20rpx 0 0;
+}
+
+.l-chat-view {
+  max-width: 515rpx;
+}
+
+.l-chat-name {
+  width: 100%;
+  font-size: 24rpx;
+  color: #666666;
+  margin-bottom: 20rpx;
+}
+
+.l-chat-text {
+  min-width: 100rpx;
+  max-width: 515rpx;
+  padding: 20rpx 30rpx;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  margin: 0 0 0 15rpx;
+  position: relative;
+  word-break: break-all;
+  border-radius: 3px;
+}
+
+.l-chat-text::after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  top: 40rpx;
+  width: 0;
+  height: 0;
+  left: -28rpx;
+  transform: translate(0, -50%);
+  border: 15rpx solid;
+  border-color: transparent #ffffff transparent transparent;
+}
+
+.l-chat-mine .l-chat-item-content {
+  flex-direction: row-reverse;
+}
+
+.l-chat-mine .l-chat-avatar {
+  margin: 0 0 0 20rpx;
+}
+
+.l-chat-mine .l-chat-name {
+  text-align: right;
+}
+
+.l-chat-mine .l-chat-text {
+  background-color: #95eb6c;
+  color: #000;
+  margin: 0 15rpx 0 0;
+  border-radius: 3px;
+}
+
+.l-chat-mine .l-chat-text::after {
+  left: auto;
+  right: -28rpx;
+  border-color: transparent transparent transparent #95eb6c;
+}
+
+.l-chat-file {
+  line-height: 1;
+  margin: 0;
+  text-align: left;
+  padding: 20rpx;
+  width: 420rpx;
+  background-color: #ededed;
+}
+
+.l-chat-flie-view {
+  display: flex;
+}
+.l-icon-emoji-m {
+  width: 54rpx;
+  height: 54rpx;
+}
+</style>

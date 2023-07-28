@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-24 14:50:01
- * @LastEditTime: 2023-07-25 10:17:43
+ * @LastEditTime: 2023-07-28 15:21:16
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -39,6 +39,11 @@ async function getList() {
     }
   } catch {}
 }
+function toGroupChat(item: { name: any }) {
+  uni.navigateTo({
+    url: `/pagesA/chat/index?groupName=${item.name}&username=jack2`
+  })
+}
 onLoad((option) => {
   getList()
 })
@@ -62,6 +67,7 @@ onReachBottom(() => {
           size="mini"
           shape="circle"
           :ripple="true"
+          @click="toGroupChat(item)"
           >加入</u-button
         >
       </view>

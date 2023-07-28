@@ -5,12 +5,12 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-25 15:30:59
- * @LastEditTime: 2023-07-26 10:30:18
+ * @LastEditTime: 2023-07-28 15:11:02
  * @LastEditors:  Please set LastEditors
  */
 import { defineStore } from 'pinia'
 import jpushIM from '@/common/jim/jim.js'
-import config from '@/common/jim/config.js'
+import $config from '@/common/jim/config.js'
 import jimMsg from '@/common/jim/imMsgApi.js'
 import { $toast } from '@/utils/common'
 
@@ -26,16 +26,28 @@ const useStore = defineStore('config', {
     chatList: [],
     singleInfo: {}
   }),
-  getters: {},
+  getters: {
+    singleInfoAvatar: (state) => {
+      return state.singleInfo.avatar
+        ? $config.jimLocalhost + state.singleInfo.avatar
+        : $config.$defaultAvatar
+    },
+    jimUserInfoAvatar: (state) => {
+      return state.jimUserInfo.avatar
+        ? $config.jimLocalhost + state.jimUserInfo.avatar
+        : $config.$defaultAvatar
+    }
+  },
   actions: {
     async jimInit() {
       await jpushIM.init()
       const inter = setInterval(() => {
         if (jpushIM.isInit() || number > 20) {
           clearInterval(inter)
-          this.jimInit()
+          this.isJimInit = true
         } else {
           number++
+          this.jimInit()
         }
       }, 200)
     },
@@ -111,8 +123,8 @@ const useStore = defineStore('config', {
       if (code === 0) {
         conversations.forEach((e: { avatar: any }) => {
           e.avatar = e.avatar
-            ? config.jimLocalhost + e.avatar
-            : config.$defaultAvatar
+            ? $config.jimLocalhost + e.avatar
+            : $config.$defaultAvatar
         })
         this.jimGetConversationFormat(conversations)
       }

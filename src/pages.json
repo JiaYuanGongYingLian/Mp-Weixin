@@ -238,6 +238,14 @@
 						"navigationStyle": "custom",
 						"backgroundColor": "#F5F5F5"
 					}
+				},
+				{
+					"path": "chat/index",
+					"style": {
+						"navigationBarTitleText": "圈子群聊",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
 				}
 			]
 		}

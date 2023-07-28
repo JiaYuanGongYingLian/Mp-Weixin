@@ -6,14 +6,14 @@
 /* eslint-disable max-len */
 import { Md5 } from 'ts-md5'
 import config from './config.js'
-import $errorCode from './errorCode.js'
+import $errorCode from './jimErrorCode.js'
 import utils from '@/utils/common.ts'
 // #ifdef H5
-const JMessage = require('./jmessage-sdk-web.2.6.0.min.js')
+// const JMessage = require('./jmessage-sdk-web.2.6.0.min.js')
 // #endif
 // #ifndef H5
 // eslint-disable-next-line no-redeclare
-const JMessage = require('./jmessage-wxapplet-sdk-1.4.3.min.js')
+// const JMessage = require('./jmessage-wxapplet-sdk-1.4.3.min.js')
 // #endif
 
 // 文档链接  https://docs.jiguang.cn/jmessage/client/im_sdk_js_v2/

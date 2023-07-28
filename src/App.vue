@@ -3,10 +3,24 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/store'
+import { watch } from 'vue'
+import { useUserStore, useChatStore } from '@/store'
 
 const storeUser = useUserStore()
+const chatStore = useChatStore()
+const { hasLogin, isJimInit } = storeToRefs(chatStore)
+watch(isJimInit, (n) => {
+  if (n) {
+    const data = uni.getStorageSync('jimLoginInfo')
+    if (data && data.username) {
+      chatStore.jimLogin(data)
+    }
+  }
+})
 onLaunch(() => {
+  if (!hasLogin.value) {
+    chatStore.jimInit()
+  }
   console.log('App Launch')
 })
 onShow(() => {
