@@ -1,14 +1,15 @@
+<!-- eslint-disable no-use-before-define -->
 <!--
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-07-28 18:15:50
+ * @LastEditTime: 2023-07-29 16:48:38
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref, computed, onBeforeMount } from 'vue'
+import { reactive, ref, computed, onBeforeMount, watch } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi } from '@/api'
@@ -33,9 +34,12 @@ const {
   singleInfoAvatar,
   jimUserInfoAvatar
 } = storeToRefs(chatStore)
+watch(chatList, (n) => {
+  setChatScrollTop()
+})
 const isEmoji = ref(false)
 const isUpload = ref(false)
-const chatScrollTop = ref(99999)
+const chatScrollTop = ref(999999)
 const thouUsername = ref('')
 const groupName = ref('群聊')
 function onChatClick() {

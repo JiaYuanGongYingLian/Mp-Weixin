@@ -2,7 +2,7 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-07-28 18:32:01
+ * @LastEditTime: 2023-07-29 11:07:48
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -132,7 +132,6 @@ function submit() {
   }
   chatStore.jimSendSingleMsg(params)
   content.value = ''
-  emit('onFocus')
 }
 
 onMounted((option) => {})
