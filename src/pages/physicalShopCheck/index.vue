@@ -77,8 +77,9 @@ async function getShopInfo() {
     detail: true,
     otherColumns: 'moneyRuleDetails'
   })
-  const { name, shopMoneyRules, code } = data
+  const { name, shopMoneyRules, code, user } = data
   uni.setStorageSync('shopCode', code)
+  uni.setStorageSync('shopOwnerShareCode', user.shareCode)
   info.name = name
   if (shopMoneyRules && shopMoneyRules.length > 0) {
     if (moneyRuleId.value) {

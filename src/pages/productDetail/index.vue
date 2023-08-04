@@ -30,11 +30,13 @@ async function getProductInfo() {
       productId: productId.value
     })
     const { bannerResources, shopProductSkus } = data
-    data.bannerList = bannerResources.map(
-      (element: { resourceUrl: string }) => {
-        return getImgFullPath(element.resourceUrl)
-      }
-    )
+    if (bannerResources && bannerResources.length) {
+      data.bannerList = bannerResources.map(
+        (element: { resourceUrl: string }) => {
+          return getImgFullPath(element.resourceUrl)
+        }
+      )
+    }
     data.saleCount = shopProductSkus.reduce((pre: any, cur: any) => {
       return pre + Math.abs(cur.saleCount)
     }, 0)

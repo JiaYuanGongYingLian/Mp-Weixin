@@ -72,8 +72,11 @@ async function submit() {
     }
     const shopCode = uni.getStorageSync('shopCode')
     const shareCode = uni.getStorageSync('shareCode')
+    const shopOwnerShareCode = uni.getStorageSync('shopOwnerShareCode')
     if (shareCode) {
       params.inviteCode = shareCode
+    } else if (shopOwnerShareCode) {
+      params.inviteCode = shopOwnerShareCode
     } else if (shopCode) {
       params.shopCode = shopCode
     }

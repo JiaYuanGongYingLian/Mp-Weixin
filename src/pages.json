@@ -28,12 +28,6 @@
 			}
 		},
 		{
-			"path": "pages/pinia/index",
-			"style": {
-				"navigationBarTitleText": "状态管理工具（pinia）"
-			}
-		},
-		{
 			"path": "pages/unocss/index",
 			"style": {
 				"navigationBarTitleText": "UnoCSS 示例"
