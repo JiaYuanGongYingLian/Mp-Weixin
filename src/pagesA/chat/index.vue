@@ -3,7 +3,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-07-29 16:48:38
+ * @LastEditTime: 2023-08-04 16:54:06
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -32,16 +32,26 @@ const {
   jimUserInfo,
   singleInfo,
   singleInfoAvatar,
-  jimUserInfoAvatar
+  jimUserInfoAvatar,
+  syncConversation
 } = storeToRefs(chatStore)
-watch(chatList, (n) => {
-  setChatScrollTop()
-})
+watch(
+  [chatList, syncConversation],
+  (n) => {
+    if (n) {
+      setChatScrollTop()
+    }
+  },
+  { deep: true }
+)
 const isEmoji = ref(false)
 const isUpload = ref(false)
 const chatScrollTop = ref(999999)
 const thouUsername = ref('')
-const groupName = ref('群聊')
+const groupInfo = reactive({
+  name: '',
+  gid: ''
+})
 function onChatClick() {
   if (isEmoji.value) {
     isEmoji.value = !isEmoji.value
@@ -61,14 +71,20 @@ function setChatScrollTop() {
 onLoad((option) => {
   if (option) {
     thouUsername.value = option.username || ''
-    groupName.value = option.groupName
-    chatStore.jimGetSingleInfo(thouUsername.value)
+    groupInfo.gid = option.groupId
+    groupInfo.name = option.groupName
+    if (option.username) {
+      chatStore.jimGetSingleInfo(thouUsername.value)
+    } else {
+      chatStore.jimGetGroupInfo(groupInfo.gid)
+    }
+    setChatScrollTop()
   }
 })
 </script>
 <template>
   <view class="container">
-    <hy-nav-bar :title="groupName"></hy-nav-bar>
+    <hy-nav-bar :title="groupInfo.name"></hy-nav-bar>
     <view class="l-chat-body" @tap="onChatClick">
       <scroll-view
         scroll-y="true"
@@ -84,7 +100,9 @@ onLoad((option) => {
             class="l-chat-item"
             v-for="(s, i) in chatList"
             :key="i"
-            :class="{ 'l-chat-mine': s.content.from_id !== thouUsername }"
+            :class="{
+              'l-chat-mine': s.content.from_id === jimUserInfo.username
+            }"
           >
             <view class="l-chat-item-time">
               {{ dateFormat(new Date(s.ctime_ms), 'yyyy-MM-dd hh:mm') }}
@@ -93,7 +111,7 @@ onLoad((option) => {
               <view class="l-chat-avatar">
                 <image
                   class="l-chat-img-avatar"
-                  v-if="s.content.from_id == thouUsername"
+                  v-if="s.content.from_id !== jimUserInfo.username"
                   @tap="$nav({ url: '/pages/info/info?type=single' })"
                   :src="singleInfoAvatar"
                   mode="aspectFill"
@@ -107,10 +125,11 @@ onLoad((option) => {
               </view>
               <view class="l-chat-view">
                 <view class="l-chat-name">
+                  <!-- {{ s }} -->
                   {{
-                    s.content.from_id !== thouUsername
+                    s.content.from_id === jimUserInfo.username
                       ? jimUserInfo.nickname || jimUserInfo.username
-                      : singleInfo.nickname || singleInfo.username
+                      : s.content.from_name
                   }}
                 </view>
                 <template v-if="s.content.msg_type === 'text'">

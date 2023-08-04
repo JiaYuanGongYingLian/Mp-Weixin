@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-25 15:30:59
- * @LastEditTime: 2023-07-28 15:11:02
+ * @LastEditTime: 2023-08-04 17:27:19
  * @LastEditors:  Please set LastEditors
  */
 import { defineStore } from 'pinia'
@@ -24,7 +24,8 @@ const useStore = defineStore('config', {
     syncConversation: [],
     conversation: [],
     chatList: [],
-    singleInfo: {}
+    singleInfo: {},
+    groupInfo: {}
   }),
   getters: {
     singleInfoAvatar: (state) => {
@@ -68,13 +69,20 @@ const useStore = defineStore('config', {
     },
     async jimLogin(data: { username: any }) {
       uni.setStorageSync('jimLoginInfo', data)
-      await jpushIM.login(data)
-      this.hasLogin = true
-      this.jimGetUserInfo(data.username)
-      this.jimOnSyncConversation()
-      this.jimOnMsgReceive()
-      this.jimGetConversation()
-      $toast('登录成功')
+      try {
+        const { res } = await jpushIM.login(data)
+        console.log(72, res)
+        this.hasLogin = true
+        this.jimGetUserInfo(data.username)
+        this.jimOnSyncConversation()
+        this.jimOnMsgReceive()
+        this.jimGetConversation()
+        $toast('登录成功')
+      } catch (err) {
+        if (err && err.code !== 0) {
+          this.jimRegister(data)
+        }
+      }
     },
     async jimGetUserInfo(data: any) {
       const params = {
@@ -176,6 +184,7 @@ const useStore = defineStore('config', {
         this.syncConversation.push(syncConversation)
       }
       console.log('state.syncConversation', this.syncConversation)
+      console.log('state.chatlist', this.chatList)
     },
     jimGetSingleMsg(user: {}) {
       const chatList = jimMsg.getSingleMsg(
@@ -207,18 +216,55 @@ const useStore = defineStore('config', {
         }
       }
     },
-    jimResetUnreadCount(data: { username: any; appkey: any }) {
+    async jimGetGroupInfo(data: any) {
+      this.chatList = []
+      if (data) {
+        const params = {
+          gid: data
+        }
+        const { code, group_info } = await jpushIM.getGroupInfo(params)
+        if (code === 0) {
+          const group = group_info || {
+            gid: data
+          }
+          this.jimGetGroupMembers(group)
+          this.jimGetGroupMsg(group)
+        }
+      }
+    },
+    async jimGetGroupMembers(group: any) {
+      const res = await jpushIM.getGroupMembers(group)
+      console.log(res)
+    },
+    jimGetGroupMsg(group: {}) {
+      const chatList = jimMsg.getGroupMsg(
+        this.conversation,
+        this.syncConversation,
+        group
+      )
+      if (chatList.isfind) {
+        this.chatList = chatList._chatInfoList
+      } else {
+        this.conversation.unshift(chatList._chatList)
+        this.chatList = []
+      }
+      this.groupInfo = group
+      this.jimResetUnreadCount(group)
+    },
+    jimResetUnreadCount(data: { username?: any; appkey?: any; gid?: any }) {
       const params = {
         username: data.username,
-        appkey: data.appkey
+        appkey: data.appkey,
+        gid: data.gid
       }
       jpushIM.resetUnreadCount(params)
       this.jimUpdateConversation(data)
     },
-    jimUpdateConversation(data: { username: any; appkey: any }) {
+    jimUpdateConversation(data: { username?: any; appkey?: any; gid?: any }) {
       const params = {
         username: data.username,
-        appkey: data.appkey
+        appkey: data.appkey,
+        gid: data.gid
       }
       jpushIM.updateConversation(params)
     },
@@ -271,6 +317,10 @@ const useStore = defineStore('config', {
       if (res.code === 0) {
         this.jimGetUserInfo(this.jimUserInfo.username)
       }
+    },
+    async joinGroup(data: any) {
+      const res = await jpushIM.joinGroup(data)
+      return res
     }
   }
 })

@@ -134,6 +134,51 @@ const jimMsg = {
       content
     }
     return msgInfo
+  },
+  getGroupMsg(chatList = [], chatInfoList = [], groupInfo) {
+  debugger
+
+    const object = {}
+    const _chatList = chatList.map((e) => e.gid)
+    const _chatInfoList = chatInfoList.map((e) => e.from_gid)
+    const index = _chatList.indexOf(String(groupInfo.gid))
+    if (index === -1) {
+      object.isfind = false
+      object._chatInfoList = null
+      object._chatList = {
+        name: groupInfo.name,
+        username: groupInfo.username,
+        appkey: groupInfo.appkey,
+        type: 4,
+        mtime: new Date().getTime(),
+        avatar: groupInfo.avatar,
+        nickName: groupInfo.nickName,
+        extras: groupInfo.extras,
+        unread_msg_count: 0
+      }
+    } else {
+      const _index = _chatInfoList.indexOf(String(groupInfo.gid))
+      if (_index === -1) {
+        object.isfind = false
+        object._chatInfoList = null
+        object._chatList = {
+          name: groupInfo.name,
+          username: groupInfo.username,
+          appkey: groupInfo.appkey,
+          type: 4,
+          mtime: new Date().getTime(),
+          avatar: groupInfo.avatar,
+          nickName: groupInfo.nickName,
+          extras: groupInfo.extras,
+          unread_msg_count: 0
+        }
+      } else {
+        object.isfind = true
+        object._chatList = null
+        object._chatInfoList = chatInfoList[_index].msgs || []
+      }
+    }
+    return object
   }
 }
 

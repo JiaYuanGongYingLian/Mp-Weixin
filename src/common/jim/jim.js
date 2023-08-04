@@ -119,6 +119,20 @@ const jpushIM = {
     return myPromise('getUserInfo', params)
   },
   /*
+   * 获取群聊信息
+   * @param{ params.gid } 群id
+   */
+  getGroupInfo(params) {
+    return myPromise('getGroupInfo', params)
+  },
+  /*
+   * 获取群成员
+   * @param{ params.gid } 群id
+   */
+  getGroupMembers(params) {
+    return myPromise('getGroupMembers', params)
+  },
+  /*
    * 更新个人头像
    * @param{ params.avatar } 头像头像图片的 DataForm 对象
    */
@@ -226,6 +240,9 @@ const jpushIM = {
   },
   getUnreadMsgCnt(params) {
     return JIM.getUnreadMsgCnt(params)
+  },
+  joinGroup(params) {
+    return myPromise('joinGroup', params)
   }
 }
 

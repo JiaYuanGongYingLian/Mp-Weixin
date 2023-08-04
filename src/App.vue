@@ -4,16 +4,25 @@
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
+import { Md5 } from 'ts-md5'
 import { useUserStore, useChatStore } from '@/store'
 
 const storeUser = useUserStore()
 const chatStore = useChatStore()
 const { hasLogin, isJimInit } = storeToRefs(chatStore)
+const { userInfo } = storeToRefs(storeUser)
 watch(isJimInit, (n) => {
   if (n) {
     const data = uni.getStorageSync('jimLoginInfo')
     if (data && data.username) {
       chatStore.jimLogin(data)
+    } else {
+      const loginInfo = {
+        username: `hy_${userInfo.value.id}`,
+        password: Md5.hashStr(`hy_${userInfo.value.id}_Ji`),
+        nickname: userInfo.value.nickname,
+      }
+      chatStore.jimLogin(loginInfo)
     }
   }
 })
