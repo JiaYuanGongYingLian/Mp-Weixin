@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-28 17:45:12
- * @LastEditTime: 2023-07-22 05:27:26
+ * @LastEditTime: 2023-08-05 17:17:14
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -19,7 +19,7 @@ import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 import { upload, webUploadVideo } from '@/common/ali-oss'
-import biography from './biography.vue'
+import c_biography from './c_biography.vue'
 
 const store = useUserStore()
 const { hasLogin, userInfo } = storeToRefs(store)
@@ -85,7 +85,7 @@ const videoList2 = reactive({
 })
 const progress = ref(0)
 const counter = ref()
-const currentTab = ref(0)
+const currentTab = ref(1)
 function change(index: any) {
   currentTab.value = index
 }
@@ -265,7 +265,7 @@ onLoad((option) => {
         </view>
       </view>
       <view v-else-if="currentTab === 1">
-        <biography />
+        <c_biography />
       </view>
       <view v-else> <u-empty text="暂无数据" mode="list" style="margin-top: 200rpx;"></u-empty> </view>
     </Transition>

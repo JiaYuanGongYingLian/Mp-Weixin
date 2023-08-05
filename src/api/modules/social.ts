@@ -2,7 +2,7 @@
  * @Description: 社交服务
  * @Author: Kerwin
  * @Date: 2023-06-29 15:54:59
- * @LastEditTime: 2023-08-01 11:01:54
+ * @LastEditTime: 2023-08-05 17:05:55
  * @LastEditors:  Please set LastEditors
  */
 import http from '../http'
@@ -76,6 +76,21 @@ function circleUserDelete(data: any) {
 function circleUserUpdate(data: any) {
   return http.post('/social/api/v1/friend/circle/user/update', data)
 }
+/**
+ * 用户详情信息
+ */
+function userDetailAdd(data: any) {
+  return http.post('/social/api/v1/user/detail/add', data)
+}
+function userDetailList(data: any) {
+  return http.get('/social/api/v1/user/detail/list', data)
+}
+function userDetailDelete(data: any) {
+  return http.get('/social/api/v1/user/detail/delete', data)
+}
+function userDetailUpdate(data: any) {
+  return http.post('/social/api/v1/user/detail/update', data)
+}
 export default {
   dynamicAdd,
   dynamicList,
@@ -95,5 +110,9 @@ export default {
   circleUserAdd,
   circleUserList,
   circleUserDelete,
-  circleUserUpdate
+  circleUserUpdate,
+  userDetailAdd,
+  userDetailList,
+  userDetailDelete,
+  userDetailUpdate
 }

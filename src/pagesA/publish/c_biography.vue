@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-30 11:32:40
- * @LastEditTime: 2023-07-22 05:24:35
+ * @LastEditTime: 2023-08-05 17:43:27
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -13,7 +13,7 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi } from '@/api'
+import { baseApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 import { isMObile } from '@/utils/common'
@@ -28,27 +28,18 @@ let formData = reactive({
   name: '',
   remark: '',
   status: 0,
-  shopMoneyRules: [],
+  shopProductSkuMoney: '',
   userId: '',
   addressName: '',
-  address: {
-    provinceName: '',
-    street: '',
-    phone: '',
-    other: '',
-    districtId: '',
-    provinceId: '',
-    cityName: '',
-    longitude: '',
-    latitude: '',
-    name: '',
-    districtName: '',
-    cityId: ''
-  },
-  invitePhone: '',
-  avatar: '',
+  provinceName: '',
+  districtId: '',
+  provinceId: '',
+  cityName: '',
+  districtName: '',
+  cityId: '',
   license: '',
-  bannerResources: []
+  bannerResources: [],
+  companyRemark: ''
 })
 const rules = reactive({
   categoryName: [
@@ -70,35 +61,6 @@ const rules = reactive({
     {
       required: true,
       message: '请选择地址',
-      trigger: ['change', 'blur']
-    }
-  ],
-  'address.other': [
-    {
-      required: true,
-      message: '请填写详细地址',
-      trigger: ['change', 'blur']
-    }
-  ],
-  'address.name': [
-    {
-      required: true,
-      message: '请填写联系人',
-      trigger: ['change', 'blur']
-    }
-  ],
-  'address.phone': [
-    {
-      required: true,
-      message: '请填写联系电话',
-      trigger: ['change', 'blur']
-    },
-    {
-      // 自定义验证函数，见上说明
-      validator: (rule, value, callback) => {
-        return isMObile(value)
-      },
-      message: '手机号码不正确',
       trigger: ['change', 'blur']
     }
   ],
@@ -146,11 +108,12 @@ const uploadUrl = ref(
 )
 const tempImageData = reactive({
   avatar: '',
+  coverImage: '',
   license: '',
   bannerResources: []
 })
 function uploadSuccess(data: any, index: any, lists: any, name: string) {
-  if (['avatar', 'license'].includes(name)) {
+  if (['avatar', 'coverImage', 'license'].includes(name)) {
     tempImageData[name] = data.data
     return
   }
@@ -190,8 +153,6 @@ function chooseLocation() {
     success: async (res) => {
       const { latitude, longitude } = res
       if (!latitude || !longitude) return
-      formData.address.latitude = latitude
-      formData.address.longitude = longitude
       const { code, data } = await baseApi.reverseGeocoding({
         latitude,
         longitude
@@ -201,19 +162,17 @@ function chooseLocation() {
         provinceName,
         cityName,
         districtName,
-        street,
         districtId,
         provinceId,
         cityId
       } = data
-      formData.address.provinceName = provinceName
-      formData.address.cityName = cityName
-      formData.address.districtName = districtName
-      formData.address.provinceId = provinceId
-      formData.address.cityId = cityId
-      formData.address.districtId = districtId
-      formData.address.street = street
-      formData.addressName = provinceName + cityName + districtName + street
+      formData.provinceName = provinceName
+      formData.cityName = cityName
+      formData.districtName = districtName
+      formData.provinceId = provinceId
+      formData.cityId = cityId
+      formData.districtId = districtId
+      formData.addressName = provinceName + cityName + districtName
     },
     fail: (error) => {
       console.log('error', error)
@@ -294,15 +253,26 @@ onLoad(async (option) => {
             "
           ></u-upload>
         </u-form-item>
-        <u-form-item
-          required
-          label="姓名"
-          label-width="auto"
-          prop="address.name"
+        <u-form-item label="传记主图" label-width="auto" required>
+          <u-upload
+            ref="upload1"
+            :action="uploadUrl"
+            max-count="1"
+            :header="header"
+            name="object"
+            @on-success="uploadSuccess"
+            index="coverImage"
+            :file="true"
+            :file-list="
+              formData.avatar ? [{ url: getImgFullPath(formData.avatar) }] : []
+            "
+          ></u-upload>
+        </u-form-item>
+        <u-form-item required label="姓名" label-width="auto" prop="name"
           ><u-input
-            v-model="formData.address.name"
+            v-model="formData.name"
             input-align="right"
-            placeholder="请填写姓名"
+            placeholder="请填写真实姓名"
         /></u-form-item>
         <u-form-item
           required
@@ -310,13 +280,14 @@ onLoad(async (option) => {
           label-width="auto"
           prop="address.phone"
           ><u-input
-            v-model="formData.address.phone"
+            v-model="formData.phone"
             input-align="right"
             placeholder="请填写联系电话"
+            type="number"
         /></u-form-item>
         <u-form-item
           required
-          label="行业"
+          label="职业分类"
           label-width="auto"
           prop="categoryName"
         >
@@ -324,7 +295,7 @@ onLoad(async (option) => {
             v-model="formData.categoryName"
             type="select"
             input-align="right"
-            placeholder="请选择行业"
+            placeholder="请选择职业"
             @click="showPicker1 = true" />
           <u-action-sheet
             :list="categoryList"
@@ -333,15 +304,18 @@ onLoad(async (option) => {
             @click="actionSheetCallback"
           ></u-action-sheet
         ></u-form-item>
-        <u-form-item required label="企业名称" label-width="auto" prop="name"
+        <u-form-item required label="对接金额" label-width="auto" prop="name"
           ><u-input
-            v-model="formData.name"
+            v-model="formData.shopProductSkuMoney"
             input-align="right"
-            placeholder="请填写名称"
-        /></u-form-item>
+            placeholder="请填写对接金额（10~1w）"
+            type="number"
+          />
+          （元）</u-form-item
+        >
         <u-form-item
           required
-          label="地址"
+          label="所在城市"
           label-width="auto"
           prop="addressName"
           right-icon="map-fill"
@@ -349,32 +323,9 @@ onLoad(async (option) => {
           ><u-input
             v-model="formData.addressName"
             input-align="right"
-            placeholder="请选择地址"
+            placeholder="请选择地区"
             @click="chooseLocation"
           />
-        </u-form-item>
-        <u-form-item
-          required
-          label="详细地址"
-          label-width="auto"
-          prop="address.other"
-          ><u-input
-            v-model="formData.address.other"
-            input-align="right"
-            placeholder="请填写详细地址"
-        /></u-form-item>
-        <u-form-item required label="经纬度" label-width="auto">
-          <view flex
-            ><u-input
-              v-model="formData.address.longitude"
-              input-align="center"
-              placeholder="请填写经度" />
-            <text style="color: #ccc; flex-shrink: 0">--</text>
-            <u-input
-              v-model="formData.address.latitude"
-              input-align="right"
-              placeholder="请填写纬度"
-          /></view>
         </u-form-item>
         <u-form-item
           required
