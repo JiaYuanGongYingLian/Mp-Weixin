@@ -136,8 +136,6 @@ const jimMsg = {
     return msgInfo
   },
   getGroupMsg(chatList = [], chatInfoList = [], groupInfo) {
-  debugger
-
     const object = {}
     const _chatList = chatList.map((e) => e.gid)
     const _chatInfoList = chatInfoList.map((e) => e.from_gid)

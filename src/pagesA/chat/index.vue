@@ -3,7 +3,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-08-04 16:54:06
+ * @LastEditTime: 2023-08-05 15:43:28
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -17,7 +17,8 @@ import {
   getImgFullPath,
   getDistance,
   previewImage,
-  dateFormat
+  dateFormat,
+  handleMapLocation
 } from '@/utils/index'
 import { useUserStore, useChatStore } from '@/store'
 import $config from '@/common/jim/config.js'
@@ -125,7 +126,6 @@ onLoad((option) => {
               </view>
               <view class="l-chat-view">
                 <view class="l-chat-name">
-                  <!-- {{ s }} -->
                   {{
                     s.content.from_id === jimUserInfo.username
                       ? jimUserInfo.nickname || jimUserInfo.username
@@ -156,13 +156,17 @@ onLoad((option) => {
                 <template v-else-if="s.content.msg_type === 'image'">
                   <view>
                     <image
-                      @tap="previewImage(s.content.msg_body.image)"
+                      @tap="previewImage([s.content.msg_body.image])"
                       v-if="s.content.msg_body.type"
                       :src="s.content.msg_body.image"
                       :style="{
                         'max-width': '250rpx',
                         width: s.content.msg_body.width,
-                        height: s.content.msg_body.height
+                        height:
+                          s.content.msg_body.width < 500
+                            ? s.content.msg_body.height
+                            : (500 / s.content.msg_body.width) *
+                              s.content.msg_body.height
                       }"
                       mode="aspectFit"
                       class="l-upload-img"
@@ -170,26 +174,52 @@ onLoad((option) => {
                     <image
                       v-else
                       @tap="
-                        previewImage(
+                        previewImage([
                           $config.jimLocalhost + s.content.msg_body.media_id
-                        )
+                        ])
                       "
                       :src="$config.jimLocalhost + s.content.msg_body.media_id"
                       :style="{
                         'max-width': '250rpx',
                         width: s.content.msg_body.width,
-                        height: s.content.msg_body.height
+                        height:
+                          s.content.msg_body.width < 500
+                            ? s.content.msg_body.height
+                            : (500 / s.content.msg_body.width) *
+                              s.content.msg_body.height
                       }"
-                      mode="aspectFit"
+                      mode="widthFix"
                       class="l-upload-img"
                     ></image>
+                  </view>
+                </template>
+                <template v-else-if="s.content.msg_type === 'location'">
+                  <!-- {{ s.content }} -->
+                  <view
+                    class="l-chat-location"
+                    @click="
+                      handleMapLocation({
+                        latitude: s.content.msg_body.latitude,
+                        longitude: s.content.msg_body.longitude,
+                        addr: s.content.msg_body.label
+                      })
+                    "
+                  >
+                    <view class="l-chat-con">
+                      <view class="name">{{ s.content.msg_body.label }}</view>
+                    </view>
+                    <map
+                      :longitude="s.content.msg_body.longitude"
+                      :latitude="s.content.msg_body.latitude"
+                      style="width: 350rpx; height: 180rpx"
+                    ></map>
                   </view>
                 </template>
                 <template v-else>
                   <button class="l-chat-file">
                     <view class="l-chat-flie-view">
                       <view class="l-cfv-name">
-                        文件名文件名文件名文件名文件名文件名文件名文件名文件名
+                        {{ s.content }}
                       </view>
                       <!-- <image
                         class="l-chat-file-img"
@@ -313,6 +343,30 @@ onLoad((option) => {
   border: 15rpx solid;
   border-color: transparent #ffffff transparent transparent;
 }
+.l-chat-text-wapper {
+  min-width: 100rpx;
+  max-width: 515rpx;
+  padding: 20rpx 20rpx;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  margin: 0 0 0 15rpx;
+  position: relative;
+  word-break: break-all;
+  border-radius: 3px;
+}
+
+.l-chat-text-wapper::after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  top: 40rpx;
+  width: 0;
+  height: 0;
+  left: -28rpx;
+  transform: translate(0, -50%);
+  border: 15rpx solid;
+  border-color: transparent #ffffff transparent transparent;
+}
 
 .l-chat-mine .l-chat-item-content {
   flex-direction: row-reverse;
@@ -338,6 +392,15 @@ onLoad((option) => {
   right: -28rpx;
   border-color: transparent transparent transparent #95eb6c;
 }
+.l-chat-location {
+  background-color: #fff;
+  border: 8rpx;
+  overflow: hidden;
+  .l-chat-con {
+    padding: 20rpx;
+    font-size: 26rpx;
+  }
+}
 
 .l-chat-file {
   line-height: 1;
@@ -354,5 +417,8 @@ onLoad((option) => {
 .l-icon-emoji-m {
   width: 54rpx;
   height: 54rpx;
+}
+.l-upload-img {
+  border-radius: 6rpx;
 }
 </style>

@@ -1,8 +1,9 @@
+<!-- eslint-disable no-use-before-define -->
 <!--
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-07-29 11:07:48
+ * @LastEditTime: 2023-08-05 15:36:54
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -15,7 +16,6 @@ import { socialApi } from '@/api'
 import { getImgFullPath, checkLoginState } from '@/utils/index'
 import { $toast } from '@/utils/common'
 import { useUserStore, useChatStore } from '@/store'
-import { m_video } from '@/common/mock.js'
 import { emoji } from '@/common/jim/emoji.js'
 
 const userStore = useUserStore()
@@ -119,7 +119,18 @@ function chooseMessageFile() {
   })
   // #endif
 }
-function submit() {
+// 地图选择地址
+function chooseLocation() {
+  uni.chooseLocation({
+    success: async (data) => {
+      const { latitude, longitude, name, address } = data
+    },
+    fail: (error) => {
+      console.log('error',error)
+    }
+  })
+}
+function sendSingleMsg() {
   if (!content.value) {
     $toast('请先输入内容')
     return
@@ -132,6 +143,23 @@ function submit() {
   }
   chatStore.jimSendSingleMsg(params)
   content.value = ''
+}
+
+function collapse() {
+  isUpload.value = false
+  isEmoji.value = false
+}
+function toggleEmoji(item: { value: boolean }) {
+  isEmoji.value = !isEmoji.value
+  isUpload.value = false
+}
+function toggleUpload() {
+  isUpload.value = !isUpload.value
+  isEmoji.value = false
+}
+function submit(fn: (arg0: any) => void, params: any) {
+  collapse()
+  fn(params)
 }
 
 onMounted((option) => {})
@@ -153,7 +181,7 @@ onMounted((option) => {})
         <view class="l-chat-handle">
           <image
             class="l-send-emoji"
-            @tap="isEmoji = !isEmoji"
+            @tap="toggleEmoji(isEmoji)"
             :src="
               isEmoji
                 ? 'https://image.blacksilverscore.com/uploads/42889f3f-9cd6-44f9-8fde-097b94d952fb.png'
@@ -164,7 +192,7 @@ onMounted((option) => {})
           <view class="l-chat-send">
             <image
               class="l-send-upload"
-              @tap="isUpload = !isUpload"
+              @tap="toggleUpload()"
               :class="{ 'l-send-upload-50': !content }"
               src="https://image.blacksilverscore.com/uploads/fe7263ec-3b7a-4acd-879b-b542c38c29ea.png"
               mode="aspectFill"
@@ -208,18 +236,39 @@ onMounted((option) => {})
         <swiper :indicator-dots="false">
           <swiper-item>
             <view class="l-swiper-item l-chat-handle-upload">
-              <image
-                class="l-upload-img"
-                @tap="chooseImage"
-                src="https://image.blacksilverscore.com/uploads/88fe43db-bbcb-4426-861a-628b9562c3c4.png"
-                mode="aspectFill"
-              ></image>
-              <image
-                class="l-upload-img"
-                @tap="chooseMessageFile"
-                src="https://image.blacksilverscore.com/uploads/6d00c584-b472-4b78-85d2-2da964a1f7fc.png"
-                mode="aspectFill"
-              ></image>
+              <view class="l-chat-upload-item">
+                <view class="l-upload-img-wrap">
+                  <image
+                    class="l-upload-img"
+                    @tap="chooseImage"
+                    src="https://image.blacksilverscore.com/uploads/88fe43db-bbcb-4426-861a-628b9562c3c4.png"
+                    mode="aspectFill"
+                  ></image>
+                </view>
+                <view class="l-upload-name">相册</view>
+              </view>
+              <view class="l-chat-upload-item">
+                <view class="l-upload-img-wrap">
+                  <image
+                    class="l-upload-img"
+                    @tap="chooseMessageFile"
+                    src="https://image.blacksilverscore.com/uploads/6d00c584-b472-4b78-85d2-2da964a1f7fc.png"
+                    mode="aspectFill"
+                  ></image>
+                </view>
+                <view class="l-upload-name">文件</view>
+              </view>
+              <view class="l-chat-upload-item">
+                <view class="l-upload-img-wrap">
+                  <u-icon
+                    size="50"
+                    @tap="chooseLocation"
+                    name="map-fill"
+                    color="#888"
+                  ></u-icon>
+                </view>
+                <view class="l-upload-name">位置</view>
+              </view>
             </view>
           </swiper-item>
         </swiper>
@@ -266,6 +315,32 @@ onMounted((option) => {})
 
   .l-swiper-item {
     padding-bottom: 40rpx;
+  }
+  .l-chat-handle-upload {
+    display: flex;
+    .l-chat-upload-item {
+      margin-top: 20rpx;
+      margin-left: 20rpx;
+      flex-direction: column;
+      .l-upload-img-wrap {
+        background: #f6f6f6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 110rpx;
+        height: 110rpx;
+        border-radius: 8rpx;
+        .l-upload-img {
+          width: 40rpx;
+          height: 40rpx;
+        }
+      }
+      .l-upload-name {
+        font-size: 24rpx;
+        text-align: center;
+        margin-top: 10rpx;
+      }
+    }
   }
 
   .l-icon-emoji {
@@ -327,11 +402,6 @@ onMounted((option) => {})
       width: 50rpx;
     }
   }
-}
-.l-upload-img {
-  width: 120rpx;
-  height: 120rpx;
-  margin: 30rpx 0 0 30rpx;
 }
 
 .l-chat-send-btn {
