@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-28 17:45:12
- * @LastEditTime: 2023-08-05 17:17:14
+ * @LastEditTime: 2023-08-08 17:41:24
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -28,7 +28,7 @@ const list = [
     name: '短视频'
   },
   {
-    name: '完善传记'
+    name: '完善名片'
   },
   {
     name: '完善橱窗'
@@ -267,7 +267,13 @@ onLoad((option) => {
       <view v-else-if="currentTab === 1">
         <c_biography />
       </view>
-      <view v-else> <u-empty text="暂无数据" mode="list" style="margin-top: 200rpx;"></u-empty> </view>
+      <view v-else>
+        <u-empty
+          text="暂无数据"
+          mode="list"
+          style="margin-top: 200rpx"
+        ></u-empty>
+      </view>
     </Transition>
   </view>
 </template>

@@ -43,7 +43,7 @@ export default defineConfig({
       }
     }
   },
-  base: '/',
+  base: '/test',
   build: {
     assetsDir: 'assets',
     outDir: 'hyLife'

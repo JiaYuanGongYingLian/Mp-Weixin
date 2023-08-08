@@ -1,34 +1,46 @@
+<!-- eslint-disable no-use-before-define -->
+<!-- eslint-disable no-unused-expressions -->
+<!-- eslint-disable no-plusplus -->
 <!-- eslint-disable no-empty -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-30 11:32:40
- * @LastEditTime: 2023-08-05 17:43:27
+ * @LastEditTime: 2023-08-08 18:28:29
  * @LastEditors:  Please set LastEditors
 -->
 
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 import { isMObile } from '@/utils/common'
+import c_recorder from './c_recorder.vue'
+import rules from './rules.ts'
 
 const userStore = useUserStore()
 const { hasLogin } = storeToRefs(userStore)
 const form = ref()
+const isEdit = ref(false)
 let formData = reactive({
   avatar: '',
+  coverImage: '',
   categoryName: '',
   categoryId: '',
+  companyRemark: '',
+  companyResources: [],
+  honorRemark: '',
+  honorResources: [],
   name: '',
   remark: '',
+  resume: '',
+  resumeResources: [],
   status: 0,
-  shopProductSkuMoney: '',
   userId: '',
   addressName: '',
   provinceName: '',
@@ -37,61 +49,31 @@ let formData = reactive({
   cityName: '',
   districtName: '',
   cityId: '',
-  license: '',
-  bannerResources: [],
-  companyRemark: ''
+  jobTagId: 0,
+  jobTagName: '',
+  motto: '',
+  serviceRemark: '',
+  serviceTags: ''
 })
-const rules = reactive({
-  categoryName: [
-    {
-      required: true,
-      message: '请选择行业',
-      // 可以单个或者同时写两个触发验证方式
-      trigger: ['change', 'blur']
-    }
-  ],
-  name: [
-    {
-      required: true,
-      message: '请填写商家名称',
-      trigger: ['change', 'blur']
-    }
-  ],
-  addressName: [
-    {
-      required: true,
-      message: '请选择地址',
-      trigger: ['change', 'blur']
-    }
-  ],
-  avatar: {
-    required: false,
-    message: '请上传头像',
-    trigger: ['change', 'blur']
+const serviceTags = ref([
+  {
+    id: 1,
+    name: '30分钟行业咨询'
   },
-  license: {
-    required: false,
-    message: '请上传营业执照',
-    trigger: ['change', 'blur']
+  {
+    id: 2,
+    name: '30分钟企业管理咨询'
   },
-  bannerResources: {
-    required: false,
-    message: '请上传店铺展示图',
-    trigger: ['change', 'blur']
+  {
+    id: 3,
+    name: '30分钟股权设计咨询'
   },
-  remark: [
-    {
-      required: true,
-      message: '请填写商家简介',
-      trigger: ['change', 'blur']
-    },
-    {
-      min: 5,
-      message: '简介不能少于5个字',
-      trigger: 'change'
-    }
-  ]
-})
+  {
+    id: 4,
+    name: '20分钟法务咨询'
+  }
+])
+
 const agree = ref(false)
 function toProtocol() {
   const url =
@@ -109,11 +91,12 @@ const uploadUrl = ref(
 const tempImageData = reactive({
   avatar: '',
   coverImage: '',
-  license: '',
-  bannerResources: []
+  resumeResources: [],
+  honorResources: [],
+  companyResources: []
 })
 function uploadSuccess(data: any, index: any, lists: any, name: string) {
-  if (['avatar', 'coverImage', 'license'].includes(name)) {
+  if (['avatar', 'coverImage'].includes(name)) {
     tempImageData[name] = data.data
     return
   }
@@ -128,24 +111,35 @@ const header = {
   'Content-Type': 'multipart/form-data'
   // #endif
 }
-// 名人分类列表
-const categoryList = ref([])
-const actionSheetCallback = (e) => {
-  const cate = categoryList.value[e]
-  formData.categoryName = cate.name
-  formData.categoryId = cate.id
-}
+// 名人职业列表
+const jobList = ref([])
+const actionSheetCallback = (e) => {}
 const showPicker1 = ref(false)
 
-async function getCategoryList() {
+async function getTagList(type: number, parentId?: any) {
   try {
-    const { data } = await baseApi.getCategoryList({
-      pageSize: 1000,
-      type: 1,
-      parentId: 500000
+    const { data } = await socialApi.userDetailTagList({
+      type,
+      parentId,
+      noPaging: true
     })
-    categoryList.value = data.records
+    jobList.value = treeTrans(data)
   } catch {}
+}
+function treeTrans(data: { parentId: number; id: number }[]) {
+  const p = data.filter((item: { parentId: number }) => {
+    return item.parentId === 0
+  })
+  for (let i = 0; i < p.length; i++) {
+    for (let j = 0; j < data.length; j++) {
+      if (p[i].id === data[j].parentId) {
+        p[i].children !== undefined
+          ? p[i].children.push(data[j])
+          : (p[i].children = [])
+      }
+    }
+  }
+  return p
 }
 // 地图选择地址
 function chooseLocation() {
@@ -179,6 +173,21 @@ function chooseLocation() {
     }
   })
 }
+function selectServiceTag(tag: { active: boolean; name: string }) {
+  tag.active = !tag.active
+  const temp = formData.serviceRemark ? formData.serviceRemark.split('，') : []
+  const idx = temp.indexOf(tag.name)
+  if (idx > -1) {
+    temp.splice(idx, 1)
+  } else {
+    temp.push(tag.name)
+  }
+  formData.serviceRemark = temp.reduce((pre, cur) => {
+    return `${pre}${pre ? '，' : ''}${cur}`
+  }, '')
+}
+function handleUpdate() {}
+function handleAdd() {}
 const submit = () => {
   if (!agree.value) {
     uni.showModal({
@@ -198,29 +207,29 @@ const submit = () => {
       if (!formData.avatar) {
         uni.showToast({
           icon: 'none',
-          title: '请上传店铺商标'
+          title: '请上传头像'
         })
         return
       }
-      if (!formData.license) {
+      if (!formData.coverImage) {
         uni.showToast({
           icon: 'none',
-          title: '请上传营业执照'
+          title: '请上传名片主图'
         })
         return
       }
-      if (formData.bannerResources.length < 1) {
+      if (!formData.serviceRemark) {
         uni.showToast({
           icon: 'none',
-          title: '请上传店铺展示图'
+          title: '请填写提供的服务'
         })
         return
       }
-      //   if (shopId.value) {
-      //     shopUpdate()
-      //   } else {
-      //     shopAdd()
-      //   }
+      if (isEdit.value) {
+        handleUpdate()
+      } else {
+        handleAdd()
+      }
     } else {
       console.log('验证失败')
     }
@@ -231,14 +240,17 @@ onReady(() => {
   form.value.setRules(rules)
 })
 onLoad(async (option) => {
-  await getCategoryList()
+  // 职业
+  await getTagList(1)
+  // 服务
+  await getTagList(2)
 })
 </script>
 <template>
   <view class="container">
     <u-form :model="formData" ref="form" :label-style="{ fontWeight: 'bold' }">
       <view class="section">
-        <u-form-item label="头像" label-width="auto" required>
+        <u-form-item label="名片头像" label-width="auto" prop="avatar" required>
           <u-upload
             ref="upload1"
             :action="uploadUrl"
@@ -253,7 +265,7 @@ onLoad(async (option) => {
             "
           ></u-upload>
         </u-form-item>
-        <u-form-item label="传记主图" label-width="auto" required>
+        <u-form-item label="名片主图" label-width="auto" required>
           <u-upload
             ref="upload1"
             :action="uploadUrl"
@@ -296,23 +308,15 @@ onLoad(async (option) => {
             type="select"
             input-align="right"
             placeholder="请选择职业"
-            @click="showPicker1 = true" />
-          <u-action-sheet
-            :list="categoryList"
-            v-model="showPicker1"
-            label-name="name"
-            @click="actionSheetCallback"
-          ></u-action-sheet
-        ></u-form-item>
-        <u-form-item required label="对接金额" label-width="auto" prop="name"
-          ><u-input
-            v-model="formData.shopProductSkuMoney"
-            input-align="right"
-            placeholder="请填写对接金额（10~1w）"
-            type="number"
+            @click="showPicker1 = true"
           />
-          （元）</u-form-item
-        >
+          <u-select
+            v-model="showPicker1"
+            mode="mutil-column-auto"
+            :list="categoryList"
+            @confirm="actionSheetCallback"
+          ></u-select>
+        </u-form-item>
         <u-form-item
           required
           label="所在城市"
@@ -327,32 +331,117 @@ onLoad(async (option) => {
             @click="chooseLocation"
           />
         </u-form-item>
+        <u-form-item required label="对接金额" label-width="auto" prop="name"
+          ><u-input
+            v-model="formData.shopProductSkuMoney"
+            input-align="right"
+            placeholder="请填写对接金额（10~1w）"
+            type="number"
+          />
+          （元）</u-form-item
+        >
         <u-form-item
           required
-          label="企业简介"
+          label="提供服务"
           label-width="auto"
           prop="remark"
           label-position="top"
         >
-          <u-input v-model="formData.remark" type="textarea" />
+          <view style="flex-shrink: 0; flex: 1; width: 100%">
+            <u-input
+              v-model="formData.serviceRemark"
+              placeholder="自定义填写服务内容"
+              type="textarea"
+            />
+            <view class="tags">
+              <view
+                :class="{ tag: true, active: tag.active }"
+                v-for="tag in serviceTags"
+                :key="tag.id"
+                @click="selectServiceTag(tag)"
+              >
+                {{ tag.name }}
+              </view>
+            </view>
+          </view>
         </u-form-item>
-        <u-form-item label="企业电话" label-width="auto"
+        <u-form-item label="人物导语" label-width="auto" label-position="top"
           ><u-input
-            v-model="formData.invitePhone"
-            input-align="right"
-            placeholder="请填写电话"
+            v-model="formData.motto"
+            input-align="left"
+            type="textarea"
+            placeholder="请填写自己的座右铭"
         /></u-form-item>
-        <u-form-item label="荣誉证书" label-width="auto">
-          <u-upload
-            ref="upload3"
-            :action="uploadUrl"
-            max-count="10"
-            :header="header"
-            name="object"
-            @on-success="uploadSuccess"
-            index="bannerResources"
-            :file-list="formData.bannerResources"
-          ></u-upload>
+        <u-form-item label="录制录音" label-width="auto" label-position="top">
+          <view style="width: 100%">
+            <u-input
+              input-align="left"
+              type="textarea"
+              disabled
+              placeholder="录一段语音说清楚我的需求是什么？我能提供什么服务？"
+            />
+            <c_recorder />
+          </view>
+        </u-form-item>
+        <u-form-item label="个人履历" label-width="auto" label-position="top">
+          <view style="width: 100%">
+            <u-input
+              v-model="formData.motto"
+              input-align="left"
+              type="textarea"
+              placeholder="填写履历（用图片和文字形式表达内容）"
+            />
+            <u-upload
+              ref="upload3"
+              :action="uploadUrl"
+              max-count="10"
+              :header="header"
+              name="object"
+              @on-success="uploadSuccess"
+              index="resumeResources"
+              :file-list="formData.bannerResources"
+            ></u-upload>
+          </view>
+        </u-form-item>
+        <u-form-item label="所获荣誉" label-width="auto" label-position="top">
+          <view style="width: 100%">
+            <u-input
+              v-model="formData.motto"
+              input-align="left"
+              type="textarea"
+              placeholder="请填写所获荣誉（用图片和文字形式表达内容）"
+            />
+            <u-upload
+              ref="upload3"
+              :action="uploadUrl"
+              max-count="10"
+              :header="header"
+              name="object"
+              @on-success="uploadSuccess"
+              index="honorResources"
+              :file-list="formData.bannerResources"
+            ></u-upload>
+          </view>
+        </u-form-item>
+        <u-form-item label="公司介绍" label-width="auto" label-position="top">
+          <view style="width: 100%">
+            <u-input
+              v-model="formData.motto"
+              input-align="left"
+              type="textarea"
+              placeholder="请填写公司介绍（用图片和文字形式表达内容）"
+            />
+            <u-upload
+              ref="upload3"
+              :action="uploadUrl"
+              max-count="10"
+              :header="header"
+              name="object"
+              @on-success="uploadSuccess"
+              index="companyResources"
+              :file-list="formData.bannerResources"
+            ></u-upload>
+          </view>
         </u-form-item>
       </view>
     </u-form>
@@ -373,30 +462,31 @@ onLoad(async (option) => {
 <style lang="scss" scoped>
 .container {
   padding: 22rpx;
+
   .section {
     padding: 30rpx 30rpx;
     background: #fff;
     border-radius: 16rpx;
     margin-bottom: 30rpx;
+
     .title {
       font-size: 28rpx;
       margin-bottom: 10rpx;
     }
-    .tips {
-      font-size: 20rpx;
-      color: red;
-    }
   }
 }
+
 .protocol {
   text-align: center;
   display: flex;
   justify-content: center;
   margin: 50rpx 0 30rpx 0;
+
   .link {
     color: #6b9eff;
   }
 }
+
 .slot-btn {
   width: 200rpx;
   height: 200rpx;
@@ -407,6 +497,7 @@ onLoad(async (option) => {
   align-items: center;
   position: relative;
   overflow: hidden;
+
   .des {
     position: absolute;
     bottom: 0;
@@ -421,12 +512,37 @@ onLoad(async (option) => {
     line-height: 40rpx;
   }
 }
+
 .uploadBox {
   gap: 20rpx;
   margin-top: 20rpx;
 }
+
 .submitBtn {
   margin: 50rpx 0;
   display: block;
+}
+
+.tags {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-top: 20rpx;
+
+  .tag {
+    background: #f6f6f6;
+    border-radius: 50rpx;
+    line-height: 40rpx;
+    font-size: 26rpx;
+    color: #666;
+    padding: 5rpx 20rpx;
+    border: 1rpx solid #f6f6f6;
+
+    &.active {
+      border-color: #fa3534;
+      color: #fa3534;
+    }
+  }
 }
 </style>
