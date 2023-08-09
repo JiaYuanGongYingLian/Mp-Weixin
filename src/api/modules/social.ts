@@ -82,6 +82,9 @@ function circleUserUpdate(data: any) {
 function userDetailAdd(data: any) {
   return http.post('/social/api/v1/user/detail/add', data)
 }
+function userDetailInfo(data: any) {
+  return http.get('/social/api/v1/user/detail/info', data)
+}
 function userDetailList(data: any) {
   return http.get('/social/api/v1/user/detail/list', data)
 }
@@ -124,6 +127,7 @@ export default {
   circleUserDelete,
   circleUserUpdate,
   userDetailAdd,
+  userDetailInfo,
   userDetailList,
   userDetailDelete,
   userDetailUpdate,

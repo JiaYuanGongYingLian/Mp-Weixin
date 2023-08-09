@@ -2,21 +2,21 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 13:49:44
- * @LastEditTime: 2023-07-22 06:12:45
+ * @LastEditTime: 2023-08-09 14:13:42
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi } from '@/api'
+import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { useUserStore } from '@/store'
-import { m_fcate,m_flist } from '@/common/mock.js'
+import { m_fcate, m_flist } from '@/common/mock.js'
 
 const store = useUserStore()
 const { hasLogin } = storeToRefs(store)
-const productList = ref<object[]>([])
+const dataList = ref<object[]>([])
 const tabs = ref([])
 const currentTab = ref(0)
 const keyword = ref('')
@@ -48,29 +48,27 @@ async function getTabs(parentId = 0) {
       //   name: '全部',
       //   id: ''
       // })
-      productList.value = initData()
+      dataList.value = initData()
     })
     .catch((err: any) => {})
 }
-async function getHeidouProductList() {
-  const item = productList.value[currentTab.value]
+async function getDataList() {
+  const item = dataList.value[currentTab.value]
   const tab = tabs.value[currentTab.value]
   const { pageIndex, pageSize, finished } = item
   if (finished) {
     status.value = 'nomore'
     return
   }
-  const { data } = await productApi.getShopProductList({
+  const { data } = await socialApi.userDetailList({
     pageIndex,
     pageSize,
     detail: 'true',
-    shopId: 225, // 黑豆线上商城
-    categoryId: tab.id,
     keywords: keyword.value
   })
   const { records, current, pages } = data
-  // item.list.push(...records)
-  item.list.push(...m_flist)
+  item.list.push(...records)
+  // item.list.push(...m_flist)
   if (current < pages && pages !== 0) {
     item.pageIndex++
   } else {
@@ -78,25 +76,24 @@ async function getHeidouProductList() {
     status.value = 'nomore'
   }
 }
-function toProductDetail(product: { shopId: any; productId: any }) {
-  const { shopId, productId } = product
-  uni.navigateTo({ url: `/pagesA/businessCard/detail?id=${shopId}` })
+function toDetail(data: { id: any }) {
+  uni.navigateTo({ url: `/pagesA/businessCard/index?id=${data.id}` })
 }
 function tabsChange(index: any) {
   currentTab.value = index
   status.value = 'loading'
-  const item = productList.value[currentTab.value]
+  const item = dataList.value[currentTab.value]
   if (!item.list.length) {
-    getHeidouProductList()
+    getDataList()
   }
   keyword.value = ''
 }
 function doSearch() {
-  const item = productList.value[currentTab.value]
+  const item = dataList.value[currentTab.value]
   item.pageIndex = 1
   item.list = []
   item.finished = false
-  getHeidouProductList()
+  getDataList()
 }
 onLoad(async (option) => {
   if (option?.categoryData) {
@@ -105,11 +102,11 @@ onLoad(async (option) => {
   } else {
     await getTabs()
   }
-  await getHeidouProductList()
+  await getDataList()
 })
 onReachBottom(() => {
   status.value = 'loading'
-  getHeidouProductList()
+  getDataList()
 })
 </script>
 
@@ -151,31 +148,27 @@ onReachBottom(() => {
     </view>
 
     <view class="swiper">
-      <view
-        class="swiper-item"
-        v-for="(item, index) in productList"
-        :key="index"
-      >
+      <view class="swiper-item" v-for="(item, index) in dataList" :key="index">
         <view class="container" v-if="index === currentTab">
           <view
             class="itemWrap"
-            v-for="product in item.list"
-            :key="product.productId"
+            v-for="data in item.list"
+            :key="data.productId"
           >
-            <view class="contentBox" @click="toProductDetail(product)">
+            <view class="contentBox" @click="toDetail(data)">
               <view class="imgCover">
                 <u-image
                   class="img"
                   border-radius="0"
-                  :src="getImgFullPath(product.head_pic)"
+                  :src="getImgFullPath(data.coverImage)"
                   height="300rpx"
                   :lazy-load="true"
                   mode="scaleToFill"
                 />
               </view>
               <view class="content">
-                <view class="name">{{ product.name }}</view>
-                <view class="desc">{{ product.position }}</view>
+                <view class="name">{{ data.name }}</view>
+                <view class="desc">{{ data.jobTagName }}</view>
               </view>
             </view>
           </view>

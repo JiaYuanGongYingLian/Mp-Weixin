@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-07-24 10:05:15
+ * @LastEditTime: 2023-08-09 17:51:25
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -23,7 +23,8 @@ import c_contact from './c_contact.vue'
 
 const userStore = useUserStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)
-
+const cardId = ref()
+const userDetailInfo = ref({})
 const tabList = ref([
   {
     name: '传记'
@@ -39,17 +40,29 @@ const tabList = ref([
   }
 ])
 const currentTab = ref(0)
+async function getUserDetailInfo() {
+  const { data } = await socialApi.userDetailInfo({
+    id: cardId.value,
+    detail: true
+  })
+  userDetailInfo.value = data
+}
 function toEdit() {}
 const pop = ref()
 function contact() {
   uni.setStorageSync('businessCard', {
-    nickName: '钱祥龙',
+    nickName: userDetailInfo.value?.name,
     cate: '亲子教育'
   })
   pop.value.openPop()
 }
 function tabChange() {}
-onLoad((option) => {})
+onLoad((option) => {
+  if (option) {
+    cardId.value = option.id
+    getUserDetailInfo()
+  }
+})
 
 const show = ref(true)
 const scrollTop = ref(0)
@@ -67,14 +80,14 @@ onPageScroll((e) => {
     <hyNavBarSimpler v-show="show" />
     <view class="topView">
       <u-image
-        src="https://oss.wyh139.com/Uploads/Merchants/20230606/1686017975000501.png"
+        :src="getImgFullPath(userDetailInfo?.coverImage)"
         width="100%"
         height="400rpx"
       ></u-image>
       <view class="headBox">
         <view class="avatar">
           <u-image
-            src="https://oss.wyh139.com/Uploads/Merchants/20230606/1686017975000501.png"
+            :src="getImgFullPath(userDetailInfo?.avatar)"
             width="180rpx"
             height="180rpx"
             shape="circle"
@@ -82,28 +95,30 @@ onPageScroll((e) => {
           ></u-image>
         </view>
         <view class="info">
-          <view class="name">钱祥龙</view>
-          <uni-view class="badge">亲子教育</uni-view>
+          <view class="name">{{ userDetailInfo.name }}</view>
+          <uni-view class="badge">{{
+            userDetailInfo?.jobTagName?.split('-')[0]
+          }}</uni-view>
         </view>
       </view>
     </view>
     <view class="main">
       <view class="section">
         <view class="accountInfo">
-          <view class="item">
+          <!-- <view class="item">
             <text class="val">194.0万</text>
             <text class="label">获赞</text>
-          </view>
+          </view> -->
           <view class="item">
-            <text class="val">8</text>
+            <text class="val"> {{ userDetailInfo.focusCount || 0 }}</text>
             <text class="label">关注</text>
           </view>
           <view class="item">
-            <text class="val">10万</text>
+            <text class="val">{{ userDetailInfo.fansCount }}</text>
             <text class="label">粉丝</text>
           </view>
         </view>
-        <view class="remark"> "人生是美好的，好好珍惜每一天！" </view>
+        <view class="remark"> {{ userDetailInfo.motto }} </view>
         <view class="action">
           <view class="subscribe focus">
             <text class="text">+关注</text>
@@ -127,7 +142,7 @@ onPageScroll((e) => {
       ></u-tabs>
       <!-- 传记 -->
       <view class="tabBox biography" v-show="currentTab === 0">
-        <c_biography />
+        <c_biography :info="userDetailInfo" />
       </view>
       <!-- 视频 -->
       <view class="video" v-show="currentTab === 1">
