@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-09 18:02:35
+ * @LastEditTime: 2023-08-09 23:52:40
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -53,49 +53,6 @@ async function dynamicList() {
       detail: true
     })
     swiperList.value = res1.data
-    return
-    swiperList.value = [
-      {
-        avatar:
-          'https://www.blacksilverscore.com/assets/images/logo/logo11.png',
-        videoUrl:
-          'https://image.blacksilverscore.com/dynamic/00e0d144-55e2-4a0e-bcd9-b8bc347a997f.mp4',
-        like: 8858,
-        share: 200,
-        nickName: '黑银集团',
-        content: '热烈庆祝黑银集团首场产品发布会隆重举办成功!'
-      },
-      {
-        avatar:
-          'https://www.blacksilverscore.com/assets/images/logo/logo11.png',
-        videoUrl:
-          'https://image.blacksilverscore.com/dynamic/bc883605-c471-447c-8703-df93f1d4d681.mp4',
-        like: 999,
-        share: 456,
-        nickName: '黑银集团',
-        content: '合作共赢'
-      },
-      {
-        avatar:
-          'https://oss.wyh139.com/Uploads/null/20230608/1686191394000541.png',
-        videoUrl:
-          'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/90991d0a3270835009634348668/v.f30.mp4',
-        like: 888,
-        share: 1011,
-        nickName: '钱祥龙',
-        content: '人参植物干细胞原液饮品#提升免疫力，展现精气神！'
-      },
-      {
-        avatar:
-          'https://oss.wyh139.com/Uploads/null/20230608/1686191394000541.png',
-        videoUrl:
-          'https://1400340355.vod2.myqcloud.com/d64cd6c3vodtranscq1400340355/bebe71093270835009648940538/v.f30.mp4',
-        like: 1200,
-        share: 666,
-        nickName: '钱祥龙',
-        content: '健康是人类第一需求！'
-      }
-    ]
   } catch {}
 }
 function videoPlay(index: any) {
@@ -221,8 +178,7 @@ onLoad((option) => {
       class="swiper"
       :current="swiperCurrent"
       @change="animationfinishFn"
-      interval="3000"
-      duration="500"
+      duration="300"
       :vertical="true"
     >
       <swiper-item
@@ -311,7 +267,7 @@ onLoad((option) => {
 
 <style lang="scss" scoped>
 .container {
-  height: 100vh;
+  height: calc(100vh - env(safe-area-inset-top));
   background-color: #000;
   display: flex;
   flex-direction: column;
