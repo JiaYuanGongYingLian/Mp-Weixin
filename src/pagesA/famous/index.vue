@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 13:49:44
- * @LastEditTime: 2023-08-09 14:13:42
+ * @LastEditTime: 2023-08-10 15:51:58
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -76,8 +76,10 @@ async function getDataList() {
     status.value = 'nomore'
   }
 }
-function toDetail(data: { id: any }) {
-  uni.navigateTo({ url: `/pagesA/businessCard/index?id=${data.id}` })
+function toDetail(data: { id: any; userId: any }) {
+  uni.navigateTo({
+    url: `/pagesA/businessCard/index?cardId=${data.id}&userId=${data.userId}`
+  })
 }
 function tabsChange(index: any) {
   currentTab.value = index

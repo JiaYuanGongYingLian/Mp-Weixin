@@ -1,8 +1,9 @@
+<!-- eslint-disable no-empty -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-07-28 16:01:50
+ * @LastEditTime: 2023-08-10 17:39:28
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -11,7 +12,7 @@
 import { reactive, ref, onMounted } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { socialApi } from '@/api'
+import { socialApi, enumAll } from '@/api'
 import { getImgFullPath, checkLoginState } from '@/utils/index'
 import { useUserStore } from '@/store'
 import { m_video } from '@/common/mock.js'
@@ -26,15 +27,30 @@ const videoList = reactive({
   pageSize: 20
 })
 const status = ref('loadmore')
+const props = withDefaults(
+  defineProps<{
+    cardUserId?: any
+  }>(),
+  {}
+)
 async function dynamicList() {
   try {
-    const res1 = await socialApi.dynamicList({
+    const { current, pages, data } = await socialApi.dynamicList({
       noPaging: true,
       type: 3,
-      userId: userInfo.value.id,
-      detail: true
+      userId: props.cardUserId,
+      detail: true,
+      status: enumAll.audit_status_enum.SUCCESS
     })
-    videoList.list = [...m_video, ...res1.data]
+    videoList.list = [...data]
+    status.value = 'nomore'
+    // if (current < pages) {
+    //   videoList.pageIndex += 1
+    //   videoList.list = [...data]
+    // } else {
+    //   videoList.finished = true
+    //   status.value = 'nomore'
+    // }
   } catch {}
 }
 function toView(index: number) {
@@ -43,7 +59,7 @@ function toView(index: number) {
     url: `/pagesA/shortVideo/index?type=viewSingleUser&index=${index}`
   })
 }
-onMounted((option) => {
+onMounted(() => {
   dynamicList()
 })
 </script>
@@ -67,7 +83,7 @@ onMounted((option) => {
         </view>
       </view>
     </view>
-    <u-loadmore :status="status" />
+    <u-loadmore :status="status" margin-top="50" />
   </view>
 </template>
 

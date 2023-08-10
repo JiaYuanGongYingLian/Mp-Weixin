@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-09 23:52:40
+ * @LastEditTime: 2023-08-10 17:04:10
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -14,13 +14,13 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi, socialApi } from '@/api'
+import { baseApi, productApi, socialApi, enumAll } from '@/api';
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 import hyNavBarSimpler from '@/components/hy-nav-bar-simpler/index.vue'
 
-const store = useUserStore()
-const { hasLogin } = storeToRefs(store)
+const userStore = useUserStore()
+const { hasLogin, userInfo } = storeToRefs(userStore)
 const buttonRect = ref({})
 // #ifdef MP-WEIXIN
 buttonRect.value = wx.getMenuButtonBoundingClientRect()
@@ -50,7 +50,8 @@ async function dynamicList() {
     const res1 = await socialApi.dynamicList({
       noPaging: true,
       type: 3,
-      detail: true
+      detail: true,
+      status: enumAll.audit_status_enum.SUCCESS
     })
     swiperList.value = res1.data
   } catch {}
@@ -96,9 +97,10 @@ function toBusinessCard() {
     url: '/pagesA/businessCard/detail'
   })
 }
-function toBusinessCardHome() {
+function toBusinessCardHome(data: { userId: any }, index: any) {
+  videoPlay(index)
   uni.navigateTo({
-    url: '/pagesA/businessCard/index'
+    url: `/pagesA/businessCard/index?userId=${data.userId}`
   })
 }
 function toPublishCenter() {
@@ -108,7 +110,7 @@ function toPublishCenter() {
 }
 function toMine() {
   uni.navigateTo({
-    url: '/pagesA/businessCard/index'
+    url: `/pagesA/businessCard/index?userId=${userInfo.value.id}`
   })
 }
 function toFamous() {
@@ -211,11 +213,11 @@ onLoad((option) => {
         <view class="sideBar" v-if="!isPreview">
           <view class="avatar">
             <u-image
-              :src="item.avatar"
+              :src="getImgFullPath(item?.user?.avatar)"
               width="80rpx"
               height="80rpx"
               shape="circle"
-              @click="toBusinessCardHome"
+              @click="toBusinessCardHome(item, index)"
             ></u-image>
             <u-image
               width="36rpx"
@@ -230,7 +232,7 @@ onLoad((option) => {
               class="iconfont hy-icon-yidianzan"
               :class="{ 'is-active': item.likeStatus }"
             ></text>
-            {{ item.like }}
+            {{ item?.count }}
           </view>
           <view class="action">
             <text
@@ -247,9 +249,9 @@ onLoad((option) => {
         >
           <view class="top">
             <view class="name" @click="toBusinessCard"
-              >@{{ item.nickName }}</view
+              >@{{ item?.user?.nickname }}</view
             >
-            <view class="textBox">{{ item.name }}</view>
+            <view class="textBox tit" v-if="item?.name">{{ item?.name }}</view>
             <view class="textBox">{{ item.content }}</view>
           </view>
         </view>
@@ -382,6 +384,10 @@ onLoad((option) => {
         flex-wrap: wrap;
         margin-top: 16rpx;
         color: #ffffff;
+        &.tit {
+          font-weight: bold;
+          font-size: 28rpx;
+        }
         .p {
           max-width: 525rpx;
           font-size: 28rpx;

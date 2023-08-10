@@ -1,17 +1,19 @@
+<!-- eslint-disable no-console -->
+<!-- eslint-disable no-empty -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 04:42:53
- * @LastEditTime: 2023-07-22 05:30:16
+ * @LastEditTime: 2023-08-10 14:35:12
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref, onMounted } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { userApi } from '@/api'
+import { orderApi, userApi } from '@/api'
 import { getImgFullPath, checkLoginState } from '@/utils/index'
 import { useUserStore } from '@/store'
 
@@ -38,9 +40,23 @@ const rules = reactive({
 })
 const form1 = ref()
 function submit() {
-  form1.value.validate((valid: any) => {
+  form1.value.validate(async (valid: any) => {
     if (valid) {
-      console.log('验证通过')
+      const orderData = {
+        orderProductSkus: [
+          {
+            count: 1,
+            money: info.value.shopProductSkuMoney,
+            shopProductSkuId: ''
+          }
+        ],
+        remark: form.remark,
+        detail: true
+      }
+      const { data } = await orderApi.orderAdd(orderData)
+      uni.navigateTo({
+        url: `/pages/payment/index?order=${JSON.stringify(data)}`
+      })
     } else {
       console.log('验证失败')
     }
@@ -55,16 +71,27 @@ onMounted((option) => {
 onReady(() => {
   try {
     form1.value.setRules(rules)
-  } catch { }
+  } catch {}
 })
 </script>
 <template>
   <view class="wrapper">
-    <u-popup v-model="showPop" mode="center" width="298px" closeable border-radius="20" close-icon-color="#fff"
-      close-icon="close-circle" close-icon-size="40">
+    <u-popup
+      v-model="showPop"
+      mode="center"
+      width="298px"
+      closeable
+      border-radius="20"
+      close-icon-color="#fff"
+      close-icon="close-circle"
+      close-icon-size="40"
+    >
       <view class="pop-head">
-        <u-image src="https://image.blacksilverscore.com/uploads/05a779ee-c342-49be-a9da-541f2d9a614d.png" width="100%"
-          height="130px"></u-image>
+        <u-image
+          src="https://image.blacksilverscore.com/uploads/05a779ee-c342-49be-a9da-541f2d9a614d.png"
+          width="100%"
+          height="130px"
+        ></u-image>
         <view class="head-con">
           <view class="pop-tit">对接提示</view>
           <view class="des">
@@ -86,7 +113,14 @@ onReady(() => {
             <u-input v-model="form.name" />
           </u-form-item>
         </u-form>
-        <u-button class="btn" @click="submit" shape="circle" type="primary" ripple>立即支付 ￥30</u-button>
+        <u-button
+          class="btn"
+          @click="submit"
+          shape="circle"
+          type="primary"
+          ripple
+          >立即支付 ￥{{ info?.shopProductSkuMoney }}</u-button
+        >
       </view>
     </u-popup>
   </view>

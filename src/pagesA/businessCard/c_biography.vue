@@ -2,7 +2,7 @@
  * @Description: 传记
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-09 17:58:06
+ * @LastEditTime: 2023-08-10 09:54:10
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -70,13 +70,13 @@ onMounted((option) => {})
         </view>
         <view class="item">
           <text class="label">所在城市：</text>
-          <text class="value">{{
+          <text class="value" v-if="info?.provinceName">{{
             `${info?.provinceName}-${info?.cityName}`
           }}</text>
         </view>
         <view class="item">
           <text class="label">职业分类：</text>
-          <text class="value">{{ info.jobTagName }}</text>
+          <text class="value">{{ info?.jobTagName }}</text>
         </view>
         <view class="item">
           <text class="label">职位头衔：</text>
@@ -84,8 +84,8 @@ onMounted((option) => {})
         </view>
         <view class="item">
           <text class="label">提供服务：</text>
-          <text class="value">
-            {{ `${info.serviceRemark}(${info.serviceTags})` }}</text
+          <text class="value" v-if="info?.serviceTags">
+            {{ `${info?.serviceRemark}(${info?.serviceTags})` }}</text
           >
         </view>
         <view class="item">

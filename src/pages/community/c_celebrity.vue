@@ -2,7 +2,7 @@
  * @Description: 对接名人主页
  * @Author: Kerwin
  * @Date: 2023-08-05 16:36:09
- * @LastEditTime: 2023-08-05 16:47:16
+ * @LastEditTime: 2023-08-10 15:56:43
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -11,7 +11,7 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi } from '@/api'
+import { baseApi, productApi, socialApi } from '@/api';
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 
@@ -36,53 +36,24 @@ async function getCategory() {
   categoryList.value = data
 }
 const getFamousList = async () => {
-  const { data } = await productApi.getShopProductList({
+  const { data } = await socialApi.userDetailList({
     pageIndex: famousList.pageIndex,
     pageSize: famousList.pageSize,
-    shopId: 225 // 黑银商家
+    detail: 'true'
   })
   const { records, current, pages } = data
-  const f = [
-    {
-      name: '钱祥龙',
-      desc: '黑银教育管理有限公司负责人 四川玉阶教育科技有限公司董事长 ',
-      image:
-        'https://oss.wyh139.com/Uploads/Merchants/20230606/1686017975000501.png'
-    },
-    {
-      name: '俞真',
-      desc: '中源控股集团中投汇昌（北京）企业管理有限公司杭州分公司总经理国疆(北京)控股有限公司杭州分公司总经理。',
-      image:
-        'https://oss.wyh139.com/Uploads/Merchants/20230627/1687881302000712.png?x-oss-process=image/resize,m_fill,w_400,quality,q_60,h_500,m_lfit'
-    },
-    {
-      name: '金军因',
-      desc: '玛雅房屋华东总部董事长 山东今名扬信息技术有限公司董事长',
-      image:
-        'https://oss.wyh139.com/2023/djmr/2023-06-30/fa15329743d53d7a970cacf0c5c3e5531688131214.png?x-oss-process=image/resize,m_fill,w_400,quality,q_60,h_500,m_lfit'
-    },
-    {
-      name: '方立忠',
-      desc: '中国印染行业协会印花专业委员会委员 绍兴鸿坤文化艺术基金会专家委员绍兴市绿色印染技术研究院副院长江南大学柯桥轻纺产业技术中心运营总经理',
-      image:
-        'https://oss.wyh139.com/2023/djmr/2023-07-10/04789e74f992cbce08552a3fb56c9afd1688999925.png?x-oss-process=image/resize,m_fill,w_400,quality,q_60,h_500,m_lfit'
-    },
-    {
-      name: '俞真',
-      desc: '中源控股集团中投汇昌（北京）企业管理有限公司杭州分公司总经理国疆(北京)控股有限公司杭州分公司总经理。',
-      image:
-        'https://oss.wyh139.com/Uploads/Merchants/20230616/168690814000093.png?x-oss-process=image/resize,m_fill,w_400,quality,q_60,h_500,m_lfit'
-    }
-  ]
-  famousList.list.push(...f)
+  famousList.list.push(...records)
   if (current < pages) {
     famousList.pageIndex += 1
   } else {
     famousList.finished = true
+    status.value = 'nomore'
   }
 }
-function toFamousDetail(item: { id: any }) {
-  uni.navigateTo({ url: `/pagesA/businessCard/index?id=${item.id}` })
+function toFamousDetail(item: { id: any; userId: any }) {
+  uni.navigateTo({
+    url: `/pagesA/businessCard/index?cardId=${item.id}&userId=${item.userId}`
+  })
 }
 
 onLoad((option) => {
@@ -129,7 +100,7 @@ onReachBottom(() => {
               <u-image
                 class="img"
                 border-radius="0"
-                :src="getImgFullPath(item.image)"
+                :src="getImgFullPath(item.coverImage)"
                 height="300rpx"
                 :lazy-load="true"
                 mode="scaleToFill"
@@ -157,13 +128,13 @@ onReachBottom(() => {
             </view>
             <view class="content">
               <view class="name">{{ item.name }}</view>
-              <view class="desc">{{ item.desc }}</view>
+              <view class="desc">{{ item.jobTagName }}</view>
             </view>
           </view>
         </view>
       </view>
+      <u-loadmore :status="status" />
     </view>
-    <u-loadmore :status="status" />
   </view>
 </template>
 
@@ -233,7 +204,7 @@ onReachBottom(() => {
       }
 
       .content {
-        padding: $uni-spacing-row-lg;
+        padding: 20rpx;
         text-align: left;
         .name {
           @include ellipsis;
@@ -243,6 +214,8 @@ onReachBottom(() => {
         .desc {
           @include ellipsis(3);
           color: #666;
+          margin-top: 10rpx;
+          font-size: 26rpx;
         }
 
         .money {

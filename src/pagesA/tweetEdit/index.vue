@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-29 17:12:32
- * @LastEditTime: 2023-06-30 10:26:50
+ * @LastEditTime: 2023-08-10 12:01:40
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -11,7 +11,7 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi, socialApi } from '@/api'
+import { baseApi, productApi, socialApi, enumAll } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 
@@ -51,7 +51,7 @@ async function dynamicUpdate(status: any) {
   })
   if (code === 200) {
     uni.showToast({
-      title: '操作成功'
+      title: '发布成功'
     })
   }
 }
@@ -77,8 +77,8 @@ onLoad((option) => {
 </script>
 <template>
   <hy-nav-bar
-    title=""
-    backIconColor="#fff"
+    title="发布视频"
+    backIconColor="#333"
     :borderBottom="false"
     :background="{ background: 'transparent' }"
   ></hy-nav-bar>
@@ -116,10 +116,18 @@ onLoad((option) => {
       </view>
     </u-form>
     <view class="actions">
-      <u-button class="submitBtn" @click="submit(1)" type="warning" ripple
+      <u-button
+        class="submitBtn"
+        @click="submit(enumAll.audit_status_enum.DEFAULT)"
+        type="warning"
+        ripple
         >存入草稿</u-button
       >
-      <u-button class="submitBtn" @click="submit(2)" type="primary" ripple
+      <u-button
+        class="submitBtn"
+        @click="submit(enumAll.audit_status_enum.SUCCESS)"
+        type="primary"
+        ripple
         >发布活动</u-button
       >
     </view>

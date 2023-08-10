@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-08-05 16:45:57
+ * @LastEditTime: 2023-08-10 17:10:20
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -43,7 +43,7 @@ const list = [
     name: '短视频'
   }
 ]
-const currentTab = ref(0)
+const currentTab = ref(1)
 const categoryList = ref([])
 const famousList = reactive({
   pageIndex: 1,

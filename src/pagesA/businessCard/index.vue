@@ -1,9 +1,11 @@
+<!-- eslint-disable no-console -->
+<!-- eslint-disable no-use-before-define -->
 <!-- eslint-disable no-empty -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-09 17:51:25
+ * @LastEditTime: 2023-08-10 18:31:25
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -19,12 +21,15 @@ import hyNavBarSimpler from '@/components/hy-nav-bar-simpler/index.vue'
 import c_shop from './c_shop.vue'
 import c_biography from './c_biography.vue'
 import c_video from './c_video.vue'
-import c_contact from './c_contact.vue'
+import c_connection from './c_connection.vue'
 
 const userStore = useUserStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)
-const cardId = ref()
+const cardId = ref(null)
+const cardUserId = ref(null)
 const userDetailInfo = ref({})
+const hasDetailInfo = ref(true)
+const isMySelf = ref(false)
 const tabList = ref([
   {
     name: '传记'
@@ -43,24 +48,87 @@ const currentTab = ref(0)
 async function getUserDetailInfo() {
   const { data } = await socialApi.userDetailInfo({
     id: cardId.value,
+    userId: cardUserId.value,
     detail: true
   })
   userDetailInfo.value = data
 }
-function toEdit() {}
+function toEdit() {
+  uni.navigateTo({
+    url: '/pagesA/publish/index?tabIndex=1'
+  })
+}
+function toView() {
+  uni.navigateTo({
+    url: '/pagesA/shortVideo/index'
+  })
+}
+const focusDetail = reactive({
+  id: null,
+  status: false
+})
+async function focusAdd() {
+  if (focusDetail.status) {
+    uni.showModal({
+      title: '提示',
+      content: '取消此用户关注？',
+      async success(res) {
+        if (res.confirm) {
+          focusCancel()
+        } else {
+          console.log('取消')
+        }
+      }
+    })
+    return
+  }
+  const { code } = await socialApi.userFocusAdd({
+    targetUserId: cardUserId.value,
+    userId: userInfo.value.id
+  })
+  if (code === 200) {
+    focusDetailFn()
+  }
+}
+async function focusCancel() {
+  const { code } = await socialApi.userFocusDelete({
+    targetUserId: cardUserId.value,
+    userId: userInfo.value.id,
+    id: focusDetail.id
+  })
+  if (code === 200) {
+    focusDetailFn()
+  }
+}
+async function focusDetailFn() {
+  const { code, data } = await socialApi.userFocusList({
+    targetUserId: cardUserId.value,
+    userId: userInfo.value.id,
+    noPaging: true
+  })
+  if (data?.length > 0) {
+    focusDetail.status = true
+    focusDetail.id = data[0]?.id
+  } else {
+    focusDetail.status = false
+  }
+}
 const pop = ref()
 function contact() {
   uni.setStorageSync('businessCard', {
     nickName: userDetailInfo.value?.name,
-    cate: '亲子教育'
+    shopProductSkuMoney: userDetailInfo.value?.shopProductSkuMoney
   })
   pop.value.openPop()
 }
 function tabChange() {}
 onLoad((option) => {
-  if (option) {
-    cardId.value = option.id
-    getUserDetailInfo()
+  cardId.value = option?.cardId
+  cardUserId.value = option?.userId
+  isMySelf.value = Number(option?.userId) === userInfo.value.id
+  getUserDetailInfo()
+  if (!isMySelf.value) {
+    focusDetailFn()
   }
 })
 
@@ -119,14 +187,28 @@ onPageScroll((e) => {
           </view>
         </view>
         <view class="remark"> {{ userDetailInfo.motto }} </view>
-        <view class="action">
-          <view class="subscribe focus">
-            <text class="text">+关注</text>
+        <view class="action" v-if="isMySelf">
+          <view class="btn def" @click="toEdit">
+            <text class="text">编辑资料</text>
           </view>
-          <view class="subscribe link" @click="contact">
+          <view class="btn def" @click="toView">
+            <text class="text">随便看看</text>
+          </view>
+        </view>
+        <view class="action" v-else>
+          <view
+            class="btn focus"
+            :class="{ isFocus: focusDetail.status }"
+            @click="focusAdd"
+          >
+            <text class="text"
+              >{{ focusDetail.status ? '✔ 已关注' : '+关注' }}
+            </text>
+          </view>
+          <view class="btn link" @click="contact">
             <text class="text">立即对接</text>
           </view>
-          <c_contact ref="pop" />
+          <c_connection ref="pop" />
         </view>
       </view>
       <u-tabs
@@ -140,22 +222,29 @@ onPageScroll((e) => {
         sticky
         :style="{ top: '0', zIndex: 2 }"
       ></u-tabs>
-      <!-- 传记 -->
-      <view class="tabBox biography" v-show="currentTab === 0">
-        <c_biography :info="userDetailInfo" />
+      <view v-if="hasDetailInfo">
+        <!-- 传记 -->
+        <view class="tabBox biography" v-show="currentTab === 0">
+          <c_biography :info="userDetailInfo" />
+        </view>
+        <!-- 视频 -->
+        <view class="video" v-show="currentTab === 1">
+          <c_video :cardUserId="cardUserId" />
+        </view>
+        <!-- 橱窗 -->
+        <view class="shop" v-show="currentTab === 2">
+          <c_shop />
+        </view>
+        <!-- 排行榜 -->
+        <view class="shop" v-show="currentTab === 3">
+          <u-empty
+            text="暂无数据"
+            mode="list"
+            style="margin-top: 30px"
+          ></u-empty>
+        </view>
       </view>
-      <!-- 视频 -->
-      <view class="video" v-show="currentTab === 1">
-        <c_video />
-      </view>
-      <!-- 橱窗 -->
-      <view class="shop" v-show="currentTab === 2">
-        <c_shop />
-      </view>
-      <!-- 排行榜 -->
-      <view class="shop" v-show="currentTab === 3">
-        <u-empty text="暂无数据" mode="list" style="margin-top: 30px"></u-empty>
-      </view>
+
       <u-back-top :scroll-top="scrollTop"></u-back-top>
     </view>
   </view>
@@ -259,7 +348,7 @@ onPageScroll((e) => {
   align-items: center;
   width: 100%;
   gap: 10rpx;
-  .subscribe {
+  .btn {
     background-color: #fc2b55;
     border-radius: 6rpx;
     color: #fff;
@@ -267,8 +356,21 @@ onPageScroll((e) => {
     line-height: 60rpx;
     font-weight: bold;
     box-shadow: 0 0 10rpx 0 rgba(0, 0, 0, 0.3);
+    &.def {
+      background-color: #eee;
+      width: 50%;
+      color: #333;
+      font-weight: normal;
+      box-shadow: none;
+    }
     &.focus {
       width: 40%;
+      &.isFocus {
+        background-color: #f6f6f6;
+        // box-shadow: none;
+        color: #333;
+        font-weight: normal;
+      }
     }
     &.link {
       flex: 1;
