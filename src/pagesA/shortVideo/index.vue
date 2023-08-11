@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-11 17:32:50
+ * @LastEditTime: 2023-08-11 18:28:44
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -52,7 +52,8 @@ async function dynamicList() {
       noPaging: true,
       type: 3,
       detail: true,
-      status: enumAll.audit_status_enum.SUCCESS
+      status: enumAll.audit_status_enum.SUCCESS,
+      otherColumns: 'favorited,focused'
     })
     swiperList.value = res1.data
   } catch {}
@@ -126,20 +127,19 @@ function autoShowFn(name?: string) {
   return ['preview', 'viewSingleUser'].includes(type.value)
 }
 async function doLike(item: {
-  likeStatus?: boolean
+  favorited?: boolean
   id: any
   favoriteCount: number
 }) {
   const excutor = item.likeStatus
     ? socialApi.userDetailDelete
     : socialApi.userFavoriteAdd
-  item.favoriteCount += item.likeStatus ? -1 : 1
-  item.likeStatus = !item.likeStatus
+  item.favoriteCount += item.favorited ? -1 : 1
+  item.favorited = !item.favorited
   const res = await excutor({
     dynamicId: item.id,
     userId: userInfo.value.id
   })
-
 }
 onLoad((option) => {
   type.value = option?.type
@@ -245,12 +245,13 @@ onHide(() => {
               shape="circle"
               class="icon"
               src="https://image.blacksilverscore.com/uploads/2fdc2eed-dc7a-490e-8c11-17a4668ea375.png"
+              v-if="item?.focused"
             ></u-image>
           </view>
           <view class="action" @click="doLike(item)">
             <text
               class="iconfont hy-icon-yidianzan"
-              :class="{ 'is-active': item.likeStatus }"
+              :class="{ 'is-active': item?.favorited }"
             ></text>
             {{ item?.favoriteCount }}
           </view>
@@ -349,7 +350,7 @@ onHide(() => {
       margin-top: 30rpx;
       .iconfont {
         font-size: 70rpx;
-        opacity: 0.8;
+        opacity: 0.85;
       }
       .hy-icon-yidianzan {
         &.is-active {
