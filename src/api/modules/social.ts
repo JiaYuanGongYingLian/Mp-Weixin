@@ -119,15 +119,15 @@ function userFocusDelete(data: any) {
   return http.get('/social/api/v1/user/focus/delete', data)
 }
 /**
- * 用户关注
+ * 动态收藏（点赞）
  */
-function userFavoriteAdd(data: any) {
+function dynamicFavoriteAdd(data: any) {
   return http.post('/social/api/v1/dynamic/favorite/add', data)
 }
-function userFavoriteList(data: any) {
+function dynamicFavoriteList(data: any) {
   return http.get('/social/api/v1/dynamic/favorite/list', data)
 }
-function userFavoriteDelete(data: any) {
+function dynamicFavoriteDelete(data: any) {
   return http.get('/social/api/v1/dynamic/favorite/delete', data)
 }
 export default {
@@ -161,7 +161,7 @@ export default {
   userFocusAdd,
   userFocusList,
   userFocusDelete,
-  userFavoriteAdd,
-  userFavoriteList,
-  userFavoriteDelete
+  dynamicFavoriteAdd,
+  dynamicFavoriteList,
+  dynamicFavoriteDelete
 }

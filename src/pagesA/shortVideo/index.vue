@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-11 18:28:44
+ * @LastEditTime: 2023-08-11 18:44:46
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -131,9 +131,9 @@ async function doLike(item: {
   id: any
   favoriteCount: number
 }) {
-  const excutor = item.likeStatus
-    ? socialApi.userDetailDelete
-    : socialApi.userFavoriteAdd
+  const excutor = item.favorited
+    ? socialApi.dynamicFavoriteDelete
+    : socialApi.dynamicFavoriteAdd
   item.favoriteCount += item.favorited ? -1 : 1
   item.favorited = !item.favorited
   const res = await excutor({
@@ -245,7 +245,7 @@ onHide(() => {
               shape="circle"
               class="icon"
               src="https://image.blacksilverscore.com/uploads/2fdc2eed-dc7a-490e-8c11-17a4668ea375.png"
-              v-if="item?.focused"
+              v-if="!item?.focused && item?.userId !== userInfo.id"
             ></u-image>
           </view>
           <view class="action" @click="doLike(item)">
