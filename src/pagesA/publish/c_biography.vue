@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-30 11:32:40
- * @LastEditTime: 2023-08-09 17:47:15
+ * @LastEditTime: 2023-08-11 15:56:18
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -256,13 +256,6 @@ const submit = () => {
         }
       })
       formData = reactive({ ...formData, ...data })
-      if (!formData.avatar) {
-        uni.showToast({
-          icon: 'none',
-          title: '请上传头像'
-        })
-        return
-      }
       if (!formData.coverImage) {
         uni.showToast({
           icon: 'none',
@@ -337,7 +330,7 @@ onLoad(async (option) => {
   <view class="container">
     <u-form :model="formData" ref="form" :label-style="{ fontWeight: 'bold' }">
       <view class="section">
-        <u-form-item label="名片头像" label-width="auto" prop="avatar" required>
+        <!-- <u-form-item label="名片头像" label-width="auto" prop="avatar" required>
           <u-upload
             ref="upload1"
             :action="uploadUrl"
@@ -351,7 +344,7 @@ onLoad(async (option) => {
               formData.avatar ? [{ url: getImgFullPath(formData.avatar) }] : []
             "
           ></u-upload>
-        </u-form-item>
+        </u-form-item> -->
         <u-form-item label="名片主图" label-width="auto" required>
           <u-upload
             ref="upload1"

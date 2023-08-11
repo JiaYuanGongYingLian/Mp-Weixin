@@ -14,7 +14,7 @@ const { userInfo } = storeToRefs(storeUser)
 watch(isJimInit, (n) => {
   if (n) {
     const data = uni.getStorageSync('jimLoginInfo')
-    if (data && data.username) {
+    if (data && data?.username === `hy_${userInfo.value.id}`) {
       chatStore.jimLogin(data)
     } else {
       const loginInfo = {

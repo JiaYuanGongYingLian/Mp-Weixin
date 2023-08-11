@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-10 18:31:25
+ * @LastEditTime: 2023-08-11 16:16:28
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -16,7 +16,7 @@ import { onLoad, onShow, onReady, onPageScroll } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
-import { useUserStore } from '@/store'
+import { useUserStore, useConfigStore } from '@/store'
 import hyNavBarSimpler from '@/components/hy-nav-bar-simpler/index.vue'
 import c_shop from './c_shop.vue'
 import c_biography from './c_biography.vue'
@@ -24,6 +24,7 @@ import c_video from './c_video.vue'
 import c_connection from './c_connection.vue'
 
 const userStore = useUserStore()
+const configStore = useConfigStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)
 const cardId = ref(null)
 const cardUserId = ref(null)
@@ -51,7 +52,22 @@ async function getUserDetailInfo() {
     userId: cardUserId.value,
     detail: true
   })
-  userDetailInfo.value = data
+  if (!data) {
+    hasDetailInfo.value = false
+    if (isMySelf.value) {
+      userDetailInfo.value.avatar =
+        userInfo.value.avatar || configStore.cardDefualtAvatar
+      userDetailInfo.value.coverImage =
+        userInfo.value.avatar || configStore.cardDefualtCoverImage
+      userDetailInfo.value.name = userInfo.value.nickname
+    } else {
+      userDetailInfo.value.avatar = configStore.cardDefualtAvatar
+      userDetailInfo.value.coverImage = configStore.cardDefualtCoverImage
+      userDetailInfo.value.name = userInfo.value.nickname
+    }
+  } else {
+    userDetailInfo.value = data
+  }
 }
 function toEdit() {
   uni.navigateTo({
@@ -115,10 +131,6 @@ async function focusDetailFn() {
 }
 const pop = ref()
 function contact() {
-  uni.setStorageSync('businessCard', {
-    nickName: userDetailInfo.value?.name,
-    shopProductSkuMoney: userDetailInfo.value?.shopProductSkuMoney
-  })
   pop.value.openPop()
 }
 function tabChange() {}
@@ -164,7 +176,7 @@ onPageScroll((e) => {
         </view>
         <view class="info">
           <view class="name">{{ userDetailInfo.name }}</view>
-          <uni-view class="badge">{{
+          <uni-view class="badge" v-if="userDetailInfo?.jobTagName">{{
             userDetailInfo?.jobTagName?.split('-')[0]
           }}</uni-view>
         </view>
@@ -178,15 +190,15 @@ onPageScroll((e) => {
             <text class="label">获赞</text>
           </view> -->
           <view class="item">
-            <text class="val"> {{ userDetailInfo.focusCount || 0 }}</text>
+            <text class="val"> {{ userDetailInfo?.focusCount || 0 }}</text>
             <text class="label">关注</text>
           </view>
           <view class="item">
-            <text class="val">{{ userDetailInfo.fansCount }}</text>
+            <text class="val">{{ userDetailInfo?.fansCount || 0 }}</text>
             <text class="label">粉丝</text>
           </view>
         </view>
-        <view class="remark"> {{ userDetailInfo.motto }} </view>
+        <view class="remark"> {{ userDetailInfo?.motto }} </view>
         <view class="action" v-if="isMySelf">
           <view class="btn def" @click="toEdit">
             <text class="text">编辑资料</text>
@@ -208,7 +220,7 @@ onPageScroll((e) => {
           <view class="btn link" @click="contact">
             <text class="text">立即对接</text>
           </view>
-          <c_connection ref="pop" />
+          <c_connection ref="pop" :info="userDetailInfo" />
         </view>
       </view>
       <u-tabs
@@ -244,6 +256,19 @@ onPageScroll((e) => {
           ></u-empty>
         </view>
       </view>
+      <view v-else class="empty">
+        <view class="text" v-if="isMySelf">完善传记链接名人</view>
+        <view class="text" v-else>暂无数据</view>
+        <u-button
+          size="medium"
+          class="btn"
+          :hair-line="false"
+          ripple
+          @click="toEdit"
+          v-if="isMySelf"
+          >立即完善</u-button
+        >
+      </view>
 
       <u-back-top :scroll-top="scrollTop"></u-back-top>
     </view>
@@ -251,6 +276,7 @@ onPageScroll((e) => {
 </template>
 
 <style lang="scss" scoped>
+@import '@/styles/helper.scss';
 .container {
   height: 100%;
   display: flex;
@@ -290,6 +316,8 @@ onPageScroll((e) => {
         color: #fff;
         font-size: 36rpx;
         font-weight: bold;
+        max-width: 250rpx;
+        @include ellipsis;
       }
 
       .badge {
@@ -399,5 +427,21 @@ onPageScroll((e) => {
 
 .shop {
   padding: 30rpx;
+}
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 150rpx;
+  .text {
+    font-size: 32rpx;
+    color: #000;
+  }
+  .btn {
+    margin-top: 40rpx;
+    font-weight: bold;
+    color: #000;
+  }
 }
 </style>

@@ -6,7 +6,11 @@ const useStore = defineStore('config', {
     navBarHeight: 44,
     enterType: null,
     isWeChatBrowser: isWeChat(), // 微信浏览器
-    isAlipayClient: isAlipayClient() // 支付宝浏览器
+    isAlipayClient: isAlipayClient(), // 支付宝浏览器
+    cardDefualtAvatar:
+      'https://image.blacksilverscore.com/uploads/39d21a81-34a3-404d-9af4-09fac6441226.png', // 名片默认头像
+    cardDefualtCoverImage:
+      'https://image.blacksilverscore.com/uploads/cdac802e-2c3e-448e-a4ff-089bd7a3888e.jpg' // 名片默认背景
   }),
   getters: {
     enterByStoreQrcode: (state) => state.enterType === 'storeQrcode' // 是否通过商家二维码链接进入页面

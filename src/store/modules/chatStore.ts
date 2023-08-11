@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-25 15:30:59
- * @LastEditTime: 2023-08-04 17:27:19
+ * @LastEditTime: 2023-08-11 17:02:48
  * @LastEditors:  Please set LastEditors
  */
 import { defineStore } from 'pinia'
@@ -15,7 +15,7 @@ import jimMsg from '@/common/jim/imMsgApi.js'
 import { $toast } from '@/utils/common'
 
 let number = 0
-const useStore = defineStore('config', {
+const useStore = defineStore('chat', {
   state: () => ({
     jimLoginInfo: null,
     hasLogin: false,
@@ -52,10 +52,15 @@ const useStore = defineStore('config', {
         }
       }, 200)
     },
-    async jimRegister(data: any) {
+    async jimRegister(data: { username: any; password?: any }) {
+      const { username, password } = data
       const res = await jpushIM.register(data)
       console.log(res)
-      $toast('注册成功')
+      // $toast('注册成功')
+      this.jimLogin({
+        username,
+        password
+      })
     },
     async jimLoginOut() {
       await jpushIM.loginOut()
@@ -67,20 +72,28 @@ const useStore = defineStore('config', {
         }
       }, 500)
     },
-    async jimLogin(data: { username: any }) {
-      uni.setStorageSync('jimLoginInfo', data)
+    async jimLogin(data: { username: any; password?: any; nickname?: any }) {
+      const { username, password } = data
       try {
-        const { res } = await jpushIM.login(data)
+        console.log(data, 1234156)
+        const { res } = await jpushIM.login({
+          username,
+          password
+        })
+        uni.setStorageSync('jimLoginInfo', data)
         console.log(72, res)
         this.hasLogin = true
-        this.jimGetUserInfo(data.username)
+        this.jimGetUserInfo(username)
         this.jimOnSyncConversation()
         this.jimOnMsgReceive()
         this.jimGetConversation()
-        $toast('登录成功')
+        // $toast('登录成功')
       } catch (err) {
         if (err && err.code !== 0) {
-          this.jimRegister(data)
+          this.jimRegister({
+            username,
+            password
+          })
         }
       }
     },

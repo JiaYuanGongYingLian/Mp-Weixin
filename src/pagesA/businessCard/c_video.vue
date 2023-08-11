@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-10 17:39:28
+ * @LastEditTime: 2023-08-11 17:39:03
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -79,7 +79,7 @@ onMounted(() => {
         ></u-image>
         <view class="like">
           <text class="iconfont hy-icon-like-line"></text>
-          <text>{{ item.like || 123 }}</text>
+          <text>{{ item.favoriteCount || 0 }}</text>
         </view>
       </view>
     </view>

@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-29 17:12:32
- * @LastEditTime: 2023-08-10 12:01:40
+ * @LastEditTime: 2023-08-11 11:31:31
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -57,7 +57,6 @@ async function dynamicUpdate(status: any) {
 }
 const submit = (status: any) => {
   form.value.validate((valid: any) => {
-    console.log(49, formData)
     if (valid) {
       dynamicUpdate(status)
     } else {

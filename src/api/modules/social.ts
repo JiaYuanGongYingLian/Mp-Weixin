@@ -2,7 +2,7 @@
  * @Description: 社交服务
  * @Author: Kerwin
  * @Date: 2023-06-29 15:54:59
- * @LastEditTime: 2023-08-10 17:35:25
+ * @LastEditTime: 2023-08-11 17:33:24
  * @LastEditors:  Please set LastEditors
  */
 import http from '../http'
@@ -118,6 +118,18 @@ function userFocusList(data: any) {
 function userFocusDelete(data: any) {
   return http.get('/social/api/v1/user/focus/delete', data)
 }
+/**
+ * 用户关注
+ */
+function userFavoriteAdd(data: any) {
+  return http.post('/social/api/v1/dynamic/favorite/add', data)
+}
+function userFavoriteList(data: any) {
+  return http.get('/social/api/v1/dynamic/favorite/list', data)
+}
+function userFavoriteDelete(data: any) {
+  return http.get('/social/api/v1/dynamic/favorite/delete', data)
+}
 export default {
   dynamicAdd,
   dynamicList,
@@ -148,5 +160,8 @@ export default {
   userDetailTagDelete,
   userFocusAdd,
   userFocusList,
-  userFocusDelete
+  userFocusDelete,
+  userFavoriteAdd,
+  userFavoriteList,
+  userFavoriteDelete
 }

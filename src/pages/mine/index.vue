@@ -104,10 +104,12 @@ onLoad((option) => {
             <image
               mode="aspectFill"
               :src="
-                userInfo?.avatar ||
-                wxUserInfo?.headimgurl ||
-                wxUserInfo?.avatarUrl ||
-                'https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/img_user.png'
+                getImgFullPath(
+                  userInfo?.avatar ||
+                    wxUserInfo?.headimgurl ||
+                    wxUserInfo?.avatarUrl ||
+                    'https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/img_user.png'
+                )
               "
             ></image>
           </view>

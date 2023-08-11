@@ -3,7 +3,7 @@ import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, userApi } from '@/api'
-import { checkLoginState } from '@/utils/index'
+import { checkLoginState, getImgFullPath } from '@/utils/index'
 import { upload } from '@/common/ali-oss'
 import { useUserStore } from '@/store'
 
@@ -82,10 +82,13 @@ onLoad((option) => {})
 
       <u-cell-item title="头像" hover-class="cell-hover-class">
         <!-- #ifdef H5 -->
-        <u-avatar :src="userInfo.avatar"></u-avatar>
+        <u-avatar :src="getImgFullPath(userInfo.avatar)"></u-avatar>
         <!-- #endif -->
         <!-- #ifdef MP-WEIXIN -->
-        <u-avatar :src="userInfo.avatar" v-if="userInfo.avatar"></u-avatar>
+        <u-avatar
+          :src="getImgFullPath(userInfo.avatar)"
+          v-if="userInfo.avatar"
+        ></u-avatar>
         <view v-else class="avatar">
           <open-data type="userAvatarUrl"></open-data>
         </view>

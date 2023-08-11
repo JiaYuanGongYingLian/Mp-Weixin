@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-01 16:22:48
- * @LastEditTime: 2023-08-10 11:53:46
+ * @LastEditTime: 2023-08-11 11:33:04
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -286,6 +286,7 @@ onMounted(() => {
       padding: 6rpx;
       z-index: 1;
       background: #fa3534;
+      opacity: 0.8;
 
       // border-bottom-left-radius: 8rpx;
       .hy-icon-delete {

@@ -5,21 +5,22 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-10 17:04:10
+ * @LastEditTime: 2023-08-11 17:32:50
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onHide } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi, socialApi, enumAll } from '@/api';
+import { baseApi, productApi, socialApi, enumAll } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
-import { useUserStore } from '@/store'
+import { useUserStore, useConfigStore } from '@/store'
 import hyNavBarSimpler from '@/components/hy-nav-bar-simpler/index.vue'
 
 const userStore = useUserStore()
+const configStore = useConfigStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)
 const buttonRect = ref({})
 // #ifdef MP-WEIXIN
@@ -98,7 +99,6 @@ function toBusinessCard() {
   })
 }
 function toBusinessCardHome(data: { userId: any }, index: any) {
-  videoPlay(index)
   uni.navigateTo({
     url: `/pagesA/businessCard/index?userId=${data.userId}`
   })
@@ -125,9 +125,21 @@ function autoShowFn(name?: string) {
   }
   return ['preview', 'viewSingleUser'].includes(type.value)
 }
-function doLike(item) {
-  item.like += 1
-  item.likeStatus = true
+async function doLike(item: {
+  likeStatus?: boolean
+  id: any
+  favoriteCount: number
+}) {
+  const excutor = item.likeStatus
+    ? socialApi.userDetailDelete
+    : socialApi.userFavoriteAdd
+  item.favoriteCount += item.likeStatus ? -1 : 1
+  item.likeStatus = !item.likeStatus
+  const res = await excutor({
+    dynamicId: item.id,
+    userId: userInfo.value.id
+  })
+
 }
 onLoad((option) => {
   type.value = option?.type
@@ -144,6 +156,10 @@ onLoad((option) => {
   } else {
     dynamicList()
   }
+})
+onHide(() => {
+  // 页面跳转，暂停视频播放
+  videoPlay(swiperCurrent.value)
 })
 </script>
 <template>
@@ -213,7 +229,11 @@ onLoad((option) => {
         <view class="sideBar" v-if="!isPreview">
           <view class="avatar">
             <u-image
-              :src="getImgFullPath(item?.user?.avatar)"
+              :src="
+                getImgFullPath(
+                  item?.user?.avatar || configStore.cardDefualtAvatar
+                )
+              "
               width="80rpx"
               height="80rpx"
               shape="circle"
@@ -232,7 +252,7 @@ onLoad((option) => {
               class="iconfont hy-icon-yidianzan"
               :class="{ 'is-active': item.likeStatus }"
             ></text>
-            {{ item?.count }}
+            {{ item?.favoriteCount }}
           </view>
           <view class="action">
             <text
@@ -329,6 +349,7 @@ onLoad((option) => {
       margin-top: 30rpx;
       .iconfont {
         font-size: 70rpx;
+        opacity: 0.8;
       }
       .hy-icon-yidianzan {
         &.is-active {

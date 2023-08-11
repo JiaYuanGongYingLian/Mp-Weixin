@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-24 14:50:01
- * @LastEditTime: 2023-08-04 18:10:02
+ * @LastEditTime: 2023-08-11 15:39:32
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -45,6 +45,11 @@ async function getList() {
     }
   } catch {}
 }
+function reload() {
+  circleList.list = []
+  circleList.pageIndex = 1
+  getList()
+}
 async function toGroupChat(item: {
   type?: any
   chatGroupId: any
@@ -57,8 +62,8 @@ async function toGroupChat(item: {
   } else {
     uni.navigateTo({
       // url: `/pagesA/chat/index?groupId=${item.gid}&username=hy_500795`
-      // url: `/pagesA/chat/index?groupId=${item.chatGroupId}&groupName=${item.name}`
-      url: `/pagesA/chat/index?groupId=75293282&groupName=${item.name}`
+      url: `/pagesA/chat/index?groupId=${item.chatGroupId}&groupName=${item.name}`
+      // url: `/pagesA/chat/index?groupId=75293282&groupName=${item.name}`
     })
   }
 }
@@ -75,8 +80,9 @@ async function joinGroup(item: {
     userId: userInfo.value.id
   })
   if (code === 200) {
+    reload()
     uni.navigateTo({
-      url: `/pagesA/chat/index?groupId=${item.gid}`
+      url: `/pagesA/chat/index?groupId=${item.chatGroupId}`
     })
   }
 }

@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 04:42:53
- * @LastEditTime: 2023-08-10 14:35:12
+ * @LastEditTime: 2023-08-11 17:41:19
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -19,7 +19,16 @@ import { useUserStore } from '@/store'
 
 const userStore = useUserStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)
-const info = ref()
+const props = withDefaults(
+  defineProps<{
+    info?: object
+  }>(),
+  {
+    info() {
+      return {}
+    }
+  }
+)
 const showPop = ref(false)
 function openPop() {
   showPop.value = true
@@ -46,7 +55,7 @@ function submit() {
         orderProductSkus: [
           {
             count: 1,
-            money: info.value.shopProductSkuMoney,
+            money: props.info.shopProductSkuMoney,
             shopProductSkuId: ''
           }
         ],
@@ -65,9 +74,7 @@ function submit() {
 defineExpose({
   openPop
 })
-onMounted((option) => {
-  info.value = uni.getStorageSync('businessCard')
-})
+
 onReady(() => {
   try {
     form1.value.setRules(rules)
@@ -104,7 +111,7 @@ onReady(() => {
         <view class="card">
           <!-- <u-image :src="getImgFullPath(info.avatar)"></u-image> -->
           <view>
-            <view class="name">{{ info.nickName }}</view>
+            <view class="name">{{ info?.name }}</view>
           </view>
         </view>
         <view class="label">给TA留言</view>
