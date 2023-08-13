@@ -56,10 +56,11 @@ export const webUpload = async (options: {
 
 export const webUploadVideo = async (options: {
   file: any
-  uploadPath: string
-  onSuccess: (arg0: any) => any
-  onError: (arg0: string) => any
-  onProgress: (arg0: number) => any
+  fileType?: any
+  uploadPath?: string
+  onSuccess?: (arg0: any) => any
+  onError?: (arg0: string) => any
+  onProgress?: (arg0: number) => any
 }) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -67,14 +68,15 @@ export const webUploadVideo = async (options: {
       const file = options.file || options // 拿到 file
       const id = generateId()
       const temp = file.name ? file.name.split('.') : ''
-      const suffixes = file.name ? temp[temp.length - 1] : 'png'
+      const suffixes =
+        options.fileType ?? file.name ? temp[temp.length - 1] : 'png'
       const fileName = `${`${id}.${suffixes}`}`
       const path = options.uploadPath || 'dynamic/'
       client
         .multipartUpload(path + fileName, file, {
           progress(p: number) {
             // 获取进度条的值
-            options.onProgress(p * 100)
+            options.onProgress && options.onProgress(p * 100)
           }
         })
         .then((res) => {
