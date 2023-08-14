@@ -31,7 +31,7 @@ async function getOrderMoney() {
 }
 function toAddressList() {
   uni.navigateTo({
-    url: '/pages/addressList/index?type=setAddress',
+    url: '/packageB/pages/addressList/index?type=setAddress',
     success: () => {
       uni.$once('/pages/productCheckout/index', (data: { address: {} }) => {
         console.log('addressData:>>', data)

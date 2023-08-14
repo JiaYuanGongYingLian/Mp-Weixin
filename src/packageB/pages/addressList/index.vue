@@ -58,7 +58,7 @@ function addAddress(_type = 'add', data?: any) {
   if (_type === 'edit') {
     uni.setStorageSync('routerParam', data)
   }
-  let url = `/pages/addressEdit/index?type=${_type}`
+  let url = `/packageB/pages/addressEdit/index?type=${_type}`
   if (list.value.length === 0) {
     url = `${url}&isFirst=true`
   }

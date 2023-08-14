@@ -1,14 +1,10 @@
-<!-- eslint-disable no-use-before-define -->
-<!-- eslint-disable no-shadow -->
-<!-- eslint-disable max-len -->
 <!-- eslint-disable no-console -->
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-<!-- eslint-disable prefer-destructuring -->
+<!-- eslint-disable no-console -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-01 16:22:48
- * @LastEditTime: 2023-08-13 21:03:11
+ * @LastEditTime: 2023-08-14 11:30:18
  * @LastEditors:  Please set LastEditors
 -->
 <template>
@@ -49,14 +45,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive } from 'vue'
+// #ifdef H5
 import Recorder from 'recorder-core'
 import 'recorder-core/src/engine/mp3'
 import 'recorder-core/src/engine/mp3-engine'
-import 'recorder-core/src/extensions/waveview'
+// #endif
+
 import { webUploadVideo } from '@/common/ali-oss'
 import { getImgFullPath } from '@/utils'
-import { isWeChat } from '@/utils/common'
 
 const props = withDefaults(
   defineProps<{
@@ -153,14 +150,12 @@ function recPlay() {
 }
 function recOpen() {
   try {
-    console.log('录音1111')
     // 创建录音对象
     rec.value = Recorder({
       type: 'mp3', // 录音格式，可以换成wav等其他格式
       sampleRate: 16000, // 录音的采样率，越大细节越丰富越细腻
       bitRate: 16 // 录音的比特率，越大音质越好
     })
-    console.log('222')
     // 打开录音，获得权限
     rec.value.open(
       () => {
@@ -177,16 +172,7 @@ function recOpen() {
   }
 }
 function recorderFn() {
-  console.log('录音', 123)
-  if (isWeChat()) {
-    uni.showToast({
-      title: '请在APP进行录制',
-      icon: 'none'
-    })
-    return
-  }
   if (recValue.value === recStatus.toStart) {
-    console.log('录音', 456)
     recOpen()
   } else if (recValue.value === recStatus.toEnd) {
     recStop()

@@ -100,7 +100,7 @@ onLoad((option) => {})
       <u-cell-item
         title="地址管理"
         hover-class="cell-hover-class"
-        @click="goUrlFn(`/pages/addressList/index?type=mine&id=''`)"
+        @click="goUrlFn(`/packageB/pages/addressList/index?type=mine&id=''`)"
       >
       </u-cell-item>
     </u-cell-group>
@@ -112,7 +112,7 @@ onLoad((option) => {})
       <u-cell-item
         title="联系我们"
         hover-class="cell-hover-class"
-        @click="goUrlFn(`/pages/about/index`)"
+        @click="goUrlFn(`/packageB/pages/about/index`)"
       >
       </u-cell-item>
     </u-cell-group>

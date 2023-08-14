@@ -71,12 +71,12 @@ async function getUserDetailInfo() {
 }
 function toEdit() {
   uni.navigateTo({
-    url: '/pagesA/publish/index?tabIndex=1'
+    url: '/packageA/pages/publish/index?tabIndex=1'
   })
 }
 function toView() {
   uni.navigateTo({
-    url: '/pagesA/shortVideo/index'
+    url: '/packageA/pages/shortVideo/index'
   })
 }
 const focusDetail = reactive({

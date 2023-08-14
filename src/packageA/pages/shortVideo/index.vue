@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-11 18:44:46
+ * @LastEditTime: 2023-08-14 09:53:00
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -96,27 +96,27 @@ function fullscreenchangeFn(e: { detail: { fullScreen: boolean } }) {
 }
 function toBusinessCard() {
   uni.navigateTo({
-    url: '/pagesA/businessCard/detail'
+    url: '/packageA/pages/businessCard/detail'
   })
 }
 function toBusinessCardHome(data: { userId: any }, index: any) {
   uni.navigateTo({
-    url: `/pagesA/businessCard/index?userId=${data.userId}`
+    url: `/packageA/pages/businessCard/index?userId=${data.userId}`
   })
 }
 function toPublishCenter() {
   uni.navigateTo({
-    url: '/pagesA/publish/index'
+    url: '/packageA/pages/publish/index'
   })
 }
 function toMine() {
   uni.navigateTo({
-    url: `/pagesA/businessCard/index?userId=${userInfo.value.id}`
+    url: `/packageA/pages/businessCard/index?userId=${userInfo.value.id}`
   })
 }
 function toFamous() {
   uni.navigateTo({
-    url: '/pagesA/famous/index'
+    url: '/packageA/pages/famous/index'
   })
 }
 const type = ref('default')
@@ -542,7 +542,7 @@ onHide(() => {
     font-size: 30rpx;
     font-weight: 500;
     .hy-icon-push {
-      font-size: 52rpx;
+      font-size: 54rpx;
       font-weight: normal;
     }
   }

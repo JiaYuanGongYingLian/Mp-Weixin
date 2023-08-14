@@ -5,7 +5,7 @@
 
     <view class="btn-group">
       <!-- <navigator
-        url="/pages/order/index?state=0"
+        url="/packageB/pages/order/index?state=0"
         open-type="redirect"
         class="mix-btn"
         >查看订单</navigator

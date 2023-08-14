@@ -118,7 +118,7 @@ function showCoupon() {
     return
   }
   const coupon = JSON.stringify(userCoupons.value[0])
-  uni.navigateTo({ url: `/pages/couponQrcode/index?coupon=${coupon}` })
+  uni.navigateTo({ url: `/packageB/pages/couponQrcode/index?coupon=${coupon}` })
 }
 // 领券
 async function couponAdd() {
@@ -155,7 +155,7 @@ async function getCartProductNumFn() {
 function toCart() {
   if (!checkLoginState()) return
   uni.navigateTo({
-    url: '/pages/cart/index',
+    url: '/packageB/pages/cart/index',
     success: () => {
       uni.$on('cartNum', (num) => {
         totalCartNum.value = num

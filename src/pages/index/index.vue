@@ -72,7 +72,7 @@ const toPhysicalStore = (content: any) => {
 }
 const toHeidouShop = () => {
   uni.navigateTo({
-    url: '/pages/heidouShop/index'
+    url: '/packageB/pages/heidouShop/index'
   })
 }
 const toShopProduct = () => {}

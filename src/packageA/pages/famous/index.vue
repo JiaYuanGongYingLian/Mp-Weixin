@@ -78,7 +78,7 @@ async function getDataList() {
 }
 function toDetail(data: { id: any; userId: any }) {
   uni.navigateTo({
-    url: `/pagesA/businessCard/index?cardId=${data.id}&userId=${data.userId}`
+    url: `/packageA/pages/businessCard/index?cardId=${data.id}&userId=${data.userId}`
   })
 }
 function tabsChange(index: any) {

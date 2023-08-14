@@ -4,18 +4,15 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-var */
 /* eslint-disable max-len */
+
 import { Md5 } from 'ts-md5'
+import { getCurrentInstance } from 'vue'
 import config from './config.js'
 import $errorCode from './jimErrorCode.js'
 import utils from '@/utils/common.ts'
-// #ifdef H5
-// const JMessage = require('./jmessage-sdk-web.2.6.0.min.js')
-// #endif
 // #ifndef H5
-// eslint-disable-next-line no-redeclare
-// const JMessage = require('./jmessage-wxapplet-sdk-1.4.3.min.js')
+const JMessage = require('./jmessage-wxapplet-sdk-1.4.3.min.js')
 // #endif
-
 // 文档链接  https://docs.jiguang.cn/jmessage/client/im_sdk_js_v2/
 
 const JIM = new JMessage({
@@ -254,14 +251,11 @@ function myPromise(key, params) {
       console.log(`----------------${key}------------------`)
       JIM[key](params)
         .onSuccess(function (data) {
-          console.log(
-            '%c ' + JSON.stringify(data) + '-----' + key,
-            'color:blue;'
-          )
+          console.log(`%c ${JSON.stringify(data)}-----${key}`, 'color:blue;')
           resolve(data)
         })
         .onFail(function (data) {
-          console.log('%c ' + JSON.stringify(data), 'color:red;')
+          console.log(`%c ${JSON.stringify(data)}`, 'color:red;')
           reject(data)
           if (data.error) {
             toastError(data.error)
@@ -289,7 +283,7 @@ function toastError(res) {
     utils.$toast('未找到该用户信息')
     return
   }
-  let msg = '错误码:' + res.code || '' + ';'
+  let msg = `错误码:${res.code}` || '' + ';'
   if (res.code && res.code !== 882002) {
     msg += $errorCode[res.code] || ''
   } else {

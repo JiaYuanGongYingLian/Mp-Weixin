@@ -3,7 +3,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-08-05 15:43:28
+ * @LastEditTime: 2023-08-14 16:01:43
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -142,7 +142,7 @@ onLoad((option) => {
                   >
                     <image
                       :src="
-                        '../../static/emoji/' +
+                        '../static/emoji/' +
                         emojiAllJson[s.content.msg_body.text]
                       "
                       mode="aspectFit"

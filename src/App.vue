@@ -12,23 +12,23 @@ const chatStore = useChatStore()
 const { hasLogin, isJimInit } = storeToRefs(chatStore)
 const { userInfo } = storeToRefs(storeUser)
 watch(isJimInit, (n) => {
-  if (n) {
-    const data = uni.getStorageSync('jimLoginInfo')
-    if (data && data?.username === `hy_${userInfo.value.id}`) {
-      chatStore.jimLogin(data)
-    } else {
-      const loginInfo = {
-        username: `hy_${userInfo.value.id}`,
-        password: Md5.hashStr(`hy_${userInfo.value.id}_Ji`),
-        nickname: userInfo.value.nickname,
-      }
-      chatStore.jimLogin(loginInfo)
-    }
-  }
+  // if (n) {
+  //   const data = uni.getStorageSync('jimLoginInfo')
+  //   if (data && data?.username === `hy_${userInfo.value.id}`) {
+  //     chatStore.jimLogin(data)
+  //   } else {
+  //     const loginInfo = {
+  //       username: `hy_${userInfo.value.id}`,
+  //       password: Md5.hashStr(`hy_${userInfo.value.id}_Ji`),
+  //       nickname: userInfo.value.nickname,
+  //     }
+  //     chatStore.jimLogin(loginInfo)
+  //   }
+  // }
 })
 onLaunch(() => {
   if (!hasLogin.value) {
-    chatStore.jimInit()
+    // chatStore.jimInit()
   }
   console.log('App Launch')
 })

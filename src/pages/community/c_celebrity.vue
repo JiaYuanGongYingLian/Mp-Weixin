@@ -26,7 +26,7 @@ const famousList = reactive({
   list: []
 })
 function handleClickCate(item: { id: any }) {
-  uni.navigateTo({ url: `/pagesA/famous/index?id=${item.id}` })
+  uni.navigateTo({ url: `/packageA/pages/famous/index?id=${item.id}` })
 }
 async function getCategory() {
   const { data } = await baseApi.getAdvertisingList({
@@ -52,7 +52,7 @@ const getFamousList = async () => {
 }
 function toFamousDetail(item: { id: any; userId: any }) {
   uni.navigateTo({
-    url: `/pagesA/businessCard/index?cardId=${item.id}&userId=${item.userId}`
+    url: `/packageA/pages/businessCard/index?cardId=${item.id}&userId=${item.userId}`
   })
 }
 

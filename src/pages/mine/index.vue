@@ -150,7 +150,7 @@ onLoad((option) => {
           <view
             class="bar"
             @tap="goUrlFn"
-            data-url="/pages/order/index?status=10"
+            data-url="/packageB/pages/order/index?status=10"
           >
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_01.png"
@@ -160,7 +160,7 @@ onLoad((option) => {
           <view
             class="bar"
             @tap="goUrlFn"
-            data-url="/pages/order/index?status=20"
+            data-url="/packageB/pages/order/index?status=20"
           >
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_03.png"
@@ -170,7 +170,7 @@ onLoad((option) => {
           <view
             class="bar"
             @tap="goUrlFn"
-            data-url="/pages/order/index?status=60"
+            data-url="/packageB/pages/order/index?status=60"
           >
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_02.png"
@@ -180,7 +180,7 @@ onLoad((option) => {
           <view
             class="bar commentBox"
             @tap="goUrlFn"
-            data-url="/pages/order/index?status=0"
+            data-url="/packageB/pages/order/index?status=0"
           >
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/mine/icon_order_04.png"
@@ -191,7 +191,7 @@ onLoad((option) => {
       </view>
       <view class="myBox healthTool tool">
         <view class="box">
-          <view class="bar" @tap="goUrlFn" data-url="/pages/setting/index">
+          <view class="bar" @tap="goUrlFn" data-url="/packageB/pages/setting/index">
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/mine_icon_08.png"
             ></image

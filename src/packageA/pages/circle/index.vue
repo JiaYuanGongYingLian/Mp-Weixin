@@ -4,13 +4,13 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-24 14:50:01
- * @LastEditTime: 2023-08-11 15:39:32
+ * @LastEditTime: 2023-08-14 14:18:50
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue';
 import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, socialApi } from '@/api'
@@ -61,9 +61,9 @@ async function toGroupChat(item: {
     joinGroup(item)
   } else {
     uni.navigateTo({
-      // url: `/pagesA/chat/index?groupId=${item.gid}&username=hy_500795`
-      url: `/pagesA/chat/index?groupId=${item.chatGroupId}&groupName=${item.name}`
-      // url: `/pagesA/chat/index?groupId=75293282&groupName=${item.name}`
+      // url: `/packageA/pages/chat/index?groupId=${item.gid}&username=hy_500795`
+      url: `/packageA/pages/chat/index?groupId=${item.chatGroupId}&groupName=${item.name}`
+      // url: `/packageA/pages/chat/index?groupId=75293282&groupName=${item.name}`
     })
   }
 }
@@ -82,11 +82,11 @@ async function joinGroup(item: {
   if (code === 200) {
     reload()
     uni.navigateTo({
-      url: `/pagesA/chat/index?groupId=${item.chatGroupId}`
+      url: `/packageA/pages/chat/index?groupId=${item.chatGroupId}`
     })
   }
 }
-onLoad((option) => {
+onMounted(() => {
   getList()
 })
 onReachBottom(() => {

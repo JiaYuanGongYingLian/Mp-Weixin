@@ -160,7 +160,7 @@ function getOrderStatuses(status: number) {
 function toOrderDetail(order: { orderId: any }) {
   const { id } = order
   uni.navigateTo({
-    url: `/pages/order/detail?orderId=${id}`
+    url: `/packageB/pages/order/detail?orderId=${id}`
   })
 }
 

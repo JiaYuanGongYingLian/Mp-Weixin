@@ -162,7 +162,7 @@ function paySuccess() {
   })
   setTimeout(() => {
     uni.redirectTo({
-      url: `/pages/order/detail?orderId=${order.value.id}`
+      url: `/packageB/pages/order/detail?orderId=${order.value.id}`
     })
   }, 1000)
 }

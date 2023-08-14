@@ -89,7 +89,7 @@ function chooseVideo() {
 function toPreview(item: any) {
   localStorage.setItem('video', JSON.stringify(item))
   uni.navigateTo({
-    url: '/pagesA/shortVideo/index?type=preview'
+    url: '/packageA/pages/shortVideo/index?type=preview'
   })
 }
 async function dynamicList() {
@@ -149,7 +149,7 @@ function deleteFn(data: { id: any }) {
 function toTweetEdit(item: any) {
   localStorage.setItem('video', JSON.stringify(item))
   uni.navigateTo({
-    url: '/pagesA/tweetEdit/index'
+    url: '/packageA/pages/tweetEdit/index'
   })
 }
 

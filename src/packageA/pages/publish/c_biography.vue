@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-30 11:32:40
- * @LastEditTime: 2023-08-11 15:56:18
+ * @LastEditTime: 2023-08-14 10:57:53
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -330,7 +330,7 @@ onLoad(async (option) => {
   <view class="container">
     <u-form :model="formData" ref="form" :label-style="{ fontWeight: 'bold' }">
       <view class="section">
-        <!-- <u-form-item label="名片头像" label-width="auto" prop="avatar" required>
+        <u-form-item label="名片头像" label-width="auto" prop="avatar" required>
           <u-upload
             ref="upload1"
             :action="uploadUrl"
@@ -344,7 +344,7 @@ onLoad(async (option) => {
               formData.avatar ? [{ url: getImgFullPath(formData.avatar) }] : []
             "
           ></u-upload>
-        </u-form-item> -->
+        </u-form-item>
         <u-form-item label="名片主图" label-width="auto" required>
           <u-upload
             ref="upload1"

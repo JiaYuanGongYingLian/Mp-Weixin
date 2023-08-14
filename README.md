@@ -261,3 +261,30 @@ export default defineConfig({
 > 支持小程序，h5，app
 
 ![](https://fastly.jsdelivr.net/gh/MellowCo/image-host/2022/202211121156442.png)
+
+
+### 页面模板
+
+<!-- eslint-disable @typescript-eslint/no-empty-function -->
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+<script setup lang="ts">
+import { reactive, ref } from 'vue'
+import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { storeToRefs } from 'pinia'
+import { baseApi, productApi } from '@/api'
+import { getImgFullPath, getDistance } from '@/utils/index'
+import { useUserStore } from '@/store'
+
+const userStore = useUserStore()
+const { hasLogin } = storeToRefs(userStore)
+const bannerList = ref([])
+const info = ref()
+
+onLoad((option) => {})
+</script>
+<template>
+  <hy-nav-bar title="title"></hy-nav-bar>
+  <view class="container"></view>
+</template>
+
+<style lang="scss" scoped></style>

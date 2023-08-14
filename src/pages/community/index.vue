@@ -23,7 +23,7 @@ import { baseApi, productApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 import hyNavBar from '@/components/hy-nav-bar/index.vue'
-import hyCircle from '@/pagesA/circle/index.vue'
+import hyCircle from '@/packageA/pages/circle/index.vue'
 import c_elebrity from './c_celebrity.vue'
 
 const store = useUserStore()
@@ -59,7 +59,7 @@ function change(index: any) {
   currentTab.value = index
   if (index === 2) {
     uni.navigateTo({
-      url: '/pagesA/shortVideo/index',
+      url: '/packageA/pages/shortVideo/index',
       success: () => {
         currentTab.value = 1
       }
