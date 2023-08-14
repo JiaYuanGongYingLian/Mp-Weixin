@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-01 16:22:48
- * @LastEditTime: 2023-08-14 11:30:18
+ * @LastEditTime: 2023-08-14 18:23:28
  * @LastEditors:  Please set LastEditors
 -->
 <template>
@@ -47,9 +47,9 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 // #ifdef H5
-import Recorder from 'recorder-core'
-import 'recorder-core/src/engine/mp3'
-import 'recorder-core/src/engine/mp3-engine'
+// import Recorder from 'recorder-core'
+// import 'recorder-core/src/engine/mp3'
+// import 'recorder-core/src/engine/mp3-engine'
 // #endif
 
 import { webUploadVideo } from '@/common/ali-oss'

@@ -11,13 +11,13 @@ import config from './config.js'
 import $errorCode from './jimErrorCode.js'
 import utils from '@/utils/common.ts'
 // #ifndef H5
-const JMessage = require('./jmessage-wxapplet-sdk-1.4.3.min.js')
+// const JMessage = require('./jmessage-wxapplet-sdk-1.4.3.min.js')
 // #endif
 // 文档链接  https://docs.jiguang.cn/jmessage/client/im_sdk_js_v2/
 
-const JIM = new JMessage({
-  debug: false
-})
+// const JIM = new JMessage({
+//   debug: false
+// })
 
 const paramsInit = {
   appkey: config.jimAppkey,

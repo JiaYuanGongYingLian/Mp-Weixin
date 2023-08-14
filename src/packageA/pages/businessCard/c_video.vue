@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-11 17:39:03
+ * @LastEditTime: 2023-08-14 17:59:28
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -15,7 +15,6 @@ import { storeToRefs } from 'pinia'
 import { socialApi, enumAll } from '@/api'
 import { getImgFullPath, checkLoginState } from '@/utils/index'
 import { useUserStore } from '@/store'
-import { m_video } from '@/common/mock.js'
 
 const userStore = useUserStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)

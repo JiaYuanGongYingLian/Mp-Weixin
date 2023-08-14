@@ -133,7 +133,7 @@
 			"root": "packageA",
 			"pages": [
 				{
-					"path": "/pages/famous/index",
+					"path": "pages/famous/index",
 					"style": {
 						"navigationBarTitleText": "名人列表",
 						"navigationStyle": "custom",
@@ -141,7 +141,7 @@
 					}
 				},
 				{
-					"path": "/pages/businessCard/index",
+					"path": "pages/businessCard/index",
 					"style": {
 						"navigationBarTitleText": "名人主页",
 						"navigationStyle": "custom",
@@ -149,7 +149,7 @@
 					}
 				},
 				{
-					"path": "/pages/shortVideo/index",
+					"path": "pages/shortVideo/index",
 					"style": {
 						"navigationBarTitleText": "短视频",
 						"navigationStyle": "custom",
@@ -157,7 +157,7 @@
 					}
 				},
 				{
-					"path": "/pages/publish/index",
+					"path": "pages/publish/index",
 					"style": {
 						"navigationBarTitleText": "发布中心",
 						"navigationStyle": "custom",
@@ -165,7 +165,7 @@
 					}
 				},
 				{
-					"path": "/pages/tweetEdit/index",
+					"path": "pages/tweetEdit/index",
 					"style": {
 						"navigationBarTitleText": "编辑动态",
 						"navigationStyle": "custom",
@@ -173,7 +173,7 @@
 					}
 				},
 				{
-					"path": "/pages/chat/index",
+					"path": "pages/chat/index",
 					"style": {
 						"navigationBarTitleText": "圈子群聊",
 						"navigationStyle": "custom",

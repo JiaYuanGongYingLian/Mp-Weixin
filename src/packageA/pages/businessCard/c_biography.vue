@@ -2,7 +2,7 @@
  * @Description: 传记
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-10 09:54:10
+ * @LastEditTime: 2023-08-14 17:53:53
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -14,7 +14,6 @@ import { storeToRefs } from 'pinia'
 import { baseApi, productApi } from '@/api'
 import { getImgFullPath, checkLoginState, previewImage } from '@/utils/index'
 import { useUserStore } from '@/store'
-import { m_productList } from '@/common/mock.js'
 
 const userStore = useUserStore()
 const { hasLogin } = storeToRefs(userStore)

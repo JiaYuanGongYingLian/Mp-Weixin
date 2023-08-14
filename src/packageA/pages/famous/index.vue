@@ -12,7 +12,7 @@ import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { useUserStore } from '@/store'
-import { m_fcate, m_flist } from '@/common/mock.js'
+import { m_fcate } from '@/common/mock.js'
 
 const store = useUserStore()
 const { hasLogin } = storeToRefs(store)
@@ -68,7 +68,6 @@ async function getDataList() {
   })
   const { records, current, pages } = data
   item.list.push(...records)
-  // item.list.push(...m_flist)
   if (current < pages && pages !== 0) {
     item.pageIndex++
   } else {
