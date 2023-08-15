@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-14 09:53:00
+ * @LastEditTime: 2023-08-15 11:06:55
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -146,10 +146,10 @@ onLoad((option) => {
   if (type.value === 'preview') {
     type.value = 'preview'
     isPreview.value = true
-    const video = JSON.parse(localStorage.getItem('video') || '{}')
+    const video = JSON.parse(uni.getStorageSync('video') || '{}')
     swiperList.value.push(video)
   } else if (type.value === 'viewSingleUser') {
-    const list = JSON.parse(localStorage.getItem('videoList') || '[]')
+    const list = JSON.parse(uni.getStorageSync('videoList') || '[]')
     swiperList.value.push(...list)
     swiperCurrent.value = Number(option?.index)
     videoPlay(swiperCurrent.value)

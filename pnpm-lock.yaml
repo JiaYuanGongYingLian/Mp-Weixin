@@ -56,6 +56,9 @@ dependencies:
   cz-git:
     specifier: ^1.4.1
     version: registry.npmmirror.com/cz-git@1.6.1
+  jiguang-wx-js-sdk:
+    specifier: ^1.4.4
+    version: registry.npmmirror.com/jiguang-wx-js-sdk@1.4.4
   js-base64:
     specifier: ^3.7.5
     version: registry.npmmirror.com/js-base64@3.7.5
@@ -8849,6 +8852,12 @@ packages:
       - ts-node
       - utf-8-validate
     dev: true
+
+  registry.npmmirror.com/jiguang-wx-js-sdk@1.4.4:
+    resolution: {integrity: sha512-rIT2bFRt2zSGHE7gKiDjikONbktHhz2jAqYJ5Jluspar2bUSYKNE427pZZYwlLxNkjIXS+wybzAnt4FZQ01sHg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/jiguang-wx-js-sdk/-/jiguang-wx-js-sdk-1.4.4.tgz}
+    name: jiguang-wx-js-sdk
+    version: 1.4.4
+    dev: false
 
   registry.npmmirror.com/jimp@0.10.3:
     resolution: {integrity: sha512-meVWmDMtyUG5uYjFkmzu0zBgnCvvxwWNi27c4cg55vWNVC9ES4Lcwb+ogx+uBBQE3Q+dLKjXaLl0JVW+nUNwbQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/jimp/-/jimp-0.10.3.tgz}

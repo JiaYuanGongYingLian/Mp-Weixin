@@ -142,7 +142,7 @@ onLoad((option) => {
                   >
                     <image
                       :src="
-                        '../static/emoji/' +
+                        '../../static/emoji/' +
                         emojiAllJson[s.content.msg_body.text]
                       "
                       mode="aspectFit"

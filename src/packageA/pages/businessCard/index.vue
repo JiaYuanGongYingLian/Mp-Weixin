@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-11 16:16:28
+ * @LastEditTime: 2023-08-15 14:08:16
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -160,7 +160,9 @@ onPageScroll((e) => {
     <hyNavBarSimpler v-show="show" />
     <view class="topView">
       <u-image
-        :src="getImgFullPath(userDetailInfo?.coverImage)"
+        :src="
+          getImgFullPath(userDetailInfo?.coverImage || userDetailInfo?.avatar)
+        "
         width="100%"
         height="400rpx"
       ></u-image>

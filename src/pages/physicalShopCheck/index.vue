@@ -30,9 +30,12 @@ const moneyRuleId = ref(null)
 async function creatOrder() {
   try {
     const { data } = await orderApi.orderAdd(orderData.value)
-    uni.navigateTo({
-      url: `/pages/payment/index?order=${JSON.stringify(data)}`
-    })
+    if (data) {
+      uni.setStorageSync('orderDataString', JSON.stringify(data))
+      uni.navigateTo({
+        url: '/pages/payment/index?order=true'
+      })
+    }
   } catch (err) {
     console.log(err)
   }
@@ -121,52 +124,23 @@ onLoad(async (option) => {
 </script>
 <template>
   <div class="physicalShopCheck">
-    <u-navbar
-      back-text=""
-      :title="'店铺付款'"
-      :title-bold="true"
-      :is-back="!enterByStoreQrcode"
-      v-if="!isWeChatBrowser && !isAlipayClient"
-      color="#333"
-    ></u-navbar>
+    <u-navbar back-text="" :title="'店铺付款'" :title-bold="true" :is-back="!enterByStoreQrcode"
+      v-if="!isWeChatBrowser && !isAlipayClient" color="#333"></u-navbar>
     <text class="name">{{ info.name }}</text>
     <view class="inptBox">
-      <u-input
-        v-model="money"
-        type="digit"
-        inputmode="decimal"
-        focus
-        pattern="number"
-        placeholder="请输入支付金额"
-        input-align="center"
-      />
+      <u-input v-model="money" type="digit" inputmode="decimal" focus pattern="number" placeholder="请输入支付金额"
+        input-align="center" />
       <text class="unit">(元)</text>
     </view>
-    <view
-      class="radioBox"
-      v-if="info.shopMoneyRules && info.shopMoneyRules.length > 1"
-    >
-      <u-radio-group
-        v-model="moneyRuleId"
-        @change="radioGroupChange"
-        :wrap="true"
-      >
-        <u-radio
-          v-for="(item, index) in info.shopMoneyRules"
-          :key="index"
-          :name="item.moneyRuleId"
-        >
+    <view class="radioBox" v-if="info.shopMoneyRules && info.shopMoneyRules.length > 1">
+      <u-radio-group v-model="moneyRuleId" @change="radioGroupChange" :wrap="true">
+        <u-radio v-for="(item, index) in info.shopMoneyRules" :key="index" :name="item.moneyRuleId">
           {{ item.userMoneyRuleName }}
         </u-radio>
       </u-radio-group>
     </view>
-    <u-form-item
-      label-width="auto"
-      label-position="top"
-      :border-bottom="false"
-      label="备注："
-      ><u-input type="textarea" v-model="orderData.remark"
-    /></u-form-item>
+    <u-form-item label-width="auto" label-position="top" :border-bottom="false" label="备注："><u-input type="textarea"
+        v-model="orderData.remark" /></u-form-item>
     <u-button class="hy-btn" type="primary" ripple @click="toPayment">
       结算
     </u-button>
@@ -202,11 +176,13 @@ onLoad(async (option) => {
       top: 36rpx;
     }
   }
+
   .radioBox {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 40rpx;
+
     :deep(.u-radio) {
       justify-content: center;
     }

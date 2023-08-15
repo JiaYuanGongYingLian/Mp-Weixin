@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 04:42:53
- * @LastEditTime: 2023-08-11 17:41:19
+ * @LastEditTime: 2023-08-15 13:42:21
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -41,8 +41,8 @@ const form = reactive({
 const rules = reactive({
   name: [
     {
-      required: true,
-      message: '请输入姓名',
+      required: false,
+      message: '请输入留言',
       trigger: ['blur', 'change']
     }
   ]
@@ -56,16 +56,19 @@ function submit() {
           {
             count: 1,
             money: props.info.shopProductSkuMoney,
-            shopProductSkuId: ''
+            shopProductSkuId: props.info.shopProductSkuId
           }
         ],
         remark: form.remark,
         detail: true
       }
       const { data } = await orderApi.orderAdd(orderData)
-      uni.navigateTo({
-        url: `/pages/payment/index?order=${JSON.stringify(data)}`
-      })
+      if (data) {
+        uni.setStorageSync('orderDataString', JSON.stringify(data))
+        uni.navigateTo({
+          url: '/pages/payment/index?order=true'
+        })
+      }
     } else {
       console.log('验证失败')
     }

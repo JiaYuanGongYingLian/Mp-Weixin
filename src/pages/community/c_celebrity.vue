@@ -2,7 +2,7 @@
  * @Description: 对接名人主页
  * @Author: Kerwin
  * @Date: 2023-08-05 16:36:09
- * @LastEditTime: 2023-08-10 15:56:43
+ * @LastEditTime: 2023-08-15 14:38:54
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -36,6 +36,7 @@ async function getCategory() {
   categoryList.value = data
 }
 const getFamousList = async () => {
+  if (status.value === 'nomore') return
   const { data } = await socialApi.userDetailList({
     pageIndex: famousList.pageIndex,
     pageSize: famousList.pageSize,
@@ -61,7 +62,6 @@ onLoad((option) => {
   getFamousList()
 })
 onReachBottom(() => {
-  status.value = 'loading'
   getFamousList()
 })
 </script>
@@ -100,31 +100,25 @@ onReachBottom(() => {
               <u-image
                 class="img"
                 border-radius="0"
-                :src="getImgFullPath(item.coverImage)"
+                :src="getImgFullPath(item.coverImage || item.avatar)"
                 height="300rpx"
                 :lazy-load="true"
                 mode="scaleToFill"
               />
-              <u-icon
-                name="https://mr.wyh139.com/h5/static/v3_static/class/classMain/hot.png"
-                style="
-                  width: 140rpx;
-                  height: 44rpx;
-                  position: absolute;
-                  right: 10rpx;
-                  top: 10rpx;
-                "
-              ></u-icon>
-              <u-icon
-                name="https://mr.wyh139.com/h5/static/v3_static/class/classMain/ljdj.png"
-                style="
-                  width: 250rpx;
-                  height: 56rpx;
-                  position: absolute;
-                  left: 0rpx;
-                  bottom: 0;
-                "
-              ></u-icon>
+              <u-image
+                src="https://mr.wyh139.com/h5/static/v3_static/class/classMain/hot.png"
+                mode="scaleToFill"
+                width="140rpx"
+                height="44rpx"
+                style="position: absolute; right: 10rpx; top: 10rpx; z-index: 2"
+              ></u-image>
+              <u-image
+                src="https://mr.wyh139.com/h5/static/v3_static/class/classMain/ljdj.png"
+                mode="scaleToFill"
+                width="250rpx"
+                height="56rpx"
+                style="position: absolute; left: 0rpx; bottom: 0; z-index: 2"
+              ></u-image>
             </view>
             <view class="content">
               <view class="name">{{ item.name }}</view>

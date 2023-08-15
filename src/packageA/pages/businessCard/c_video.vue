@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-14 17:59:28
+ * @LastEditTime: 2023-08-15 11:05:51
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -53,7 +53,7 @@ async function dynamicList() {
   } catch {}
 }
 function toView(index: number) {
-  localStorage.setItem('videoList', JSON.stringify(videoList.list))
+  uni.setStorageSync('videoList', JSON.stringify(videoList.list))
   uni.navigateTo({
     url: `/packageA/pages/shortVideo/index?type=viewSingleUser&index=${index}`
   })

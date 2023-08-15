@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-08-10 17:10:20
+ * @LastEditTime: 2023-08-15 10:28:15
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -23,8 +23,8 @@ import { baseApi, productApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 import hyNavBar from '@/components/hy-nav-bar/index.vue'
-import hyCircle from '@/packageA/pages/circle/index.vue'
 import c_elebrity from './c_celebrity.vue'
+import c_circle from './c_circle.vue'
 
 const store = useUserStore()
 const { hasLogin } = storeToRefs(store)
@@ -106,7 +106,7 @@ onPageScroll((e) => {
       ></u-tabs>
     </view>
     <view class="circle" v-show="currentTab === 0">
-      <hyCircle></hyCircle>
+      <c_circle></c_circle>
       <!-- <u-empty text="暂未开放" mode="page" style="margin-top: 100px"></u-empty> -->
     </view>
     <!-- 对接名人 -->

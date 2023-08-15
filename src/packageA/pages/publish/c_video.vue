@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-01 16:22:48
- * @LastEditTime: 2023-08-11 11:33:04
+ * @LastEditTime: 2023-08-15 16:43:33
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -29,8 +29,7 @@ const props = withDefaults(
 )
 const subList = [
   {
-    name: '草稿',
-    num: 10
+    name: '草稿'
   },
   {
     name: '已发布'
@@ -87,7 +86,7 @@ function chooseVideo() {
   })
 }
 function toPreview(item: any) {
-  localStorage.setItem('video', JSON.stringify(item))
+  uni.setStorageSync('video', JSON.stringify(item))
   uni.navigateTo({
     url: '/packageA/pages/shortVideo/index?type=preview'
   })
@@ -122,7 +121,7 @@ async function dynamicAdd() {
     videoUrl: videoUrl.value,
     remark: '',
     userId: userInfo.value.id,
-    previewImage: `${videoUrl.value}?x-oss-process=video/snapshot,t_0,f_jpg,w_800,h_600,m_fast`
+    previewImage: `${videoUrl.value}?x-oss-process=video/snapshot,t_0,f_jpg,w_540,h_960,m_fast`
   })
   dynamicList()
 }
@@ -147,7 +146,7 @@ function deleteFn(data: { id: any }) {
   })
 }
 function toTweetEdit(item: any) {
-  localStorage.setItem('video', JSON.stringify(item))
+  uni.setStorageSync('video', JSON.stringify(item))
   uni.navigateTo({
     url: '/packageA/pages/tweetEdit/index'
   })

@@ -6,18 +6,19 @@
 /* eslint-disable max-len */
 
 import { Md5 } from 'ts-md5'
-import { getCurrentInstance } from 'vue'
+// #ifndef H5
+// const JMessage = require('./jmessage-wxapplet-sdk-1.4.3.min.js')
+import JMessage from 'jiguang-wx-js-sdk'
+// #endif
 import config from './config.js'
 import $errorCode from './jimErrorCode.js'
 import utils from '@/utils/common.ts'
-// #ifndef H5
-// const JMessage = require('./jmessage-wxapplet-sdk-1.4.3.min.js')
-// #endif
+
 // 文档链接  https://docs.jiguang.cn/jmessage/client/im_sdk_js_v2/
 
-// const JIM = new JMessage({
-//   debug: false
-// })
+const JIM = new JMessage({
+  debug: false
+})
 
 const paramsInit = {
   appkey: config.jimAppkey,
@@ -240,6 +241,15 @@ const jpushIM = {
   },
   joinGroup(params) {
     return myPromise('joinGroup', params)
+  },
+  sendGroupMsg(params) {
+    return myPromise('sendGroupMsg', params)
+  },
+  sendGroupPic(params) {
+    return myPromise('sendGroupPic', params)
+  },
+  sendGroupFile(params) {
+    return myPromise('sendGroupFile', params)
   }
 }
 
@@ -267,6 +277,7 @@ function myPromise(key, params) {
           toastError({ message: '请求超时' })
         })
     } catch (e) {
+      console.log(e)
       utils.$toast('状态连接有误,请刷新页面重新操作')
     }
   })

@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-01 16:22:48
- * @LastEditTime: 2023-08-14 18:23:28
+ * @LastEditTime: 2023-08-15 09:56:28
  * @LastEditors:  Please set LastEditors
 -->
 <template>
@@ -95,7 +95,7 @@ function recStop() {
       recRet.url = localUrl
       recRet.duration = duration
       console.log('录音成功', blob, localUrl, `时长:${duration}ms`)
-      // upload(blob);//把blob文件上传到服务器
+      // upload(blob); // 把blob文件上传到服务器
       const fileOfBlob = new File([blob], '.mp3')
       webUploadVideo({
         file: fileOfBlob,

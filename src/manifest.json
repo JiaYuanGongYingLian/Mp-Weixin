@@ -64,7 +64,8 @@
       }
     },
     "requiredPrivateInfos" : [ "getLocation","chooseLocation","chooseAddress" ],
-    "usingComponents": true
+    "usingComponents": true,
+    "optimization":{"subPackages":true}
   },
   "h5" : {
     "uniStatistics" : {
@@ -76,7 +77,8 @@
                 "key" : "WZUBZ-XKZ3W-EXIRA-3IAU7-MHXY7-ARBJO"
             }
         }
-    }
+    },
+    "optimization":{"subPackages":true}
   },
   "mp-alipay": {
     "usingComponents": true

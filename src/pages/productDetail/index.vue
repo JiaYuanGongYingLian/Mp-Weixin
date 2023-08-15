@@ -247,7 +247,7 @@ async function confirm() {
   const orderJson = JSON.stringify(orderData)
   togglePopupFn(false)
   if (actionType.value === 'toBuyNow') {
-    localStorage.setItem('orderJson', orderJson)
+    uni.setStorageSync('orderJson', orderJson)
     uni.navigateTo({
       url: '/pages/productCheckout/index'
     })

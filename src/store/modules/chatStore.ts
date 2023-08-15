@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-25 15:30:59
- * @LastEditTime: 2023-08-11 17:02:48
+ * @LastEditTime: 2023-08-15 17:36:55
  * @LastEditors:  Please set LastEditors
  */
 import { defineStore } from 'pinia'
@@ -331,9 +331,19 @@ const useStore = defineStore('chat', {
         this.jimGetUserInfo(this.jimUserInfo.username)
       }
     },
-    async joinGroup(data: any) {
-      const res = await jpushIM.joinGroup(data)
-      return res
+    // 群聊
+    async jimSendGroupMsg(data: { target_gid: any }) {
+      const params = data
+      const res = await jpushIM.sendGroupMsg(params)
+      if (res.code === 0) {
+        const msgInfo = jimMsg.formatMsgInfo(this.jimUserInfo, params, res)
+        this.jimSendMsgAdd(msgInfo)
+        // if (!this.chatList.length) {
+        //   setTimeout(() => {
+        //     this.jimGetSingleInfo(data.target_username)
+        //   }, 500)
+        // }
+      }
     }
   }
 })

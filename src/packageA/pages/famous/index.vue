@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 13:49:44
- * @LastEditTime: 2023-08-10 15:51:58
+ * @LastEditTime: 2023-08-15 14:04:41
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -161,7 +161,7 @@ onReachBottom(() => {
                 <u-image
                   class="img"
                   border-radius="0"
-                  :src="getImgFullPath(data.coverImage)"
+                  :src="getImgFullPath(data.coverImage || data.avatar)"
                   height="300rpx"
                   :lazy-load="true"
                   mode="scaleToFill"

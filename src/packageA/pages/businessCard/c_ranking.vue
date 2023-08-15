@@ -38,7 +38,7 @@ async function dynamicList() {
   } catch {}
 }
 function toView(index: number) {
-  localStorage.setItem('videoList', JSON.stringify(videoList.list))
+  uni.setStorageSync('videoList', JSON.stringify(videoList.list))
   uni.navigateTo({
     url: `/packageA/pages/shortVideo/index?type=viewSingleUser&index=${index}`
   })
