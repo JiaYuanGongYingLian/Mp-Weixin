@@ -141,6 +141,13 @@
 					}
 				},
 				{
+					"path": "pages/famousOrder/index",
+					"style": {
+						"navigationBarTitleText": "对接列表",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
 					"path": "pages/businessCard/index",
 					"style": {
 						"navigationBarTitleText": "名人主页",

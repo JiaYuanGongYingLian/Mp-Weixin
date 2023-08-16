@@ -191,11 +191,35 @@ onLoad((option) => {
       </view>
       <view class="myBox healthTool tool">
         <view class="box">
-          <view class="bar" @tap="goUrlFn" data-url="/packageB/pages/setting/index">
+          <view
+            class="bar"
+            @tap="goUrlFn"
+            data-url="/packageB/pages/setting/index"
+          >
             <image
               src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/mine_icon_08.png"
             ></image
             >设置
+          </view>
+          <view
+            class="bar"
+            @tap="goUrlFn"
+            data-url="/packageA/pages/famousOrder/index"
+          >
+            <image
+              src="https://image.blacksilverscore.com/uploads/516fd61d-c1d3-4878-815e-26ed4d216502.png"
+            ></image
+            >精准对接
+          </view>
+          <view
+            class="bar"
+            @tap="goUrlFn"
+            data-url="/packageA/pages/message/index"
+          >
+            <image
+              src="https://image.blacksilverscore.com/uploads/9a62ef97-4a3c-4107-8f4b-abf65f6d1f85.png"
+            ></image
+            >消息
           </view>
         </view>
       </view>

@@ -3,7 +3,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-08-16 11:22:16
+ * @LastEditTime: 2023-08-16 18:19:11
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -87,7 +87,7 @@ onLoad((option) => {
 </script>
 <template>
   <view class="container">
-    <hy-nav-bar :title="groupInfo.name"></hy-nav-bar>
+    <hy-nav-bar :title="thouUsername || groupInfo.name"></hy-nav-bar>
     <view class="l-chat-body" @tap="onChatClick">
       <scroll-view
         scroll-y="true"
