@@ -77,31 +77,52 @@ const jimMsg = {
     return chatList
   },
   formatMsgInfo(jimUserInfo = {}, params = {}, res = {}) {
-    const content = {
-      from_type: 'user',
-      from_id: jimUserInfo.username,
-      set_from_name: 0,
-      target_appkey: params.appkey,
-      target_name: params.target_username,
-      create_time: new Date().getTime(),
-      from_appkey: jimUserInfo.appkey,
-      target_type: 'single',
-      from_platform: 'web',
-      target_id: params.target_username,
-      from_name: jimUserInfo.username,
-      version: 1,
-      msg_body: {
-        ...params,
-        text: params.content,
-        extras: params.extras
-      },
-      msg_type: params.type || 'text'
+    let content
+    if (params.target_gid) {
+      content = {
+        from_id: jimUserInfo.username,
+        from_platform: 'web',
+        set_from_name: 0,
+        create_time: new Date().getTime(),
+        target_type: 'group',
+        target_gname: params.target_gname,
+        target_gid: res.target_gid,
+        version: 1,
+        msg_body: {
+          ...params,
+          text: params.content,
+          extras: params.extras
+        },
+        msg_type: params.type || 'text'
+      }
+    } else {
+      content = {
+        from_type: 'user',
+        from_id: jimUserInfo.username,
+        set_from_name: 0,
+        target_appkey: params.appkey,
+        target_name: params.target_username,
+        create_time: new Date().getTime(),
+        from_appkey: jimUserInfo.appkey,
+        target_type: 'single',
+        from_platform: 'web',
+        target_id: params.target_username,
+        from_name: jimUserInfo.username,
+        version: 1,
+        msg_body: {
+          ...params,
+          text: params.content,
+          extras: params.extras
+        },
+        msg_type: params.type || 'text'
+      }
     }
     const msgInfo = {
       ctime_ms: res.ctime_ms,
       from_appkey: params.appkey,
       from_username: params.target_username,
-      msg_type: 3,
+      target_gid: params.target_gid,
+      msg_type: params.target_gid ? 4 : 4,
       need_receipt: false,
       custom_notification: {
         alert: '',
@@ -116,13 +137,14 @@ const jimMsg = {
     return msgInfo
   },
   formatMsgInfoReceive(msg) {
-    const { content } = msg
+    const { content, ctime_ms, msg_type, need_receipt, from_gid } = msg
     const msgInfo = {
       from_appkey: content.from_appkey,
       from_username: content.from_id,
-      ctime_ms: msg.ctime_ms,
-      msg_type: 3,
-      need_receipt: false,
+      from_gid,
+      ctime_ms,
+      msg_type,
+      need_receipt,
       custom_notification: {
         alert: '',
         at_prefix: '',

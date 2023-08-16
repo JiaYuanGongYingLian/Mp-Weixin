@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-25 15:30:59
- * @LastEditTime: 2023-08-15 18:29:55
+ * @LastEditTime: 2023-08-16 16:01:03
  * @LastEditors:  Please set LastEditors
  */
 import { defineStore } from 'pinia'
@@ -175,21 +175,30 @@ const useStore = defineStore('chat', {
         }
       })
     },
-    jimSendMsgAdd(data: { from_appkey?: any; from_username?: any }) {
-      const { from_username } = data
-      const appkey = data.from_appkey
-      const list = this.syncConversation.map(
-        (e: { from_username: any }) => e.from_username
-      )
-      const index = list.indexOf(from_username)
-
+    jimSendMsgAdd(data: {
+      from_appkey?: any
+      from_username?: any
+      msg_type?: number
+      from_gid?: any
+    }) {
+      const { from_username, from_gid, msg_type, from_appkey } = data
+      let index
+      if (msg_type === 3) {
+        index = this.syncConversation?.findIndex(
+          (e: { from_username: any }) => e.from_username == from_username
+        )
+      } else {
+        index = this.syncConversation?.findIndex(
+          (e: { from_gid: any }) => e.from_gid == from_gid
+        )
+      }
       if (index !== -1) {
         this.syncConversation[index].msgs.push(data)
       } else {
         const syncConversation = {
           from_username,
-          from_appkey: appkey,
-          msg_type: 3,
+          from_appkey,
+          msg_type,
           receipt_msgs: [],
           unread_msg_count: 0,
           msgs: [data]
@@ -332,7 +341,7 @@ const useStore = defineStore('chat', {
       }
     },
     // 群聊
-    async jimSendGroupMsg(data: { target_gid: any }) {
+    async jimSendGroupMsg(data: { target_gid?: any }) {
       const params = data
       const res = await jpushIM.sendGroupMsg(params)
       if (res.code === 0) {
@@ -344,6 +353,24 @@ const useStore = defineStore('chat', {
         //   }, 500)
         // }
       }
+    },
+    jimSendGroupMsgAdd(data: { gid?: any }) {
+      const { gid } = data
+      const index = this.syncConversation.findIndex((item) => item?.gid === gid)
+      if (index !== -1) {
+        this.syncConversation[index].msgs.push(data)
+      } else {
+        const syncConversation = {
+          gid,
+          msg_type: 4,
+          receipt_msgs: [],
+          unread_msg_count: 0,
+          msgs: [data]
+        }
+        this.syncConversation.push(syncConversation)
+      }
+      console.log('state.syncConversation', this.syncConversation)
+      console.log('state.chatlist', this.chatList)
     }
   }
 })

@@ -3,13 +3,13 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-08-15 17:42:25
+ * @LastEditTime: 2023-08-16 16:02:43
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, computed } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { socialApi } from '@/api'
@@ -18,9 +18,20 @@ import { $toast } from '@/utils/common'
 import { useUserStore, useChatStore } from '@/store'
 import { emoji } from '@/common/jim/emoji.js'
 
+const props = withDefaults(
+  defineProps<{
+    chatType?: string
+  }>(),
+  {
+    chatType: 'single'
+  }
+)
+const isSingle = computed(() => {
+  return props.chatType === 'single'
+})
 const userStore = useUserStore()
 const chatStore = useChatStore()
-const { hasLogin, singleInfo } = storeToRefs(chatStore)
+const { hasLogin, singleInfo, groupInfo } = storeToRefs(chatStore)
 const videoList = reactive({
   list: [],
   loading: true,
@@ -35,17 +46,29 @@ const content = ref('')
 const onFocus = () => {
   emit('onFocus')
 }
-function sendEmojiItem(item) {
-  const params = {
-    content: item.alt || '',
-    extras: {
-      isEmoji: true
-    },
-    appkey: singleInfo.value.appkey,
-    target_username: singleInfo.value.username,
-    target_nickname: singleInfo.value.nickname
+function sendEmojiItem(item: { alt: any }) {
+  let params
+  if (isSingle.value) {
+    params = {
+      content: item.alt || '',
+      extras: {
+        isEmoji: true
+      },
+      appkey: singleInfo.value.appkey,
+      target_username: singleInfo.value.username,
+      target_nickname: singleInfo.value.nickname
+    }
+  } else {
+    params = {
+      target_gid: groupInfo.value.gid,
+      content: item.alt || '',
+      extras: {
+        isEmoji: true
+      },
+      target_gname: groupInfo.value.name
+    }
   }
-  chatStore.jimSendSingleMsg(params)
+  chatStore[isSingle.value ? 'jimSendSingleMsg' : 'jimSendGroupMsg'](params)
   content.value = ''
   if (isEmoji.value) {
     isEmoji.value = !isEmoji.value
@@ -126,22 +149,31 @@ function chooseLocation() {
       const { latitude, longitude, name, address } = data
     },
     fail: (error) => {
-      console.log('error',error)
+      console.log('error', error)
     }
   })
 }
-function sendSingleMsg() {
+function sendMsg() {
   if (!content.value) {
     $toast('请先输入内容')
     return
   }
-  const params = {
-    content: content.value,
-    appkey: singleInfo.value.appkey,
-    target_username: singleInfo.value.username,
-    target_nickname: singleInfo.value.nickname
+  let params
+  if (isSingle.value) {
+    params = {
+      content: content.value,
+      appkey: singleInfo.value.appkey,
+      target_username: singleInfo.value.username,
+      target_nickname: singleInfo.value.nickname
+    }
+  } else {
+    params = {
+      content: content.value,
+      target_gid: groupInfo.value.gid,
+      target_gname: groupInfo.value.name
+    }
   }
-  chatStore.jimSendSingleMsg(params)
+  chatStore[isSingle.value ? 'jimSendSingleMsg' : 'jimSendGroupMsg'](params)
   content.value = ''
 }
 
@@ -200,7 +232,7 @@ onMounted((option) => {})
             <button
               class="l-chat-send-btn"
               :class="{ 'l-chat-send-btn-100': content }"
-              @tap="submit"
+              @click="submit(sendMsg, content)"
               type="default"
             >
               发送
@@ -220,7 +252,7 @@ onMounted((option) => {})
                 @tap="sendEmojiItem(emoji)"
                 v-for="(emoji, index) in s"
                 :key="index"
-                :src="'../../static/emoji/' + emoji.url"
+                :src="'../../../static/emoji/' + emoji.url"
                 mode="aspectFit"
                 class="l-icon-emoji"
               ></image>

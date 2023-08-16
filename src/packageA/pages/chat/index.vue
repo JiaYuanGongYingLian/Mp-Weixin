@@ -3,7 +3,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-08-14 16:01:43
+ * @LastEditTime: 2023-08-16 11:22:16
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -69,6 +69,7 @@ function setChatScrollTop() {
     chatScrollTop.value += 1
   }, 200)
 }
+const chatType = ref('single')
 onLoad((option) => {
   if (option) {
     thouUsername.value = option.username || ''
@@ -78,6 +79,7 @@ onLoad((option) => {
       chatStore.jimGetSingleInfo(thouUsername.value)
     } else {
       chatStore.jimGetGroupInfo(groupInfo.gid)
+      chatType.value = 'group'
     }
     setChatScrollTop()
   }
@@ -142,7 +144,7 @@ onLoad((option) => {
                   >
                     <image
                       :src="
-                        '../../static/emoji/' +
+                        '../../../static/emoji/' +
                         emojiAllJson[s.content.msg_body.text]
                       "
                       mode="aspectFit"
@@ -236,7 +238,7 @@ onLoad((option) => {
         </view>
       </scroll-view>
     </view>
-    <c_foot @on-focus="setChatScrollTop" />
+    <c_foot @on-focus="setChatScrollTop" :chatType="chatType" />
   </view>
 </template>
 

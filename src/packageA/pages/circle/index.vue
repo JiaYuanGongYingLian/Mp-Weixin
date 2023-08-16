@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-24 14:50:01
- * @LastEditTime: 2023-08-14 14:18:50
+ * @LastEditTime: 2023-08-16 14:13:32
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -61,9 +61,8 @@ async function toGroupChat(item: {
     joinGroup(item)
   } else {
     uni.navigateTo({
-      // url: `/packageA/pages/chat/index?groupId=${item.gid}&username=hy_500795`
-      url: `/packageA/pages/chat/index?groupId=${item.chatGroupId}&groupName=${item.name}`
-      // url: `/packageA/pages/chat/index?groupId=75293282&groupName=${item.name}`
+      // url: `/packageA/pages/chat/index?groupId=${item.chatGroupId}&groupName=${item.name}`
+      url: `/packageA/pages/chat/index?groupId=75293282&groupName=${item.name}`
     })
   }
 }
