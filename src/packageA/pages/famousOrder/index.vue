@@ -125,7 +125,7 @@ function toOrderDetail(order: { orderId: any }) {
 }
 function toChat(data) {
   uni.navigateTo({
-    url: `/packageA/pages/chat/index?username=hy_${data.userId}`
+    url: `/packageA/pages/chat/index?username=hy_${data?.orderProductSkus[0]?.shopProductSku?.shop?.userId}`
   })
 }
 const statusMap = {

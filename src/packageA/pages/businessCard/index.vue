@@ -45,6 +45,12 @@ const tabList = ref([
     name: '排行榜'
   }
 ])
+const statusBarHeight = ref()
+uni.getSystemInfo({
+  success: (res) => {
+    statusBarHeight.value = res.statusBarHeight
+  }
+})
 const currentTab = ref(0)
 async function getUserDetailInfo() {
   const { data } = await socialApi.userDetailInfo({
@@ -234,7 +240,7 @@ onPageScroll((e) => {
         item-width="50%"
         @change="tabChange"
         sticky
-        :style="{ top: '0', zIndex: 2 }"
+        :style="{ top: `${statusBarHeight}px`, zIndex: 2 }"
       ></u-tabs>
       <view v-if="hasDetailInfo">
         <!-- 传记 -->

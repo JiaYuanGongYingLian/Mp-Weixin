@@ -9,7 +9,7 @@
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref, onMounted, computed } from 'vue'
+import { reactive, ref, onMounted, computed, watch } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { socialApi } from '@/api'
@@ -43,9 +43,26 @@ const isEmoji = ref(false)
 const isUpload = ref(false)
 const emit = defineEmits(['onFocus'])
 const content = ref('')
-const onFocus = () => {
-  emit('onFocus')
+const onFocus = (isScrollHeight: boolean) => {
+  emit('onFocus',isScrollHeight)
 }
+defineExpose({
+  onChatClick
+})
+function onChatClick() {
+  isEmoji.value = false
+  isUpload.value = false
+  onFocus(false)
+}
+watch([isEmoji,isUpload],(n)=>{
+  if(n) {
+    if(n[0] || n[1]) {
+      onFocus(true)
+    }else {
+      onFocus(false)
+    }
+  }
+})
 function sendEmojiItem(item: { alt: any }) {
   let params
   if (isSingle.value) {
@@ -89,19 +106,27 @@ function sendFilesItem(tempFilePaths: any) {
   }
 }
 function sendImageItem(
-  tempFilePaths: string,
+  tempFilePath: string,
   info: UniApp.GetImageInfoSuccessData
 ) {
+  // const fd = new FormData();
+  // fd.append('image',tempFilePath)
   const params = {
     type: 'image',
     width: info.width,
     height: info.height,
-    image: tempFilePaths,
-    appkey: singleInfo.value.appkey,
-    target_username: singleInfo.value.username,
-    target_nickname: singleInfo.value.nickname
+    image: tempFilePath,
   }
-  chatStore.jimSendSinglePic(params)
+  if (isSingle.value) {
+    params.appkey = singleInfo.value.appkey
+    params.target_username = singleInfo.value.username
+    params.target_nickname = singleInfo.value.nickname
+  } else {
+    params.target_gid = groupInfo.value.gid
+    params.target_gname = groupInfo.value.name
+  }
+  debugger
+  chatStore[isSingle.value ? 'jimSendSinglePic' : 'jimSendGroupPic'](params)
   content.value = ''
   if (isUpload.value) {
     isUpload.value = !isUpload.value
@@ -111,12 +136,12 @@ function chooseImage() {
   uni.chooseImage({
     count: 1,
     success(res) {
-      const tempFilePaths = res.tempFilePaths[0]
+      const tempFilePath = res.tempFilePaths[0]
       uni.getImageInfo({
-        src: tempFilePaths,
+        src: tempFilePath,
         success(info) {
           console.log(info)
-          sendImageItem(tempFilePaths, info)
+          sendImageItem(tempFilePath, info)
         }
       })
     }
@@ -194,110 +219,68 @@ function submit(fn: (arg0: any) => void, params: any) {
   fn(params)
 }
 
-onMounted((option) => {})
+onMounted((option) => { })
 </script>
 <template>
   <view class="wrapper">
     <view class="l-chat-posi">
       <view class="l-chat-foot">
         <view class="l-chat-form">
-          <textarea
-            class="l-chat-textarea"
-            v-model="content"
-            @focus="onFocus"
-            auto-height
-            placeholder="请输入"
-            :cursor-spacing="20"
-          />
+          <textarea class="l-chat-textarea" v-model="content" @focus="onFocus(false)" auto-height placeholder="请输入"
+            :cursor-spacing="20" />
         </view>
         <view class="l-chat-handle">
-          <image
-            class="l-send-emoji"
-            @tap="toggleEmoji(isEmoji)"
-            :src="
-              isEmoji
-                ? 'https://image.blacksilverscore.com/uploads/42889f3f-9cd6-44f9-8fde-097b94d952fb.png'
-                : 'https://image.blacksilverscore.com/uploads/02438d4f-40ae-40c0-8e01-524d0937e02e.png'
-            "
-            mode="aspectFill"
-          ></image>
+          <image class="l-send-emoji" @tap="toggleEmoji(isEmoji)" :src="
+            isEmoji
+              ? 'https://image.blacksilverscore.com/uploads/42889f3f-9cd6-44f9-8fde-097b94d952fb.png'
+              : 'https://image.blacksilverscore.com/uploads/02438d4f-40ae-40c0-8e01-524d0937e02e.png'
+          " mode="aspectFill"></image>
           <view class="l-chat-send">
-            <image
-              class="l-send-upload"
-              @tap="toggleUpload()"
-              :class="{ 'l-send-upload-50': !content }"
-              src="https://image.blacksilverscore.com/uploads/fe7263ec-3b7a-4acd-879b-b542c38c29ea.png"
-              mode="aspectFill"
-            ></image>
-            <button
-              class="l-chat-send-btn"
-              :class="{ 'l-chat-send-btn-100': content }"
-              @click="submit(sendMsg, content)"
-              type="default"
-            >
+            <image class="l-send-upload" @tap="toggleUpload()" :class="{ 'l-send-upload-50': !content }"
+              src="https://image.blacksilverscore.com/uploads/fe7263ec-3b7a-4acd-879b-b542c38c29ea.png" mode="aspectFill">
+            </image>
+            <button class="l-chat-send-btn" :class="{ 'l-chat-send-btn-100': content }" @click="submit(sendMsg, content)"
+              type="default">
               发送
             </button>
           </view>
         </view>
       </view>
 
-      <view
-        :class="{ 'l-chat-emoji-height': isEmoji }"
-        class="l-chat-emoji-item"
-      >
+      <view :class="{ 'l-chat-emoji-height': isEmoji }" class="l-chat-emoji-item">
         <swiper :indicator-dots="true">
           <swiper-item v-for="(s, i) in emoji" :key="i">
             <view class="l-swiper-item">
-              <image
-                @tap="sendEmojiItem(emoji)"
-                v-for="(emoji, index) in s"
-                :key="index"
-                :src="'../../../static/emoji/' + emoji.url"
-                mode="aspectFit"
-                class="l-icon-emoji"
-              ></image>
+              <image @tap="sendEmojiItem(emoji)" v-for="(emoji, index) in s" :key="index"
+                :src="'../../../static/emoji/' + emoji.url" mode="aspectFit" class="l-icon-emoji"></image>
             </view>
           </swiper-item>
         </swiper>
       </view>
 
-      <view
-        :class="{ 'l-chat-emoji-height': isUpload }"
-        class="l-chat-emoji-item l-chat-head-upload"
-      >
+      <view :class="{ 'l-chat-emoji-height': isUpload }" class="l-chat-emoji-item l-chat-head-upload">
         <swiper :indicator-dots="false">
           <swiper-item>
             <view class="l-swiper-item l-chat-handle-upload">
               <view class="l-chat-upload-item">
                 <view class="l-upload-img-wrap">
-                  <image
-                    class="l-upload-img"
-                    @tap="chooseImage"
+                  <image class="l-upload-img" @tap="chooseImage"
                     src="https://image.blacksilverscore.com/uploads/88fe43db-bbcb-4426-861a-628b9562c3c4.png"
-                    mode="aspectFill"
-                  ></image>
+                    mode="aspectFill"></image>
                 </view>
                 <view class="l-upload-name">相册</view>
               </view>
-              <view class="l-chat-upload-item">
+              <!-- <view class="l-chat-upload-item">
                 <view class="l-upload-img-wrap">
-                  <image
-                    class="l-upload-img"
-                    @tap="chooseMessageFile"
+                  <image class="l-upload-img" @tap="chooseMessageFile"
                     src="https://image.blacksilverscore.com/uploads/6d00c584-b472-4b78-85d2-2da964a1f7fc.png"
-                    mode="aspectFill"
-                  ></image>
+                    mode="aspectFill"></image>
                 </view>
                 <view class="l-upload-name">文件</view>
-              </view>
+              </view> -->
               <view class="l-chat-upload-item">
                 <view class="l-upload-img-wrap">
-                  <u-icon
-                    size="50"
-                    @tap="chooseLocation"
-                    name="map-fill"
-                    color="#888"
-                  ></u-icon>
+                  <u-icon size="50" @tap="chooseLocation" name="map-fill" color="#888"></u-icon>
                 </view>
                 <view class="l-upload-name">位置</view>
               </view>
@@ -348,12 +331,15 @@ onMounted((option) => {})
   .l-swiper-item {
     padding-bottom: 40rpx;
   }
+
   .l-chat-handle-upload {
     display: flex;
+
     .l-chat-upload-item {
       margin-top: 20rpx;
       margin-left: 20rpx;
       flex-direction: column;
+
       .l-upload-img-wrap {
         background: #f6f6f6;
         display: flex;
@@ -362,11 +348,13 @@ onMounted((option) => {})
         width: 110rpx;
         height: 110rpx;
         border-radius: 8rpx;
+
         .l-upload-img {
           width: 40rpx;
           height: 40rpx;
         }
       }
+
       .l-upload-name {
         font-size: 24rpx;
         text-align: center;
@@ -413,6 +401,7 @@ onMounted((option) => {})
     justify-content: flex-end;
     align-items: center;
     align-self: flex-end;
+
     .l-send-emoji {
       width: 54rpx;
       height: 54rpx;
@@ -424,6 +413,7 @@ onMounted((option) => {})
   .l-chat-send {
     display: flex;
     align-items: center;
+
     .l-send-upload {
       width: 0;
       height: 50rpx;
@@ -448,6 +438,7 @@ onMounted((option) => {})
   align-items: center;
   background-color: #007aff;
   justify-content: center;
+
   &.l-chat-send-btn-100 {
     width: 100rpx;
   }

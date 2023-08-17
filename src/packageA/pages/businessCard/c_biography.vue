@@ -38,6 +38,7 @@ const tabList = ref([
     name: '辉煌战绩'
   }
 ])
+
 const currentTab = ref(0)
 function tabChange() {}
 function previewImageFn(arr: { resourceUrl: string }[], i: number) {

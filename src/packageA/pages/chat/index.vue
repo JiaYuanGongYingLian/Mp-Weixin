@@ -27,8 +27,8 @@ import c_foot from './c_foot.vue'
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
-const { hasLogin } = storeToRefs(userStore)
 const {
+  hasLogin,
   chatList,
   jimUserInfo,
   singleInfo,
@@ -53,103 +53,82 @@ const groupInfo = reactive({
   name: '',
   gid: ''
 })
+const footerRef = ref()
 function onChatClick() {
-  if (isEmoji.value) {
-    isEmoji.value = !isEmoji.value
-  }
-  if (isUpload.value) {
-    isUpload.value = !isUpload.value
-  }
+  footerRef.value.onChatClick()
 }
-const isScrollHeight = computed(() => {
-  return isEmoji.value && isUpload.value
-})
-function setChatScrollTop() {
+const isScrollHeight =ref(false)
+function setChatScrollTop(arg_isScrollHeight?: boolean | undefined) {
+  isScrollHeight.value = arg_isScrollHeight?? false
   setTimeout(() => {
     chatScrollTop.value += 1
   }, 200)
 }
 const chatType = ref('single')
 onLoad((option) => {
-  if (option) {
-    thouUsername.value = option.username || ''
-    groupInfo.gid = option.groupId
-    groupInfo.name = option.groupName
-    if (option.username) {
-      chatStore.jimGetSingleInfo(thouUsername.value)
-    } else {
-      chatStore.jimGetGroupInfo(groupInfo.gid)
-      chatType.value = 'group'
-    }
-    setTimeout(setChatScrollTop, 500)
+  thouUsername.value = option?.username || ''
+  groupInfo.gid = option?.groupId
+  groupInfo.name = option?.groupName
+  if (thouUsername.value) {
+    hasLogin.value && chatStore.jimGetSingleInfo(thouUsername.value)
+  } else {
+    hasLogin.value && chatStore.jimGetGroupInfo(groupInfo.gid)
+    chatType.value = 'group'
   }
 })
+watch(
+  hasLogin,
+  (n) => {
+    if (n) {
+      if (thouUsername.value) {
+        hasLogin.value && chatStore.jimGetSingleInfo(thouUsername.value)
+      } else {
+        hasLogin.value && chatStore.jimGetGroupInfo(groupInfo.gid)
+        chatType.value = 'group'
+      }
+    }
+  },
+  { deep: true }
+)
 </script>
 <template>
   <view class="container">
-    <hy-nav-bar :title="thouUsername || groupInfo.name"></hy-nav-bar>
+    <hy-nav-bar :title="chatType === 'group'?groupInfo.name : singleInfo.nickname"></hy-nav-bar>
     <view class="l-chat-body" @tap="onChatClick">
-      <scroll-view
-        scroll-y="true"
-        class="l-char-scroll"
-        scroll-with-animation
-        :class="{ 'l-char-scroll-height': isScrollHeight }"
-        :scroll-top="chatScrollTop"
-      >
+      <scroll-view scroll-y="true" class="l-char-scroll" scroll-with-animation
+        :class="{ 'l-char-scroll-height': isScrollHeight }" :scroll-top="chatScrollTop">
         <view class="l-char-scroll-content">
           <view class="l-char-empty"> 已经没有聊天记录了~ </view>
           <!-- chatList -->
-          <view
-            class="l-chat-item"
-            v-for="(s, i) in chatList"
-            :key="i"
-            :class="{
-              'l-chat-mine': s.content.from_id === jimUserInfo.username
-            }"
-          >
+          <view class="l-chat-item" v-for="(s, i) in chatList" :key="i" :class="{
+            'l-chat-mine': s.content.from_id === jimUserInfo.username
+          }">
             <view class="l-chat-item-time">
               {{ dateFormat(new Date(s.ctime_ms), 'yyyy-MM-dd hh:mm') }}
             </view>
             <view class="l-chat-item-content">
               <view class="l-chat-avatar">
-                <image
-                  class="l-chat-img-avatar"
-                  v-if="s.content.from_id !== jimUserInfo.username"
-                  @tap="$nav({ url: '/pages/info/info?type=single' })"
-                  :src="singleInfoAvatar"
-                  mode="aspectFill"
-                ></image>
-                <image
-                  class="l-chat-img-avatar"
-                  v-else
-                  :src="jimUserInfoAvatar"
-                  mode="aspectFill"
-                ></image>
+                <image class="l-chat-img-avatar" v-if="s.content.from_id !== jimUserInfo.username"
+                  @tap="$nav({ url: '/pages/info/info?type=single' })" :src="singleInfoAvatar" mode="aspectFill"></image>
+                <image class="l-chat-img-avatar" v-else :src="jimUserInfoAvatar" mode="aspectFill"></image>
               </view>
               <view class="l-chat-view">
                 <view class="l-chat-name">
                   {{
                     s.content.from_id === jimUserInfo.username
-                      ? jimUserInfo.nickname || jimUserInfo.username
-                      : s.content.from_name
+                    ? jimUserInfo.nickname || jimUserInfo.username
+                    : s.content.from_name
                   }}
                 </view>
                 <template v-if="s.content.msg_type === 'text'">
-                  <view
-                    v-if="
-                      s.content.msg_body.extras &&
-                      s.content.msg_body.extras.isEmoji
-                    "
-                    class="l-chat-text"
-                  >
-                    <image
-                      :src="
-                        '../../../static/emoji/' +
-                        emojiAllJson[s.content.msg_body.text]
-                      "
-                      mode="aspectFit"
-                      class="l-icon-emoji-m"
-                    ></image>
+                  <view v-if="
+                    s.content.msg_body.extras &&
+                    s.content.msg_body.extras.isEmoji
+                  " class="l-chat-text">
+                    <image :src="
+                      '../../../static/emoji/' +
+                      emojiAllJson[s.content.msg_body.text]
+                    " mode="aspectFit" class="l-icon-emoji-m"></image>
                   </view>
                   <view class="l-chat-text" v-else>
                     {{ s.content.msg_body.text || '' }}
@@ -157,64 +136,45 @@ onLoad((option) => {
                 </template>
                 <template v-else-if="s.content.msg_type === 'image'">
                   <view>
-                    <image
-                      @tap="previewImage([s.content.msg_body.image])"
-                      v-if="s.content.msg_body.type"
-                      :src="s.content.msg_body.image"
-                      :style="{
+                    <image @tap="previewImage([s.content.msg_body.image])" v-if="s.content.msg_body.type"
+                      :src="s.content.msg_body.image" :style="{
                         'max-width': '250rpx',
                         width: s.content.msg_body.width,
                         height:
                           s.content.msg_body.width < 500
                             ? s.content.msg_body.height
                             : (500 / s.content.msg_body.width) *
-                              s.content.msg_body.height
-                      }"
-                      mode="aspectFit"
-                      class="l-upload-img"
-                    ></image>
-                    <image
-                      v-else
-                      @tap="
-                        previewImage([
-                          $config.jimLocalhost + s.content.msg_body.media_id
-                        ])
-                      "
-                      :src="$config.jimLocalhost + s.content.msg_body.media_id"
-                      :style="{
-                        'max-width': '250rpx',
-                        width: s.content.msg_body.width,
-                        height:
-                          s.content.msg_body.width < 500
-                            ? s.content.msg_body.height
-                            : (500 / s.content.msg_body.width) *
-                              s.content.msg_body.height
-                      }"
-                      mode="widthFix"
-                      class="l-upload-img"
-                    ></image>
+                            s.content.msg_body.height
+                      }" mode="widthFix" class="l-upload-img"></image>
+                    <image v-else @tap="
+                      previewImage([
+                        $config.jimLocalhost + s.content.msg_body.media_id
+                      ])
+                    " :src="$config.jimLocalhost + s.content.msg_body.media_id" :style="{
+  'max-width': '250rpx',
+  width: s.content.msg_body.width,
+  height:
+    s.content.msg_body.width < 500
+      ? s.content.msg_body.height
+      : (500 / s.content.msg_body.width) *
+      s.content.msg_body.height
+}" mode="widthFix" class="l-upload-img"></image>
                   </view>
                 </template>
                 <template v-else-if="s.content.msg_type === 'location'">
                   <!-- {{ s.content }} -->
-                  <view
-                    class="l-chat-location"
-                    @click="
-                      handleMapLocation({
-                        latitude: s.content.msg_body.latitude,
-                        longitude: s.content.msg_body.longitude,
-                        addr: s.content.msg_body.label
-                      })
-                    "
-                  >
+                  <view class="l-chat-location" @click="
+                    handleMapLocation({
+                      latitude: s.content.msg_body.latitude,
+                      longitude: s.content.msg_body.longitude,
+                      addr: s.content.msg_body.label
+                    })
+                  ">
                     <view class="l-chat-con">
                       <view class="name">{{ s.content.msg_body.label }}</view>
                     </view>
-                    <map
-                      :longitude="s.content.msg_body.longitude"
-                      :latitude="s.content.msg_body.latitude"
-                      style="width: 350rpx; height: 180rpx"
-                    ></map>
+                    <map :longitude="s.content.msg_body.longitude" :latitude="s.content.msg_body.latitude"
+                      style="width: 350rpx; height: 180rpx"></map>
                   </view>
                 </template>
                 <template v-else>
@@ -224,10 +184,10 @@ onLoad((option) => {
                         {{ s.content }}
                       </view>
                       <!-- <image
-                        class="l-chat-file-img"
-                        src="../../static/wenjian.png"
-                        mode="aspectFill"
-                      ></image> -->
+                              class="l-chat-file-img"
+                              src="../../static/wenjian.png"
+                              mode="aspectFill"
+                            ></image> -->
                     </view>
                     <view class="l-chat-file-size"> 5.9MB </view>
                   </button>
@@ -238,7 +198,7 @@ onLoad((option) => {
         </view>
       </scroll-view>
     </view>
-    <c_foot @on-focus="setChatScrollTop" :chatType="chatType" />
+    <c_foot ref="footerRef" @on-focus="setChatScrollTop" :chatType="chatType" />
   </view>
 </template>
 
@@ -250,21 +210,21 @@ onLoad((option) => {
 
 .l-char-scroll {
   width: 100%;
-  height: 100%;
   /* #ifdef H5 */
   height: calc(100vh - 190rpx);
   /* #endif */
   /* #ifndef H5 */
-  height: calc(100vh - 110rpx);
+  height: calc(100vh - 250rpx);
   /* #endif */
   background-color: #f6f6f6;
 }
+
 .l-char-scroll-height {
   /* #ifdef H5 */
-  height: calc(100vh - 190rpx - 150rpx);
+  height: calc(100vh - 190rpx - 350rpx);
   /* #endif */
   /* #ifndef H5 */
-  height: calc(100vh - 110rpx - 150rpx);
+  height: calc(100vh - 250rpx - 350rpx);
   /* #endif */
 }
 
@@ -273,6 +233,7 @@ onLoad((option) => {
   box-sizing: border-box;
   padding: 40rpx 20rpx 40rpx;
 }
+
 .l-char-scroll-content {
   padding: 0 20rpx 20rpx;
   width: 100%;
@@ -345,6 +306,7 @@ onLoad((option) => {
   border: 15rpx solid;
   border-color: transparent #ffffff transparent transparent;
 }
+
 .l-chat-text-wapper {
   min-width: 100rpx;
   max-width: 515rpx;
@@ -394,10 +356,12 @@ onLoad((option) => {
   right: -28rpx;
   border-color: transparent transparent transparent #95eb6c;
 }
+
 .l-chat-location {
   background-color: #fff;
   border: 8rpx;
   overflow: hidden;
+
   .l-chat-con {
     padding: 20rpx;
     font-size: 26rpx;
@@ -416,10 +380,12 @@ onLoad((option) => {
 .l-chat-flie-view {
   display: flex;
 }
+
 .l-icon-emoji-m {
   width: 54rpx;
   height: 54rpx;
 }
+
 .l-upload-img {
   border-radius: 6rpx;
 }

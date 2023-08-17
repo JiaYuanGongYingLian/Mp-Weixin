@@ -290,7 +290,7 @@ onHide(() => {
 
 <style lang="scss" scoped>
 .container {
-  height: calc(100vh - env(safe-area-inset-top));
+  height:100vh;
   background-color: #000;
   display: flex;
   flex-direction: column;

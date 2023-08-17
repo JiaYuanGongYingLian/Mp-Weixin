@@ -7,17 +7,10 @@
 -->
 <!-- eslint-disable no-use-before-define -->
 <!-- eslint-disable no-empty -->
-<!--
- * @Description: Description
- * @Author: Kerwin
- * @Date: 2023-07-24 14:50:01
- * @LastEditTime: 2023-08-16 14:13:32
- * @LastEditors:  Please set LastEditors
--->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref, onMounted, computed } from 'vue';
 import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, socialApi } from '@/api'
@@ -27,6 +20,10 @@ import { useUserStore, useChatStore } from '@/store'
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)
+const { conversation } = storeToRefs(chatStore)
+const singleConversations = computed(()=>{
+  return conversation.value?.filter(item=> item?.type === 3)
+})
 const circleList = reactive({
   list: [],
   loading: true,
@@ -50,7 +47,7 @@ async function getList() {
     } else {
       status.value = 'nomore'
     }
-  } catch {}
+  } catch { }
 }
 function reload() {
   circleList.list = []
@@ -92,7 +89,12 @@ async function joinGroup(item: {
     })
   }
 }
-onMounted(() => {
+function toChat(data: { username: any; }) {
+  uni.navigateTo({
+    url: `/packageA/pages/chat/index?username=${data?.username}`
+  })
+}
+onLoad(() => {
   getList()
 })
 onReachBottom(() => {
@@ -102,103 +104,83 @@ onReachBottom(() => {
 <template>
   <!-- <hy-nav-bar title="title"></hy-nav-bar> -->
   <view class="container">
-    <view class="circle" v-for="item in circleList.list" :key="item.id">
-      <view class="c-top">
-        <view class="left">
-          <view class="name">{{ item.name }}</view>
-          <view class="num">共{{ item.friendCircleUsers?.length }}人</view>
-        </view>
-        <u-button
-          class="right"
-          type="primary"
-          size="mini"
-          shape="circle"
-          :ripple="true"
-          :plain="item.joined"
-          @click="toGroupChat(item)"
-        >
-          {{ item.joined ? '进入聊天' : '加入圈子' }}
-        </u-button>
-      </view>
+    <view class="circle" v-for="item in singleConversations" :key="item.id" @click="toChat(item)">
+
       <view class="c-bot">
-        <u-image
-          class="avatar"
-          shape="circle"
-          width="100rpx"
-          height="100rpx"
-          :src="getImgFullPath(item.lastFriendCircleDynamic?.user.avatar)"
-        ></u-image>
+        <view class="avatar-wrap">
+          <u-badge :is-dot="true" type="success" is-center v-if="item.unread_msg_count>0"></u-badge>
+          <u-image class="avatar" width="120rpx" height="120rpx" border-radius="10rpx"
+            :src="item?.avatar"></u-image>
+        </view>
+
         <view class="con">
           <view class="top">
             <view class="name">{{
-              item.lastFriendCircleDynamic?.user.nickname
+              item?.name
             }}</view>
-            <view class="date" v-if="item.lastFriendCircleDynamic">{{
+            <view class="date">{{
               dateFormat(
-                new Date(item.lastFriendCircleDynamic?.createTime * 1000),
+                new Date(item.mtime),
                 'yyyy-MM-dd hh:mm'
               )
             }}</view>
           </view>
-          <view class="desc"> {{ item.lastFriendCircleDynamic?.content }}</view>
+          <view class="desc"> {{ item?.content }}</view>
         </view>
       </view>
     </view>
-    <u-loadmore v-if="circleList.list.length > 3" :status="status" />
+    <u-empty text="暂无消息" mode="message" v-if="!singleConversations.length" margin-top="100"></u-empty>
+    <u-loadmore v-if="singleConversations.length > 3" :status="status" margin-top="30" />
   </view>
 </template>
 
 <style lang="scss" scoped>
 @import '@/styles/helper.scss';
+
 .container {
   padding: 20rpx;
 }
+
 .circle {
   background: #fff;
   border-radius: 16rpx;
   padding: 30rpx;
-  margin-bottom: 30rpx;
-  .c-top {
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 20rpx;
-    .left {
-      .name {
-        font-size: 30rpx;
-        font-weight: bold;
-      }
-      .num {
-        margin-top: 30rpx;
-      }
-    }
-    .right {
-      margin: 0;
-    }
-  }
+  margin-bottom: 10rpx;
+
   .c-bot {
     display: flex;
-    align-items: center;
-    padding-top: 20rpx;
-    border-top: 2rpx solid #f6f6f6;
+    align-items: flex-start;
+    .avatar-wrap {
+      position: relative;
+    }
     .avatar {
       flex-shrink: 0;
     }
+
     .con {
       margin-left: 20rpx;
       flex: 1;
+
       .top {
         display: flex;
         justify-content: space-between;
+
+        .name {
+          font-weight: bold;
+          font-size: 30rpx;
+        }
+
         .date {
           font-size: 24rpx;
-          color: #ccc;
+          color: #999;
         }
       }
+
       .desc {
-        margin-top: 10rpx;
+        margin-top: 20rpx;
         @include ellipsis(2);
+        color: #666;
       }
     }
   }
-}
-</style>
+}</style>

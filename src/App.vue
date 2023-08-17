@@ -11,9 +11,26 @@ const storeUser = useUserStore()
 const chatStore = useChatStore()
 const { hasLogin, isJimInit } = storeToRefs(chatStore)
 const { userInfo } = storeToRefs(storeUser)
+
+watch(userInfo, (n) => {
+  if (n) {
+    if (!hasLogin.value) {
+      // chatStore.jimInit()
+    }
+  }
+}, {
+  deep: true,
+  immediate: false
+}
+)
 watch(isJimInit, (n) => {
   if (n) {
-    const data = uni.getStorageSync('jimLoginInfo')
+    // jimLogin()
+  }
+}
+)
+function jimLogin() {
+  const data = uni.getStorageSync('jimLoginInfo')
     if (data && data?.username === `hy_${userInfo.value.id}`) {
       chatStore.jimLogin(data)
     } else {
@@ -24,20 +41,19 @@ watch(isJimInit, (n) => {
       }
       chatStore.jimLogin(loginInfo)
     }
-  }
-})
+}
 onLaunch(() => {
-  if (!hasLogin.value) {
-    chatStore.jimInit()
-  }
   console.log('App Launch')
 })
-onShow(() => {
+onShow(async () => {
   console.log('App Show')
   storeUser.$patch((v) => {
     v.accessToken = uni.getStorageSync('accessToken') || ''
     v.userInfo = uni.getStorageSync('userInfo') || null
   })
+  console.log(232323,hasLogin.value)
+  await  chatStore.jimInit()
+  await jimLogin()
 })
 onHide(() => {
   console.log('App Hide')

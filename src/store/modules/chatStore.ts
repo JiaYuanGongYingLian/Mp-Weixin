@@ -181,6 +181,7 @@ const useStore = defineStore('chat', {
       msg_type?: number
       from_gid?: any
     }) {
+      debugger
       const { from_username, from_gid, msg_type, from_appkey } = data
       let index
       if (msg_type === 3) {
@@ -347,11 +348,11 @@ const useStore = defineStore('chat', {
       if (res.code === 0) {
         const msgInfo = jimMsg.formatMsgInfo(this.jimUserInfo, params, res)
         this.jimSendMsgAdd(msgInfo)
-        // if (!this.chatList.length) {
-        //   setTimeout(() => {
-        //     this.jimGetSingleInfo(data.target_username)
-        //   }, 500)
-        // }
+        if (!this.chatList.length) {
+          setTimeout(() => {
+            this.jimGetGroupInfo(data.target_gid)
+          }, 500)
+        }
       }
     },
     jimSendGroupMsgAdd(data: { gid?: any }) {
@@ -371,7 +372,20 @@ const useStore = defineStore('chat', {
       }
       console.log('state.syncConversation', this.syncConversation)
       console.log('state.chatlist', this.chatList)
-    }
+    },
+    async jimSendGroupPic(data: { target_gid: any }) {
+      const params = data
+      const res = await jpushIM.sendGroupPic(params)
+      if (res.code === 0) {
+        const msgInfo = jimMsg.formatMsgInfo(this.jimUserInfo, params, res)
+        this.jimSendMsgAdd(msgInfo)
+        if (!this.chatList.length) {
+          setTimeout(() => {
+            this.jimGetGroupInfo(data.target_gid)
+          }, 500)
+        }
+      }
+    },
   }
 })
 
