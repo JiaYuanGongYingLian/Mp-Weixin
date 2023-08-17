@@ -4,27 +4,19 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi, orderApi } from '@/api'
+import { baseApi, productApi, orderApi, socialApi } from '@/api'
 import { getImgFullPath, dateFormat } from '@/utils/index'
 import $orderStatus from '@/utils/order'
 import { useUserStore } from '@/store'
 
 const userStore = useUserStore()
-const { hasLogin } = storeToRefs(userStore)
+const { hasLogin, userInfo } = storeToRefs(userStore)
 const tabCurrentIndex = ref(0)
 const navList = reactive([
   {
     pageIndex: 1,
-    status: 0,
-    text: '对接我的人',
-    loadingType: 'more',
-    loaded: false,
-    orderList: []
-  },
-  {
-    pageIndex: 1,
     status: 60,
-    text: '已对接',
+    text: '对接中',
     loadingType: 'more',
     loaded: false,
     orderList: []
@@ -38,11 +30,15 @@ const navList = reactive([
     orderList: []
   }
 ])
-function reloadData() {
-  const index = tabCurrentIndex.value
-  const navItem = navList[index]
-  navItem.pageIndex = 1
-  loadData()
+const needShopId = ref(false)
+const userShopId = ref('') // 名人的个人店铺
+async function getUserDetailInfo() {
+  if (!needShopId.value) return
+  const { data } = await socialApi.userDetailInfo({
+    userId: userInfo.value.id,
+    detail: true
+  })
+  userShopId.value = data.shopId
 }
 // 获取订单列表
 async function loadData(source?: string | undefined) {
@@ -62,7 +58,8 @@ async function loadData(source?: string | undefined) {
     detail: true,
     statuses: getOrderStatuses(navItem.status),
     userId: userStore.userInfo.id,
-    categoryId: 600001
+    categoryId: 600001,
+    shopId: needShopId.value ? userShopId.value : null
   })
   if (navItem.pageIndex === 1) {
     navItem.orderList = []
@@ -77,6 +74,12 @@ async function loadData(source?: string | undefined) {
     navItem.loaded = true
     navItem.loadingType = 'nomore'
   }
+}
+function reloadData() {
+  const index = tabCurrentIndex.value
+  const navItem = navList[index]
+  navItem.pageIndex = 1
+  loadData()
 }
 // swiper 切换
 function changeTab(e: { detail: { current: any } }) {
@@ -100,44 +103,16 @@ async function deleteOrder(item: { id: any }) {
   reloadData()
 }
 // 取消订单
-async function cancelOrder(item: { id: any }) {
+async function updateOrder(item: { id: any }, type: string) {
   uni.showLoading({
     title: '请稍后'
   })
   const { data } = await orderApi.orderUpdate({
     id: item.id,
-    status: $orderStatus.getCancelStatus().type
+    status: type === 'agree' ? 60 : 90
   })
   uni.hideLoading()
   reloadData()
-}
-function payOrder(item: any) {
-  uni.navigateTo({
-    url: `/pages/payment/index?type=orderList&order=${JSON.stringify(item)}`
-  })
-}
-function getOrderProductSkusCount(order: {
-  orderProductSkus: { count: number }[]
-}) {
-  let count = 0
-  if (!order.orderProductSkus) return count
-  order.orderProductSkus.forEach((item: { count: number }) => {
-    count += item.count
-  })
-  return count
-}
-function getStatusColor(order: { status: any }) {
-  const { status } = order
-  let ret = '#fa436a'
-  switch (status) {
-    case 91:
-      ret = '#909399'
-      break
-    default:
-      ret = '#fa436a'
-      break
-  }
-  return ret
 }
 function getOrderStatuses(status: number) {
   return $orderStatus.getStatuses(status)
@@ -153,8 +128,15 @@ function toChat(data) {
     url: `/packageA/pages/chat/index?username=hy_${data.userId}`
   })
 }
+const statusMap = {
+  20: '待对接',
+  60: '对接中'
+}
+function getStatusTitle(status) {
+  return statusMap[status]
+}
 
-onLoad((option) => {
+onLoad(async (option) => {
   if (option?.status) {
     const status = option.status - 0
     for (let i = 0; i < navList.length; i += 1) {
@@ -166,9 +148,11 @@ onLoad((option) => {
       console.log(`${i}:----item.status:${item.status}  ---status:${status}`)
     }
   }
-  console.log(`status:${option?.status}`)
-  console.log(`tabCurrentIndex:${tabCurrentIndex.value}`)
-  loadData()
+  if (option?.passive) {
+    needShopId.value = true
+  }
+  await getUserDetailInfo()
+  await loadData()
 })
 </script>
 <template>
@@ -203,6 +187,7 @@ onLoad((option) => {
         >
           <!-- 空白页 -->
           <u-empty
+            text="暂无数据"
             v-if="tabItem.loaded === true && tabItem.orderList.length === 0"
           ></u-empty>
 
@@ -216,9 +201,7 @@ onLoad((option) => {
               <text class="time">{{
                 dateFormat(new Date(item.createTime * 1000), 'yyyy-MM-dd hh:mm')
               }}</text>
-              <text class="state" :style="{ color: getStatusColor(item) }">{{
-                $orderStatus.getStatusTitle(item.status)
-              }}</text>
+              <text class="state">{{ getStatusTitle(item.status) }}</text>
             </view>
             <view @click="toOrderDetail(item)">
               <scroll-view
@@ -255,33 +238,27 @@ onLoad((option) => {
                   :src="getImgFullPath(orderProductSkuItem.skuImage)"
                   mode="aspectFill"
                 ></image>
-                <view
-                  class="right"
-                  v-if="
-                    orderProductSkuItem &&
-                    orderProductSkuItem.shopProductSku &&
-                    orderProductSkuItem.shopProductSku.product
-                  "
-                >
+                <view class="right">
                   <text class="title clamp">{{
-                    orderProductSkuItem.shopProductSku.product.name
+                    orderProductSkuItem?.shopProductSku?.shop?.name
                   }}</text>
-                  <text class="attr-box"
-                    >{{ orderProductSkuItem.skuName }} x
-                    {{ orderProductSkuItem.count }}</text
-                  >
-                  <text class="price">{{ orderProductSkuItem.money }}</text>
+                  <view class="info">
+                    <text class="lab">实际支付：</text>
+                    <text class="val">{{ orderProductSkuItem?.money }} 元</text>
+                  </view>
+                  <view class="info">
+                    <text class="lab">对接时间：</text>
+                    <text class="val">{{
+                      dateFormat(
+                        new Date(item.createTime * 1000),
+                        'yyyy-MM-dd hh:mm'
+                      )
+                    }}</text>
+                  </view>
                 </view>
               </view>
             </view>
-
-            <view class="price-box">
-              共
-              <text class="num">{{ getOrderProductSkusCount(item) }}</text>
-              件商品 实付款
-              <text class="price">{{ item.money }}</text>
-            </view>
-            <view class="action-box b-t">
+            <view class="action-box">
               <u-button
                 class="action-btn"
                 @click="toChat(item)"
@@ -292,13 +269,27 @@ onLoad((option) => {
               >
                 去聊天
               </u-button>
-              <button
-                class="action-btn recom"
-                @click="payOrder(item)"
-                v-if="item.status === $orderStatus.getPayWillStatus().type"
+              <u-button
+                class="action-btn"
+                @click="updateOrder(item, 'refuse')"
+                size="mini"
+                type="warning"
+                ripple
+                style="margin-right: 20rpx"
+                v-if="item.status === 20 && needShopId"
               >
-                立即支付
-              </button>
+                拒绝对接
+              </u-button>
+              <u-button
+                class="action-btn"
+                @click="updateOrder(item, 'agree')"
+                size="mini"
+                type="primary"
+                ripple
+                v-if="item.status === 20 && needShopId"
+              >
+                同意对接
+              </u-button>
             </view>
           </view>
           <u-loadmore
@@ -388,7 +379,7 @@ onLoad((option) => {
     }
 
     .state {
-      color: #333;
+      color: #2979ff;
     }
 
     .del-btn {
@@ -434,11 +425,12 @@ onLoad((option) => {
   .goods-box-single {
     display: flex;
     padding: 20upx 0;
-
+    margin-top: 10rpx;
     .goods-img {
       display: block;
       width: 120upx;
       height: 120upx;
+      border-radius: 8rpx;
     }
 
     .right {
@@ -450,23 +442,17 @@ onLoad((option) => {
 
       .title {
         font-size: 28rpx;
-        color: #333;
+        color: #000;
+        margin-bottom: 10rpx;
+        font-weight: bold;
       }
-
-      .attr-box {
-        font-size: 26rpx;
-        color: $uni-text-color-grey;
-        padding: 10upx 0upx;
-      }
-
-      .price {
-        font-size: 26rpx;
-        color: #333;
-
-        &:before {
-          content: '￥';
-          font-size: 24rpx;
-          margin: 0 2upx 0 0;
+      .info {
+        line-height: 46rpx;
+        .lab {
+          color: #666;
+        }
+        .val {
+          color: #000;
         }
       }
     }
@@ -501,25 +487,13 @@ onLoad((option) => {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    height: 100upx;
     position: relative;
-    padding-right: 30upx;
     border-color: $uni-border-color-light;
+    padding: 20rpx 0;
   }
 
   .action-btn {
-    width: 160upx;
-    height: 60upx;
     margin: 0;
-    margin-left: 24upx;
-    padding: 0;
-    text-align: center;
-    line-height: 60upx;
-    font-size: 26rpx;
-    color: #333;
-    background: #fff;
-    border-radius: 100px;
-
     &:after {
       border-radius: 100px;
     }

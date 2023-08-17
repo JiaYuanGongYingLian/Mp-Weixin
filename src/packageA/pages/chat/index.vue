@@ -3,7 +3,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-08-16 18:19:11
+ * @LastEditTime: 2023-08-17 13:38:07
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -81,7 +81,7 @@ onLoad((option) => {
       chatStore.jimGetGroupInfo(groupInfo.gid)
       chatType.value = 'group'
     }
-    setChatScrollTop()
+    setTimeout(setChatScrollTop, 500)
   }
 })
 </script>

@@ -186,6 +186,13 @@
 						"navigationStyle": "custom",
 						"backgroundColor": "#F5F5F5"
 					}
+				},
+				{
+					"path": "pages/message/index",
+					"style": {
+						"navigationBarTitleText": "消息",
+						"backgroundColor": "#F5F5F5"
+					}
 				}
 			]
 		},

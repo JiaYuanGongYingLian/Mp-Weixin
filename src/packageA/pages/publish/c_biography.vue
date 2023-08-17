@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-30 11:32:40
- * @LastEditTime: 2023-08-14 10:57:53
+ * @LastEditTime: 2023-08-17 15:38:54
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -226,7 +226,10 @@ async function handleAdd() {
     const res = await socialApi.userDetailAdd(formData)
     uni.showToast({
       title: '提交成功',
-      icon: 'none'
+      icon: 'none',
+      success() {
+        uni.navigateBack()
+      }
     })
   } catch (err) {
     console.log(err)
