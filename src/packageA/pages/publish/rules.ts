@@ -2,14 +2,14 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-08-08 17:32:28
- * @LastEditTime: 2023-08-08 17:32:28
+ * @LastEditTime: 2023-08-18 18:50:41
  * @LastEditors:  Please set LastEditors
  */
 
 export default {
   categoryName: [
     {
-      required: true,
+      required: false,
       message: '请选择行业',
       // 可以单个或者同时写两个触发验证方式
       trigger: ['change', 'blur']
@@ -17,20 +17,20 @@ export default {
   ],
   name: [
     {
-      required: true,
-      message: '请填写商家名称',
+      required: false,
+      message: '请填写名称',
       trigger: ['change', 'blur']
     }
   ],
   addressName: [
     {
-      required: true,
+      required: false,
       message: '请选择地址',
       trigger: ['change', 'blur']
     }
   ],
   avatar: {
-    required: true,
+    required: false,
     message: '请上传头像',
     trigger: ['change', 'blur']
   },
@@ -46,14 +46,9 @@ export default {
   },
   remark: [
     {
-      required: true,
-      message: '请填写商家简介',
+      required: false,
+      message: '请填写提供的服务',
       trigger: ['change', 'blur']
-    },
-    {
-      min: 5,
-      message: '简介不能少于5个字',
-      trigger: 'change'
     }
   ]
 }

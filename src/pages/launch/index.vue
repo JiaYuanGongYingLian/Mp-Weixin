@@ -23,6 +23,7 @@ import {
   isWeChat,
   parseParams
 } from '@/utils/common'
+import { baseApi } from '@/api'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
@@ -35,6 +36,12 @@ function toTargetPage(URL?: any, duration = 0) {
     })
   }, duration)
 }
+async function getConfig(fieldName = 'mini_project_chat') {
+  const { data } = await baseApi.getSystemConfigInfo({
+    fieldName
+  })
+  configStore.videoPageOpen = data.fieldValue !== '0'
+}
 
 onLoad(async (option) => {
   // #ifdef MP-WEIXIN
@@ -45,6 +52,8 @@ onLoad(async (option) => {
       await userStore.wxMiniLogin(res.code)
       await userStore.loginByOpenId()
       toTargetPage()
+      getConfig('mini_project_chat')
+      getConfig('mini_project_video')
     },
     fail: () => {
       uni.hideLoading()

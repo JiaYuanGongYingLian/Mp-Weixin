@@ -1,8 +1,9 @@
+<!-- eslint-disable no-empty -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 13:49:44
- * @LastEditTime: 2023-08-15 14:04:41
+ * @LastEditTime: 2023-08-18 16:24:23
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -37,21 +38,38 @@ function initData() {
     }
   })
 }
-async function getTabs(parentId = 0) {
-  await baseApi
-    .getCategoryList({ pageSize: 1000, type: 1, parentId })
-    .then((res: { data: any }) => {
-      const { data } = res
-      // tabs.value = data.records
-      tabs.value = m_fcate
-      // tabs.value.unshift({
-      //   name: '全部',
-      //   id: ''
-      // })
-      dataList.value = initData()
-    })
-    .catch((err: any) => {})
+const TYPEMAP = {
+  JOB: 1,
+  SERVICE: 2,
+  PROVIDESERVICE: 3,
+  FINDSERVICE: 4
 }
+async function getTabs(parentId?: any) {
+  try {
+    const { data } = await socialApi.userDetailTagList({
+      type: TYPEMAP.JOB,
+      parentId,
+      noPaging: true
+    })
+    tabs.value = data
+    dataList.value = initData()
+  } catch {}
+}
+// async function getTabs(parentId = 0) {
+//   await baseApi
+//     .getCategoryList({ pageSize: 1000, type: 1, parentId })
+//     .then((res: { data: any }) => {
+//       const { data } = res
+//       // tabs.value = data.records
+//       tabs.value = m_fcate
+//       // tabs.value.unshift({
+//       //   name: '全部',
+//       //   id: ''
+//       // })
+//       dataList.value = initData()
+//     })
+//     .catch((err: any) => {})
+// }
 async function getDataList() {
   const item = dataList.value[currentTab.value]
   const tab = tabs.value[currentTab.value]
@@ -64,7 +82,8 @@ async function getDataList() {
     pageIndex,
     pageSize,
     detail: 'true',
-    keywords: keyword.value
+    name: keyword.value,
+    jobTagId: tab.id
   })
   const { records, current, pages } = data
   item.list.push(...records)
@@ -97,9 +116,8 @@ function doSearch() {
   getDataList()
 }
 onLoad(async (option) => {
-  if (option?.categoryData) {
-    const obj = JSON.parse(option?.categoryData)
-    await getTabs(obj.categoryId)
+  if (option?.id) {
+    await getTabs(option?.id)
   } else {
     await getTabs()
   }

@@ -8,6 +8,7 @@ import { baseApi, productApi, orderApi, socialApi } from '@/api'
 import { getImgFullPath, dateFormat } from '@/utils/index'
 import $orderStatus from '@/utils/order'
 import { useUserStore } from '@/store'
+import config from '@/common/jim/config.js'
 
 const userStore = useUserStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)
@@ -57,9 +58,10 @@ async function loadData(source?: string | undefined) {
     pageIndex: navItem.pageIndex,
     detail: true,
     statuses: getOrderStatuses(navItem.status),
-    userId: userStore.userInfo.id,
+    userId: needShopId.value ? null : userStore.userInfo.id,
     categoryId: 600001,
-    shopId: needShopId.value ? userShopId.value : null
+    shopId: needShopId.value ? userShopId.value : null,
+    otherColumns: 'user'
   })
   if (navItem.pageIndex === 1) {
     navItem.orderList = []
@@ -109,7 +111,7 @@ async function updateOrder(item: { id: any }, type: string) {
   })
   const { data } = await orderApi.orderUpdate({
     id: item.id,
-    status: type === 'agree' ? 60 : 90
+    status: type === 'agree' ? 60 : 80
   })
   uni.hideLoading()
   reloadData()
@@ -118,15 +120,21 @@ function getOrderStatuses(status: number) {
   return $orderStatus.getStatuses(status)
 }
 function toOrderDetail(order: { orderId: any }) {
-  const { id } = order
-  uni.navigateTo({
-    url: `/packageB/pages/order/detail?orderId=${id}`
-  })
+  // const { id } = order
+  // uni.navigateTo({
+  //   url: `/packageB/pages/order/detail?orderId=${id}`
+  // })
 }
 function toChat(data) {
-  uni.navigateTo({
-    url: `/packageA/pages/chat/index?username=hy_${data?.orderProductSkus[0]?.shopProductSku?.shop?.userId}`
-  })
+  if (needShopId.value) {
+    uni.navigateTo({
+      url: `/packageA/pages/chat/index?username=hy_${data?.user?.id}`
+    })
+  } else {
+    uni.navigateTo({
+      url: `/packageA/pages/chat/index?username=hy_${data?.orderProductSkus[0]?.shopProductSku?.shop?.userId}`
+    })
+  }
 }
 const statusMap = {
   20: '待对接',
@@ -204,56 +212,67 @@ onLoad(async (option) => {
               <text class="state">{{ getStatusTitle(item.status) }}</text>
             </view>
             <view @click="toOrderDetail(item)">
-              <scroll-view
-                v-if="item.orderProductSkus && item.orderProductSkus.length > 1"
-                class="goods-box"
-                scroll-x
-              >
+              <view v-if="needShopId">
+                <view class="goods-box-single">
+                  <image
+                    class="goods-img"
+                    :src="
+                      getImgFullPath(
+                        item?.user?.avatar || config.$defaultAvatar
+                      )
+                    "
+                    mode="aspectFill"
+                  ></image>
+                  <view class="right">
+                    <text class="title clamp">{{ item?.user?.nickname }}</text>
+                    <view class="info">
+                      <text class="lab">实际支付：</text>
+                      <text class="val">{{ item?.money }} 元</text>
+                    </view>
+                    <view class="info">
+                      <text class="lab">对接时间：</text>
+                      <text class="val">{{
+                        dateFormat(
+                          new Date(item.createTime * 1000),
+                          'yyyy-MM-dd hh:mm'
+                        )
+                      }}</text>
+                    </view>
+                  </view>
+                </view>
+              </view>
+              <view v-else>
                 <view
+                  class="goods-box-single"
                   v-for="(
                     orderProductSkuItem, goodsIndex
-                  ) in item.orderProductSkus"
+                  ) in item?.orderProductSkus"
                   :key="goodsIndex"
-                  class="goods-item"
                 >
                   <image
                     class="goods-img"
                     :src="getImgFullPath(orderProductSkuItem.skuImage)"
                     mode="aspectFill"
                   ></image>
-                </view>
-              </scroll-view>
-              <view
-                v-if="
-                  item.orderProductSkus && item.orderProductSkus.length === 1
-                "
-                class="goods-box-single"
-                v-for="(
-                  orderProductSkuItem, goodsIndex
-                ) in item.orderProductSkus"
-                :key="goodsIndex"
-              >
-                <image
-                  class="goods-img"
-                  :src="getImgFullPath(orderProductSkuItem.skuImage)"
-                  mode="aspectFill"
-                ></image>
-                <view class="right">
-                  <text class="title clamp">{{
-                    orderProductSkuItem?.shopProductSku?.shop?.name
-                  }}</text>
-                  <view class="info">
-                    <text class="lab">实际支付：</text>
-                    <text class="val">{{ orderProductSkuItem?.money }} 元</text>
-                  </view>
-                  <view class="info">
-                    <text class="lab">对接时间：</text>
-                    <text class="val">{{
-                      dateFormat(
-                        new Date(item.createTime * 1000),
-                        'yyyy-MM-dd hh:mm'
-                      )
+                  <view class="right">
+                    <text class="title clamp">{{
+                      orderProductSkuItem?.shopProductSku?.shop?.name
                     }}</text>
+                    <view class="info">
+                      <text class="lab">实际支付：</text>
+                      <text class="val"
+                        >{{ orderProductSkuItem?.money }} 元</text
+                      >
+                    </view>
+                    <view class="info">
+                      <text class="lab">对接时间：</text>
+                      <text class="val">{{
+                        dateFormat(
+                          new Date(item.createTime * 1000),
+                          'yyyy-MM-dd hh:mm'
+                        )
+                      }}</text>
+                    </view>
                   </view>
                 </view>
               </view>

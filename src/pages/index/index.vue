@@ -5,7 +5,8 @@ import {
   onShow,
   onLoad,
   onReachBottom,
-  onPageScroll
+  onPageScroll,
+onShareAppMessage
 } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, moneyApi, productApi } from '@/api'
@@ -168,6 +169,13 @@ onReady(async () => {
 onReachBottom(() => {
   status.value = 'loading'
   getHeidouProductList()
+})
+onShareAppMessage((_res) => {
+  const sourceTime = new Date().getTime()
+  return {
+    title: '黑银生活',
+    path: `/pages/launch/index?sourceTime=${sourceTime}`
+  }
 })
 </script>
 <template>

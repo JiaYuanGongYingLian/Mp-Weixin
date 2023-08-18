@@ -76,7 +76,7 @@ function onSubmit() {
 }
 
 onLoad(async (option) => {
-  orderData.value = JSON.parse(localStorage.getItem('orderJson') || '')
+  orderData.value = JSON.parse(uni.getStorageSync('orderJson') || '')
   console.log(orderData.value)
   await getAddressList()
   await getOrderMoney()

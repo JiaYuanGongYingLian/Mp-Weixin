@@ -52,6 +52,12 @@ function getAliOssToken(data: any) {
 function aliAddFile(data: any) {
   return http.post('/base/api/v1/ali/addFile', data)
 }
+/**
+ * 获取系统配置表
+ */
+function getSystemConfigInfo(data: any) {
+  return http.get('/base/api/v1/system/config/info', data)
+}
 
 export default {
   getCategoryList,
@@ -60,5 +66,6 @@ export default {
   smsSend,
   reverseGeocoding,
   getAliOssToken,
-  aliAddFile
+  aliAddFile,
+  getSystemConfigInfo
 }

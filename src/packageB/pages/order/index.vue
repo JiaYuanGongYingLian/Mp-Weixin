@@ -77,7 +77,8 @@ async function loadData(source?: string | undefined) {
     pageIndex: navItem.pageIndex,
     detail: true,
     statuses: getOrderStatuses(navItem.status),
-    userId: userStore.userInfo.id
+    userId: userStore.userInfo.id,
+    otherColumns: 'user'
   })
   if (navItem.pageIndex === 1) {
     navItem.orderList = []

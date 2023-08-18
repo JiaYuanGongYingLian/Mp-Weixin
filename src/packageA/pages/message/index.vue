@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-08-17 18:27:47
- * @LastEditTime: 2023-08-17 18:27:51
+ * @LastEditTime: 2023-08-18 14:31:12
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -10,19 +10,20 @@
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref, onMounted, computed } from 'vue';
+import { reactive, ref, onMounted, computed } from 'vue'
 import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance, dateFormat } from '@/utils/index'
 import { useUserStore, useChatStore } from '@/store'
+import $config from '@/common/jim/config.js'
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)
 const { conversation } = storeToRefs(chatStore)
-const singleConversations = computed(()=>{
-  return conversation.value?.filter(item=> item?.type === 3)
+const singleConversations = computed(() => {
+  return conversation.value?.filter((item) => item?.type === 3)
 })
 const circleList = reactive({
   list: [],
@@ -47,7 +48,7 @@ async function getList() {
     } else {
       status.value = 'nomore'
     }
-  } catch { }
+  } catch {}
 }
 function reload() {
   circleList.list = []
@@ -89,7 +90,7 @@ async function joinGroup(item: {
     })
   }
 }
-function toChat(data: { username: any; }) {
+function toChat(data: { username: any }) {
   uni.navigateTo({
     url: `/packageA/pages/chat/index?username=${data?.username}`
   })
@@ -104,33 +105,55 @@ onReachBottom(() => {
 <template>
   <!-- <hy-nav-bar title="title"></hy-nav-bar> -->
   <view class="container">
-    <view class="circle" v-for="item in singleConversations" :key="item.id" @click="toChat(item)">
-
+    <view
+      class="circle"
+      v-for="item in singleConversations"
+      :key="item.id"
+      @click="toChat(item)"
+    >
       <view class="c-bot">
         <view class="avatar-wrap">
-          <u-badge :is-dot="true" type="success" is-center v-if="item.unread_msg_count>0"></u-badge>
-          <u-image class="avatar" width="120rpx" height="120rpx" border-radius="10rpx"
-            :src="item?.avatar"></u-image>
+          <u-badge
+            :is-dot="true"
+            type="success"
+            is-center
+            v-if="item.unread_msg_count > 0"
+          ></u-badge>
+          <u-image
+            class="avatar"
+            width="120rpx"
+            height="120rpx"
+            border-radius="10rpx"
+            :src="
+              item?.avatar.slice(0, 5) == 'qiniu'
+                ? $config.jimLocalhost + item?.avatar
+                : item?.avatar
+            "
+          ></u-image>
         </view>
 
         <view class="con">
           <view class="top">
-            <view class="name">{{
-              item?.name
-            }}</view>
+            <view class="name">{{ item?.name }}</view>
             <view class="date">{{
-              dateFormat(
-                new Date(item.mtime),
-                'yyyy-MM-dd hh:mm'
-              )
+              dateFormat(new Date(item.mtime), 'yyyy-MM-dd hh:mm')
             }}</view>
           </view>
           <view class="desc"> {{ item?.content }}</view>
         </view>
       </view>
     </view>
-    <u-empty text="暂无消息" mode="message" v-if="!singleConversations.length" margin-top="100"></u-empty>
-    <u-loadmore v-if="singleConversations.length > 3" :status="status" margin-top="30" />
+    <u-empty
+      text="暂无消息"
+      mode="message"
+      v-if="!singleConversations.length"
+      margin-top="100"
+    ></u-empty>
+    <u-loadmore
+      v-if="singleConversations.length > 3"
+      :status="status"
+      margin-top="30"
+    />
   </view>
 </template>
 
@@ -183,4 +206,5 @@ onReachBottom(() => {
       }
     }
   }
-}</style>
+}
+</style>

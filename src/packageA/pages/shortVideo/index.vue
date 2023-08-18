@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-15 11:06:55
+ * @LastEditTime: 2023-08-18 17:40:28
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -115,9 +115,10 @@ function toMine() {
   })
 }
 function toFamous() {
-  uni.navigateTo({
-    url: '/packageA/pages/famous/index'
-  })
+  // uni.navigateTo({
+  //   url: '/packageA/pages/famous/index'
+  // })
+  uni.navigateBack()
 }
 const type = ref('default')
 function autoShowFn(name?: string) {
@@ -159,6 +160,7 @@ onLoad((option) => {
 })
 onHide(() => {
   // 页面跳转，暂停视频播放
+  swiperList.value[swiperCurrent.value].isPlay = true
   videoPlay(swiperCurrent.value)
 })
 </script>

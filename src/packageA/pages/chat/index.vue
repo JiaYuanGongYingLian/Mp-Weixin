@@ -1,9 +1,10 @@
+<!-- eslint-disable no-unused-expressions -->
 <!-- eslint-disable no-use-before-define -->
 <!--
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-08-17 13:38:07
+ * @LastEditTime: 2023-08-18 09:55:52
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -57,9 +58,9 @@ const footerRef = ref()
 function onChatClick() {
   footerRef.value.onChatClick()
 }
-const isScrollHeight =ref(false)
+const isScrollHeight = ref(false)
 function setChatScrollTop(arg_isScrollHeight?: boolean | undefined) {
-  isScrollHeight.value = arg_isScrollHeight?? false
+  isScrollHeight.value = arg_isScrollHeight ?? false
   setTimeout(() => {
     chatScrollTop.value += 1
   }, 200)
@@ -76,59 +77,88 @@ onLoad((option) => {
     chatType.value = 'group'
   }
 })
-watch(
-  hasLogin,
-  (n) => {
-    if (n) {
-      if (thouUsername.value) {
-        hasLogin.value && chatStore.jimGetSingleInfo(thouUsername.value)
-      } else {
-        hasLogin.value && chatStore.jimGetGroupInfo(groupInfo.gid)
-        chatType.value = 'group'
-      }
-    }
-  },
-  { deep: true }
-)
+// watch(
+//   hasLogin,
+//   (n) => {
+//     if (n) {
+//       if (thouUsername.value) {
+//         hasLogin.value && chatStore.jimGetSingleInfo(thouUsername.value)
+//       } else {
+//         hasLogin.value && chatStore.jimGetGroupInfo(groupInfo.gid)
+//         chatType.value = 'group'
+//       }
+//     }
+//   },
+//   { deep: true }
+// )
 </script>
 <template>
   <view class="container">
-    <hy-nav-bar :title="chatType === 'group'?groupInfo.name : singleInfo.nickname"></hy-nav-bar>
+    <hy-nav-bar
+      :title="chatType === 'group' ? groupInfo.name : singleInfo.nickname"
+    ></hy-nav-bar>
     <view class="l-chat-body" @tap="onChatClick">
-      <scroll-view scroll-y="true" class="l-char-scroll" scroll-with-animation
-        :class="{ 'l-char-scroll-height': isScrollHeight }" :scroll-top="chatScrollTop">
+      <scroll-view
+        scroll-y="true"
+        class="l-char-scroll"
+        scroll-with-animation
+        :class="{ 'l-char-scroll-height': isScrollHeight }"
+        :scroll-top="chatScrollTop"
+      >
         <view class="l-char-scroll-content">
           <view class="l-char-empty"> 已经没有聊天记录了~ </view>
           <!-- chatList -->
-          <view class="l-chat-item" v-for="(s, i) in chatList" :key="i" :class="{
-            'l-chat-mine': s.content.from_id === jimUserInfo.username
-          }">
+          <view
+            class="l-chat-item"
+            v-for="(s, i) in chatList"
+            :key="i"
+            :class="{
+              'l-chat-mine': s.content.from_id === jimUserInfo.username
+            }"
+          >
             <view class="l-chat-item-time">
               {{ dateFormat(new Date(s.ctime_ms), 'yyyy-MM-dd hh:mm') }}
             </view>
             <view class="l-chat-item-content">
               <view class="l-chat-avatar">
-                <image class="l-chat-img-avatar" v-if="s.content.from_id !== jimUserInfo.username"
-                  @tap="$nav({ url: '/pages/info/info?type=single' })" :src="singleInfoAvatar" mode="aspectFill"></image>
-                <image class="l-chat-img-avatar" v-else :src="jimUserInfoAvatar" mode="aspectFill"></image>
+                <image
+                  class="l-chat-img-avatar"
+                  v-if="s.content.from_id !== jimUserInfo.username"
+                  @tap="$nav({ url: '/pages/info/info?type=single' })"
+                  :src="singleInfoAvatar"
+                  mode="aspectFill"
+                ></image>
+                <image
+                  class="l-chat-img-avatar"
+                  v-else
+                  :src="jimUserInfoAvatar"
+                  mode="aspectFill"
+                ></image>
               </view>
               <view class="l-chat-view">
                 <view class="l-chat-name">
                   {{
                     s.content.from_id === jimUserInfo.username
-                    ? jimUserInfo.nickname || jimUserInfo.username
-                    : s.content.from_name
+                      ? jimUserInfo.nickname || jimUserInfo.username
+                      : s.content.from_name
                   }}
                 </view>
                 <template v-if="s.content.msg_type === 'text'">
-                  <view v-if="
-                    s.content.msg_body.extras &&
-                    s.content.msg_body.extras.isEmoji
-                  " class="l-chat-text">
-                    <image :src="
-                      '../../../static/emoji/' +
-                      emojiAllJson[s.content.msg_body.text]
-                    " mode="aspectFit" class="l-icon-emoji-m"></image>
+                  <view
+                    v-if="
+                      s.content.msg_body.extras &&
+                      s.content.msg_body.extras.isEmoji
+                    "
+                    class="l-chat-text"
+                  >
+                    <image
+                      :src="
+                        '../../../static/emoji/' +
+                        emojiAllJson[s.content.msg_body.text]
+                      "
+                      mode="aspectFit"
+                      class="l-icon-emoji-m"
+                    ></image>
                   </view>
                   <view class="l-chat-text" v-else>
                     {{ s.content.msg_body.text || '' }}
@@ -136,45 +166,64 @@ watch(
                 </template>
                 <template v-else-if="s.content.msg_type === 'image'">
                   <view>
-                    <image @tap="previewImage([s.content.msg_body.image])" v-if="s.content.msg_body.type"
-                      :src="s.content.msg_body.image" :style="{
+                    <image
+                      @tap="previewImage([s.content.msg_body.image])"
+                      v-if="s.content.msg_body.type"
+                      :src="s.content.msg_body.image"
+                      :style="{
                         'max-width': '250rpx',
                         width: s.content.msg_body.width,
                         height:
                           s.content.msg_body.width < 500
                             ? s.content.msg_body.height
                             : (500 / s.content.msg_body.width) *
-                            s.content.msg_body.height
-                      }" mode="widthFix" class="l-upload-img"></image>
-                    <image v-else @tap="
-                      previewImage([
-                        $config.jimLocalhost + s.content.msg_body.media_id
-                      ])
-                    " :src="$config.jimLocalhost + s.content.msg_body.media_id" :style="{
-  'max-width': '250rpx',
-  width: s.content.msg_body.width,
-  height:
-    s.content.msg_body.width < 500
-      ? s.content.msg_body.height
-      : (500 / s.content.msg_body.width) *
-      s.content.msg_body.height
-}" mode="widthFix" class="l-upload-img"></image>
+                              s.content.msg_body.height
+                      }"
+                      mode="widthFix"
+                      class="l-upload-img"
+                    ></image>
+                    <image
+                      v-else
+                      @tap="
+                        previewImage([
+                          $config.jimLocalhost + s.content.msg_body.media_id
+                        ])
+                      "
+                      :src="$config.jimLocalhost + s.content.msg_body.media_id"
+                      :style="{
+                        'max-width': '250rpx',
+                        width: s.content.msg_body.width,
+                        height:
+                          s.content.msg_body.width < 500
+                            ? s.content.msg_body.height
+                            : (500 / s.content.msg_body.width) *
+                              s.content.msg_body.height
+                      }"
+                      mode="widthFix"
+                      class="l-upload-img"
+                    ></image>
                   </view>
                 </template>
                 <template v-else-if="s.content.msg_type === 'location'">
                   <!-- {{ s.content }} -->
-                  <view class="l-chat-location" @click="
-                    handleMapLocation({
-                      latitude: s.content.msg_body.latitude,
-                      longitude: s.content.msg_body.longitude,
-                      addr: s.content.msg_body.label
-                    })
-                  ">
+                  <view
+                    class="l-chat-location"
+                    @click="
+                      handleMapLocation({
+                        latitude: s.content.msg_body.latitude,
+                        longitude: s.content.msg_body.longitude,
+                        addr: s.content.msg_body.label
+                      })
+                    "
+                  >
                     <view class="l-chat-con">
                       <view class="name">{{ s.content.msg_body.label }}</view>
                     </view>
-                    <map :longitude="s.content.msg_body.longitude" :latitude="s.content.msg_body.latitude"
-                      style="width: 350rpx; height: 180rpx"></map>
+                    <map
+                      :longitude="s.content.msg_body.longitude"
+                      :latitude="s.content.msg_body.latitude"
+                      style="width: 350rpx; height: 180rpx"
+                    ></map>
                   </view>
                 </template>
                 <template v-else>

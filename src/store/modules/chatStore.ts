@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-25 15:30:59
- * @LastEditTime: 2023-08-16 16:01:03
+ * @LastEditTime: 2023-08-18 14:21:38
  * @LastEditors:  Please set LastEditors
  */
 import { defineStore } from 'pinia'
@@ -181,7 +181,6 @@ const useStore = defineStore('chat', {
       msg_type?: number
       from_gid?: any
     }) {
-      debugger
       const { from_username, from_gid, msg_type, from_appkey } = data
       let index
       if (msg_type === 3) {

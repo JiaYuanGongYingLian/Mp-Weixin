@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 04:42:53
- * @LastEditTime: 2023-08-16 17:23:08
+ * @LastEditTime: 2023-08-18 17:36:56
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -68,6 +68,7 @@ function submit() {
         uni.navigateTo({
           url: '/pages/payment/index?order=true'
         })
+        showPop.value = false
       }
     } else {
       console.log('验证失败')

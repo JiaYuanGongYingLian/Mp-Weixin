@@ -268,9 +268,9 @@ function myPromise(key, params) {
           console.log(`%c ${JSON.stringify(data)}`, 'color:red;')
           reject(data)
           if (data.error) {
-            toastError(data.error)
+            // toastError(data.error)
           } else {
-            toastError(data)
+            // toastError(data)
           }
         })
         .onTimeout(function (data) {
@@ -278,7 +278,7 @@ function myPromise(key, params) {
         })
     } catch (e) {
       console.log(e)
-      utils.$toast('状态连接有误,请刷新页面重新操作')
+      // utils.$toast('状态连接有误,请刷新页面重新操作')
     }
   })
   //    .catch(err => {

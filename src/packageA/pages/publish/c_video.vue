@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-01 16:22:48
- * @LastEditTime: 2023-08-15 16:43:33
+ * @LastEditTime: 2023-08-18 17:11:24
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -63,6 +63,7 @@ function chooseVideo() {
     camera: 'back',
     maxDuration: 60,
     success: (res) => {
+      // #ifdef H5
       webUploadVideo({
         file: res.tempFile,
         onSuccess: async (ret: { name: string }) => {
@@ -82,6 +83,27 @@ function chooseVideo() {
         },
         uploadPath: ''
       })
+      // #endif
+      // #ifndef H5
+      uni.uploadFile({
+        url: 'https://api.blacksilverscore.com/base/api/v1/ali/sendFile',
+        filePath: res.tempFilePath,
+        header: {
+          Authorization: `Bearer ${uni.getStorageSync('accessToken') || ''}`
+        },
+        name: 'object',
+        success(ret) {
+          const { data } = ret
+          const jsonData = JSON.parse(data)
+          videoUrl.value = jsonData.data
+          progress.value = 80
+          setTimeout(async () => {
+            await dynamicAdd()
+            progress.value = 0
+          }, 1000)
+        }
+      })
+      // #endif
     }
   })
 }

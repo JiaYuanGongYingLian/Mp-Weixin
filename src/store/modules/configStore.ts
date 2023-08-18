@@ -5,6 +5,7 @@ const useStore = defineStore('config', {
   state: () => ({
     navBarHeight: 44,
     enterType: null,
+    videoPageOpen: true,
     isWeChatBrowser: isWeChat(), // 微信浏览器
     isAlipayClient: isAlipayClient(), // 支付宝浏览器
     cardDefualtAvatar:

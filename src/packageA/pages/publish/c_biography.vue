@@ -8,14 +8,14 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-30 11:32:40
- * @LastEditTime: 2023-08-17 15:38:54
+ * @LastEditTime: 2023-08-18 18:51:32
  * @LastEditors:  Please set LastEditors
 -->
 
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, onMounted } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, socialApi } from '@/api'
@@ -259,20 +259,20 @@ const submit = () => {
         }
       })
       formData = reactive({ ...formData, ...data })
-      if (!formData.coverImage) {
-        uni.showToast({
-          icon: 'none',
-          title: '请上传名片主图'
-        })
-        return
-      }
-      if (!formData.serviceRemark) {
-        uni.showToast({
-          icon: 'none',
-          title: '请填写提供的服务'
-        })
-        return
-      }
+      // if (!formData.coverImage) {
+      //   uni.showToast({
+      //     icon: 'none',
+      //     title: '请上传名片主图'
+      //   })
+      //   return
+      // }
+      // if (!formData.serviceRemark) {
+      //   uni.showToast({
+      //     icon: 'none',
+      //     title: '请填写提供的服务'
+      //   })
+      //   return
+      // }
       if (isEdit.value) {
         handleUpdate()
       } else {
@@ -321,7 +321,7 @@ async function getUserDetailInfo() {
 onReady(() => {
   form.value.setRules(rules)
 })
-onLoad(async (option) => {
+onMounted(async () => {
   // 职业
   await getTagList(TYPEMAP.JOB)
   // 服务
@@ -401,7 +401,7 @@ onLoad(async (option) => {
             @confirm="selectConfirm($event, TYPEMAP.JOB)"
           ></u-select>
         </u-form-item>
-        <u-form-item required label="姓名" label-width="auto" prop="name"
+        <u-form-item required label="职务" label-width="auto" prop="name"
           ><u-input
             v-model="formData.postRemark"
             input-align="right"
@@ -421,20 +421,17 @@ onLoad(async (option) => {
             @click="chooseLocation"
           />
         </u-form-item>
-        <u-form-item required label="对接金额" label-width="auto" prop="name"
+        <u-form-item required label="对接金额（元）" label-width="auto" prop="name"
           ><u-input
             v-model="formData.shopProductSkuMoney"
             input-align="right"
             placeholder="请填写对接金额（10~1w）"
             type="number"
-          />
-          （元）</u-form-item
-        >
+        /></u-form-item>
         <u-form-item
           required
           label="提供服务"
           label-width="auto"
-          prop="remark"
           :border-bottom="false"
         >
           <u-input
@@ -476,7 +473,7 @@ onLoad(async (option) => {
             type="textarea"
             placeholder="请填写自己的座右铭"
         /></u-form-item>
-        <u-form-item label="录制录音" label-width="auto" label-position="top">
+        <!-- <u-form-item label="录制录音" label-width="auto" label-position="top">
           <view style="width: 100%">
             <u-input
               input-align="left"
@@ -486,7 +483,7 @@ onLoad(async (option) => {
             />
             <c_recorder />
           </view>
-        </u-form-item>
+        </u-form-item> -->
         <u-form-item label="个人履历" label-width="auto" label-position="top">
           <view style="width: 100%">
             <u-input

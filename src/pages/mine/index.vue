@@ -195,6 +195,7 @@ onLoad((option) => {
             class="bar"
             @tap="goUrlFn"
             data-url="/packageA/pages/famousOrder/index"
+            v-if="configStore.videoPageOpen"
           >
             <image
               src="https://image.blacksilverscore.com/uploads/516fd61d-c1d3-4878-815e-26ed4d216502.png"
@@ -205,6 +206,7 @@ onLoad((option) => {
             class="bar reverse"
             @tap="goUrlFn"
             data-url="/packageA/pages/famousOrder/index?passive=true"
+            v-if="configStore.videoPageOpen"
           >
             <image
               src="https://image.blacksilverscore.com/uploads/516fd61d-c1d3-4878-815e-26ed4d216502.png"
@@ -215,6 +217,7 @@ onLoad((option) => {
             class="bar"
             @tap="goUrlFn"
             data-url="/packageA/pages/message/index"
+            v-if="configStore.videoPageOpen"
           >
             <image
               src="https://image.blacksilverscore.com/uploads/9a62ef97-4a3c-4107-8f4b-abf65f6d1f85.png"

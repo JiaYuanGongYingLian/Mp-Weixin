@@ -1,3 +1,4 @@
+<!-- eslint-disable no-use-before-define -->
 <!-- eslint-disable no-shadow -->
 <!-- eslint-disable no-console -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -6,7 +7,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-08-15 10:28:15
+ * @LastEditTime: 2023-08-18 17:59:52
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -21,18 +22,19 @@ import {
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
-import { useUserStore } from '@/store'
+import { useUserStore, useConfigStore } from '@/store'
 import hyNavBar from '@/components/hy-nav-bar/index.vue'
 import c_elebrity from './c_celebrity.vue'
 import c_circle from './c_circle.vue'
 
 const store = useUserStore()
+const configStore = useConfigStore()
 const { hasLogin } = storeToRefs(store)
 const scrollTop = ref(0)
 const tabBgColor = ref('#fff')
 const tabActiveColor = ref('#2979ff')
 const tabInactiveColor = ref('#303133')
-const list = [
+let list = [
   {
     name: '圈子'
   },
@@ -43,6 +45,7 @@ const list = [
     name: '短视频'
   }
 ]
+
 const currentTab = ref(1)
 const categoryList = ref([])
 const famousList = reactive({
@@ -65,6 +68,14 @@ function change(index: any) {
       }
     })
   }
+}
+if (!configStore.videoPageOpen) {
+  list = [
+    {
+      name: '圈子'
+    }
+  ]
+  currentTab.value = 0
 }
 
 onLoad((option) => {})

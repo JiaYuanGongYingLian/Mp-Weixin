@@ -117,14 +117,13 @@ const jimMsg = {
         msg_type: params.type || 'text'
       }
     }
-    debugger
     const msgInfo = {
       ctime_ms: res.ctime_ms,
       from_appkey: params.appkey,
       from_username: params.target_username,
       from_gid: params.target_gid,
       target_gid: params.target_gid,
-      msg_type: params.target_gid ? 4 : 4,
+      msg_type: params.target_gid ? 4 : 3,
       need_receipt: false,
       custom_notification: {
         alert: '',

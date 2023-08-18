@@ -2,7 +2,7 @@
  * @Description: 对接名人主页
  * @Author: Kerwin
  * @Date: 2023-08-05 16:36:09
- * @LastEditTime: 2023-08-15 14:38:54
+ * @LastEditTime: 2023-08-18 15:36:31
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -11,7 +11,7 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi, socialApi } from '@/api';
+import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 
@@ -25,8 +25,8 @@ const famousList = reactive({
   finished: false,
   list: []
 })
-function handleClickCate(item: { id: any }) {
-  uni.navigateTo({ url: `/packageA/pages/famous/index?id=${item.id}` })
+function handleClickCate(item: { objectId: any }) {
+  uni.navigateTo({ url: `/packageA/pages/famous/index?id=${item?.objectId}` })
 }
 async function getCategory() {
   const { data } = await baseApi.getAdvertisingList({

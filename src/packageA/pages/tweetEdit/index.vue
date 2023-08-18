@@ -68,7 +68,7 @@ onReady(() => {
   form.value.setRules(rules)
 })
 onLoad((option) => {
-  const video = JSON.parse(localStorage.getItem('video') || '') || {}
+  const video = JSON.parse(uni.getStorageSync('video') || '') || {}
   formData.name = video.name
   formData.content = video.content
   formData.id = video.id
