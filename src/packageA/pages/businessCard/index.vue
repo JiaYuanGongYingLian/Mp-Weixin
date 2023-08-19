@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-19 14:20:09
+ * @LastEditTime: 2023-08-19 17:38:08
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -262,7 +262,7 @@ onShareAppMessage((_res) => {
         </view>
         <!-- 橱窗 -->
         <view class="shop" v-show="currentTab === 2">
-          <c_shop />
+          <c_shop :shopId="userDetailInfo.shopId" />
         </view>
         <!-- 排行榜 -->
         <view class="shop" v-show="currentTab === 3">

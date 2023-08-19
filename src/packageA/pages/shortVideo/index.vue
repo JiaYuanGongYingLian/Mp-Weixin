@@ -5,13 +5,13 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-19 14:31:18
+ * @LastEditTime: 2023-08-19 16:25:13
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue';
 import {
   onLoad,
   onShow,
@@ -27,7 +27,7 @@ import hyNavBarSimpler from '@/components/hy-nav-bar-simpler/index.vue'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
-const { hasLogin, userInfo } = storeToRefs(userStore)
+const { hasLogin, userInfo, hasNewDynamic } = storeToRefs(userStore)
 const buttonRect = ref({})
 // #ifdef MP-WEIXIN
 buttonRect.value = wx.getMenuButtonBoundingClientRect()
@@ -52,7 +52,12 @@ const swiperCurrent = ref(0)
 const showControl = ref(true)
 const swiperList = ref([])
 const isPreview = ref(false)
-async function dynamicList(dynamicId: any) {
+watch(hasNewDynamic, (n) => {
+  if (n) {
+    dynamicList()
+  }
+})
+async function dynamicList(dynamicId?: any) {
   try {
     const res1 = await socialApi.dynamicList({
       noPaging: true,

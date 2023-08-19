@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-29 17:12:32
- * @LastEditTime: 2023-08-19 10:45:52
+ * @LastEditTime: 2023-08-19 16:23:04
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -16,7 +16,7 @@ import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
 
 const userStore = useUserStore()
-const { hasLogin } = storeToRefs(userStore)
+const { hasLogin,hasNewDynamic } = storeToRefs(userStore)
 const form = ref()
 const formData = reactive({
   id: '',
@@ -51,7 +51,11 @@ async function dynamicUpdate(status: any) {
   })
   if (code === 200) {
     uni.showToast({
-      title: '发布成功'
+      title: '发布成功',
+      success() {
+        hasNewDynamic.value = true
+        uni.navigateBack()
+      }
     })
   }
 }

@@ -13,7 +13,8 @@ const userStore = defineStore('storeId', {
     unionid: '',
     openid: '',
     wxUserInfo: {},
-    walletList: []
+    walletList: [],
+    hasNewDynamic: false
   }),
   getters: {
     hasLogin: (state) => Boolean(state.accessToken)

@@ -6,6 +6,7 @@ import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
 import { Md5 } from 'ts-md5'
 import { useUserStore, useChatStore } from '@/store'
+import jpushIM from "@/common/jim/jim.js"
 
 const storeUser = useUserStore()
 const chatStore = useChatStore()
@@ -53,11 +54,15 @@ onShow(async () => {
     v.accessToken = uni.getStorageSync('accessToken') || ''
     v.userInfo = uni.getStorageSync('userInfo') || null
   })
-  console.log(232323, hasLogin.value)
+  console.log('chatHasLogin', hasLogin.value)
   if (!hasLogin.value) {
     await chatStore.jimInit()
     await jimLogin()
   }
+  jpushIM.onDisconnect(async () => {
+    await chatStore.jimInit()
+    await jimLogin()
+  })
 })
 onHide(() => {
   console.log('App Hide')

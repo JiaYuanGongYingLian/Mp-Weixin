@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-25 15:30:59
- * @LastEditTime: 2023-08-18 14:21:38
+ * @LastEditTime: 2023-08-19 16:21:00
  * @LastEditors:  Please set LastEditors
  */
 import { defineStore } from 'pinia'
@@ -81,7 +81,6 @@ const useStore = defineStore('chat', {
           password
         })
         uni.setStorageSync('jimLoginInfo', data)
-        console.log(72, res)
         this.hasLogin = true
         this.jimGetUserInfo(username)
         this.jimOnSyncConversation()

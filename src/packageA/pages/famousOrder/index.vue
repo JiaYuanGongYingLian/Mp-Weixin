@@ -39,7 +39,7 @@ async function getUserDetailInfo() {
     userId: userInfo.value.id,
     detail: true
   })
-  userShopId.value = data.shopId
+  userShopId.value = data?.shopId
 }
 // 获取订单列表
 async function loadData(source?: string | undefined) {
@@ -53,6 +53,7 @@ async function loadData(source?: string | undefined) {
   if (navItem.loadingType === 'loading' || navItem.loadingType === 'noMore') {
     return
   }
+  if (needShopId.value && !userShopId.value) return
   navItem.loadingType = 'loading'
   const { data } = await orderApi.orderList({
     pageIndex: navItem.pageIndex,

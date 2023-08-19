@@ -1,15 +1,16 @@
+<!-- eslint-disable no-use-before-define -->
 <!-- eslint-disable no-empty -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-15 11:05:51
+ * @LastEditTime: 2023-08-19 16:26:33
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, watch } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { socialApi, enumAll } from '@/api'
@@ -17,7 +18,7 @@ import { getImgFullPath, checkLoginState } from '@/utils/index'
 import { useUserStore } from '@/store'
 
 const userStore = useUserStore()
-const { hasLogin, userInfo } = storeToRefs(userStore)
+const { hasLogin, userInfo, hasNewDynamic } = storeToRefs(userStore)
 const videoList = reactive({
   list: [],
   loading: true,
@@ -32,6 +33,11 @@ const props = withDefaults(
   }>(),
   {}
 )
+watch(hasNewDynamic, (n) => {
+  if (n) {
+    dynamicList()
+  }
+})
 async function dynamicList() {
   try {
     const { current, pages, data } = await socialApi.dynamicList({

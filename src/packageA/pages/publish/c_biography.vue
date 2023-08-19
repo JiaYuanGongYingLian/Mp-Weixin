@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-30 11:32:40
- * @LastEditTime: 2023-08-19 10:30:53
+ * @LastEditTime: 2023-08-19 16:07:04
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -211,12 +211,20 @@ async function handleUpdate() {
     const res = await socialApi.userDetailUpdate(formData)
     uni.showToast({
       title: '提交成功',
-      icon: 'none'
+      icon: 'none',
+      duration: 2000,
+      success() {
+        uni.hideLoading()
+        uni.navigateBack()
+        // uni.redirectTo({
+        //   url: `/packageA/pages/businessCard/index?userId=${userInfo.value.id}`
+        // })
+      }
     })
   } catch (err) {
     console.log(err)
+    uni.hideLoading()
   }
-  uni.hideLoading()
 }
 async function handleAdd() {
   uni.showLoading({
@@ -228,13 +236,14 @@ async function handleAdd() {
       title: '提交成功',
       icon: 'none',
       success() {
+        uni.hideLoading()
         uni.navigateBack()
       }
     })
   } catch (err) {
     console.log(err)
+    uni.hideLoading()
   }
-  uni.hideLoading()
 }
 
 const submit = () => {

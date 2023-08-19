@@ -273,7 +273,7 @@ onLoad(async (option) => {
           ripple
           @getphonenumber="getPhoneNumber"
         >
-          <text class="iconfont hy-icon-wechat"></text>
+          <!-- <text class="iconfont hy-icon-wechat"></text> -->
           手机号快捷登录
         </u-button>
         <navigator
