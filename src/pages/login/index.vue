@@ -274,7 +274,7 @@ onLoad(async (option) => {
           @getphonenumber="getPhoneNumber"
         >
           <text class="iconfont hy-icon-wechat"></text>
-          微信快捷登录
+          手机号快捷登录
         </u-button>
         <navigator
           open-type="navigateBack"
