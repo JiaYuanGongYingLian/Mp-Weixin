@@ -7,7 +7,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-08-18 17:59:52
+ * @LastEditTime: 2023-08-18 20:05:40
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -69,6 +69,7 @@ function change(index: any) {
     })
   }
 }
+// #ifdef MP-WEIXIN
 if (!configStore.videoPageOpen) {
   list = [
     {
@@ -77,6 +78,7 @@ if (!configStore.videoPageOpen) {
   ]
   currentTab.value = 0
 }
+// #endif
 
 onLoad((option) => {})
 

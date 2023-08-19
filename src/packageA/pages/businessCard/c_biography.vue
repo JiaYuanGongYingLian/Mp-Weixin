@@ -2,7 +2,7 @@
  * @Description: 传记
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-14 17:53:53
+ * @LastEditTime: 2023-08-19 11:39:45
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -92,7 +92,11 @@ onMounted((option) => {})
           <text class="label">人物导语：</text>
           <text class="value"> {{ info.motto }}</text>
         </view>
-        <u-divider class="divider" fontSize="30" margin-top="30"
+        <u-divider
+          class="divider"
+          fontSize="30"
+          margin-top="30"
+          margin-botom="20"
           >个人履历</u-divider
         >
         <view class="textCon">{{ info.resume }}</view>

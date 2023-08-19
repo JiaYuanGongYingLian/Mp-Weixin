@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-30 11:32:40
- * @LastEditTime: 2023-08-18 18:51:32
+ * @LastEditTime: 2023-08-19 10:30:53
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -307,9 +307,10 @@ async function getUserDetailInfo() {
         item.url = getImgFullPath(item.resourceUrl)
       }
     )
-    serviceTags.value = data?.serviceTags?.split(',')?.map((item: any) => {
+    const tagsTemp = data?.serviceTags?.split(',')?.map((item: any) => {
       return { name: item }
     })
+    serviceTags.value = tagsTemp || []
     Object.keys(formData).forEach((key) => {
       formData[key] = data[key]
     })

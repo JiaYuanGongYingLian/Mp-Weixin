@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-29 17:12:32
- * @LastEditTime: 2023-08-11 11:31:31
+ * @LastEditTime: 2023-08-19 10:45:52
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -127,7 +127,7 @@ onLoad((option) => {
         @click="submit(enumAll.audit_status_enum.SUCCESS)"
         type="primary"
         ripple
-        >发布活动</u-button
+        >发布视频</u-button
       >
     </view>
   </view>
