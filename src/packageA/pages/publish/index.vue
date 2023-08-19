@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-28 17:45:12
- * @LastEditTime: 2023-08-15 10:52:06
+ * @LastEditTime: 2023-08-19 18:08:13
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -57,7 +57,7 @@ onLoad((option) => {
     <u-tabs
       :list="list"
       sticky
-      :style="{ top: 0, zIndex: 2 }"
+      :style="{ top: 0, zIndex: 10 }"
       v-model="currentTab"
       @change="change"
     ></u-tabs>
