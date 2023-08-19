@@ -5,14 +5,20 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-18 17:40:28
+ * @LastEditTime: 2023-08-19 14:31:18
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady, onHide } from '@dcloudio/uni-app'
+import {
+  onLoad,
+  onShow,
+  onReady,
+  onHide,
+  onShareAppMessage
+} from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi, enumAll } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
@@ -46,16 +52,23 @@ const swiperCurrent = ref(0)
 const showControl = ref(true)
 const swiperList = ref([])
 const isPreview = ref(false)
-async function dynamicList() {
+async function dynamicList(dynamicId: any) {
   try {
     const res1 = await socialApi.dynamicList({
       noPaging: true,
       type: 3,
       detail: true,
       status: enumAll.audit_status_enum.SUCCESS,
-      otherColumns: 'favorited,focused'
+      otherColumns: 'favorited,focused',
+      sortJson: '[{"column":"createTime","direction":"DESC"}]'
     })
     swiperList.value = res1.data
+    const index = swiperList.value.findIndex((item) => item.id == dynamicId)
+    console.log(index, 'videoIndex')
+    if (index !== -1) {
+      swiperCurrent.value = index
+      videoPlay(index)
+    }
   } catch {}
 }
 function videoPlay(index: any) {
@@ -76,6 +89,7 @@ function videoPlay(index: any) {
   }
 }
 function animationfinishFn(e: { detail: { current: number } }) {
+  console.log(e.detail.current, 'animationfinishFn')
   if (swiperCurrent.value !== e.detail.current) {
     swiperCurrent.value = e.detail.current
     videoPlay(swiperCurrent.value)
@@ -155,13 +169,24 @@ onLoad((option) => {
     swiperCurrent.value = Number(option?.index)
     videoPlay(swiperCurrent.value)
   } else {
-    dynamicList()
+    const dynamicId = option?.dynamicId
+    dynamicList(dynamicId)
   }
 })
 onHide(() => {
   // 页面跳转，暂停视频播放
   swiperList.value[swiperCurrent.value].isPlay = true
   videoPlay(swiperCurrent.value)
+})
+onShareAppMessage((_res) => {
+  const dynamic = swiperList.value[swiperCurrent.value] || {}
+  return {
+    title: dynamic.name || '黑银生活短视频',
+    content: dynamic.content,
+    desc: dynamic.content,
+    imageUrl: getImgFullPath(dynamic.previewImage) || '',
+    path: `/pages/launch/index?redirect_url=/packageA/pages/shortVideo/index&dynamicId=${dynamic.id}`
+  }
 })
 </script>
 <template>
@@ -258,6 +283,7 @@ onHide(() => {
             {{ item?.favoriteCount }}
           </view>
           <view class="action">
+            <button open-type="share" class="shareBtn"></button>
             <text
               class="iconfont hy-icon-fenxiangzhuanfa"
               style="font-size: 60rpx"
@@ -292,7 +318,7 @@ onHide(() => {
 
 <style lang="scss" scoped>
 .container {
-  height:100vh;
+  height: 100vh;
   background-color: #000;
   display: flex;
   flex-direction: column;
@@ -350,6 +376,7 @@ onHide(() => {
       font-size: 20rpx;
       text-align: center;
       margin-top: 30rpx;
+      position: relative;
       .iconfont {
         font-size: 70rpx;
         opacity: 0.85;
@@ -359,6 +386,15 @@ onHide(() => {
           animation: heartbeat 1s;
           color: red;
         }
+      }
+      .shareBtn {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        z-index: 1;
       }
       @keyframes heartbeat {
         0% {

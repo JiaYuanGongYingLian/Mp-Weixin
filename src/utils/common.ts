@@ -213,11 +213,12 @@ export const updateTimelineShareData = (data: {
 
 // 参数拼接
 export const parseParams = (uri: string, params: { [x: string]: any }) => {
+  if (!uri) return
   const paramsArray: string[] = []
   Object.keys(params).forEach(
     (key) => params[key] && paramsArray.push(`${key}=${params[key]}`)
   )
-  if (uri.search(/\?/) === -1) {
+  if (uri?.search(/\?/) === -1) {
     uri += `?${paramsArray.join('&')}`
   } else {
     uri += `&${paramsArray.join('&')}`

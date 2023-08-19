@@ -5,14 +5,14 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-15 14:08:16
+ * @LastEditTime: 2023-08-19 14:20:09
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady, onPageScroll } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onPageScroll, onShareAppMessage } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
@@ -158,6 +158,15 @@ onPageScroll((e) => {
     show.value = false
   } else {
     show.value = true
+  }
+})
+onShareAppMessage((_res) => {
+  return {
+    title: `黑银名片-${userDetailInfo.value?.name}` || '黑银名片',
+    content: userDetailInfo.value?.jobTagName?.split('-')[0],
+    desc: userDetailInfo.value?.jobTagName?.split('-')[0],
+    imageUrl: getImgFullPath(userDetailInfo.value?.avatar) || '',
+    path: `/pages/launch/index?redirect_url=/packageA/pages/businessCard/index&cardId=${cardId.value}&userId=${cardUserId.value}`
   }
 })
 </script>

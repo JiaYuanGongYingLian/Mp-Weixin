@@ -45,13 +45,16 @@ async function getConfig(fieldName = 'mini_project_chat') {
 
 onLoad(async (option) => {
   // #ifdef MP-WEIXIN
+  const redirect_url = option?.redirect_url
+  delete option?.redirect_url
+  const url_rewirte = parseParams(redirect_url, option || {})
   uni.login({
     provider: 'weixin',
     success: async (res) => {
       uni.setStorageSync('wxCode', res.code)
       await userStore.wxMiniLogin(res.code)
       await userStore.loginByOpenId()
-      toTargetPage()
+      toTargetPage(url_rewirte)
       getConfig('mini_project_chat')
       getConfig('mini_project_video')
     },
