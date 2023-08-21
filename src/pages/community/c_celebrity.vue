@@ -2,7 +2,7 @@
  * @Description: 对接名人主页
  * @Author: Kerwin
  * @Date: 2023-08-05 16:36:09
- * @LastEditTime: 2023-08-21 11:33:13
+ * @LastEditTime: 2023-08-21 12:34:35
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -40,7 +40,8 @@ const getFamousList = async () => {
   const { data } = await socialApi.userDetailList({
     pageIndex: famousList.pageIndex,
     pageSize: famousList.pageSize,
-    detail: 'true'
+    detail: 'true',
+    sortJson: '[{"column":"createTime","direction":"DESC"}]'
   })
   const { records, current, pages } = data
   famousList.list.push(...records)

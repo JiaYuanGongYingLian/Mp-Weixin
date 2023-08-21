@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-21 10:30:57
+ * @LastEditTime: 2023-08-21 12:37:12
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -122,6 +122,7 @@ async function focusAdd() {
   })
   if (code === 200) {
     focusDetailFn()
+    getUserDetailInfo()
   }
 }
 async function focusCancel() {
@@ -132,6 +133,7 @@ async function focusCancel() {
   })
   if (code === 200) {
     focusDetailFn()
+    getUserDetailInfo()
   }
 }
 async function focusDetailFn() {
