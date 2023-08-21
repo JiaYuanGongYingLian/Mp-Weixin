@@ -95,6 +95,7 @@ const userStore = defineStore('storeId', {
             unionId: this.wxUserInfo.unionid
           },
           success: (res) => {
+            console.log(res,this.wxUserInfo,'loginByOpenId')
             const { code, data } = res.data
             if (code === 200) {
               this.syncSetToken(data.accessToken)
@@ -137,6 +138,7 @@ const userStore = defineStore('storeId', {
             code
           },
           success: (res) => {
+            console.log(res,code,'wxMiniLogin')
             const { data } = res.data
             this.wxUserInfo = data
             this.syncSetWxToken(data.access_token)

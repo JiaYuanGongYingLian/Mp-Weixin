@@ -161,8 +161,8 @@ class RequestHttp {
             success: ({ confirm, cancel }) => {
               if (confirm) {
                 // #ifdef MP-WEIXIN
-                uni.reLaunch({
-                  url: '/pages/launch/index'
+                uni.navigateTo({
+                  url: '/pages/login/index'
                 })
                 // #endif
                 // #ifdef H5
