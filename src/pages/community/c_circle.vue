@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-08-15 10:27:44
- * @LastEditTime: 2023-08-21 10:34:58
+ * @LastEditTime: 2023-08-21 11:26:41
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -22,10 +22,11 @@ import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance, dateFormat } from '@/utils/index'
-import { useUserStore, useChatStore } from '@/store'
+import { useUserStore, useChatStore, useConfigStore } from '@/store'
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
+const configStore = useConfigStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)
 const circleList = reactive({
   list: [],
@@ -126,7 +127,12 @@ onReachBottom(() => {
           shape="circle"
           width="100rpx"
           height="100rpx"
-          :src="getImgFullPath(item.lastFriendCircleDynamic?.user.avatar)"
+          :src="
+            getImgFullPath(
+              item.lastFriendCircleDynamic?.user.avatar ||
+                configStore.cardDefualtAvatar
+            )
+          "
         ></u-image>
         <view class="con">
           <view class="top">

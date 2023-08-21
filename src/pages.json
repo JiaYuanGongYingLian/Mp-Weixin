@@ -124,7 +124,8 @@
 			"style": {
 				"navigationBarTitleText": "社区",
 				"navigationStyle": "custom",
-				"backgroundColor": "#F5F5F5"
+				"backgroundColor": "#F5F5F5",
+				"enablePullDownRefresh": true
 			}
 		}
 	],
@@ -160,7 +161,8 @@
 					"style": {
 						"navigationBarTitleText": "短视频",
 						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5"
+						"backgroundColor": "#F5F5F5",
+						"enablePullDownRefresh": true
 					}
 				},
 				{

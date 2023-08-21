@@ -2,7 +2,7 @@
  * @Description: 对接名人主页
  * @Author: Kerwin
  * @Date: 2023-08-05 16:36:09
- * @LastEditTime: 2023-08-18 15:36:31
+ * @LastEditTime: 2023-08-21 11:33:13
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -106,14 +106,14 @@ onReachBottom(() => {
                 mode="scaleToFill"
               />
               <u-image
-                src="https://mr.wyh139.com/h5/static/v3_static/class/classMain/hot.png"
+                src="https://image.blacksilverscore.com/uploads/da681ce5-0873-46dc-a5b6-a94fc8064611.png"
                 mode="scaleToFill"
                 width="140rpx"
                 height="44rpx"
                 style="position: absolute; right: 10rpx; top: 10rpx; z-index: 2"
               ></u-image>
               <u-image
-                src="https://mr.wyh139.com/h5/static/v3_static/class/classMain/ljdj.png"
+                src="https://image.blacksilverscore.com/uploads/7ef270c4-80b8-4334-8f15-c555cf36693f.png"
                 mode="scaleToFill"
                 width="250rpx"
                 height="56rpx"

@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-21 10:23:15
+ * @LastEditTime: 2023-08-21 11:57:30
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -17,7 +17,8 @@ import {
   onShow,
   onReady,
   onHide,
-  onShareAppMessage
+  onShareAppMessage,
+onPullDownRefresh
 } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi, enumAll } from '@/api'
@@ -113,11 +114,6 @@ function controlFn(e: { detail: { show: boolean } }) {
 function fullscreenchangeFn(e: { detail: { fullScreen: boolean } }) {
   fullScreen.value = e.detail.fullScreen
 }
-function toBusinessCard() {
-  uni.navigateTo({
-    url: '/packageA/pages/businessCard/detail'
-  })
-}
 function toBusinessCardHome(data: { userId: any }, index: any) {
   uni.navigateTo({
     url: `/packageA/pages/businessCard/index?userId=${data.userId}&avatar=${data?.user?.avatar}&nickname=${data?.user?.nickname}`
@@ -161,6 +157,19 @@ async function doLike(item: {
     userId: userInfo.value.id
   })
 }
+async function focusAdd(item: { userId: any; focused: boolean }) {
+  const { code } = await socialApi.userFocusAdd({
+    targetUserId: item.userId,
+    userId: userInfo.value.id
+  })
+  if (code === 200) {
+    item.focused = true
+    uni.showToast({
+      icon: 'none',
+      title: '关注成功'
+    })
+  }
+}
 onLoad((option) => {
   type.value = option?.type
   if (type.value === 'preview') {
@@ -192,6 +201,13 @@ onShareAppMessage((_res) => {
     imageUrl: getImgFullPath(dynamic.previewImage) || '',
     path: `/pages/launch/index?redirect_url=/packageA/pages/shortVideo/index&dynamicId=${dynamic.id}`
   }
+})
+onPullDownRefresh(() => {
+  console.log('refresh')
+  setTimeout(() => {
+    dynamicList()
+    uni.stopPullDownRefresh()
+  }, 1000)
 })
 </script>
 <template>
@@ -278,6 +294,7 @@ onShareAppMessage((_res) => {
               class="icon"
               src="https://image.blacksilverscore.com/uploads/2fdc2eed-dc7a-490e-8c11-17a4668ea375.png"
               v-if="!item?.focused && item?.userId !== userInfo.id"
+              @click="focusAdd(item)"
             ></u-image>
           </view>
           <view class="action" @click="doLike(item)">
@@ -302,7 +319,7 @@ onShareAppMessage((_res) => {
           v-if="!fullScreen"
         >
           <view class="top">
-            <view class="name" @click="toBusinessCard"
+            <view class="name" @click="toBusinessCardHome(item, index)"
               >@{{ item?.user?.nickname }}</view
             >
             <view class="textBox tit" v-if="item?.name">{{ item?.name }}</view>

@@ -7,7 +7,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-08-18 20:05:40
+ * @LastEditTime: 2023-08-21 11:54:55
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -17,7 +17,8 @@ import {
   onShow,
   onReady,
   onReachBottom,
-  onPageScroll
+  onPageScroll,
+  onPullDownRefresh
 } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi } from '@/api'
@@ -80,12 +81,16 @@ if (!configStore.videoPageOpen) {
 }
 // #endif
 
-onLoad((option) => {})
+onLoad((option) => {
+  if (option?.tabIndex !== undefined) {
+    currentTab.value = Number(option?.tabIndex)
+  }
+})
 
 onPageScroll((e) => {
   scrollTop.value = e.scrollTop
   if (scrollTop.value > 60) {
-    tabBgColor.value = 'rgba(0,0,0,0.5)'
+    tabBgColor.value = 'rgba(0,0,0,0.7)'
     tabInactiveColor.value = '#fff'
     tabActiveColor.value = '#fff'
   } else {
@@ -93,6 +98,15 @@ onPageScroll((e) => {
     tabActiveColor.value = '#2979ff'
     tabInactiveColor.value = '#303133'
   }
+})
+onPullDownRefresh(() => {
+  console.log('refresh')
+  setTimeout(() => {
+    uni.reLaunch({
+      url: `/pages/community/index?tabIndex=${currentTab.value}`
+    })
+    uni.stopPullDownRefresh()
+  }, 1000)
 })
 </script>
 <template>
@@ -102,7 +116,7 @@ onPageScroll((e) => {
       sticky
       :style="{
         top: 0,
-        zIndex: 2,
+        zIndex: 20,
         paddingTop: buttonRect.top ? buttonRect.top + 'px' : '0',
         background: tabBgColor
       }"
@@ -110,7 +124,7 @@ onPageScroll((e) => {
       <u-tabs
         :list="list"
         sticky
-        :style="{ top: 0, zIndex: 2 }"
+        :style="{ top: 0, zIndex: 20 }"
         v-model="currentTab"
         bg-color="transparent"
         :active-color="tabActiveColor"
