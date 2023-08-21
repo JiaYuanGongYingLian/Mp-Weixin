@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 04:42:53
- * @LastEditTime: 2023-08-18 17:36:56
+ * @LastEditTime: 2023-08-21 17:32:23
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -120,7 +120,7 @@ onReady(() => {
         </view>
         <view class="label">给TA留言</view>
         <u-form :model="form" ref="form1">
-          <u-form-item placeholder="请输入" prop="name">
+          <u-form-item placeholder="请输入" prop="name" :border-bottom="false">
             <u-input v-model="form.name" />
           </u-form-item>
         </u-form>

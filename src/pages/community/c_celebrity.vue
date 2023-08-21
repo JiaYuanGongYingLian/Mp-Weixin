@@ -2,7 +2,7 @@
  * @Description: 对接名人主页
  * @Author: Kerwin
  * @Date: 2023-08-05 16:36:09
- * @LastEditTime: 2023-08-21 12:34:35
+ * @LastEditTime: 2023-08-21 17:27:55
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -101,10 +101,10 @@ onReachBottom(() => {
               <u-image
                 class="img"
                 border-radius="0"
-                :src="getImgFullPath(item.coverImage || item.avatar)"
+                :src="getImgFullPath(item.avatar || item.coverImage)"
                 height="300rpx"
                 :lazy-load="true"
-                mode="scaleToFill"
+                mode="aspectFill"
               />
               <u-image
                 src="https://image.blacksilverscore.com/uploads/da681ce5-0873-46dc-a5b6-a94fc8064611.png"
@@ -191,7 +191,8 @@ onReachBottom(() => {
         width: 100%;
         flex-shrink: 0;
         margin-right: 20rpx;
-
+        max-height: 300rpx;
+        overflow: hidden;
         .img {
           width: 100%;
           // height: 200rpx;

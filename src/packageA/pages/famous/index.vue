@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 13:49:44
- * @LastEditTime: 2023-08-18 16:24:23
+ * @LastEditTime: 2023-08-21 17:06:13
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -82,7 +82,7 @@ async function getDataList() {
     pageIndex,
     pageSize,
     detail: 'true',
-    name: keyword.value,
+    keywords: keyword.value,
     jobTagId: tab.id
   })
   const { records, current, pages } = data
