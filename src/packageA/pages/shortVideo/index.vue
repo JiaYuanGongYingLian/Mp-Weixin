@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-19 16:25:13
+ * @LastEditTime: 2023-08-21 10:23:15
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -120,7 +120,7 @@ function toBusinessCard() {
 }
 function toBusinessCardHome(data: { userId: any }, index: any) {
   uni.navigateTo({
-    url: `/packageA/pages/businessCard/index?userId=${data.userId}`
+    url: `/packageA/pages/businessCard/index?userId=${data.userId}&avatar=${data?.user?.avatar}&nickname=${data?.user?.nickname}`
   })
 }
 function toPublishCenter() {

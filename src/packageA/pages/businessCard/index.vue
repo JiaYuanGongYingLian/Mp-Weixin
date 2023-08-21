@@ -5,17 +5,23 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-19 17:38:08
+ * @LastEditTime: 2023-08-21 10:30:57
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady, onPageScroll, onShareAppMessage } from '@dcloudio/uni-app'
+import {
+  onLoad,
+  onShow,
+  onReady,
+  onPageScroll,
+  onShareAppMessage
+} from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi } from '@/api'
-import { getImgFullPath, getDistance } from '@/utils/index'
+import { getImgFullPath, getDistance, previewImage } from '@/utils/index'
 import { useUserStore, useConfigStore } from '@/store'
 import hyNavBarSimpler from '@/components/hy-nav-bar-simpler/index.vue'
 import c_shop from './c_shop.vue'
@@ -52,6 +58,10 @@ uni.getSystemInfo({
   }
 })
 const currentTab = ref(0)
+const userData = reactive({
+  avatar: '',
+  nickname: ''
+})
 async function getUserDetailInfo() {
   const { data } = await socialApi.userDetailInfo({
     id: cardId.value,
@@ -67,9 +77,11 @@ async function getUserDetailInfo() {
         userInfo.value.avatar || configStore.cardDefualtCoverImage
       userDetailInfo.value.name = userInfo.value.nickname
     } else {
-      userDetailInfo.value.avatar = configStore.cardDefualtAvatar
-      userDetailInfo.value.coverImage = configStore.cardDefualtCoverImage
-      userDetailInfo.value.name = userInfo.value.nickname
+      userDetailInfo.value.avatar =
+        userData.avatar || configStore.cardDefualtAvatar
+      userDetailInfo.value.coverImage =
+        userData.avatar || configStore.cardDefualtCoverImage
+      userDetailInfo.value.name = userData.nickname || userInfo.value.nickname
     }
   } else {
     userDetailInfo.value = data
@@ -143,6 +155,8 @@ function tabChange() {}
 onLoad((option) => {
   cardId.value = option?.cardId
   cardUserId.value = option?.userId
+  userData.avatar = option?.avatar
+  userData.nickname = option?.nickname
   isMySelf.value = Number(option?.userId) === userInfo.value.id
   getUserDetailInfo()
   if (!isMySelf.value) {
@@ -188,7 +202,7 @@ onShareAppMessage((_res) => {
             width="180rpx"
             height="180rpx"
             shape="circle"
-            @click="toEdit"
+            @click="previewImage([getImgFullPath(userDetailInfo?.avatar)], 0)"
           ></u-image>
         </view>
         <view class="info">
@@ -251,10 +265,23 @@ onShareAppMessage((_res) => {
         sticky
         :style="{ top: `${statusBarHeight}px`, zIndex: 2 }"
       ></u-tabs>
-      <view v-if="hasDetailInfo">
+      <view>
         <!-- 传记 -->
         <view class="tabBox biography" v-show="currentTab === 0">
-          <c_biography :info="userDetailInfo" />
+          <c_biography :info="userDetailInfo" v-if="hasDetailInfo" />
+          <view v-else class="empty">
+            <view class="text" v-if="isMySelf">完善传记链接名人</view>
+            <view class="text" v-else>暂无数据</view>
+            <u-button
+              size="medium"
+              class="btn"
+              :hair-line="false"
+              ripple
+              @click="toEdit"
+              v-if="isMySelf"
+              >立即完善</u-button
+            >
+          </view>
         </view>
         <!-- 视频 -->
         <view class="video" v-show="currentTab === 1">
@@ -272,19 +299,6 @@ onShareAppMessage((_res) => {
             style="margin-top: 30px"
           ></u-empty>
         </view>
-      </view>
-      <view v-else class="empty">
-        <view class="text" v-if="isMySelf">完善传记链接名人</view>
-        <view class="text" v-else>暂无数据</view>
-        <u-button
-          size="medium"
-          class="btn"
-          :hair-line="false"
-          ripple
-          @click="toEdit"
-          v-if="isMySelf"
-          >立即完善</u-button
-        >
       </view>
 
       <u-back-top :scroll-top="scrollTop"></u-back-top>

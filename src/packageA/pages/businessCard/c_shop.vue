@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-19 17:46:57
+ * @LastEditTime: 2023-08-21 10:41:01
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -20,8 +20,7 @@ const userStore = useUserStore()
 const { hasLogin } = storeToRefs(userStore)
 const props = defineProps({
   shopId: {
-    type: String,
-    default: ''
+    type: Number
   }
 })
 
