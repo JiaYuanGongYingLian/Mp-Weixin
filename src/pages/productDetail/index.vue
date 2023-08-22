@@ -303,8 +303,11 @@ onShareAppMessage((res) => {
           <view class="price-tip" v-if="!productData.moneyUnit">￥</view>
           <view class="price"
             >{{ shopProductSkuSelected.money || productData.money }}
-            <text class="origin" v-if="productData.couponSku"
-              >￥{{ productData.originalMoney }}</text
+            <text class="origin"
+              >￥{{
+                shopProductSkuSelected.originalMoney ||
+                productData.originalMoney
+              }}</text
             >
           </view>
           <view class="price-tip" v-if="productData.moneyUnit">黑豆</view>

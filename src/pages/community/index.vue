@@ -7,7 +7,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-08-21 11:54:55
+ * @LastEditTime: 2023-08-22 11:29:53
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -48,13 +48,6 @@ let list = [
 ]
 
 const currentTab = ref(1)
-const categoryList = ref([])
-const famousList = reactive({
-  pageIndex: 1,
-  pageSize: 18,
-  finished: false,
-  list: []
-})
 const buttonRect = ref({})
 // #ifdef MP-WEIXIN
 buttonRect.value = wx.getMenuButtonBoundingClientRect()

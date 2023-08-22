@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-08-15 10:27:44
- * @LastEditTime: 2023-08-21 11:26:41
+ * @LastEditTime: 2023-08-22 11:02:38
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -87,9 +87,9 @@ async function joinGroup(item: {
     userId: userInfo.value.id
   })
   if (code === 200) {
-    reload()
+    await reload()
     uni.navigateTo({
-      url: `/packageA/pages/chat/index?groupId=${item.chatGroupId}`
+      url: `/packageA/pages/chat/index?groupId=${item.chatGroupId}&groupName=${item.name}`
     })
   }
 }

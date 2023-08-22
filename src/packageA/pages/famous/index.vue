@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 13:49:44
- * @LastEditTime: 2023-08-21 17:06:13
+ * @LastEditTime: 2023-08-22 11:51:14
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -83,7 +83,8 @@ async function getDataList() {
     pageSize,
     detail: 'true',
     keywords: keyword.value,
-    jobTagId: tab.id
+    jobTagId: tab.id,
+    sortJson: '[{"column":"createTime","direction":"DESC"}]'
   })
   const { records, current, pages } = data
   item.list.push(...records)
@@ -179,10 +180,10 @@ onReachBottom(() => {
                 <u-image
                   class="img"
                   border-radius="0"
-                  :src="getImgFullPath(data.coverImage || data.avatar)"
+                  :src="getImgFullPath(data.avatar || data.coverImage)"
                   height="300rpx"
                   :lazy-load="true"
-                  mode="scaleToFill"
+                  mode="aspectFill"
                 />
               </view>
               <view class="content">

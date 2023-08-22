@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-08-17 18:27:47
- * @LastEditTime: 2023-08-18 14:31:12
+ * @LastEditTime: 2023-08-22 14:12:12
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -136,7 +136,7 @@ onReachBottom(() => {
           <view class="top">
             <view class="name">{{ item?.name }}</view>
             <view class="date">{{
-              dateFormat(new Date(item.mtime), 'yyyy-MM-dd hh:mm')
+              dateFormat(new Date(item.mtime), 'MM-dd hh:mm')
             }}</view>
           </view>
           <view class="desc"> {{ item?.content }}</view>

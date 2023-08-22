@@ -2,7 +2,7 @@
  * @Description: 对接名人主页
  * @Author: Kerwin
  * @Date: 2023-08-05 16:36:09
- * @LastEditTime: 2023-08-21 17:27:55
+ * @LastEditTime: 2023-08-22 13:46:33
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -85,7 +85,7 @@ onReachBottom(() => {
         </view>
       </view>
     </view>
-    <view class="section">
+    <view class="p-b-40 section">
       <view class="t-head">
         <text class="iconfont hy-icon-hot" />
         <text class="t-head-t"> 热门推荐</text>
@@ -140,6 +140,9 @@ onReachBottom(() => {
   background: #fff;
   padding: 20rpx;
   margin-top: 20rpx;
+  &.p-b-40 {
+    padding-bottom: 40rpx;
+  }
 }
 
 .actions {

@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-19 16:26:33
+ * @LastEditTime: 2023-08-22 11:50:19
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -45,7 +45,8 @@ async function dynamicList() {
       type: 3,
       userId: props.cardUserId,
       detail: true,
-      status: enumAll.audit_status_enum.SUCCESS
+      status: enumAll.audit_status_enum.SUCCESS,
+      sortJson: '[{"column":"createTime","direction":"DESC"}]'
     })
     videoList.list = [...data]
     status.value = 'nomore'
