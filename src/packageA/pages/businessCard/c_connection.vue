@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 04:42:53
- * @LastEditTime: 2023-08-21 17:32:23
+ * @LastEditTime: 2023-08-23 16:45:40
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -64,7 +64,7 @@ function submit() {
       }
       const { data } = await orderApi.orderAdd(orderData)
       if (data) {
-        uni.setStorageSync('orderDataString', JSON.stringify(data))
+        uni.setStorageSync('orderJson', JSON.stringify(data))
         uni.navigateTo({
           url: '/pages/payment/index?order=true'
         })

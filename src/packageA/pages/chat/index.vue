@@ -4,7 +4,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-08-22 11:03:56
+ * @LastEditTime: 2023-08-23 17:01:48
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -120,6 +120,7 @@ onLoad((option) => {
               {{ dateFormat(new Date(s.ctime_ms), 'MM-dd hh:mm') }}
             </view>
             <view class="l-chat-item-content">
+              <!-- {{ s }} -->
               <view class="l-chat-avatar">
                 <image
                   class="l-chat-img-avatar"

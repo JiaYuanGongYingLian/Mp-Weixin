@@ -31,7 +31,7 @@ async function creatOrder() {
   try {
     const { data } = await orderApi.orderAdd(orderData.value)
     if (data) {
-      uni.setStorageSync('orderDataString', JSON.stringify(data))
+      uni.setStorageSync('orderJson', JSON.stringify(data))
       uni.navigateTo({
         url: '/pages/payment/index?order=true'
       })

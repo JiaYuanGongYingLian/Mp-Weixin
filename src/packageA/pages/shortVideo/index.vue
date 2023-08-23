@@ -5,20 +5,20 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-21 11:57:30
+ * @LastEditTime: 2023-08-23 15:14:54
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, watch } from 'vue'
 import {
   onLoad,
   onShow,
   onReady,
   onHide,
   onShareAppMessage,
-onPullDownRefresh
+  onPullDownRefresh
 } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi, enumAll } from '@/api'
@@ -302,7 +302,7 @@ onPullDownRefresh(() => {
               class="iconfont hy-icon-yidianzan"
               :class="{ 'is-active': item?.favorited }"
             ></text>
-            {{ item?.favoriteCount }}
+            <text class="num">{{ item?.favoriteCount }}</text>
           </view>
           <view class="action">
             <button open-type="share" class="shareBtn"></button>
@@ -402,6 +402,10 @@ onPullDownRefresh(() => {
       .iconfont {
         font-size: 70rpx;
         opacity: 0.85;
+        text-shadow: rgba(0, 0, 0, 0.6) 1px 1px 0px;
+      }
+      .num {
+        text-shadow: rgba(0, 0, 0, 0.6) 1px 1px 1px;
       }
       .hy-icon-yidianzan {
         &.is-active {

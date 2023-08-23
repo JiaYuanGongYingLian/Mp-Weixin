@@ -273,7 +273,7 @@ onLoad(async (option) => {
     info.money = option.money
   }
   if (option?.order) {
-    order.value = JSON.parse(uni.getStorageSync('orderDataString'))
+    order.value = JSON.parse(uni.getStorageSync('orderJson'))
     info.money = order.value.money
     info.moneyUnit = order.value.moneyUnit
     getWalletRuleList()

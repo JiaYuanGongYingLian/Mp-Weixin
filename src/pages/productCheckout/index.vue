@@ -59,8 +59,9 @@ function numberChange(data) {
 // 创建订单
 async function creatOrder() {
   const { data } = await orderApi.orderAdd(orderData.value)
+  uni.setStorageSync('orderJson', JSON.stringify(data))
   uni.redirectTo({
-    url: `/pages/payment/index?order=${JSON.stringify(data)}`
+    url: '/pages/payment/index?order=true'
   })
 }
 
@@ -77,7 +78,7 @@ function onSubmit() {
 
 onLoad(async (option) => {
   orderData.value = JSON.parse(uni.getStorageSync('orderJson') || '')
-  console.log(orderData.value)
+  console.log(orderData.value,123)
   await getAddressList()
   await getOrderMoney()
 })

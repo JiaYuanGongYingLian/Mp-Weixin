@@ -2,7 +2,7 @@
  * @Description: 传记
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-19 11:39:45
+ * @LastEditTime: 2023-08-23 16:24:42
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -105,7 +105,7 @@ onMounted((option) => {})
           v-for="(item, index) in info.resumeResources"
           :key="item.id"
           :src="getImgFullPath(item.resourceUrl)"
-          @click="previewImageFn(info.resumeResources,index)"
+          @click="previewImageFn(info.resumeResources, index)"
         ></u-image>
       </view>
       <view
@@ -121,7 +121,7 @@ onMounted((option) => {})
           v-for="(item, index) in info.companyResources"
           :key="item.id"
           :src="getImgFullPath(item.resourceUrl)"
-          @click="previewImageFn(info.companyResources,index)"
+          @click="previewImageFn(info.companyResources, index)"
         ></u-image>
       </view>
       <view
@@ -152,7 +152,8 @@ onMounted((option) => {})
     .item {
       display: flex;
       align-items: top;
-      margin: 30rpx 0;
+      margin: 20rpx 0;
+      line-height: 52rpx;
 
       .label {
         color: #666;
@@ -165,7 +166,7 @@ onMounted((option) => {})
     margin-bottom: 20rpx !important;
   }
   .textCon {
-    line-height: 40rpx;
+    line-height: 56rpx;
     margin-bottom: 20rpx;
   }
 }

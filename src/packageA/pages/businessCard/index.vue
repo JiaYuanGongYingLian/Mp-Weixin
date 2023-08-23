@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-21 12:37:12
+ * @LastEditTime: 2023-08-23 14:40:33
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -154,6 +154,12 @@ function contact() {
   pop.value.openPop()
 }
 function tabChange() {}
+function toChat() {
+  const jgUserName = `hy_${userDetailInfo.value.userId}`
+  uni.navigateTo({
+    url: `/packageA/pages/chat/index?username=${jgUserName}`
+  })
+}
 onLoad((option) => {
   cardId.value = option?.cardId
   cardUserId.value = option?.userId
@@ -243,16 +249,22 @@ onShareAppMessage((_res) => {
         <view class="action" v-else>
           <view
             class="btn focus"
-            :class="{ isFocus: focusDetail.status }"
+            :class="{
+              isFocus: focusDetail.status,
+              shadow: !focusDetail.status
+            }"
             @click="focusAdd"
           >
             <text class="text"
               >{{ focusDetail.status ? '✔ 已关注' : '+关注' }}
             </text>
           </view>
-          <view class="btn link" @click="contact">
-            <text class="text">立即对接</text>
+          <view class="btn def" @click="toChat" v-show="focusDetail.status">
+            <text class="text">私信</text>
           </view>
+          <!-- <view class="btn link" @click="contact">
+            <text class="text">立即对接</text>
+          </view> -->
           <c_connection ref="pop" :info="userDetailInfo" />
         </view>
       </view>
@@ -327,7 +339,18 @@ onShareAppMessage((_res) => {
     padding: 60rpx 40rpx;
     display: flex;
     align-items: center;
-    box-shadow: inset 0rpx -100rpx 20rpx -10rpx rgba(0, 0, 0, 0.1);
+    &.after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #000;
+      z-index: 1;
+    }
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
 
     .avatar {
       width: 180rpx;
@@ -342,8 +365,8 @@ onShareAppMessage((_res) => {
     }
 
     .info {
-      display: flex;
-      align-items: center;
+      // display: flex;
+      // align-items: center;
 
       .name {
         color: #fff;
@@ -359,12 +382,18 @@ onShareAppMessage((_res) => {
         font-size: 20rpx;
         background: linear-gradient(128deg, #ff522d, #ff913e);
         border-radius: 17px;
-        padding: 2px 8px;
-        margin-left: 7px;
+        padding: 0 8px;
+        // margin-left: 7px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
         margin-bottom: 0rpx;
+        text-align: center;
+        margin-top: 7rpx;
+        display: flex;
+        justify-content: center;
+        height: 40rpx;
+        line-height: 40rpx;
       }
     }
   }
@@ -416,25 +445,27 @@ onShareAppMessage((_res) => {
     text-align: center;
     line-height: 60rpx;
     font-weight: bold;
-    box-shadow: 0 0 10rpx 0 rgba(0, 0, 0, 0.3);
+    transition: 0.3s ease;
+    &.shadow {
+      box-shadow: 0 0 10rpx 0 rgba(0, 0, 0, 0.3);
+    }
     &.def {
       background-color: #eee;
       width: 50%;
       color: #333;
       font-weight: normal;
-      box-shadow: none;
     }
     &.focus {
-      width: 40%;
+      flex: 1;
       &.isFocus {
-        background-color: #f6f6f6;
+        background-color: #eee;
         // box-shadow: none;
         color: #333;
         font-weight: normal;
       }
     }
     &.link {
-      flex: 1;
+      width: 50%;
     }
     &:active {
       box-shadow: 0 0 0 rgba(0, 0, 0, 0.5);
