@@ -205,35 +205,36 @@ onLoad((option) => {
               ></image>
               <image
                 class="image"
-                :src="getImgFullPath(item.shopProductSku.productSku.image)"
+                :src="getImgFullPath(item.shopProductSku?.productSku?.image)"
                 mode="aspectFill"
               />
             </view>
             <view class="item-right">
-              <text class="title">{{ item.shopProductSku.name }}</text>
+              <text class="title">{{ item.shopProductSku?.name }}</text>
               <text class="attr">{{
-                item.shopProductSku.productSku.name
+                item.shopProductSku?.productSku?.name
               }}</text>
               <view class="price red">
                 <view class="money">
                   <text
                     class="unit l"
-                    v-if="!item.shopProductSku.shopProductSkuWalletRules"
+                    v-if="!item.shopProductSku?.shopProductSkuWalletRules"
                     >¥</text
                   >
-                  <text> {{ ' ' + item.shopProductSku.money }} </text>
+                  <text> {{ ' ' + item.shopProductSku?.money }} </text>
                   <text
                     class="unit r"
-                    v-if="item.shopProductSku.shopProductSkuWalletRules"
+                    v-if="item.shopProductSku?.shopProductSkuWalletRules"
                     >{{
-                      item.shopProductSku.shopProductSkuWalletRules[0].moneyUnit
+                      item.shopProductSku?.shopProductSkuWalletRules[0]
+                        ?.moneyUnit
                     }}</text
                   >
                 </view>
                 <u-number-box
                   class="step"
                   :min="1"
-                  :max="item.shopProductSku.productSku.count"
+                  :max="item.shopProductSku?.productSku?.count"
                   v-model="item.count"
                   :index="index"
                   @change="numberChange"

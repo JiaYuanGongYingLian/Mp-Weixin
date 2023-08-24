@@ -6,7 +6,7 @@ import {
   onLoad,
   onReachBottom,
   onPageScroll,
-onShareAppMessage
+  onShareAppMessage
 } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, moneyApi, productApi } from '@/api'
@@ -16,6 +16,7 @@ import searchBar from '@/components/hy-search-bar/index.vue'
 import hyDownloadTips from '@/components/hy-download-tips/index.vue'
 import icon_heidou from '@/static/mine_hei_dou.png'
 import { isAlipayClient, isWeChat } from '@/utils/common'
+import { sharePathFormat } from '@/common/wechat-share'
 
 const userStore = useUserStore()
 const { hasLogin, walletList } = storeToRefs(userStore)
@@ -174,7 +175,7 @@ onShareAppMessage((_res) => {
   const sourceTime = new Date().getTime()
   return {
     title: '黑银生活',
-    path: `/pages/launch/index?sourceTime=${sourceTime}`
+    path: sharePathFormat({ sourceTime })
   }
 })
 </script>

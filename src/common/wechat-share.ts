@@ -2,9 +2,12 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-08 15:03:59
- * @LastEditTime: 2023-06-08 15:50:47
+ * @LastEditTime: 2023-08-24 17:48:13
  * @LastEditors:  Please set LastEditors
  */
+
+import { parseParams } from '@/utils/common'
+
 /**
  * 微信js-sdk配置
  */
@@ -61,7 +64,26 @@ export const updateTimelineShareData = (data: {
     }
   })
 }
+/**
+ * 微信小程序分享路径格式化
+ * @return{ path:string } 携带参数的完整路径
+ */
+export const sharePathFormat = (data: { [x: string]: any }) => {
+  const pages = getCurrentPages()
+  let redirect_url = `/${pages[pages.length - 1]?.route}`
+  const shareCode = uni.getStorageSync('userInfo')?.shareCode
+  if (data.redirect_url) {
+    redirect_url = data.redirect_url
+    delete data.redirect_url
+  }
+  return parseParams('/pages/launch/index', {
+    redirect_url,
+    shareCode,
+    ...data
+  })
+}
 export default {
   updateAppMessageShareData,
-  updateTimelineShareData
+  updateTimelineShareData,
+  sharePathFormat
 }

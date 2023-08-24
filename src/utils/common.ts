@@ -253,13 +253,11 @@ export const $toast = (
   })
 }
 
-  /*
-   * 图片url转bolb
-   * @param{ url } 图片url
-   * @param{ name } 图片名称
-   */
-
-
+/*
+ * 图片url转bolb
+ * @param{ url } 图片url
+ * @param{ name } 图片名称
+ */
 
 export default {
   getQueryObject,

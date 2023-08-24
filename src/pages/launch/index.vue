@@ -48,6 +48,9 @@ onLoad(async (option) => {
   const redirect_url = option?.redirect_url
   delete option?.redirect_url
   const url_rewirte = parseParams(redirect_url, option || {})
+  if (option?.shareCode) {
+    uni.setStorageSync('shareCode', option?.shareCode)
+  }
   uni.login({
     provider: 'weixin',
     success: async (res) => {

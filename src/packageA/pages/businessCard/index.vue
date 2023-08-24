@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-23 14:40:33
+ * @LastEditTime: 2023-08-24 17:45:01
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -28,6 +28,7 @@ import c_shop from './c_shop.vue'
 import c_biography from './c_biography.vue'
 import c_video from './c_video.vue'
 import c_connection from './c_connection.vue'
+import { sharePathFormat } from '@/common/wechat-share'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
@@ -182,13 +183,14 @@ onPageScroll((e) => {
     show.value = true
   }
 })
+
 onShareAppMessage((_res) => {
   return {
     title: `黑银名片-${userDetailInfo.value?.name}` || '黑银名片',
     content: userDetailInfo.value?.jobTagName?.split('-')[0],
     desc: userDetailInfo.value?.jobTagName?.split('-')[0],
     imageUrl: getImgFullPath(userDetailInfo.value?.avatar) || '',
-    path: `/pages/launch/index?redirect_url=/packageA/pages/businessCard/index&cardId=${cardId.value}&userId=${cardUserId.value}`
+    path: sharePathFormat({ cardId: cardId.value, userId: cardUserId.value })
   }
 })
 </script>

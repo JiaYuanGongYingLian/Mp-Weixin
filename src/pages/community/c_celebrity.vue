@@ -2,7 +2,7 @@
  * @Description: 对接名人主页
  * @Author: Kerwin
  * @Date: 2023-08-05 16:36:09
- * @LastEditTime: 2023-08-22 13:46:33
+ * @LastEditTime: 2023-08-24 18:21:59
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -113,13 +113,13 @@ onReachBottom(() => {
                 height="44rpx"
                 style="position: absolute; right: 10rpx; top: 10rpx; z-index: 2"
               ></u-image>
-              <u-image
+              <!-- <u-image
                 src="https://image.blacksilverscore.com/uploads/7ef270c4-80b8-4334-8f15-c555cf36693f.png"
                 mode="scaleToFill"
                 width="250rpx"
                 height="56rpx"
                 style="position: absolute; left: 0rpx; bottom: 0; z-index: 2"
-              ></u-image>
+              ></u-image> -->
             </view>
             <view class="content">
               <view class="name">{{ item.name }}</view>
