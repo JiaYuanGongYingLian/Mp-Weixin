@@ -3,7 +3,7 @@
  * @Description: 全局的枚举
  * @Author: Kerwin
  * @Date: 2023-08-10 10:12:27
- * @LastEditTime: 2023-08-10 10:39:17
+ * @LastEditTime: 2023-08-25 14:45:22
  * @LastEditors:  Please set LastEditors
  */
 
@@ -25,7 +25,7 @@ enum advertising_enum {
 enum audit_status_enum {
   DEFAULT = 0, // 默认
   PENDING = 10, // 审核中
-  SUCCESS = 20, // 审核拒绝
+  SUCCESS = 20, // 审核成功
   REJECT = 21 // 审核拒绝
 }
 

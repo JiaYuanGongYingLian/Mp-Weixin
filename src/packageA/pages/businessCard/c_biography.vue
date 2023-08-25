@@ -2,7 +2,7 @@
  * @Description: 传记
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-23 16:24:42
+ * @LastEditTime: 2023-08-25 15:32:54
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -166,8 +166,9 @@ onMounted((option) => {})
     margin-bottom: 20rpx !important;
   }
   .textCon {
-    line-height: 56rpx;
+    line-height: 52rpx;
     margin-bottom: 20rpx;
+    margin-top: 20rpx;
   }
 }
 </style>

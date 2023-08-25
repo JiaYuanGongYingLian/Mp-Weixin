@@ -7,7 +7,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-08-22 11:29:53
+ * @LastEditTime: 2023-08-25 17:44:57
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -134,6 +134,7 @@ onPullDownRefresh(() => {
       <c_elebrity />
     </view>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
+    <hy-tabbar></hy-tabbar>
   </view>
 </template>
 

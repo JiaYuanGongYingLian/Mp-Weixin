@@ -28,9 +28,16 @@
               ? 'u-tabbar__content__circle__button'
               : 'u-tabbar__content__item__button'
           ]"
+          class="tabIcon"
         >
           <u-icon
-            :size="midButton && item.midButton ? midButtonSize : iconSize"
+            :size="
+              midButton && item.midButton
+                ? midButtonSize
+                : item.iconSize
+                ? item.iconSize
+                : iconSize
+            "
             :name="elIconPath(index)"
             img-mode="scaleToFill"
             :color="elColor(index)"
@@ -75,6 +82,34 @@
 </template>
 
 <script>
+const pageslist = [
+  {
+    pagePath: '/pages/index/index',
+    iconPath: '/static/ic_bar_main_pg.png',
+    selectedIconPath: '/static/ic_bar_main_page_checked.png',
+    text: '首页'
+  },
+  {
+    pagePath: '/pages/community/index',
+    iconPath: '/static/ic_bar_circle.png',
+    selectedIconPath: '/static/ic_bar_circle_checked.png',
+    text: '社区'
+  },
+  {
+    pagePath: 'packageA/pages/shortVideo/index',
+    iconPath: '/static/ic_bar_video.png',
+    selectedIconPath: '/static/ic_bar_circle_checked.png',
+    customIcon: true,
+    iconSize: 44,
+    text: '短视频'
+  },
+  {
+    pagePath: '/pages/mine/index',
+    iconPath: '/static/ic_bar_mine.png',
+    selectedIconPath: '/static/ic_bar_mine_checked.png',
+    text: '我的'
+  }
+]
 export default {
   emits: ['update:modelValue', 'input', 'change'],
   props: {
@@ -131,7 +166,7 @@ export default {
     list: {
       type: Array,
       default() {
-        return []
+        return pageslist
       }
     },
     // 切换前的回调
@@ -378,5 +413,14 @@ export default {
       }
     }
   }
+  
 }
+/* #ifdef H5 */
+.tabIcon {
+  top: 10rpx !important;
+}
+.u-tabbar__content__item__text {
+  bottom: 10rpx;
+}
+/* #endif */
 </style>

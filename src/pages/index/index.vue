@@ -271,6 +271,7 @@ onShareAppMessage((_res) => {
     </view>
     <u-loadmore :status="status" />
     <u-back-top :scroll-top="scrollTop"></u-back-top>
+    <hy-tabbar></hy-tabbar>
   </view>
 </template>
 

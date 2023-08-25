@@ -191,7 +191,7 @@ onLoad((option) => {
       </view>
       <view class="myBox healthTool tool">
         <view class="box">
-          <view
+          <!-- <view
             class="bar"
             @tap="goUrlFn"
             data-url="/packageA/pages/famousOrder/index"
@@ -212,7 +212,7 @@ onLoad((option) => {
               src="https://image.blacksilverscore.com/uploads/516fd61d-c1d3-4878-815e-26ed4d216502.png"
             ></image
             >对接我的
-          </view>
+          </view> -->
           <view
             class="bar"
             @tap="goUrlFn"
@@ -237,6 +237,7 @@ onLoad((option) => {
         </view>
       </view>
     </view>
+    <hy-tabbar></hy-tabbar>
     <!-- #ifdef H5 -->
     <hyTabBar
       v-if="enterByStoreQrcode"

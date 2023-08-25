@@ -9,6 +9,7 @@ import { productApi, couponApi } from '@/api'
 import { getImgFullPath, previewImage, checkLoginState } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 import { useUserStore } from '@/store'
+import { sharePathFormat } from '@/common/wechat-share'
 
 const storeUser = useUserStore()
 const { hasLogin, userInfo } = storeToRefs(storeUser)
@@ -265,18 +266,11 @@ onLoad(async (option) => {
   await getFavoriteInfo()
   await getCartProductNumFn()
 })
-onShareAppMessage((res) => {
-  const inviteCode = ''
-  const title = productData.value.name
-  const imageUrl = getImgFullPath(productData.value.image)
-  const sourceTime = new Date().getTime()
-  const pages = getCurrentPages()
-  const currentPage = pages[pages.length - 1]
-  const path = `${currentPage.$page.fullPath}?inviteCode${inviteCode}&sourceTime=${sourceTime}`
+onShareAppMessage(() => {
   return {
-    title,
-    imageUrl,
-    path
+    title: productData.value.name,
+    imageUrl: getImgFullPath(productData.value.image),
+    path: sharePathFormat({ productId: productId.value, shopId: shopId.value })
   }
 })
 </script>

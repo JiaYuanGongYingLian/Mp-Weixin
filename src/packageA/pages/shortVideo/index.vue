@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-23 15:14:54
+ * @LastEditTime: 2023-08-25 15:38:52
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -25,6 +25,7 @@ import { baseApi, productApi, socialApi, enumAll } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore, useConfigStore } from '@/store'
 import hyNavBarSimpler from '@/components/hy-nav-bar-simpler/index.vue'
+import { sharePathFormat } from '@/common/wechat-share'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
@@ -199,11 +200,12 @@ onShareAppMessage((_res) => {
     content: dynamic.content,
     desc: dynamic.content,
     imageUrl: getImgFullPath(dynamic.previewImage) || '',
-    path: `/pages/launch/index?redirect_url=/packageA/pages/shortVideo/index&dynamicId=${dynamic.id}`
+    path: sharePathFormat({ dynamicId: dynamic.id })
   }
 })
 onPullDownRefresh(() => {
   console.log('refresh')
+  if (['preview', 'viewSingleUser'].includes(type.value)) return
   setTimeout(() => {
     dynamicList()
     uni.stopPullDownRefresh()
