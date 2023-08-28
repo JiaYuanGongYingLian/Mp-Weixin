@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-22 11:50:19
+ * @LastEditTime: 2023-08-28 15:59:08
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -89,7 +89,7 @@ onMounted(() => {
         </view>
       </view>
     </view>
-    <u-loadmore :status="status" margin-top="50" />
+    <u-loadmore :status="status" margin-top="30" margin-bottom="30" />
   </view>
 </template>
 

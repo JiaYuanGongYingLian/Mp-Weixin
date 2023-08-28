@@ -96,11 +96,11 @@ const pageslist = [
     text: '社区'
   },
   {
-    pagePath: 'packageA/pages/shortVideo/index',
+    path: '/packageA/pages/shortVideo/index',
     iconPath: '/static/ic_bar_video.png',
     selectedIconPath: '/static/ic_bar_circle_checked.png',
     customIcon: true,
-    iconSize: 44,
+    iconSize: 46,
     text: '短视频'
   },
   {
@@ -251,6 +251,10 @@ export default {
   },
   methods: {
     async clickHandler(index) {
+      if (this.list[index].path) {
+        uni.navigateTo({ url: this.list[index].path })
+        return
+      }
       if (this.beforeSwitch && typeof this.beforeSwitch === 'function') {
         // 执行回调，同时传入索引当作参数
         // 在微信，支付宝等环境(H5正常)，会导致父组件定义的customBack()函数体中的this变成子组件的this

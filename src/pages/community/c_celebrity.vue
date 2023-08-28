@@ -2,7 +2,7 @@
  * @Description: 对接名人主页
  * @Author: Kerwin
  * @Date: 2023-08-05 16:36:09
- * @LastEditTime: 2023-08-24 18:21:59
+ * @LastEditTime: 2023-08-28 16:57:02
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -120,6 +120,10 @@ onReachBottom(() => {
                 height="56rpx"
                 style="position: absolute; left: 0rpx; bottom: 0; z-index: 2"
               ></u-image> -->
+              <view class="count">
+                <u-icon name="eye" size="30" color="#ccc"></u-icon>
+                <text class="num"> {{ item.readCount }}</text>
+              </view>
             </view>
             <view class="content">
               <view class="name">{{ item.name }}</view>
@@ -199,6 +203,19 @@ onReachBottom(() => {
         .img {
           width: 100%;
           // height: 200rpx;
+        }
+        .count {
+          position: absolute;
+          left: 10rpx;
+          bottom: 10rpx;
+          color: #ccc;
+          text-shadow: rgba(0, 0, 0, 0.6) 1px 1px 1px;
+          display: flex;
+          align-items: center;
+          .num {
+            margin-left: 10rpx;
+            font-size: 26rpx;
+          }
         }
       }
 

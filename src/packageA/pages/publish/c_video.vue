@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-01 16:22:48
- * @LastEditTime: 2023-08-21 12:46:17
+ * @LastEditTime: 2023-08-28 16:11:22
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -53,6 +53,7 @@ const videoList2 = reactive({
   pageSize: 20
 })
 const progress = ref(0)
+const progressPrev = ref(0)
 const counter = ref()
 
 const videoUrl = ref('')
@@ -77,8 +78,8 @@ function chooseVideo() {
           })
         },
         onProgress(p: number) {
+          progressPrev.value = progress.value
           progress.value = p
-          console.log(progress.value)
           counter.value.start()
         },
         uploadPath: ''
@@ -143,7 +144,7 @@ async function dynamicAdd() {
     videoUrl: videoUrl.value,
     remark: '',
     userId: userInfo.value.id,
-    previewImage: `${videoUrl.value}?x-oss-process=video/snapshot,t_0,f_jpg,w_540,m_fast`
+    previewImage: `${videoUrl.value}?x-oss-process=video/snapshot,t_0,f_jpg,w_540`
   })
   dynamicList()
 }
@@ -193,6 +194,7 @@ onMounted(() => {
             <view
               ><u-count-to
                 ref="counter"
+                :start-val="progressPrev"
                 :end-val="progress"
                 :autoplay="true"
                 :font-size="30"

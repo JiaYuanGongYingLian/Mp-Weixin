@@ -5,13 +5,13 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-25 15:38:52
+ * @LastEditTime: 2023-08-28 18:29:01
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref, watch, onMounted } from 'vue'
 import {
   onLoad,
   onShow,
@@ -36,7 +36,7 @@ buttonRect.value = wx.getMenuButtonBoundingClientRect()
 // #endif
 const tabList = [
   {
-    name: '社区'
+    name: '关注'
   },
   {
     name: '热门'
@@ -130,11 +130,10 @@ function toMine() {
     url: `/packageA/pages/businessCard/index?userId=${userInfo.value.id}`
   })
 }
-function toFamous() {
-  // uni.navigateTo({
-  //   url: '/packageA/pages/famous/index'
-  // })
-  uni.navigateBack()
+function toHome() {
+  uni.switchTab({
+    url: '/pages/index/index'
+  })
 }
 const type = ref('default')
 function autoShowFn(name?: string) {
@@ -188,6 +187,15 @@ onLoad((option) => {
     dynamicList(dynamicId)
   }
 })
+onMounted(() => {
+  const info = uni.createSelectorQuery().select('.swiper')
+  info
+    .boundingClientRect((data) => {
+      console.log(parseInt(data.width, 10))
+      console.log(parseInt(data.height, 10))
+    })
+    .exec()
+})
 onHide(() => {
   // 页面跳转，暂停视频播放
   swiperList.value[swiperCurrent.value].isPlay = true
@@ -195,6 +203,8 @@ onHide(() => {
 })
 onShareAppMessage((_res) => {
   const dynamic = swiperList.value[swiperCurrent.value] || {}
+  console.log(sharePathFormat({ dynamicId: dynamic.id }),789)
+
   return {
     title: dynamic.name || '黑银生活短视频',
     content: dynamic.content,
@@ -267,6 +277,7 @@ onPullDownRefresh(() => {
           :show-fullscreen-btn="true"
           :show-play-btn="false"
           :show-center-play-btn="false"
+          :object-fit="'contain'"
           @controlstoggle="controlFn"
           @fullscreenchange="fullscreenchangeFn"
         ></video>
@@ -331,7 +342,7 @@ onPullDownRefresh(() => {
       </swiper-item>
     </swiper>
     <view class="tabbar" v-if="!autoShowFn()">
-      <view class="item" @click="toFamous">名人</view>
+      <view class="item" @click="toHome">首页</view>
       <view class="item" @click="toPublishCenter"
         ><text class="iconfont hy-icon-push"></text
       ></view>

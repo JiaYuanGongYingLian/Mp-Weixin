@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 13:49:44
- * @LastEditTime: 2023-08-22 11:51:14
+ * @LastEditTime: 2023-08-28 17:22:37
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -185,6 +185,10 @@ onReachBottom(() => {
                   :lazy-load="true"
                   mode="aspectFill"
                 />
+                <view class="count">
+                  <u-icon name="eye" size="30" color="#ccc"></u-icon>
+                  <text class="num"> {{ data.readCount }}</text>
+                </view>
               </view>
               <view class="content">
                 <view class="name">{{ data.name }}</view>
@@ -233,6 +237,19 @@ onReachBottom(() => {
           width: 100%;
           // height: 200rpx;
           border-radius: $section-raduis;
+        }
+        .count {
+          position: absolute;
+          left: 10rpx;
+          bottom: 10rpx;
+          color: #ccc;
+          text-shadow: rgba(0, 0, 0, 0.6) 1px 1px 1px;
+          display: flex;
+          align-items: center;
+          .num {
+            margin-left: 10rpx;
+            font-size: 26rpx;
+          }
         }
       }
 

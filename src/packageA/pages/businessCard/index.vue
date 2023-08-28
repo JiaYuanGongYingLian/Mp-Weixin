@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-24 17:45:01
+ * @LastEditTime: 2023-08-28 17:15:08
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -161,13 +161,19 @@ function toChat() {
     url: `/packageA/pages/chat/index?username=${jgUserName}`
   })
 }
-onLoad((option) => {
+async function ReadAdd() {
+  await socialApi.dynamicDetailRead({
+    id: userDetailInfo.value.id
+  })
+}
+onLoad(async (option) => {
   cardId.value = option?.cardId
   cardUserId.value = option?.userId
   userData.avatar = option?.avatar
   userData.nickname = option?.nickname
   isMySelf.value = Number(option?.userId) === userInfo.value.id
-  getUserDetailInfo()
+  await getUserDetailInfo()
+  await ReadAdd()
   if (!isMySelf.value) {
     focusDetailFn()
   }

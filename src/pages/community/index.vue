@@ -7,7 +7,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-08-25 17:44:57
+ * @LastEditTime: 2023-08-28 10:13:24
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -41,9 +41,6 @@ let list = [
   },
   {
     name: '对接名人'
-  },
-  {
-    name: '短视频'
   }
 ]
 

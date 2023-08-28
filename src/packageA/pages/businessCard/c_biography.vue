@@ -2,7 +2,7 @@
  * @Description: 传记
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-25 15:32:54
+ * @LastEditTime: 2023-08-28 17:15:21
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -11,7 +11,7 @@
 import { reactive, ref, onMounted } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi } from '@/api'
+import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath, checkLoginState, previewImage } from '@/utils/index'
 import { useUserStore } from '@/store'
 
@@ -47,7 +47,7 @@ function previewImageFn(arr: { resourceUrl: string }[], i: number) {
   )
   previewImage(pics, i)
 }
-onMounted((option) => {})
+onMounted(() => {})
 </script>
 <template>
   <view class="wrapper">

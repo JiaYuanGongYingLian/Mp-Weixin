@@ -2,7 +2,7 @@
  * @Description: 社交服务
  * @Author: Kerwin
  * @Date: 2023-06-29 15:54:59
- * @LastEditTime: 2023-08-11 17:33:24
+ * @LastEditTime: 2023-08-28 17:08:56
  * @LastEditors:  Please set LastEditors
  */
 import http from '../http'
@@ -130,6 +130,12 @@ function dynamicFavoriteList(data: any) {
 function dynamicFavoriteDelete(data: any) {
   return http.get('/social/api/v1/dynamic/favorite/delete', data)
 }
+/**
+ * 阅读查看
+ */
+function dynamicDetailRead(data: any) {
+  return http.get('/social/api/v1/user/detail/read', data)
+}
 export default {
   dynamicAdd,
   dynamicList,
@@ -163,5 +169,6 @@ export default {
   userFocusDelete,
   dynamicFavoriteAdd,
   dynamicFavoriteList,
-  dynamicFavoriteDelete
+  dynamicFavoriteDelete,
+  dynamicDetailRead
 }
