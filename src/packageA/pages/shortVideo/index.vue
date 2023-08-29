@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-29 17:18:30
+ * @LastEditTime: 2023-08-29 18:20:10
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -171,6 +171,9 @@ async function focusAdd(item: { userId: any; focused: boolean }) {
     })
   }
 }
+function destroyVideo() {
+  swiperList.value = []
+}
 onLoad((option) => {
   type.value = option?.type
   if (type.value === 'preview') {
@@ -193,8 +196,8 @@ onMounted(() => {
     const info = uni.createSelectorQuery().select('.swiper')
     info
       .boundingClientRect((data) => {
-        console.log(parseInt(data.width, 10))
-        console.log(parseInt(data.height, 10))
+        console.log(parseInt(data?.width, 10))
+        console.log(parseInt(data?.height, 10))
       })
       .exec()
   } catch {}
@@ -352,7 +355,7 @@ onPullDownRefresh(() => {
         </view>
       </swiper-item>
     </swiper>
-    <c_tabbar v-if="!autoShowFn()" />
+    <c_tabbar v-if="!autoShowFn()" @hide-page="destroyVideo" />
   </view>
 </template>
 

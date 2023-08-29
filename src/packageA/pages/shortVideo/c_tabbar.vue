@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-01 16:22:48
- * @LastEditTime: 2023-08-29 17:04:14
+ * @LastEditTime: 2023-08-29 18:08:14
  * @LastEditors:  Please set LastEditors
 -->
 <template>
@@ -36,6 +36,7 @@ import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/store'
 
+const emit = defineEmits(['hidePage'])
 const userStore = useUserStore()
 const { userInfo } = storeToRefs(userStore)
 const props = withDefaults(
@@ -55,7 +56,9 @@ function goUrlFn(e: { currentTarget: { dataset: { url: any } } }) {
     })
   }
 }
+
 function toHome() {
+  emit('hidePage')
   uni.switchTab({
     url: '/pages/index/index'
   })

@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-28 17:15:08
+ * @LastEditTime: 2023-08-29 18:23:03
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -94,7 +94,7 @@ function toEdit() {
   })
 }
 function toView() {
-  uni.navigateTo({
+  uni.redirectTo({
     url: '/packageA/pages/shortVideo/index'
   })
 }
