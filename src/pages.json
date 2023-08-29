@@ -260,6 +260,24 @@
 			]
 		}
 	],
+	"preloadRule": {
+		"packageA/pages/shortVideo/index": {
+		  "network": "all",
+		  "packages": ["packageA"]
+		},
+		"packageA/pages/message/index": {
+			"network": "all",
+			"packages": ["packageA"]
+		},
+		"packageA/pages/businessCard/index": {
+			"network": "all",
+			"packages": ["packageA"]
+		},
+		"packageA/pages/publish/index": {
+			"network": "all",
+			"packages": ["packageA"]
+		}
+	},	
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "黑银生活",

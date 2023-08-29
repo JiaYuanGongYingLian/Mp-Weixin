@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-28 18:29:01
+ * @LastEditTime: 2023-08-29 17:18:30
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -26,6 +26,8 @@ import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore, useConfigStore } from '@/store'
 import hyNavBarSimpler from '@/components/hy-nav-bar-simpler/index.vue'
 import { sharePathFormat } from '@/common/wechat-share'
+import c_tabbar from './c_tabbar.vue'
+import c_loading from './c_loading.vue'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
@@ -36,17 +38,19 @@ buttonRect.value = wx.getMenuButtonBoundingClientRect()
 // #endif
 const tabList = [
   {
-    name: '关注'
+    name: '热门'
   },
   {
-    name: '热门'
+    name: '关注'
   }
 ]
-const currentTab = ref(1)
-function change(index: any) {
+const currentTab = ref(0)
+async function change(index: any) {
   currentTab.value = index
-  if (index === 0) {
-    uni.switchTab({ url: '/pages/community/index' })
+  if (index === 1) {
+    await dynamicList(null, true)
+  } else {
+    await dynamicList()
   }
 }
 const fullScreen = ref(false)
@@ -59,22 +63,33 @@ watch(hasNewDynamic, (n) => {
     dynamicList()
   }
 })
-async function dynamicList(dynamicId?: any) {
+async function dynamicList(dynamicId?: any, isFocused?: boolean) {
+  swiperList.value = []
   try {
     const res1 = await socialApi.dynamicList({
       noPaging: true,
       type: 3,
       detail: true,
       status: enumAll.audit_status_enum.SUCCESS,
+      focused: isFocused || null,
       otherColumns: 'favorited,focused',
       sortJson: '[{"column":"createTime","direction":"DESC"}]'
     })
-    swiperList.value = res1.data
+    if (isFocused) {
+      swiperList.value = res1.data.filter(
+        (item: { focused: any }) => item.focused
+      )
+    } else {
+      swiperList.value = res1.data
+    }
     const index = swiperList.value.findIndex((item) => item.id == dynamicId)
     console.log(index, 'videoIndex')
     if (index !== -1) {
       swiperCurrent.value = index
       videoPlay(index)
+    } else {
+      swiperCurrent.value = 0
+      videoPlay(swiperCurrent.value)
     }
   } catch {}
 }
@@ -120,21 +135,7 @@ function toBusinessCardHome(data: { userId: any }, index: any) {
     url: `/packageA/pages/businessCard/index?userId=${data.userId}&avatar=${data?.user?.avatar}&nickname=${data?.user?.nickname}`
   })
 }
-function toPublishCenter() {
-  uni.navigateTo({
-    url: '/packageA/pages/publish/index'
-  })
-}
-function toMine() {
-  uni.navigateTo({
-    url: `/packageA/pages/businessCard/index?userId=${userInfo.value.id}`
-  })
-}
-function toHome() {
-  uni.switchTab({
-    url: '/pages/index/index'
-  })
-}
+
 const type = ref('default')
 function autoShowFn(name?: string) {
   if (name) {
@@ -188,13 +189,15 @@ onLoad((option) => {
   }
 })
 onMounted(() => {
-  const info = uni.createSelectorQuery().select('.swiper')
-  info
-    .boundingClientRect((data) => {
-      console.log(parseInt(data.width, 10))
-      console.log(parseInt(data.height, 10))
-    })
-    .exec()
+  try {
+    const info = uni.createSelectorQuery().select('.swiper')
+    info
+      .boundingClientRect((data) => {
+        console.log(parseInt(data.width, 10))
+        console.log(parseInt(data.height, 10))
+      })
+      .exec()
+  } catch {}
 })
 onHide(() => {
   // 页面跳转，暂停视频播放
@@ -203,8 +206,6 @@ onHide(() => {
 })
 onShareAppMessage((_res) => {
   const dynamic = swiperList.value[swiperCurrent.value] || {}
-  console.log(sharePathFormat({ dynamicId: dynamic.id }),789)
-
   return {
     title: dynamic.name || '黑银生活短视频',
     content: dynamic.content,
@@ -252,7 +253,17 @@ onPullDownRefresh(() => {
         @change="change"
       ></u-tabs>
     </view>
+    <c_loading
+      v-if="!swiperList.length"
+      style="
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      "
+    ></c_loading>
     <swiper
+      v-else
       class="swiper"
       :current="swiperCurrent"
       @change="animationfinishFn"
@@ -341,13 +352,7 @@ onPullDownRefresh(() => {
         </view>
       </swiper-item>
     </swiper>
-    <view class="tabbar" v-if="!autoShowFn()">
-      <view class="item" @click="toHome">首页</view>
-      <view class="item" @click="toPublishCenter"
-        ><text class="iconfont hy-icon-push"></text
-      ></view>
-      <view class="item" @click="toMine">我的</view>
-    </view>
+    <c_tabbar v-if="!autoShowFn()" />
   </view>
 </template>
 
@@ -597,30 +602,6 @@ onPullDownRefresh(() => {
           margin-right: 0;
         }
       }
-    }
-  }
-}
-.tabbar {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  color: #fff;
-  /* #ifdef MP-WEIXIN */
-  height: 110rpx;
-  padding-top: 26rpx;
-  /* #endif */
-  /* #ifdef H5 */
-  height: 100rpx;
-  /* #endif */
-  padding-bottom: env(safe-area-inset-bottom);
-  position: relative;
-  z-index: 1000;
-  .item {
-    font-size: 30rpx;
-    font-weight: 500;
-    .hy-icon-push {
-      font-size: 54rpx;
-      font-weight: normal;
     }
   }
 }
