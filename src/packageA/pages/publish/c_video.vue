@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-01 16:22:48
- * @LastEditTime: 2023-08-28 16:11:22
+ * @LastEditTime: 2023-08-30 10:00:28
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -144,7 +144,7 @@ async function dynamicAdd() {
     videoUrl: videoUrl.value,
     remark: '',
     userId: userInfo.value.id,
-    previewImage: `${videoUrl.value}?x-oss-process=video/snapshot,t_0,f_jpg,w_540`
+    previewImage: `${videoUrl.value}?x-oss-process=video/snapshot,t_0,f_jpg,w_540,ar_auto`
   })
   dynamicList()
 }

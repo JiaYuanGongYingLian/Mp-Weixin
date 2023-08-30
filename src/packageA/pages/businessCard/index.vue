@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-29 18:23:03
+ * @LastEditTime: 2023-08-30 18:23:40
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -28,6 +28,7 @@ import c_shop from './c_shop.vue'
 import c_biography from './c_biography.vue'
 import c_video from './c_video.vue'
 import c_connection from './c_connection.vue'
+import c_slider from './c_slider.vue'
 import { sharePathFormat } from '@/common/wechat-share'
 
 const userStore = useUserStore()
@@ -162,6 +163,7 @@ function toChat() {
   })
 }
 async function ReadAdd() {
+  if (!userDetailInfo.value.id) return
   await socialApi.dynamicDetailRead({
     id: userDetailInfo.value.id
   })
@@ -246,6 +248,7 @@ onShareAppMessage((_res) => {
           </view>
         </view>
         <view class="remark"> {{ userDetailInfo?.motto }} </view>
+        <c_slider :info="userDetailInfo"></c_slider>
         <view class="action" v-if="isMySelf">
           <view class="btn def" @click="toEdit">
             <text class="text">编辑资料</text>

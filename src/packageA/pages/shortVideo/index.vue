@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-29 18:20:10
+ * @LastEditTime: 2023-08-30 17:08:02
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -46,7 +46,10 @@ const tabList = [
 ]
 const currentTab = ref(0)
 async function change(index: any) {
+  swiperList.value = []
+  pageIndex.value = 1
   currentTab.value = index
+  swiperCurrent.value = 0
   if (index === 1) {
     await dynamicList(null, true)
   } else {
@@ -57,6 +60,9 @@ const fullScreen = ref(false)
 const swiperCurrent = ref(0)
 const showControl = ref(true)
 const swiperList = ref([])
+const pageIndex = ref(1)
+const pageSize = ref(20)
+const finished = ref(false)
 const isPreview = ref(false)
 watch(hasNewDynamic, (n) => {
   if (n) {
@@ -64,32 +70,32 @@ watch(hasNewDynamic, (n) => {
   }
 })
 async function dynamicList(dynamicId?: any, isFocused?: boolean) {
-  swiperList.value = []
   try {
-    const res1 = await socialApi.dynamicList({
-      noPaging: true,
+    const { data } = await socialApi.dynamicList({
+      pageIndex: pageIndex.value,
+      pageSize: pageSize.value,
       type: 3,
       detail: true,
       status: enumAll.audit_status_enum.SUCCESS,
       focused: isFocused || null,
-      otherColumns: 'favorited,focused',
+      otherColumns: `favorited,focused,${isFocused ? '' : 'hot'}`,
       sortJson: '[{"column":"createTime","direction":"DESC"}]'
     })
-    if (isFocused) {
-      swiperList.value = res1.data.filter(
-        (item: { focused: any }) => item.focused
-      )
+    swiperList.value.push(...data.records)
+    if (data.current < data.pages) {
+      pageIndex.value += 1
     } else {
-      swiperList.value = res1.data
+      finished.value = true
     }
-    const index = swiperList.value.findIndex((item) => item.id == dynamicId)
-    console.log(index, 'videoIndex')
-    if (index !== -1) {
-      swiperCurrent.value = index
-      videoPlay(index)
-    } else {
-      swiperCurrent.value = 0
-      videoPlay(swiperCurrent.value)
+    if (dynamicId) {
+      const index = swiperList.value.findIndex((item) => item.id == dynamicId)
+      if (index !== -1) {
+        swiperCurrent.value = index
+        videoPlay(index)
+      } else {
+        swiperCurrent.value = 0
+        videoPlay(swiperCurrent.value)
+      }
     }
   } catch {}
 }
@@ -122,6 +128,14 @@ function animationfinishFn(e: { detail: { current: number } }) {
 }
 async function getNextFn() {
   console.log('加载下一页数据')
+  if (!finished.value) {
+    dynamicList()
+  } else {
+    uni.showToast({
+      icon: 'none',
+      title: '没有更多了'
+    })
+  }
 }
 function controlFn(e: { detail: { show: boolean } }) {
   showControl.value = e.detail.show
@@ -286,7 +300,7 @@ onPullDownRefresh(() => {
           :autoplay="swiperCurrent === index"
           :loop="true"
           :src="getImgFullPath(item.videoUrl)"
-          :poster="getImgFullPath(item.previewImage)"
+          :poster="getImgFullPath(item.previewImage) + ',ar_auto'"
           :controls="true"
           :show-fullscreen-btn="true"
           :show-play-btn="false"

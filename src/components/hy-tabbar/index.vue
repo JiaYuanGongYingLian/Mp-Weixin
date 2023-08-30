@@ -93,7 +93,7 @@ const pageslist = [
     pagePath: '/pages/community/index',
     iconPath: '/static/ic_bar_circle.png',
     selectedIconPath: '/static/ic_bar_circle_checked.png',
-    text: '社区'
+    text: '圈子'
   },
   {
     path: '/packageA/pages/shortVideo/index',

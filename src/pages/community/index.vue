@@ -7,7 +7,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-08-29 17:52:14
+ * @LastEditTime: 2023-08-30 14:29:13
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -73,7 +73,11 @@ if (!configStore.videoPageOpen) {
   currentTab.value = 0
 }
 // #endif
-
+function toEdit() {
+  uni.navigateTo({
+    url: '/packageA/pages/publish/index?tabIndex=1'
+  })
+}
 onLoad((option) => {
   if (option?.tabIndex !== undefined) {
     currentTab.value = Number(option?.tabIndex)
@@ -133,6 +137,9 @@ onPullDownRefresh(() => {
     <view class="celebrity" v-show="currentTab === 1">
       <c_elebrity />
     </view>
+    <view class="edit" @click="toEdit">
+      <u-icon name="edit-pen-fill" size="40"></u-icon>
+    </view>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
     <hy-tabbar></hy-tabbar>
   </view>
@@ -145,5 +152,19 @@ onPullDownRefresh(() => {
 }
 .head {
   background: #fff;
+}
+.edit {
+  position: fixed;
+  bottom: 300rpx;
+  right: 40rpx;
+  width: 82rpx;
+  height: 82rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 10rpx 2rpx rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

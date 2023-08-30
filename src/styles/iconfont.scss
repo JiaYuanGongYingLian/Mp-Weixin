@@ -1,8 +1,8 @@
 @font-face {
   font-family: "custom-icon"; /* Project id 3983494 */
-  src: url('//at.alicdn.com/t/c/font_3983494_rqvfjn3h9m9.woff2?t=1692958300255') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3983494_rqvfjn3h9m9.woff?t=1692958300255') format('woff'),
-       url('//at.alicdn.com/t/c/font_3983494_rqvfjn3h9m9.ttf?t=1692958300255') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3983494_3n4728sim2u.woff2?t=1693389052357') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3983494_3n4728sim2u.woff?t=1693389052357') format('woff'),
+       url('//at.alicdn.com/t/c/font_3983494_3n4728sim2u.ttf?t=1693389052357') format('truetype');
 }
 .custom-icon {
 	/* 引用上面声明的"custom-icon"字体 */
@@ -14,16 +14,16 @@
 }
 
 /* uview自定义字体图标的前缀为"custom-icon-" */
-.custom-icon-video:before {
-  content: "\e876";
+.custom-icon-group:before {
+  content: "\e634";
 }
 
 
 @font-face {
   font-family: "iconfont"; /* Project id 3983494 */
-  src: url('//at.alicdn.com/t/c/font_3983494_rqvfjn3h9m9.woff2?t=1692958300255') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3983494_rqvfjn3h9m9.woff?t=1692958300255') format('woff'),
-       url('//at.alicdn.com/t/c/font_3983494_rqvfjn3h9m9.ttf?t=1692958300255') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3983494_3n4728sim2u.woff2?t=1693389052357') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3983494_3n4728sim2u.woff?t=1693389052357') format('woff'),
+       url('//at.alicdn.com/t/c/font_3983494_3n4728sim2u.ttf?t=1693389052357') format('truetype');
 }
 
 .iconfont {
@@ -33,7 +33,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+.hy-icon-group:before {
+  content: "\e634";
+}
 .hy-icon-video:before {
   content: "\e876";
 }

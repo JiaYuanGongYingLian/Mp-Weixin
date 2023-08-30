@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-30 11:32:40
- * @LastEditTime: 2023-08-19 16:07:04
+ * @LastEditTime: 2023-08-30 14:46:14
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -343,7 +343,7 @@ onMounted(async () => {
   <view class="container">
     <u-form :model="formData" ref="form" :label-style="{ fontWeight: 'bold' }">
       <view class="section">
-        <u-form-item label="名片头像" label-width="auto" prop="avatar" required>
+        <u-form-item label="头像" label-width="auto" prop="avatar" required>
           <u-upload
             ref="upload1"
             :action="uploadUrl"
@@ -358,7 +358,7 @@ onMounted(async () => {
             "
           ></u-upload>
         </u-form-item>
-        <u-form-item label="名片主图" label-width="auto" required>
+        <u-form-item label="主图" label-width="auto" required>
           <u-upload
             ref="upload1"
             :action="uploadUrl"
@@ -431,13 +431,13 @@ onMounted(async () => {
             @click="chooseLocation"
           />
         </u-form-item>
-        <u-form-item required label="对接金额（元）" label-width="auto" prop="name"
+        <!-- <u-form-item required label="对接金额（元）" label-width="auto" prop="name"
           ><u-input
             v-model="formData.shopProductSkuMoney"
             input-align="right"
             placeholder="请填写对接金额（10~1w）"
             type="number"
-        /></u-form-item>
+        /></u-form-item> -->
         <u-form-item
           required
           label="提供服务"
@@ -560,7 +560,7 @@ onMounted(async () => {
       <u-checkbox-group>
         <u-checkbox v-model="agree"
           >我已阅读并同意
-          <text class="link" @click="toProtocol">《传记发布申请协议》</text>
+          <text class="link" @click="toProtocol">《名人发布申请协议》</text>
         </u-checkbox>
       </u-checkbox-group>
     </view>

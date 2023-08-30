@@ -4,14 +4,14 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-28 15:59:08
+ * @LastEditTime: 2023-08-30 11:43:46
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref, onMounted, watch } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { socialApi, enumAll } from '@/api'
 import { getImgFullPath, checkLoginState } from '@/utils/index'
@@ -40,23 +40,22 @@ watch(hasNewDynamic, (n) => {
 })
 async function dynamicList() {
   try {
-    const { current, pages, data } = await socialApi.dynamicList({
-      noPaging: true,
+    const { data } = await socialApi.dynamicList({
+      pageIndex: videoList.pageIndex,
+      pageSize: videoList.pageSize,
       type: 3,
       userId: props.cardUserId,
       detail: true,
       status: enumAll.audit_status_enum.SUCCESS,
       sortJson: '[{"column":"createTime","direction":"DESC"}]'
     })
-    videoList.list = [...data]
-    status.value = 'nomore'
-    // if (current < pages) {
-    //   videoList.pageIndex += 1
-    //   videoList.list = [...data]
-    // } else {
-    //   videoList.finished = true
-    //   status.value = 'nomore'
-    // }
+    videoList.list.push(...data.records)
+    if (data.current < data.pages) {
+      videoList.pageIndex += 1
+    } else {
+      videoList.finished = true
+      status.value = 'nomore'
+    }
   } catch {}
 }
 function toView(index: number) {
@@ -67,6 +66,11 @@ function toView(index: number) {
 }
 onMounted(() => {
   dynamicList()
+})
+onReachBottom(() => {
+  if (!videoList.finished) {
+    dynamicList()
+  }
 })
 </script>
 <template>
