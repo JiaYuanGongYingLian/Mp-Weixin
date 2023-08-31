@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-08-30 15:08:59
- * @LastEditTime: 2023-08-30 18:29:49
+ * @LastEditTime: 2023-08-31 11:31:51
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-empty -->
@@ -47,7 +47,7 @@ function toView(index: number) {
 }
 function toGroup() {
   uni.navigateTo({
-    url: `/packageA/pages/chatGroup/index?${}`
+    url: `/packageA/pages/chatGroup/index?username=${props.info.name}&friendCircleId=${props.info.friendCircleId}`
   })
 }
 onMounted(() => {})

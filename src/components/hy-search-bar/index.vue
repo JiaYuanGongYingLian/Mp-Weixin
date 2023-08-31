@@ -31,8 +31,12 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
+import { storeToRefs } from 'pinia'
 import { getQueryObject } from '@/utils/common'
+import { useUserStore } from '@/store'
 
+const userStore = useUserStore()
+const { hasLogin } = storeToRefs(userStore)
 const emit = defineEmits(['onSearch'])
 const props = withDefaults(
   defineProps<{
@@ -74,7 +78,21 @@ uni.getSystemInfo({
 
 // 扫一扫
 const link = () => {
-  const _this = this
+  if (!hasLogin) {
+    uni.showModal({
+      title: '提示',
+      content: '登录后可使用扫码',
+      showCancel: true,
+      success: ({ confirm, cancel }) => {
+        if (confirm) {
+          uni.navigateTo({
+            url: '/pages/login/index'
+          })
+        }
+      }
+    })
+    return
+  }
   // #ifdef H5
   jWeixin.scanQRCode({
     needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
@@ -91,7 +109,7 @@ const link = () => {
       const { result } = res
       if (result) {
         const params = getQueryObject(result)
-        const { redirect_url,shopId } = params
+        const { redirect_url, shopId } = params
         if (redirect_url) {
           uni.navigateTo({
             url: `${redirect_url}?shopId=${shopId}`

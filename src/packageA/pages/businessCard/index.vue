@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-08-30 18:23:40
+ * @LastEditTime: 2023-08-31 09:53:25
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -246,9 +246,13 @@ onShareAppMessage((_res) => {
             <text class="val">{{ userDetailInfo?.fansCount || 0 }}</text>
             <text class="label">粉丝</text>
           </view>
+          <view class="item">
+            <text class="val">{{ userDetailInfo?.readCount || 0 }}</text>
+            <text class="label">浏览量</text>
+          </view>
         </view>
         <view class="remark"> {{ userDetailInfo?.motto }} </view>
-        <c_slider :info="userDetailInfo"></c_slider>
+        <c_slider :info="userDetailInfo" v-if="hasDetailInfo"></c_slider>
         <view class="action" v-if="isMySelf">
           <view class="btn def" @click="toEdit">
             <text class="text">编辑资料</text>
@@ -388,7 +392,6 @@ onShareAppMessage((_res) => {
       }
 
       .badge {
-        max-width: 77px;
         color: #fff;
         font-size: 20rpx;
         background: linear-gradient(128deg, #ff522d, #ff913e);

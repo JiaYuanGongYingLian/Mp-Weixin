@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-30 11:32:40
- * @LastEditTime: 2023-08-30 14:46:14
+ * @LastEditTime: 2023-08-31 15:59:23
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -96,9 +96,8 @@ function uploadSuccess(data: any, index: any, lists: any, name: string) {
     }
   })
 }
-const token = uni.getStorageSync('accessToken') || ''
 const header = {
-  Authorization: `Bearer ${token}`,
+  Authorization: `Bearer ${uni.getStorageSync('accessToken') || ''}`,
   // #ifdef MP-WEIXIN
   'Content-Type': 'multipart/form-data'
   // #endif

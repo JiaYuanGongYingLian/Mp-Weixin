@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-28 17:45:12
- * @LastEditTime: 2023-08-19 18:08:13
+ * @LastEditTime: 2023-08-31 16:35:02
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -69,11 +69,7 @@ onLoad((option) => {
         <c_biography />
       </view>
       <view v-else>
-        <u-empty
-          text="暂无数据"
-          mode="list"
-          style="margin-top: 200rpx"
-        ></u-empty>
+        <u-empty text="暂无数据" mode="list" margin-top="100"></u-empty>
       </view>
     </Transition>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
