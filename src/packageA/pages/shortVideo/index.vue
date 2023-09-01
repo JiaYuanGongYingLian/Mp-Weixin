@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-08-30 17:08:02
+ * @LastEditTime: 2023-09-01 15:05:15
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -218,8 +218,10 @@ onMounted(() => {
 })
 onHide(() => {
   // 页面跳转，暂停视频播放
-  swiperList.value[swiperCurrent.value].isPlay = true
-  videoPlay(swiperCurrent.value)
+  if (swiperList.value[swiperCurrent.value]) {
+    swiperList.value[swiperCurrent.value].isPlay = true
+    videoPlay(swiperCurrent.value)
+  }
 })
 onShareAppMessage((_res) => {
   const dynamic = swiperList.value[swiperCurrent.value] || {}

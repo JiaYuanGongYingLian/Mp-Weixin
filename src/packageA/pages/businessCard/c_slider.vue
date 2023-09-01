@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-08-30 15:08:59
- * @LastEditTime: 2023-08-31 11:31:51
+ * @LastEditTime: 2023-09-01 18:07:01
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-empty -->
@@ -21,6 +21,7 @@ const { hasLogin, userInfo } = storeToRefs(userStore)
 const props = withDefaults(
   defineProps<{
     info?: object
+    isMySelf?: boolean
   }>(),
   {
     info() {
@@ -47,14 +48,21 @@ function toView(index: number) {
 }
 function toGroup() {
   uni.navigateTo({
-    url: `/packageA/pages/chatGroup/index?username=${props.info.name}&friendCircleId=${props.info.friendCircleId}`
+    url: `/packageA/pages/chatGroup/index?username=${
+      props.info.name
+    }&friendCircleId=${props.info.friendCircleId || ''}&userDetailId=${
+      props.info.id
+    }`
   })
 }
 onMounted(() => {})
 </script>
 <template>
   <view class="c_container">
-    <view class="slider">
+    <view
+      v-if="props.isMySelf && props.info.fansCount > 100"
+      class="slider self"
+    >
       <view class="item" @click="toGroup">
         <view class="icon">
           <u-icon
@@ -64,8 +72,22 @@ onMounted(() => {})
           ></u-icon>
         </view>
         <view class="con">
+          <view class="tit">我的粉丝群</view>
+        </view>
+      </view>
+    </view>
+    <view class="slider" v-else>
+      <view class="item" @click="toGroup" v-if="props.info.friendCircleId">
+        <view class="icon">
+          <u-icon
+            name="group"
+            :custom-prefix="'custom-icon'"
+            size="36"
+          ></u-icon>
+        </view>
+        <view class="con">
           <view class="tit">粉丝群</view>
-          <view class="val">2个群聊</view>
+          <view class="val">1个群聊</view>
         </view>
       </view>
     </view>
@@ -79,12 +101,12 @@ onMounted(() => {})
   width: 100%;
   overflow-x: scroll;
   display: flex;
-  margin-bottom: 20rpx;
-  margin-top: 10rpx;
   .item {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 30rpx;
+    margin-top: 10rpx;
     .icon {
       width: 80rpx;
       height: 80rpx;
@@ -103,6 +125,21 @@ onMounted(() => {})
       .val {
         color: #666;
         font-size: 24rpx;
+      }
+    }
+  }
+  &.self {
+    .item {
+      flex-direction: column;
+      .icon {
+        border-radius: 50%;
+        margin-bottom: 16rpx;
+      }
+      .con {
+        .tit {
+          font-size: 24rpx;
+          color: #666;
+        }
       }
     }
   }

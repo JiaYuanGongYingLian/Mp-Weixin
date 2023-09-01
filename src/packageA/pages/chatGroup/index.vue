@@ -4,7 +4,7 @@
  * @Description: 群聊列表
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-08-31 17:44:28
+ * @LastEditTime: 2023-09-01 17:28:57
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -26,18 +26,12 @@ import { useUserStore, useChatStore, useConfigStore } from '@/store'
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const configStore = useConfigStore()
-const {
-  hasLogin,
-  chatList,
-  jimUserInfo,
-  singleInfo,
-  singleInfoAvatar,
-  jimUserInfoAvatar,
-  syncConversation
-} = storeToRefs(chatStore)
+const { hasLogin, chatList } = storeToRefs(chatStore)
+const { userInfo } = storeToRefs(userStore)
 
-const title = ref('')
+const userDetailName = ref('')
 const friendCircleId = ref(null)
+const userDetailId = ref(null)
 const groupList = ref([])
 const showPop = ref(false)
 const formData = reactive({
@@ -56,13 +50,18 @@ const header = {
   'Content-Type': 'multipart/form-data'
   // #endif
 }
-function toChat(data: { username: any }) {
-  uni.navigateTo({
-    url: `/packageA/pages/chat/index?username=${data?.username}`
-  })
-}
 function addNewGroup() {
   showPop.value = true
+}
+async function getGroupList() {
+  if (!friendCircleId.value) return
+  const { data } = await socialApi.circleList({
+    noPaging: true,
+    chatGroupId: friendCircleId.value,
+    detail: true,
+    type: 20
+  })
+  groupList.value = data
 }
 function uploadSuccess(data: any, index: any, lists: any, name: string) {
   tempImageData[name] = data.data
@@ -99,21 +98,59 @@ async function submit() {
     ...tempImageData
   })
   if (code === 200) {
-    await socialApi.userDetailUpdate({
-      friendCircleId: data.chatGroupId
+    friendCircleId.value = data.chatGroupId
+    const res = await socialApi.userDetailUpdate({
+      id: userDetailId.value,
+      friendCircleId: friendCircleId.value
+    })
+    if (res.code === 200) {
+      uni.showToast({
+        icon: 'none',
+        title: '创建成功'
+      })
+      getGroupList()
+    }
+  }
+}
+async function joinGroup(item: { id: any; joined: boolean }) {
+  const { code } = await socialApi.circleUserAdd({
+    friendCircleId: item.id,
+    chatGroupId: friendCircleId.value,
+    nickname: userDetailName.value || userInfo.value.nickname,
+    userId: userInfo.value.id
+  })
+  if (code === 200) {
+    uni.showToast({
+      icon: 'none',
+      title: '加入成功',
+      success() {
+        item.joined = true
+        toChat(item)
+      }
+    })
+  }
+}
+function toChat(item: any) {
+  if (!item.joined) {
+    joinGroup(item)
+  } else {
+    uni.navigateTo({
+      url: `/packageA/pages/chat/index?groupId=${item.chatGroupId}&groupName=${item.name}`
     })
   }
 }
 onLoad((option) => {
-  title.value = `${option?.username}的粉丝聊`
-  friendCircleId.value = option?.username ?? null
+  userDetailName.value = `${option?.username}`
+  friendCircleId.value = option?.friendCircleId ?? null
+  userDetailId.value = option?.userDetailId ?? null
+  getGroupList()
 })
 </script>
 <template>
   <view class="container">
-    <hy-nav-bar :title="title"></hy-nav-bar>
+    <hy-nav-bar :title="userDetailName + '的粉丝群'"></hy-nav-bar>
     <view>
-      <view class="new-box">
+      <view class="new-box" v-if="!friendCircleId">
         <view class="tips">还没有粉丝群？点击下方按钮新建群聊</view>
         <u-button
           type="error"
@@ -123,12 +160,7 @@ onLoad((option) => {
           >+创建群聊</u-button
         >
       </view>
-      <view
-        class="circle"
-        v-for="item in groupList"
-        :key="item.id"
-        @click="toChat(item)"
-      >
+      <view class="circle" v-for="item in groupList" :key="item.id">
         <view class="c-bot">
           <view class="avatar-wrap">
             <u-badge
@@ -142,24 +174,32 @@ onLoad((option) => {
               width="120rpx"
               height="120rpx"
               border-radius="10rpx"
-              :src="
-                item?.avatar.slice(0, 5) == 'qiniu'
-                  ? $config.jimLocalhost + item?.avatar
-                  : item?.avatar
-              "
+              shape="circle"
+              :src="getImgFullPath(item.avatar)"
             ></u-image>
           </view>
-
           <view class="con">
             <view class="top">
               <view class="name">{{ item?.name }}</view>
               <view class="date">{{
-                dateFormat(new Date(item.mtime), 'MM-dd hh:mm')
+                dateFormat(new Date(item.createTime), 'MM-dd')
               }}</view>
             </view>
-            <view class="desc"> {{ item?.content }}</view>
+            <view class="desc"> {{ item?.remark }}</view>
           </view>
         </view>
+        <u-button
+          type="warning"
+          :custom-style="{
+            height: '58rpx',
+            background: item.joined ? '#eee' : '#fc2b55',
+            color: item.joined ? '#333' : '#fff',
+            marginTop: '30rpx'
+          }"
+          ripple
+          @click="toChat(item)"
+          >{{ item.joined ? '发消息' : '申请加入' }}</u-button
+        >
       </view>
     </view>
     <u-popup
@@ -171,6 +211,7 @@ onLoad((option) => {
       close-icon-color="#fff"
       close-icon="close-circle"
       close-icon-size="40"
+      :z-index="3"
     >
       <view class="pop-head">
         <u-image
@@ -337,6 +378,16 @@ onLoad((option) => {
     border-radius: 50%;
     .u-add-tips {
       display: none;
+    }
+    .u-preview-wrap {
+      // background: none;
+      border: 0;
+    }
+  }
+  :deep(.u-preview-wrap) {
+    border-radius: 50%;
+    .u-preview-image {
+      border-radius: 50%;
     }
   }
 }
