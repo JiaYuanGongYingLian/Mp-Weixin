@@ -10,14 +10,14 @@ import jpushIM from "@/common/jim/jim.js"
 
 const storeUser = useUserStore()
 const chatStore = useChatStore()
-const { hasLogin, isJimInit } = storeToRefs(chatStore)
+const { chatHasLogin, isJimInit } = storeToRefs(chatStore)
 const { userInfo } = storeToRefs(storeUser)
 
 watch(
   userInfo,
   (n) => {
     if (n) {
-      if (!hasLogin.value) {
+      if (!chatHasLogin.value) {
         // chatStore.jimInit()
       }
     }
@@ -54,8 +54,8 @@ onShow(async () => {
     v.accessToken = uni.getStorageSync('accessToken') || ''
     v.userInfo = uni.getStorageSync('userInfo') || null
   })
-  console.log('chatHasLogin', hasLogin.value)
-  if (!hasLogin.value) {
+  console.log('chatHasLogin', chatHasLogin.value)
+  if (!chatHasLogin.value) {
     await chatStore.jimInit()
     await jimLogin()
   }

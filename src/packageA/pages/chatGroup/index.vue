@@ -4,7 +4,7 @@
  * @Description: 群聊列表
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-09-01 17:28:57
+ * @LastEditTime: 2023-09-04 18:10:55
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -26,7 +26,7 @@ import { useUserStore, useChatStore, useConfigStore } from '@/store'
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const configStore = useConfigStore()
-const { hasLogin, chatList } = storeToRefs(chatStore)
+const { chatHasLogin, chatList } = storeToRefs(chatStore)
 const { userInfo } = storeToRefs(userStore)
 
 const userDetailName = ref('')

@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-25 15:30:59
- * @LastEditTime: 2023-08-19 16:21:00
+ * @LastEditTime: 2023-09-04 18:10:10
  * @LastEditors:  Please set LastEditors
  */
 import { defineStore } from 'pinia'
@@ -18,7 +18,7 @@ let number = 0
 const useStore = defineStore('chat', {
   state: () => ({
     jimLoginInfo: null,
-    hasLogin: false,
+    chatHasLogin: false,
     jimUserInfo: {},
     isJimInit: false,
     syncConversation: [],
@@ -81,7 +81,7 @@ const useStore = defineStore('chat', {
           password
         })
         uni.setStorageSync('jimLoginInfo', data)
-        this.hasLogin = true
+        this.chatHasLogin = true
         this.jimGetUserInfo(username)
         this.jimOnSyncConversation()
         this.jimOnMsgReceive()
@@ -129,7 +129,7 @@ const useStore = defineStore('chat', {
       }
     },
     resetState() {
-      this.hasLogin = false
+      this.chatHasLogin = false
       this.jimUserInfo = {}
       this.isJimInit = false
       this.syncConversation = []

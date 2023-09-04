@@ -3,7 +3,7 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-08-16 16:02:43
+ * @LastEditTime: 2023-09-04 18:09:15
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -31,7 +31,7 @@ const isSingle = computed(() => {
 })
 const userStore = useUserStore()
 const chatStore = useChatStore()
-const { hasLogin, singleInfo, groupInfo } = storeToRefs(chatStore)
+const { chatHasLogin, singleInfo, groupInfo } = storeToRefs(chatStore)
 const videoList = reactive({
   list: [],
   loading: true,
@@ -44,7 +44,7 @@ const isUpload = ref(false)
 const emit = defineEmits(['onFocus'])
 const content = ref('')
 const onFocus = (isScrollHeight: boolean) => {
-  emit('onFocus',isScrollHeight)
+  emit('onFocus', isScrollHeight)
 }
 defineExpose({
   onChatClick
@@ -54,11 +54,11 @@ function onChatClick() {
   isUpload.value = false
   onFocus(false)
 }
-watch([isEmoji,isUpload],(n)=>{
-  if(n) {
-    if(n[0] || n[1]) {
+watch([isEmoji, isUpload], (n) => {
+  if (n) {
+    if (n[0] || n[1]) {
       onFocus(true)
-    }else {
+    } else {
       onFocus(false)
     }
   }
@@ -115,7 +115,7 @@ function sendImageItem(
     type: 'image',
     width: info.width,
     height: info.height,
-    image: tempFilePath,
+    image: tempFilePath
   }
   if (isSingle.value) {
     params.appkey = singleInfo.value.appkey
@@ -219,54 +219,89 @@ function submit(fn: (arg0: any) => void, params: any) {
   fn(params)
 }
 
-onMounted((option) => { })
+onMounted((option) => {})
 </script>
 <template>
   <view class="wrapper">
     <view class="l-chat-posi">
       <view class="l-chat-foot">
         <view class="l-chat-form">
-          <textarea class="l-chat-textarea" v-model="content" @focus="onFocus(false)" auto-height placeholder="请输入"
-            :cursor-spacing="20" />
+          <textarea
+            class="l-chat-textarea"
+            v-model="content"
+            @focus="onFocus(false)"
+            auto-height
+            placeholder="请输入"
+            :cursor-spacing="20"
+          />
         </view>
         <view class="l-chat-handle">
-          <image class="l-send-emoji" @tap="toggleEmoji(isEmoji)" :src="
-            isEmoji
-              ? 'https://image.blacksilverscore.com/uploads/42889f3f-9cd6-44f9-8fde-097b94d952fb.png'
-              : 'https://image.blacksilverscore.com/uploads/02438d4f-40ae-40c0-8e01-524d0937e02e.png'
-          " mode="aspectFill"></image>
+          <image
+            class="l-send-emoji"
+            @tap="toggleEmoji(isEmoji)"
+            :src="
+              isEmoji
+                ? 'https://image.blacksilverscore.com/uploads/42889f3f-9cd6-44f9-8fde-097b94d952fb.png'
+                : 'https://image.blacksilverscore.com/uploads/02438d4f-40ae-40c0-8e01-524d0937e02e.png'
+            "
+            mode="aspectFill"
+          ></image>
           <view class="l-chat-send">
-            <image class="l-send-upload" @tap="toggleUpload()" :class="{ 'l-send-upload-50': !content }"
-              src="https://image.blacksilverscore.com/uploads/fe7263ec-3b7a-4acd-879b-b542c38c29ea.png" mode="aspectFill">
+            <image
+              class="l-send-upload"
+              @tap="toggleUpload()"
+              :class="{ 'l-send-upload-50': !content }"
+              src="https://image.blacksilverscore.com/uploads/fe7263ec-3b7a-4acd-879b-b542c38c29ea.png"
+              mode="aspectFill"
+            >
             </image>
-            <button class="l-chat-send-btn" :class="{ 'l-chat-send-btn-100': content }" @click="submit(sendMsg, content)"
-              type="default">
+            <button
+              class="l-chat-send-btn"
+              :class="{ 'l-chat-send-btn-100': content }"
+              @click="submit(sendMsg, content)"
+              type="default"
+            >
               发送
             </button>
           </view>
         </view>
       </view>
 
-      <view :class="{ 'l-chat-emoji-height': isEmoji }" class="l-chat-emoji-item">
+      <view
+        :class="{ 'l-chat-emoji-height': isEmoji }"
+        class="l-chat-emoji-item"
+      >
         <swiper :indicator-dots="true">
           <swiper-item v-for="(s, i) in emoji" :key="i">
             <view class="l-swiper-item">
-              <image @tap="sendEmojiItem(emoji)" v-for="(emoji, index) in s" :key="index"
-                :src="'../../../static/emoji/' + emoji.url" mode="aspectFit" class="l-icon-emoji"></image>
+              <image
+                @tap="sendEmojiItem(emoji)"
+                v-for="(emoji, index) in s"
+                :key="index"
+                :src="'../../../static/emoji/' + emoji.url"
+                mode="aspectFit"
+                class="l-icon-emoji"
+              ></image>
             </view>
           </swiper-item>
         </swiper>
       </view>
 
-      <view :class="{ 'l-chat-emoji-height': isUpload }" class="l-chat-emoji-item l-chat-head-upload">
+      <view
+        :class="{ 'l-chat-emoji-height': isUpload }"
+        class="l-chat-emoji-item l-chat-head-upload"
+      >
         <swiper :indicator-dots="false">
           <swiper-item>
             <view class="l-swiper-item l-chat-handle-upload">
               <view class="l-chat-upload-item">
                 <view class="l-upload-img-wrap">
-                  <image class="l-upload-img" @tap="chooseImage"
+                  <image
+                    class="l-upload-img"
+                    @tap="chooseImage"
                     src="https://image.blacksilverscore.com/uploads/88fe43db-bbcb-4426-861a-628b9562c3c4.png"
-                    mode="aspectFill"></image>
+                    mode="aspectFill"
+                  ></image>
                 </view>
                 <view class="l-upload-name">相册</view>
               </view>
@@ -280,7 +315,12 @@ onMounted((option) => { })
               </view> -->
               <view class="l-chat-upload-item">
                 <view class="l-upload-img-wrap">
-                  <u-icon size="50" @tap="chooseLocation" name="map-fill" color="#888"></u-icon>
+                  <u-icon
+                    size="50"
+                    @tap="chooseLocation"
+                    name="map-fill"
+                    color="#888"
+                  ></u-icon>
                 </view>
                 <view class="l-upload-name">位置</view>
               </view>

@@ -4,7 +4,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-08-23 17:01:48
+ * @LastEditTime: 2023-09-04 18:08:54
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -29,7 +29,7 @@ import c_foot from './c_foot.vue'
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const {
-  hasLogin,
+  chatHasLogin,
   chatList,
   jimUserInfo,
   singleInfo,
@@ -71,20 +71,26 @@ onLoad((option) => {
   groupInfo.gid = option?.groupId
   groupInfo.name = option?.groupName
   if (thouUsername.value) {
-    hasLogin.value && chatStore.jimGetSingleInfo(thouUsername.value)
+    chatHasLogin.value && chatStore.jimGetSingleInfo(thouUsername.value)
   } else {
-    hasLogin.value && chatStore.jimGetGroupInfo(groupInfo.gid)
+    chatHasLogin.value && chatStore.jimGetGroupInfo(groupInfo.gid)
     chatType.value = 'group'
   }
 })
+function showTime(i: number) {
+  if (i === 0) return true
+  const s_time = chatList.value[i - 1]?.ctime_ms
+  const e_time = chatList.value[i]?.ctime_ms
+  return e_time - s_time > 60 * 1000
+}
 // watch(
-//   hasLogin,
+//   chatHasLogin,
 //   (n) => {
 //     if (n) {
 //       if (thouUsername.value) {
-//         hasLogin.value && chatStore.jimGetSingleInfo(thouUsername.value)
+//         chatHasLogin.value && chatStore.jimGetSingleInfo(thouUsername.value)
 //       } else {
-//         hasLogin.value && chatStore.jimGetGroupInfo(groupInfo.gid)
+//         chatHasLogin.value && chatStore.jimGetGroupInfo(groupInfo.gid)
 //         chatType.value = 'group'
 //       }
 //     }
@@ -116,7 +122,7 @@ onLoad((option) => {
               'l-chat-mine': s.content.from_id === jimUserInfo.username
             }"
           >
-            <view class="l-chat-item-time">
+            <view class="l-chat-item-time" v-if="showTime(i)">
               {{ dateFormat(new Date(s.ctime_ms), 'MM-dd hh:mm') }}
             </view>
             <view class="l-chat-item-content">
@@ -137,13 +143,13 @@ onLoad((option) => {
                 ></image>
               </view>
               <view class="l-chat-view">
-                <view class="l-chat-name">
+                <!-- <view class="l-chat-name">
                   {{
                     s.content.from_id === jimUserInfo.username
                       ? jimUserInfo.nickname || jimUserInfo.username
                       : s.content.from_name
                   }}
-                </view>
+                </view> -->
                 <template v-if="s.content.msg_type === 'text'">
                   <view
                     v-if="
@@ -293,6 +299,7 @@ onLoad((option) => {
 .l-chat-item {
   width: 100%;
   font-size: 32rpx;
+  margin-bottom: 20rpx;
 }
 
 .l-char-empty,
@@ -342,6 +349,7 @@ onLoad((option) => {
   position: relative;
   word-break: break-all;
   border-radius: 3px;
+  font-size: 28rpx;
 }
 
 .l-chat-text::after {
