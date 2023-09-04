@@ -182,7 +182,7 @@ onShareAppMessage((_res) => {
 <template>
   <view class="index-page">
     <!-- #ifdef H5 -->
-    <hyDownloadTips v-if="!isWeChat() && !isAlipayClient()" :top="'0px'" />
+    <hyDownloadTips v-if="!isAlipayClient()" :top="'0px'" />
     <!-- #endif -->
     <searchBar @on-search="onSearch" />
     <view class="section">
