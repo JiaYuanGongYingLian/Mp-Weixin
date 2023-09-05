@@ -130,7 +130,8 @@ async function getMoney() {
     userStore.syncSetWalletList(data)
   }
 }
-const handleBannerClick = (data: { objectType: any; webUrl: any }) => {
+const handleBannerClick = (i: number) => {
+  const data = bannerList.value[i]
   const { objectType, webUrl, content } = data
   switch (objectType) {
     case 0:
@@ -149,6 +150,14 @@ const handleBannerClick = (data: { objectType: any; webUrl: any }) => {
         })
       }
       break
+    case 10:
+      if (content) {
+        const obj = JSON.parse(content)
+        uni.navigateTo({
+          url: `/pages/productDetail/index?shopId=${obj.shopId}&productId=${obj.productId}`
+        })
+      }
+      break
     default:
       break
   }
@@ -160,6 +169,10 @@ onReady(async () => {
   })
   // banner
   getBaseDataFn(baseApi.advertising_enum.ADV_HOME_BANNER1, (data) => {
+    const { records } = data
+    records.forEach((element: { image: string }) => {
+      element.image = getImgFullPath(element.imageUrl)
+    })
     bannerList.value = data.records
   })
   // 黑豆商品
@@ -222,7 +235,19 @@ onShareAppMessage((_res) => {
         </view>
       </view>
     </view>
-    <swiper class="swiper" indicator-dots :autoplay="false" circular>
+    <u-swiper
+      :list="bannerList"
+      height="200"
+      mode="rect"
+      @click="handleBannerClick"
+    ></u-swiper>
+    <!-- <swiper
+      class="swiper"
+      mode="rect"
+      indicator-dots
+      :autoplay="false"
+      circular
+    >
       <swiper-item
         v-for="item in bannerList"
         :key="item.id"
@@ -231,10 +256,10 @@ onShareAppMessage((_res) => {
         <image
           class="item"
           :src="getImgFullPath(item.imageUrl)"
-          mode="widthFix"
+          mode="aspectFill"
         />
       </swiper-item>
-    </swiper>
+    </swiper> -->
     <view class="hdBar">
       <view class="link" @click="toHeidouShop">
         <u-icon :name="icon_heidou" size="30"></u-icon>
@@ -315,7 +340,7 @@ onShareAppMessage((_res) => {
 }
 
 .swiper {
-  height: 100px;
+  height: 110px;
   margin-top: 20rpx;
 
   .item {
