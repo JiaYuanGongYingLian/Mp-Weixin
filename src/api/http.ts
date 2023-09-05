@@ -121,6 +121,7 @@ class RequestHttp {
       (config: AxiosRequestConfig) => {
         const token = uni.getStorageSync('accessToken') || ''
         const wxCode = uni.getStorageSync('wxCode') || ''
+        const currentLocation = uni.getStorageSync('currentLocation') || {}
         // #ifdef H5
         config.headers.platform = 50
         // #endif
@@ -132,6 +133,10 @@ class RequestHttp {
         }
         if (wxCode) {
           config.headers.code = wxCode
+        }
+        if (currentLocation) {
+          config.headers.lng = currentLocation.longitude
+          config.headers.lat = currentLocation.latitude
         }
         return config
       },

@@ -61,7 +61,8 @@ async function getShopList() {
     otherColumns: 'moneyRuleDetails,vipReserveRoleCount,coupons',
     shopType: 3,
     categoryId: tab.id,
-    keywords: keyword.value
+    keywords: keyword.value,
+    distance: 1
   })
   const { records, current, pages } = data
   records.forEach((shop: object) => {
@@ -116,6 +117,7 @@ function getLocation() {
           latitude,
           longitude
         }
+        uni.setStorageSync('currentLocation', currentLocation.value)
         shopList.value.forEach((item) => {
           item.list.forEach(
             (shop: { distance: string; latitude: any; longitude: any }) => {
@@ -138,7 +140,7 @@ function getLocation() {
       console.log(res, 130)
       if (res.errMsg == 'getLocation:fail auth deny') {
         uni.showModal({
-          content: '检测到您没打开获取信息功能权限，是否去设置打开？',
+          content: '检测到您没打开获取位置信息功能权限，是否去设置打开？',
           confirmText: '确认',
           cancelText: '取消',
           success: (res) => {
