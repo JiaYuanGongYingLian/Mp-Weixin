@@ -25,6 +25,7 @@ const categoryList = reactive({
   list2: []
 })
 const bannerList = ref([])
+const bannerList2 = ref([])
 const productList = reactive({
   pageIndex: 1,
   pageSize: 18,
@@ -130,8 +131,8 @@ async function getMoney() {
     userStore.syncSetWalletList(data)
   }
 }
-const handleBannerClick = (i: number) => {
-  const data = bannerList.value[i]
+const handleBannerClick = (i: number, dataList: any[]) => {
+  const data = dataList[i]
   const { objectType, webUrl, content } = data
   switch (objectType) {
     case 0:
@@ -175,6 +176,14 @@ onReady(async () => {
     })
     bannerList.value = data.records
   })
+  // banner2
+  getBaseDataFn(baseApi.advertising_enum.ADV_HOME_BANNER2, (data) => {
+    const { records } = data
+    records.forEach((element: { image: string }) => {
+      element.image = getImgFullPath(element.imageUrl)
+    })
+    bannerList2.value = data.records
+  })
   // 黑豆商品
   getHeidouProductList()
   // 查询黑豆余额
@@ -198,6 +207,12 @@ onShareAppMessage((_res) => {
     <hyDownloadTips v-if="!isAlipayClient()" :top="'0px'" />
     <!-- #endif -->
     <searchBar @on-search="onSearch" />
+    <u-swiper
+      :list="bannerList"
+      height="200"
+      mode="rect"
+      @click="handleBannerClick($event, bannerList)"
+    ></u-swiper>
     <view class="section">
       <view class="tit">线下好店</view>
       <view class="actions">
@@ -236,30 +251,13 @@ onShareAppMessage((_res) => {
       </view>
     </view>
     <u-swiper
-      :list="bannerList"
+      :list="bannerList2"
       height="200"
-      mode="rect"
-      @click="handleBannerClick"
+      mode="none"
+      interval="3500"
+      duration="1000"
+      @click="handleBannerClick($event, bannerList2)"
     ></u-swiper>
-    <!-- <swiper
-      class="swiper"
-      mode="rect"
-      indicator-dots
-      :autoplay="false"
-      circular
-    >
-      <swiper-item
-        v-for="item in bannerList"
-        :key="item.id"
-        @click="handleBannerClick(item)"
-      >
-        <image
-          class="item"
-          :src="getImgFullPath(item.imageUrl)"
-          mode="aspectFill"
-        />
-      </swiper-item>
-    </swiper> -->
     <view class="hdBar">
       <view class="link" @click="toHeidouShop">
         <u-icon :name="icon_heidou" size="30"></u-icon>
