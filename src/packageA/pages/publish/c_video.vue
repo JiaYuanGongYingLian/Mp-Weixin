@@ -8,7 +8,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-01 16:22:48
- * @LastEditTime: 2023-08-30 10:00:28
+ * @LastEditTime: 2023-09-06 11:48:58
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -174,6 +174,23 @@ function toTweetEdit(item: any) {
     url: '/packageA/pages/tweetEdit/index'
   })
 }
+async function changeFn(i: number) {
+  const { data } = await socialApi.dynamicList({
+    noPaging: true,
+    type: 3,
+    userId: userInfo.value.id,
+    detail: true,
+    status:
+      i === 0
+        ? enumAll.audit_status_enum.DEFAULT
+        : enumAll.audit_status_enum.SUCCESS
+  })
+  if (i === 0) {
+    videoList1.list = data
+  } else {
+    videoList2.list = data
+  }
+}
 
 onMounted(() => {
   dynamicList()
@@ -186,7 +203,11 @@ onMounted(() => {
       <text class="text">点击上传 / 拍摄视频</text>
     </view>
     <view class="section">
-      <u-subsection :list="subList" v-model="subCurrent"></u-subsection>
+      <u-subsection
+        :list="subList"
+        v-model="subCurrent"
+        @change="changeFn($event)"
+      ></u-subsection>
       <view class="video-view" v-if="subCurrent === 0">
         <view class="video-item loading" v-show="progress > 0">
           <view class="ring">
