@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 /* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-plusplus */
@@ -5,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-25 15:30:59
- * @LastEditTime: 2023-09-04 18:10:10
+ * @LastEditTime: 2023-09-07 15:04:47
  * @LastEditors:  Please set LastEditors
  */
 import { defineStore } from 'pinia'
@@ -13,6 +14,8 @@ import jpushIM from '@/common/jim/jim.js'
 import $config from '@/common/jim/config.js'
 import jimMsg from '@/common/jim/imMsgApi.js'
 import { $toast } from '@/utils/common'
+import { Md5 } from 'ts-md5'
+import useUserStore from './userStore'
 
 let number = 0
 const useStore = defineStore('chat', {
@@ -40,6 +43,20 @@ const useStore = defineStore('chat', {
     }
   },
   actions: {
+    async jimLoginFn() {
+      const userStore = useUserStore()
+      const data = uni.getStorageSync('jimLoginInfo')
+      if (data && data?.username === `hy_${userStore.userInfo.id}`) {
+        this.jimLogin(data)
+      } else {
+        const loginInfo = {
+          username: `hy_${userStore.userInfo.id}`,
+          password: Md5.hashStr(`hy_${userStore.userInfo.id}_Ji`),
+          nickname: userStore.userInfo.nickname
+        }
+        this.jimLogin(loginInfo)
+      }
+    },
     async jimInit() {
       await jpushIM.init()
       const inter = setInterval(() => {
@@ -112,6 +129,15 @@ const useStore = defineStore('chat', {
       const params = data
       const { code } = await jpushIM.updateSelfInfo(params)
       if (code === 0) {
+        this.jimGetUserInfo(this.jimUserInfo.username)
+      }
+    },
+    async updateSelfAvatar(data: any) {
+      const params = {
+        avatar: data
+      }
+      const res = await jpushIM.updateSelfAvatar(params)
+      if (res.code === 0) {
         this.jimGetUserInfo(this.jimUserInfo.username)
       }
     },
@@ -328,15 +354,6 @@ const useStore = defineStore('chat', {
             this.jimGetSingleInfo(data.target_username)
           }, 500)
         }
-      }
-    },
-    async updateSelfAvatar(data: any) {
-      const params = {
-        avatar: data
-      }
-      const res = await jpushIM.updateSelfAvatar(params)
-      if (res.code === 0) {
-        this.jimGetUserInfo(this.jimUserInfo.username)
       }
     },
     // 群聊

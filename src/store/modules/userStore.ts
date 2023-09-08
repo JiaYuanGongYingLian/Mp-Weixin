@@ -1,7 +1,7 @@
 /* eslint-disable no-empty */
 import { defineStore } from 'pinia'
 import { getQueryVariable } from '@/utils/common'
-
+import useChatStore from './chatStore'
 const BASEURL = 'https://api.blacksilverscore.com'
 const userStore = defineStore('storeId', {
   state: () => ({
@@ -64,6 +64,8 @@ const userStore = defineStore('storeId', {
           success: (res) => {
             const { data } = res.data
             this.syncSetUserInfo(data)
+            const chatStore = useChatStore()
+            chatStore.jimLoginFn()
             resolve(data)
           }
         })

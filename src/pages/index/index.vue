@@ -6,7 +6,8 @@ import {
   onLoad,
   onReachBottom,
   onPageScroll,
-  onShareAppMessage
+  onShareAppMessage,
+  onPullDownRefresh
 } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, moneyApi, productApi } from '@/api'
@@ -199,6 +200,12 @@ onShareAppMessage((_res) => {
     title: '黑银生活',
     path: sharePathFormat({ sourceTime })
   }
+})
+onPullDownRefresh(() => {
+  setTimeout(async () => {
+    getHeidouProductList()
+    uni.stopPullDownRefresh()
+  }, 1000)
 })
 </script>
 <template>

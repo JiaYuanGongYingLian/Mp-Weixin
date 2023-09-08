@@ -1,7 +1,7 @@
 <!-- eslint-disable no-param-reassign -->
 <script setup lang="ts">
 import { reactive, ref, computed } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onPullDownRefresh } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { useUserStore, useConfigStore } from '@/store'
 import { moneyApi, userApi } from '@/api'
@@ -83,6 +83,12 @@ async function getMoney() {
 }
 onLoad((option) => {
   getMoney()
+})
+onPullDownRefresh(() => {
+  setTimeout(async () => {
+    getMoney()
+    uni.stopPullDownRefresh()
+  }, 1000)
 })
 </script>
 <template>

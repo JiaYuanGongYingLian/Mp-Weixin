@@ -5,12 +5,13 @@
 import { reactive, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { Md5 } from 'ts-md5'
-import { useUserStore } from '@/store'
+import { useUserStore, useChatStore } from '@/store'
 import { baseApi, userApi } from '@/api'
 import logo from '@/static/ic_launcher.png'
 import { isWeChat, getQueryVariable } from '@/utils/common'
 
 const userStore = useUserStore()
+const chatStore = useChatStore()
 const isWeChatOfficial = ref(true)
 // #ifdef MP-WEIXIN
 isWeChatOfficial.value = false
@@ -219,7 +220,7 @@ onLoad(async (option) => {
         <view class="inputBox" v-if="form.type === userApi.LOGIN_TYPE_ENUM.PWD">
           <input
             class="inpt code"
-            type="text"
+            type="password"
             maxlength="20"
             v-model="form.code"
             placeholder-class="placeholderStyle"

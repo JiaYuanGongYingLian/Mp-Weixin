@@ -28,15 +28,11 @@ const payWay = reactive([
     name: '微信支付',
     icon: icon_wechat,
     // #ifdef H5
-    selected: isWeChat(),
+    selected: true, // isWeChat()
+    available: true, // isWeChat()
     // #endif
     // #ifdef MP-WEIXIN
     selected: true,
-    // #endif
-    // #ifdef H5
-    available: isWeChat(),
-    // #endif
-    // #ifdef MP-WEIXIN
     available: true,
     // #endif
     payWay: 3
@@ -45,15 +41,11 @@ const payWay = reactive([
     name: '支付宝支付',
     icon: icon_ali,
     // #ifdef H5
-    selected: !isWeChat(),
+    selected: false, // !isWeChat()
+    available: false, // !isWeChat()
     // #endif
     // #ifdef MP-WEIXIN
     selected: false,
-    // #endif
-    // #ifdef H5
-    available: !isWeChat(), // !isWeChat()
-    // #endif
-    // #ifdef MP-WEIXIN
     available: false,
     // #endif
     payWay: 2
@@ -183,6 +175,13 @@ async function onSubmit() {
   if (!selectedPayWay) {
     uni.showToast({
       title: '请选择支付方式',
+      icon: 'none'
+    })
+    return
+  }
+  if (selectedPayWay.payWay === 3 && !isWeChat()) {
+    uni.showToast({
+      title: '此支付方式仅限微信App付款',
       icon: 'none'
     })
     return

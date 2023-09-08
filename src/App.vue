@@ -3,66 +3,41 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { watch } from 'vue'
-import { Md5 } from 'ts-md5'
 import { useUserStore, useChatStore } from '@/store'
-import jpushIM from "@/common/jim/jim.js"
 
-const storeUser = useUserStore()
+const userStore = useUserStore()
 const chatStore = useChatStore()
-const { chatHasLogin, isJimInit } = storeToRefs(chatStore)
-const { userInfo } = storeToRefs(storeUser)
+const { chatHasLogin } = storeToRefs(chatStore)
+const { accessToken } = storeToRefs(userStore)
 
-watch(
-  userInfo,
-  (n) => {
-    if (n) {
-      if (!chatHasLogin.value) {
-        // chatStore.jimInit()
-      }
-    }
-  },
-  {
-    deep: true,
-    immediate: false
-  }
-)
-watch(isJimInit, (n) => {
-  if (n) {
-    // jimLogin()
-  }
-})
-function jimLogin() {
-  const data = uni.getStorageSync('jimLoginInfo')
-  if (data && data?.username === `hy_${userInfo.value.id}`) {
-    chatStore.jimLogin(data)
-  } else {
-    const loginInfo = {
-      username: `hy_${userInfo.value.id}`,
-      password: Md5.hashStr(`hy_${userInfo.value.id}_Ji`),
-      nickname: userInfo.value.nickname
-    }
-    chatStore.jimLogin(loginInfo)
-  }
-}
 onLaunch(() => {
   console.log('App Launch')
+  uni.onNetworkStatusChange((res) => {
+    const { isConnected, networkType } = res
+    if (['2g', '3g', '4g', '5g'].includes(networkType)) {
+      uni.showToast({
+        icon: 'none',
+        title: '当前网络为移动数据流量，请注意流量使用情况'
+      })
+    }
+    if (!isConnected) {
+      chatHasLogin.value = false
+    }
+  })
 })
 onShow(async () => {
   console.log('App Show')
-  storeUser.$patch((v) => {
-    v.accessToken = uni.getStorageSync('accessToken') || ''
-    v.userInfo = uni.getStorageSync('userInfo') || null
-  })
+  if (!accessToken.value) {
+    userStore.$patch((v) => {
+      v.accessToken = uni.getStorageSync('accessToken') || ''
+      v.userInfo = uni.getStorageSync('userInfo') || null
+    })
+  }
   console.log('chatHasLogin', chatHasLogin.value)
   if (!chatHasLogin.value) {
     await chatStore.jimInit()
-    await jimLogin()
+    await chatStore.jimLoginFn()
   }
-  jpushIM.onDisconnect(async () => {
-    await chatStore.jimInit()
-    await jimLogin()
-  })
 })
 onHide(() => {
   console.log('App Hide')

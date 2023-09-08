@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-09-01 17:47:22
+ * @LastEditTime: 2023-09-08 11:49:47
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -17,7 +17,8 @@ import {
   onShow,
   onReady,
   onPageScroll,
-  onShareAppMessage
+  onShareAppMessage,
+onPullDownRefresh
 } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi } from '@/api'
@@ -200,6 +201,13 @@ onShareAppMessage((_res) => {
     imageUrl: getImgFullPath(userDetailInfo.value?.avatar) || '',
     path: sharePathFormat({ cardId: cardId.value, userId: cardUserId.value })
   }
+})
+onPullDownRefresh(() => {
+  console.log('refresh')
+  setTimeout(async () => {
+    await getUserDetailInfo()
+    uni.stopPullDownRefresh()
+  }, 1000)
 })
 </script>
 <template>

@@ -16,17 +16,14 @@ https://wap.blacksilverscore.com/?redirect_url=/pages/productDetail/index&qrcode
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app'
 import logo from '@/static/ic_launcher.png'
-import { useUserStore, useConfigStore } from '@/store'
-import {
-  getQueryObject,
-  getQueryVariable,
-  isWeChat,
-  parseParams
-} from '@/utils/common'
+import { useUserStore, useConfigStore, useChatStore } from '@/store'
+import { getQueryObject, getQueryVariable, parseParams } from '@/utils/common'
 import { baseApi } from '@/api'
+import jpushIM from '@/common/jim/jim.js'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
+const chatStore = useChatStore()
 function toTargetPage(URL?: any, duration = 0) {
   const url = URL || '/pages/index/index'
   console.log('启动页跳转至：', url)
@@ -57,6 +54,7 @@ onLoad(async (option) => {
       uni.setStorageSync('wxCode', res.code)
       await userStore.wxMiniLogin(res.code)
       await userStore.loginByOpenId()
+      await userStore.getUserInfo()
       toTargetPage(url_rewirte)
       getConfig('mini_project_chat')
       getConfig('mini_project_video')
@@ -106,6 +104,14 @@ onLoad(async (option) => {
   }
   toTargetPage(url)
   // #endif
+
+  jpushIM.onDisconnect(async () => {
+    console.log('jpush断线重连')
+    chatStore.chatHasLogin = false
+    await chatStore.jimInit()
+    await chatStore.jimLoginFn()
+    console.log('jpush断线重连结束')
+  })
 })
 </script>
 
