@@ -18,7 +18,6 @@ import hyDownloadTips from '@/components/hy-download-tips/index.vue'
 import icon_heidou from '@/static/mine_hei_dou.png'
 import { isAlipayClient, isWeChat } from '@/utils/common'
 import { sharePathFormat } from '@/common/wechat-share'
-import { base64 } from '@/common/mock.js'
 
 const userStore = useUserStore()
 const { hasLogin, walletList } = storeToRefs(userStore)
@@ -211,7 +210,6 @@ onPullDownRefresh(() => {
 </script>
 <template>
   <view class="index-page">
-    <image :src="base64" mode="scaleToFill" />
     <!-- #ifdef H5 -->
     <hyDownloadTips v-if="!isAlipayClient()" :top="'0px'" />
     <!-- #endif -->
