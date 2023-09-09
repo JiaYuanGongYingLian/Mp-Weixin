@@ -24,7 +24,7 @@ function loginOutFn() {
   uni.showLoading({ title: '', mask: true })
   userStore.syncClearToken()
   userStore.syncClearUserInfo()
-  chatStore.resetState()
+  chatStore.jimLoginOut()
   uni.reLaunch({
     url: '/pages/mine/index'
   })
