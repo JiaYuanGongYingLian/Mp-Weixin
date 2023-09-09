@@ -1,3 +1,6 @@
+/* eslint-disable consistent-return */
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-plusplus */
 /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 // url所有传参获取
@@ -254,10 +257,58 @@ export const $toast = (
 }
 
 /*
- * 图片url转bolb
- * @param{ url } 图片url
- * @param{ name } 图片名称
+ * image文件url转base64
+ * @param{ url } image文件url
  */
+export const imageUrlToBase64 = (url: any) => {
+  if (!url) return
+  return new Promise((resolve, reject) => {
+    uni.request({
+      url,
+      method: 'GET',
+      responseType: 'arraybuffer',
+      success: async (res) => {
+        const base64 = uni.arrayBufferToBase64(res.data)
+        const Base64Url = `data:image/jpeg;base64,${base64}`
+        resolve(Base64Url)
+      },
+      fail: (e) => {
+        reject(e)
+      }
+    })
+  })
+}
+/*
+ * bolb转file对象
+ * @param{ bolb } 文件bolb
+ * @param{ filename } 文件名称
+ */
+export const base64ToFile = (base64: string, name: string) => {
+  if (typeof base64 !== 'string') {
+    return
+  }
+  const arr = base64.split(',')
+  const type = arr[0].match(/:(.*?);/)[1]
+  const fileExt = type.split('/')[1]
+  const bstr = atob(arr[1])
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new File([u8arr], `${name}.${fileExt}`, {
+    type
+  })
+}
+/*
+ * image文件url转 file
+ * @param{ url } image文件url
+ */
+export const imageUrlToFile = async (url: string) => {
+  const base64Url = await imageUrlToBase64(url)
+  const file = await base64ToFile(base64Url, `${new Date()}`)
+  return file
+}
 
 export default {
   getQueryObject,
@@ -273,5 +324,6 @@ export default {
   parseParams,
   isEmptyObject,
   isMObile,
-  $toast
+  $toast,
+  imageUrlToFile
 }

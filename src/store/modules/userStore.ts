@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import { getQueryVariable } from '@/utils/common'
 import useChatStore from './chatStore'
+import useConfigStore from './configStore'
 const BASEURL = 'https://api.blacksilverscore.com'
 const userStore = defineStore('storeId', {
   state: () => ({
@@ -36,9 +37,12 @@ const userStore = defineStore('storeId', {
       this.wxAccessToken = token
       uni.setStorageSync('wxAccessToken', token)
     },
-    syncSetUserInfo(data: object) {
+    async syncSetUserInfo(data: object) {
       this.userInfo = data
       uni.setStorageSync('userInfo', data)
+      // 登陆极光IM
+      const chatStore = useChatStore()
+      await chatStore.jimLoginFn()
     },
     syncClearToken() {
       this.accessToken = ''
@@ -53,6 +57,14 @@ const userStore = defineStore('storeId', {
         this.walletList = data
       }
     },
+    getImgFullPath(suffix: string){
+      if (!suffix) return
+      if (suffix.includes('http' || 'https')) {
+        return suffix
+      }
+      const configStore = useConfigStore()
+      return configStore.staticUrl + suffix
+    },
     getUserInfo() {
       return new Promise((resolve, _reject) => {
         uni.request({
@@ -61,11 +73,9 @@ const userStore = defineStore('storeId', {
           header: {
             Authorization: `Bearer ${this.accessToken}`
           },
-          success: (res) => {
+          success: async (res) => {
             const { data } = res.data
             this.syncSetUserInfo(data)
-            const chatStore = useChatStore()
-            chatStore.jimLoginFn()
             resolve(data)
           }
         })

@@ -6,16 +6,17 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-25 15:30:59
- * @LastEditTime: 2023-09-07 15:04:47
+ * @LastEditTime: 2023-09-09 18:20:30
  * @LastEditors:  Please set LastEditors
  */
 import { defineStore } from 'pinia'
 import jpushIM from '@/common/jim/jim.js'
 import $config from '@/common/jim/config.js'
 import jimMsg from '@/common/jim/imMsgApi.js'
-import { $toast } from '@/utils/common'
+import { $toast, imageUrlToFile } from '@/utils/common'
 import { Md5 } from 'ts-md5'
 import useUserStore from './userStore'
+import { useConfigStore } from '..'
 
 let number = 0
 const useStore = defineStore('chat', {
@@ -89,6 +90,16 @@ const useStore = defineStore('chat', {
         }
       }, 500)
     },
+    getImgFullPath(suffix: string) {
+      if (!suffix) return
+      if (suffix.includes('http' || 'https')) {
+        // eslint-disable-next-line consistent-return
+        return suffix
+      }
+      const configStore = useConfigStore()
+      // eslint-disable-next-line consistent-return
+      return configStore.staticUrl + suffix
+    },
     async jimLogin(data: { username: any; password?: any; nickname?: any }) {
       const { username, password } = data
       try {
@@ -104,6 +115,20 @@ const useStore = defineStore('chat', {
         this.jimOnMsgReceive()
         this.jimGetConversation()
         // $toast('登录成功')
+        // 更新极光IM用户信息
+        const userStore = useUserStore()
+        this.jimUpdateSelfInfo({
+          nickname: userStore.userInfo.nickname
+        })
+        const imageFile = await imageUrlToFile(
+          this.getImgFullPath(userStore.userInfo.avatar) || ''
+        )
+        if (imageFile) {
+          const formData = new FormData()
+          formData.append('file', imageFile)
+          // debugger
+          this.updateSelfAvatar(formData)
+        }
       } catch (err) {
         if (err && err.code !== 0) {
           this.jimRegister({
@@ -400,7 +425,7 @@ const useStore = defineStore('chat', {
           }, 500)
         }
       }
-    },
+    }
   }
 })
 

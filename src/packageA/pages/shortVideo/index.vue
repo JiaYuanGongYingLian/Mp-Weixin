@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-09-01 15:05:15
+ * @LastEditTime: 2023-09-09 16:20:03
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -145,6 +145,10 @@ function fullscreenchangeFn(e: { detail: { fullScreen: boolean } }) {
   fullScreen.value = e.detail.fullScreen
 }
 function toBusinessCardHome(data: { userId: any }, index: any) {
+  if (['preview', 'viewSingleUser'].includes(type.value)) {
+    uni.navigateBack()
+    return
+  }
   uni.navigateTo({
     url: `/packageA/pages/businessCard/index?userId=${data.userId}&avatar=${data?.user?.avatar}&nickname=${data?.user?.nickname}`
   })

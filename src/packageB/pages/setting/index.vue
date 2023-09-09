@@ -5,9 +5,11 @@ import { storeToRefs } from 'pinia'
 import { baseApi, productApi, userApi } from '@/api'
 import { checkLoginState, getImgFullPath } from '@/utils/index'
 import { upload } from '@/common/ali-oss'
-import { useUserStore } from '@/store'
+import { useUserStore, useChatStore } from '@/store'
+import { isWeChat } from '@/utils/common'
 
 const userStore = useUserStore()
+const chatStore = useChatStore()
 const { userInfo } = storeToRefs(userStore)
 function goUrlFn(url: any) {
   if (checkLoginState()) {
@@ -22,6 +24,7 @@ function loginOutFn() {
   uni.showLoading({ title: '', mask: true })
   userStore.syncClearToken()
   userStore.syncClearUserInfo()
+  chatStore.resetState()
   uni.reLaunch({
     url: '/pages/mine/index'
   })
@@ -116,7 +119,9 @@ onLoad((option) => {})
       >
       </u-cell-item>
     </u-cell-group>
-    <!-- <view class="btn" @tap="loginOutFn">退出登录</view> -->
+    <!-- #ifdef H5 -->
+    <view class="btn" @tap="loginOutFn" v-if="!isWeChat()">退出登录</view>
+    <!-- #endif -->
   </div>
 </template>
 
