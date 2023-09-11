@@ -39,6 +39,10 @@ async function getConfig(fieldName = 'mini_project_chat') {
   })
   configStore.videoPageOpen = data.fieldValue !== '0'
 }
+const uncertainShareCodeLinks = [
+  '/pages/physicalShopCheck/index',
+  '/pages/physicalShop/index'
+]
 
 onLoad(async (option) => {
   // #ifdef MP-WEIXIN
@@ -71,31 +75,35 @@ onLoad(async (option) => {
   // #endif
   // #ifdef H5
   let url = ''
-  const origin_url = getQueryVariable('redirect_url')
+  const origin_url = getQueryVariable('redirect_url') || ''
   const qrcode = getQueryVariable('qrcode')
   const from = getQueryVariable('from')
   const shareCode = getQueryVariable('shareCode')
   if (shareCode) {
     uni.setStorageSync('shareCode', shareCode)
+    userStore.syncSetUseShareCode(true)
+  } else if (uncertainShareCodeLinks.includes(origin_url)) {
+    // 扫店铺结算二维码/店铺分享码 如无shareCode，标记下来结算时不携带（防止storage存的被携带）
+    userStore.syncSetUseShareCode(false)
   }
   const tempParams = getQueryObject(window.location.search)
   if (tempParams.redirect_url) {
-    delete tempParams?.redirect_url
+    delete tempParams.redirect_url
   }
-  if (origin_url) {
-    url = parseParams(origin_url, tempParams)
-    if (qrcode) {
-      configStore.setEnterType('storeQrcode')
-      if (origin_url === '/pages/physicalShopCheck/index') {
-        // 扫店铺结算二维码的特殊处理，使结算完成跳转首页为店铺首页
-        const url_rewirte = parseParams('/pages/physicalShop/index', tempParams)
-        uni.setStorageSync('redirect_url', url_rewirte)
-      } else {
-        uni.setStorageSync('redirect_url', url)
-      }
+  url = parseParams(origin_url, tempParams)
+  if (qrcode) {
+    configStore.setEnterType('storeQrcode')
+    if (origin_url === '/pages/physicalShopCheck/index') {
+      // 扫店铺结算二维码的特殊处理，使结算完成跳转首页为店铺首页
+      // eslint-disable-next-line no-shadow
+      const url_rewirte = parseParams('/pages/physicalShop/index', tempParams)
+      uni.setStorageSync('redirect_url', url_rewirte)
+    } else {
+      uni.setStorageSync('redirect_url', url)
     }
   }
   if (from === 'login') {
+    // eslint-disable-next-line no-shadow
     const redirect_url = uni.getStorageSync('redirect_url')
     if (redirect_url) {
       url = redirect_url

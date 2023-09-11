@@ -4,7 +4,7 @@ import { getQueryVariable } from '@/utils/common'
 import useChatStore from './chatStore'
 import useConfigStore from './configStore'
 const BASEURL = 'https://api.blacksilverscore.com'
-const userStore = defineStore('storeId', {
+const userStore = defineStore('user', {
   state: () => ({
     isAuthorize: false, // 是否授权
     isBindPhone: false, // 是否绑定手机
@@ -15,12 +15,16 @@ const userStore = defineStore('storeId', {
     openid: '',
     wxUserInfo: {},
     walletList: [],
-    hasNewDynamic: false
+    hasNewDynamic: false,
+    useShareCode: true
   }),
   getters: {
     hasLogin: (state) => Boolean(state.accessToken)
   },
   actions: {
+    syncSetUseShareCode(flag: boolean) {
+      this.useShareCode = flag
+    },
     syncSetOpenid(openid: string) {
       this.openid = openid
       uni.setStorageSync('openid', openid)

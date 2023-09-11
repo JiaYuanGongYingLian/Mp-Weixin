@@ -12,7 +12,7 @@ import { useUserStore } from '@/store'
 import { sharePathFormat } from '@/common/wechat-share'
 
 const storeUser = useUserStore()
-const { hasLogin, userInfo } = storeToRefs(storeUser)
+const { hasLogin, userInfo, useShareCode } = storeToRefs(storeUser)
 const loadingSkeleton = ref(false)
 const productData = ref({})
 const productId = ref()
@@ -240,7 +240,8 @@ async function confirm() {
     status: 0
   }
   // 卖手推荐的商品，卖手获得收益
-  if (uni.getStorageSync('shareCode')) {
+  // 2023/9/11 扫店铺码进入无shareCode则不携带
+  if (uni.getStorageSync('shareCode') && useShareCode.value) {
     orderData.orderProductSkus[0].externalData = {
       userShareCode: uni.getStorageSync('shareCode')
     }

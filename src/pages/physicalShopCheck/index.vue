@@ -15,7 +15,7 @@ const configStore = useConfigStore()
 const userStore = useUserStore()
 const { enterByStoreQrcode, isWeChatBrowser, isAlipayClient } =
   storeToRefs(configStore)
-const { accessToken } = storeToRefs(userStore)
+const { accessToken, useShareCode } = storeToRefs(userStore)
 const info = reactive({
   name: '',
   shopId: '',
@@ -69,7 +69,8 @@ async function toPayment() {
       ]
     }
     // 卖手推荐的门店，卖手获得收益
-    if (uni.getStorageSync('shareCode')) {
+    // 2023/9/11 扫店铺付款码进入无shareCode则不携带
+    if (uni.getStorageSync('shareCode') && useShareCode.value) {
       orderData.value.orderProductSkus[0].externalData = {
         userShareCode: uni.getStorageSync('shareCode')
       }
