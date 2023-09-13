@@ -15,8 +15,8 @@ export default defineConfig({
     // host: '0.0.0.0',
     proxy: {
       '/api/': {
-        target: 'http://192.168.169.152:8000',
-        // target: 'https://api.blacksilverscore.com',
+        // target: 'http://192.168.169.152:8000',
+        target: 'https://api.blacksilverscore.com',
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/api/, '')
       },
@@ -44,7 +44,7 @@ export default defineConfig({
       }
     }
   },
-  base: '/test',
+  base: '/',
   build: {
     assetsDir: 'assets',
     outDir: 'hyLife'

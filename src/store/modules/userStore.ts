@@ -3,8 +3,7 @@ import { defineStore } from 'pinia'
 import { getQueryVariable } from '@/utils/common'
 import useChatStore from './chatStore'
 import useConfigStore from './configStore'
-// const BASEURL = 'https://api.blacksilverscore.com'
-const BASEURL = 'http://192.168.169.152:8000'
+const BASEURL = 'https://api.blacksilverscore.com'
 const userStore = defineStore('user', {
   state: () => ({
     isAuthorize: false, // 是否授权
@@ -15,9 +14,6 @@ const userStore = defineStore('user', {
     unionid: '',
     openid: '',
     wxUserInfo: {},
-    // wxUserInfo: {
-    //   openid: 'obUWj6gfDYcJaAdUkRfOIZDfoDq8'
-    // },
     walletList: [],
     hasNewDynamic: false,
     useShareCode: true
@@ -171,8 +167,7 @@ const userStore = defineStore('user', {
     },
     wxAuth() {
       return new Promise((resolve, _reject) => {
-        // const APPID = 'wx0ffaafd066438895'
-        const APPID = 'wxa9231c6a18326dae'
+        const APPID = 'wx0ffaafd066438895'
         const SCOPE = 'snsapi_userinfo'
         const CODE = getQueryVariable('code')
         const REDIRECT_URL = encodeURIComponent(window.location.href)
