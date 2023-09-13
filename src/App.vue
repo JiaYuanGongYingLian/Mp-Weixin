@@ -4,6 +4,7 @@
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { useUserStore, useChatStore } from '@/store'
+import { onMounted } from 'vue';
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
@@ -42,6 +43,9 @@ onShow(async () => {
 onHide(() => {
   console.log('App Hide')
 })
+// onMounted(()=>{
+
+// })
 </script>
 <style lang="scss">
 @import 'vk-uview-ui/index.scss';

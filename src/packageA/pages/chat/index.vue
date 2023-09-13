@@ -1,10 +1,11 @@
+<!-- eslint-disable no-plusplus -->
 <!-- eslint-disable no-unused-expressions -->
 <!-- eslint-disable no-use-before-define -->
 <!--
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-09-04 18:08:54
+ * @LastEditTime: 2023-09-12 15:28:50
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -35,7 +36,8 @@ const {
   singleInfo,
   singleInfoAvatar,
   jimUserInfoAvatar,
-  syncConversation
+  syncConversation,
+  groupMemberList
 } = storeToRefs(chatStore)
 watch(
   [chatList, syncConversation],
@@ -46,8 +48,7 @@ watch(
   },
   { deep: true }
 )
-const isEmoji = ref(false)
-const isUpload = ref(false)
+
 const chatScrollTop = ref(999999)
 const thouUsername = ref('')
 const groupInfo = reactive({
@@ -83,20 +84,22 @@ function showTime(i: number) {
   const e_time = chatList.value[i]?.ctime_ms
   return e_time - s_time > 60 * 1000
 }
-// watch(
-//   chatHasLogin,
-//   (n) => {
-//     if (n) {
-//       if (thouUsername.value) {
-//         chatHasLogin.value && chatStore.jimGetSingleInfo(thouUsername.value)
-//       } else {
-//         chatHasLogin.value && chatStore.jimGetGroupInfo(groupInfo.gid)
-//         chatType.value = 'group'
-//       }
-//     }
-//   },
-//   { deep: true }
-// )
+function getGroupMemberAvatar(username: any) {
+  for (let i = 0; i < groupMemberList.value.length; i++) {
+    if (
+      groupMemberList.value[i].username === username &&
+      groupMemberList.value[i].avatar
+    ) {
+      return `${$config.jimLocalhost}${groupMemberList.value[i].avatar}`
+    }
+  }
+  return $config.$defaultAvatar
+}
+function toDetail(data: { userId: any }) {
+  // uni.navigateTo({
+  //   url: `/packageA/pages/businessCard/index?&userId=${data.userId}`
+  // })
+}
 </script>
 <template>
   <view class="container">
@@ -128,28 +131,36 @@ function showTime(i: number) {
             <view class="l-chat-item-content">
               <!-- {{ s }} -->
               <view class="l-chat-avatar">
-                <image
-                  class="l-chat-img-avatar"
+                <u-image
+                  shape="circle"
+                  width="80"
+                  height="80"
                   v-if="s.content.from_id !== jimUserInfo.username"
-                  @tap="$nav({ url: '/pages/info/info?type=single' })"
-                  :src="singleInfoAvatar"
+                  @click="toDetail({ userId: s.content.from_id.split('_')[1] })"
+                  :src="
+                    chatType === 'group'
+                      ? getGroupMemberAvatar(s.content.from_id)
+                      : singleInfoAvatar
+                  "
                   mode="aspectFill"
-                ></image>
-                <image
-                  class="l-chat-img-avatar"
+                ></u-image>
+                <u-image
                   v-else
+                  shape="circle"
+                  width="80"
+                  height="80"
                   :src="jimUserInfoAvatar"
                   mode="aspectFill"
-                ></image>
+                ></u-image>
               </view>
               <view class="l-chat-view">
-                <!-- <view class="l-chat-name">
+                <view class="l-chat-name" v-if="chatType === 'group'">
                   {{
                     s.content.from_id === jimUserInfo.username
                       ? jimUserInfo.nickname || jimUserInfo.username
                       : s.content.from_name
                   }}
-                </view> -->
+                </view>
                 <template v-if="s.content.msg_type === 'text'">
                   <view
                     v-if="

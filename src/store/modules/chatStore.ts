@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-25 15:30:59
- * @LastEditTime: 2023-09-09 18:20:30
+ * @LastEditTime: 2023-09-12 11:30:23
  * @LastEditors:  Please set LastEditors
  */
 import { defineStore } from 'pinia'
@@ -29,7 +29,8 @@ const useStore = defineStore('chat', {
     conversation: [],
     chatList: [],
     singleInfo: {},
-    groupInfo: {}
+    groupInfo: {},
+    groupMemberList: []
   }),
   getters: {
     singleInfoAvatar: (state) => {
@@ -126,7 +127,6 @@ const useStore = defineStore('chat', {
         if (imageFile) {
           const formData = new FormData()
           formData.append('file', imageFile)
-          // debugger
           this.updateSelfAvatar(formData)
         }
       } catch (err) {
@@ -305,8 +305,8 @@ const useStore = defineStore('chat', {
       }
     },
     async jimGetGroupMembers(group: any) {
-      const res = await jpushIM.getGroupMembers(group)
-      console.log(res)
+      const { member_list } = await jpushIM.getGroupMembers(group)
+      this.groupMemberList = member_list
     },
     jimGetGroupMsg(group: {}) {
       const chatList = jimMsg.getGroupMsg(
