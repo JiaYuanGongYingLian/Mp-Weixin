@@ -42,6 +42,7 @@ async function getConfig(fieldName = 'mini_project_chat') {
 const uncertainShareCodeLinks = [
   '/pages/physicalShopCheck/index',
   '/pages/physicalShop/index'
+  // '/pages/productDetail/index'
 ]
 
 onLoad(async (option) => {

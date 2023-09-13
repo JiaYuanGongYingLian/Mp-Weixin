@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onPullDownRefresh } from '@dcloudio/uni-app'
 import { userApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { getPrePage } from '@/utils/common'
@@ -63,7 +63,12 @@ function addAddress(_type = 'add', data?: any) {
     url = `${url}&isFirst=true`
   }
   uni.navigateTo({
-    url
+    url,
+    success: () => {
+      uni.$once('addressEdit', () => {
+        loadData()
+      })
+    }
   })
 }
 // 获取微信自己的地址
@@ -100,6 +105,12 @@ function getWXAddressFn() {
 onLoad((option) => {
   type.value = option?.type
   loadData()
+})
+onPullDownRefresh(() => {
+  setTimeout(() => {
+    loadData()
+    uni.stopPullDownRefresh()
+  }, 1000)
 })
 </script>
 <template>

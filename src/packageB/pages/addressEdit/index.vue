@@ -2,6 +2,7 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { userApi, baseApi } from '@/api'
+import { getPrePage } from '@/utils/common'
 
 const routerParam = ref({})
 const addressData = ref({})
@@ -60,7 +61,9 @@ async function confirm() {
       street,
       other,
       phone,
-      name
+      name,
+      id,
+      userId
     },
     id,
     userId,
@@ -73,11 +76,13 @@ async function confirm() {
     duration: 2000
   })
   setTimeout(() => {
-    const pages = getCurrentPages() // 当前页面栈
-    if (pages.length > 1) {
-      const beforePage = pages[pages.length - 2] // 获取上一个页面实例对象
-      beforePage.$vm.loadData()
+    try {
+      const prePage = getPrePage()
+      prePage && prePage.loadData()
+    } catch (err) {
+      console.log(err)
     }
+    uni.$emit('addressEdit')
     uni.navigateBack()
   }, 1000)
 }
@@ -98,7 +103,7 @@ function chooseLocation() {
       addressData.value.street = street
     },
     fail: (error) => {
-      console.log('error',error)
+      console.log('error', error)
     }
   })
 }

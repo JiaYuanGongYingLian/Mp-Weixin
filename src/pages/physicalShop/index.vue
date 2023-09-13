@@ -18,7 +18,7 @@ import { isWeChat } from '@/utils/common'
 
 const configStore = useConfigStore()
 const userStore = useUserStore()
-const { hasLogin } = storeToRefs(userStore)
+const { hasLogin, userInfo } = storeToRefs(userStore)
 const { enterByStoreQrcode } = storeToRefs(configStore)
 const loadingSkeleton = ref(false)
 const bannerList = ref([])
@@ -223,8 +223,9 @@ function tabsChange(index: any) {
 function toProductDetail(id: any) {
   if (checkLoginState()) {
     if (!id) return
+    const url = `/pages/productDetail/index?shopId=${shopId.value}&productId=${id}&shareCode=${userInfo.value.shareCode}`
     uni.navigateTo({
-      url: `/pages/productDetail/index?shopId=${shopId.value}&productId=${id}`
+      url
     })
   }
 }

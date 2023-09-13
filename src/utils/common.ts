@@ -85,7 +85,9 @@ export const getPrePage = () => {
   // #ifdef H5
   return prePage
   // #endif
+  // #ifndef H5
   return prePage.$vm
+  // #endif
 }
 /**
  * 拉起客户端APP
