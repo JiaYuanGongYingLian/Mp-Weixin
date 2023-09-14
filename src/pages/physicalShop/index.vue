@@ -290,9 +290,12 @@ onLoad(async (option) => {
   })
   if (option?.qrcode) {
     configStore.setEnterType('storeQrcode')
+    const pages = getCurrentPages()
+    uni.setStorageSync('shopFullPath', pages[pages.length - 1].$page.fullPath)
   }
-  const pages = getCurrentPages()
-  uni.setStorageSync('shopFullPath', pages[pages.length - 1].$page.fullPath)
+  if (option?.shareCode) {
+    uni.setStorageSync('shareCode', option?.shareCode)
+  }
   // #endif
 })
 onPageScroll((e) => {

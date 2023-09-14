@@ -11,8 +11,8 @@ import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 import { useUserStore } from '@/store'
 import { sharePathFormat } from '@/common/wechat-share'
 
-const storeUser = useUserStore()
-const { hasLogin, userInfo, useShareCode } = storeToRefs(storeUser)
+const userStore = useUserStore()
+const { hasLogin, userInfo, useShareCode } = storeToRefs(userStore)
 const loadingSkeleton = ref(false)
 const productData = ref({})
 const productId = ref()
@@ -260,6 +260,11 @@ async function confirm() {
 }
 
 onLoad(async (option) => {
+  if (!option?.shareCode) {
+    userStore.syncSetUseShareCode(false)
+  } else if (option?.shareCode !== userInfo.value.shareCode) {
+    uni.setStorageSync('shareCode', option?.shareCode)
+  }
   productId.value = option.productId
   shopId.value = option.shopId
   loadingSkeleton.value = true

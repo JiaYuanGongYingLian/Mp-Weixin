@@ -41,9 +41,14 @@ async function getConfig(fieldName = 'mini_project_chat') {
 }
 const uncertainShareCodeLinks = [
   '/pages/physicalShopCheck/index',
-  '/pages/physicalShop/index'
-  // '/pages/productDetail/index'
+  '/pages/physicalShop/index',
+  '/pages/productDetail/index'
 ]
+function isNoCodeLink(url: string) {
+  return uncertainShareCodeLinks.some((item) => {
+    return url.includes(item)
+  })
+}
 
 onLoad(async (option) => {
   // #ifdef MP-WEIXIN
@@ -83,7 +88,7 @@ onLoad(async (option) => {
   if (shareCode) {
     uni.setStorageSync('shareCode', shareCode)
     userStore.syncSetUseShareCode(true)
-  } else if (uncertainShareCodeLinks.includes(origin_url)) {
+  } else if (isNoCodeLink(origin_url)) {
     // 扫店铺结算二维码/店铺分享码 如无shareCode，标记下来结算时不携带（防止storage存的被携带）
     userStore.syncSetUseShareCode(false)
   }
