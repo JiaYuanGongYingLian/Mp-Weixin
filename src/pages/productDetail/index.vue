@@ -320,6 +320,7 @@ onShareAppMessage(() => {
         <view>
           <view class="title f-m">{{ productData.name }}</view>
         </view>
+        <!-- #ifdef MP-WEIXIN -->
         <view class="share-content">
           <image
             class="img"
@@ -328,6 +329,7 @@ onShareAppMessage(() => {
           <view class="text">分享</view>
           <button open-type="share" class="btn"></button>
         </view>
+        <!-- #endif -->
       </view>
     </view>
     <view class="c-list section yhq">

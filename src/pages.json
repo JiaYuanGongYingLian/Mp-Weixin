@@ -117,7 +117,8 @@
 			"path": "pages/mine/index",
 			"style": {
 				"navigationStyle": "custom",
-				"enablePullDownRefresh": true
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "我的"
 			}
 		},
 		{

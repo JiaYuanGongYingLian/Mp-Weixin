@@ -36,13 +36,13 @@ const tabList = ref([
   {
     iconPath: '/static/ic_bar_main_pg.png',
     selectedIconPath: '/static/ic_bar_main_page_checked.png',
-    path: '/pages/physicalShop/index',
+    hy_path: '/pages/physicalShop/index',
     text: '首页'
   },
   {
     iconPath: '/static/ic_bar_mine.png',
     selectedIconPath: '/static/ic_bar_mine_checked.png',
-    pagePath: '/pages/mine/index',
+    hy_pagePath: '/pages/mine/index',
     text: '我的'
   }
 ])
@@ -60,17 +60,15 @@ function goUrlFn(e: { currentTarget: { dataset: { url: any } } }) {
 // 切换tab
 function handleTabBarChange(index: any) {
   const toPage = tabList.value[index]
-  if (toPage.pagePath) {
+  if (toPage.hy_pagePath) {
     uni.switchTab({
-      url: toPage.pagePath
+      url: toPage.hy_pagePath
     })
   } else if (uni.getStorageSync('shopFullPath')) {
-    uni.redirectTo({
-      url: uni.getStorageSync('shopFullPath')
-    })
+    uni.redirectTo({ url: uni.getStorageSync('shopFullPath')})
   } else {
     uni.redirectTo({
-      url: toPage.path
+      url: toPage.hy_path
     })
   }
 }
@@ -245,6 +243,7 @@ onPullDownRefresh(() => {
     </view>
     <hy-tabbar></hy-tabbar>
     <!-- #ifdef H5 -->
+    <!-- 线下店扫码进入的显示此tabbar -->
     <hyTabBar
       v-if="enterByStoreQrcode"
       v-model="currentTabbar"

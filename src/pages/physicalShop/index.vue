@@ -34,12 +34,12 @@ const tabList = ref([
     iconPath: '/static/ic_bar_main_pg.png',
     selectedIconPath: '/static/ic_bar_main_page_checked.png',
     text: '首页',
-    path: '/pages/physicalShop/index'
+    hy_path: '/pages/physicalShop/index'
   },
   {
     iconPath: '/static/ic_bar_mine.png',
     selectedIconPath: '/static/ic_bar_mine_checked.png',
-    pagePath: '/pages/mine/index',
+    hy_pagePath: '/pages/mine/index',
     text: '我的'
   }
 ])
@@ -50,6 +50,7 @@ const tabsStyleTop = ref('')
 // #ifdef MP-WEIXIN
 isWeChatOfficial.value = false
 // #endif
+const shareCode = ref('')
 
 function getLocation() {
   // 获取定位信息
@@ -223,7 +224,10 @@ function tabsChange(index: any) {
 function toProductDetail(id: any) {
   if (checkLoginState()) {
     if (!id) return
-    const url = `/pages/productDetail/index?shopId=${shopId.value}&productId=${id}&shareCode=${userInfo.value.shareCode}`
+    let url = `/pages/productDetail/index?shopId=${shopId.value}&productId=${id}`
+    if (shareCode.value) {
+      url = `/pages/productDetail/index?shopId=${shopId.value}&productId=${id}&shareCode=${shareCode.value}`
+    }
     uni.navigateTo({
       url
     })
@@ -256,13 +260,13 @@ function setTitle(title = '') {
 function handleTabBarChange(index: any) {
   if (index === 0) return
   const toPage = tabList.value[index]
-  if (toPage.pagePath) {
+  if (toPage.hy_pagePath) {
     uni.switchTab({
-      url: toPage.pagePath
+      url: toPage.hy_pagePath
     })
   } else {
     uni.redirectTo({
-      url: toPage.path
+      url: toPage.hy_path
     })
   }
 }
@@ -294,6 +298,7 @@ onLoad(async (option) => {
     uni.setStorageSync('shopFullPath', pages[pages.length - 1].$page.fullPath)
   }
   if (option?.shareCode) {
+    shareCode.value = option?.shareCode
     uni.setStorageSync('shareCode', option?.shareCode)
   }
   // #endif
