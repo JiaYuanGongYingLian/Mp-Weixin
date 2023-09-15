@@ -283,6 +283,7 @@ onShareAppMessage(() => {
 <template>
   <div class="main">
     <page-skeleton :loading="loadingSkeleton" :type="2"></page-skeleton>
+    <hy-nav-bar :title="'商品详情'"></hy-nav-bar>
     <!--商品图轮播-->
     <u-swiper
       class="swiper"

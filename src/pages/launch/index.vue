@@ -53,6 +53,7 @@ function isNoCodeLink(url: string) {
 onLoad(async (option) => {
   // #ifdef MP-WEIXIN
   const redirect_url = option?.redirect_url
+  console.log('redirect_url >>> ', option?.redirect_url)
   delete option?.redirect_url
   const url_rewirte = parseParams(redirect_url, option || {})
   if (option?.shareCode) {

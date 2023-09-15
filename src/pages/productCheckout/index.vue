@@ -85,6 +85,7 @@ onLoad(async (option) => {
 </script>
 <template>
   <div class="container">
+    <hy-nav-bar :title="'创建订单'"></hy-nav-bar>
     <!-- 地址 -->
     <view class="address-section" @click="toAddressList">
       <view class="order-content">

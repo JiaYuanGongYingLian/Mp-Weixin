@@ -115,6 +115,7 @@ onPullDownRefresh(() => {
 </script>
 <template>
   <div class="container">
+    <hy-nav-bar :title="'地址编辑'"></hy-nav-bar>
     <view class="empty" v-if="loaded && list.length === 0">
       <image
         class="empty-img"

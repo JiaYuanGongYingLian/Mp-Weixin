@@ -168,7 +168,7 @@ class RequestHttp {
                 // #ifdef MP-WEIXIN
                 if (uni.getStorageSync('userInfo')) {
                   uni.reLaunch({
-                    url: '/pages/luanch/index'
+                    url: '/pages/launch/index'
                   })
                   return
                 }

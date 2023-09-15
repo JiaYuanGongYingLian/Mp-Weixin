@@ -142,6 +142,7 @@ onLoad((option) => {
 })
 </script>
 <template>
+  <hy-nav-bar :title="'地址编辑'"></hy-nav-bar>
   <view class="content">
     <view class="row b-b">
       <view class="tit">联系人</view>

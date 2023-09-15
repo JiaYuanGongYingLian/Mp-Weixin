@@ -300,7 +300,8 @@ function toastError(res) {
   } else {
     msg += res.message
   }
-  utils.$toast(msg)
+  console.log('极光IM error >>> ', msg)
+  // utils.$toast(msg)
 }
 
 export default jpushIM

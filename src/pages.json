@@ -90,13 +90,15 @@
 		{
 			"path": "pages/productDetail/index",
 			"style": {
-				"navigationBarTitleText": "商品详情"
+				"navigationBarTitleText": "商品详情",
+				"navigationStyle": "custom"
 			}
 		},
 		{
 			"path": "pages/productCheckout/index",
 			"style": {
-				"navigationBarTitleText": "创建订单"
+				"navigationBarTitleText": "创建订单",
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -240,13 +242,15 @@
 					"path": "pages/addressList/index",
 					"style": {
 						"navigationBarTitleText": "我的地址",
-						"enablePullDownRefresh": true
+						"enablePullDownRefresh": true,
+						"navigationStyle": "custom"
 					}
 				},
 				{
 					"path": "pages/addressEdit/index",
 					"style": {
-						"navigationBarTitleText": "地址编辑"
+						"navigationBarTitleText": "地址编辑",
+						"navigationStyle": "custom"
 					}
 				},
 				{
