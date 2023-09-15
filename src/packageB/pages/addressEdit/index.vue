@@ -15,8 +15,18 @@ function switchChange(e: { detail: { value: boolean } }) {
 
 // 提交
 async function confirm() {
-  const { provinceName, cityName, districtName, street, phone, name, other } =
-    addressData.value
+  const {
+    provinceName,
+    cityName,
+    districtName,
+    street,
+    phone,
+    name,
+    other,
+    provinceId,
+    cityId,
+    districtId
+  } = addressData.value
   if (!name) {
     uni.showToast({
       title: '请填联系人人姓名',
@@ -60,10 +70,13 @@ async function confirm() {
       districtName,
       street,
       other,
+      provinceId,
+      cityId,
+      districtId,
       phone,
       name,
-      id,
-      userId
+      userId,
+      id: addressId
     },
     id,
     userId,
@@ -96,11 +109,22 @@ function chooseLocation() {
       }
       const res = await baseApi.reverseGeocoding({ latitude, longitude })
       if (res.code !== 200) return
-      const { provinceName, cityName, districtName, street } = res.data
+      const {
+        provinceName,
+        cityName,
+        districtName,
+        street,
+        provinceId,
+        cityId,
+        districtId
+      } = res.data
       addressData.value.provinceName = provinceName
       addressData.value.cityName = cityName
       addressData.value.districtName = districtName
       addressData.value.street = street
+      addressData.value.provinceId = provinceId
+      addressData.value.cityId = cityId
+      addressData.value.districtId = districtId
     },
     fail: (error) => {
       console.log('error', error)
@@ -143,8 +167,8 @@ onLoad((option) => {
     </view>
     <view class="row icon-row b-b">
       <view class="tit">选择地区</view>
-      <view class="input" @click="chooseLocation">
-        <view class="uni-input"
+      <view class="input-wrap" @click="chooseLocation">
+        <view class="input"
           >{{ addressData.provinceName }}{{ addressData.cityName
           }}{{ addressData.districtName }} {{ addressData.street }}
           <view class="place" v-if="!addressData.provinceName">请选择地址</view>
@@ -206,10 +230,19 @@ onLoad((option) => {
       color: $text-color-dark;
     }
 
+    .input-wrap {
+      height: 100%;
+      flex: 1;
+      display: flex;
+    }
+
     .input {
       flex: 1;
       font-size: 30rpx;
       color: $text-color-dark;
+      height: 100%;
+      display: flex;
+      align-items: center;
     }
 
     .osx {

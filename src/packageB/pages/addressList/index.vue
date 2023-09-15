@@ -265,6 +265,7 @@ onPullDownRefresh(() => {
     font-size: 32rpx;
     background: linear-gradient(to right, #f74f43, #f74f43);
     box-shadow: 4rpx 4rpx 8rpx rgba(255, 86, 177, 0.4);
+    border-radius: 10rpx;
   }
 }
 </style>

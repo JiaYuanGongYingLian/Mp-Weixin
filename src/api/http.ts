@@ -166,6 +166,12 @@ class RequestHttp {
             success: ({ confirm, cancel }) => {
               if (confirm) {
                 // #ifdef MP-WEIXIN
+                if (uni.getStorageSync('userInfo')) {
+                  uni.reLaunch({
+                    url: '/pages/luanch/index'
+                  })
+                  return
+                }
                 uni.navigateTo({
                   url: '/pages/login/index'
                 })
