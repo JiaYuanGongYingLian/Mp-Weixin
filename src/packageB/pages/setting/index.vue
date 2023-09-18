@@ -1,3 +1,4 @@
+<!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
@@ -6,7 +7,12 @@ import { baseApi, productApi, userApi } from '@/api'
 import { checkLoginState, getImgFullPath } from '@/utils/index'
 import { upload } from '@/common/ali-oss'
 import { useUserStore, useChatStore } from '@/store'
-import { isWeChat } from '@/utils/common'
+import {
+  isWeChat,
+  base64ToFile,
+  imageUrlToFile,
+  wxUploadImage
+} from '@/utils/common'
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
@@ -48,28 +54,48 @@ async function onChooseAvatar(e: { detail: { avatarUrl: any } }) {
     }
   })
 }
+const avatarTempUrl = ref('')
 function onChooseImage() {
-  // #ifdef H5
   uni.chooseImage({
     count: 1,
     success(res) {
-      upload({
-        file: res.tempFiles[0],
-        onSuccess: async (ret: { url: any }) => {
-          await userApi.userInfoUpdate({
-            avatar: ret.url
-          })
-          await userStore.getUserInfo()
-        },
-        onError() {
-          uni.showToast({
-            title: '上传失败'
-          })
-        }
+      avatarTempUrl.value = res.tempFiles[0].path
+      // res.tempFiles[0]
+    }
+  })
+}
+function uploadImage(file: any) {
+  upload({
+    file,
+    onSuccess: async (ret: { url: any }) => {
+      successFn(ret.url)
+    },
+    onError() {
+      uni.showToast({
+        title: '上传失败'
       })
     }
   })
+}
+
+async function cutConfirm(e: any) {
+  // #ifdef H5
+  const file = base64ToFile(e.detail.tempFilePath, `${new Date()}`)
+  uploadImage(file)
   // #endif
+  // #ifdef MP-WEIXIN
+  const res = await wxUploadImage(e.detail.tempFilePath)
+  successFn(res.data)
+  // #endif
+}
+function cutCancel() {
+  avatarTempUrl.value = ''
+}
+async function successFn(url: any) {
+  await userApi.userInfoUpdate({
+    avatar: url
+  })
+  await userStore.getUserInfo()
 }
 onLoad((option) => {})
 </script>
@@ -98,6 +124,12 @@ onLoad((option) => {})
         <!-- #endif -->
       </u-cell-item>
     </u-cell-group>
+    <hy-image-cropper
+      :src="avatarTempUrl"
+      @cancel="cutCancel"
+      @confirm="cutConfirm"
+    ></hy-image-cropper>
+
     <view class="gap"></view>
     <u-cell-group>
       <u-cell-item
@@ -129,6 +161,7 @@ onLoad((option) => {})
 .container {
   min-height: 100vh;
   background-color: #f7f7f7;
+
   .avatar {
     width: 120rpx;
     height: 120rpx;
@@ -136,6 +169,7 @@ onLoad((option) => {})
     display: inline-block;
     overflow: hidden;
   }
+
   .gap {
     margin-bottom: 20rpx;
   }

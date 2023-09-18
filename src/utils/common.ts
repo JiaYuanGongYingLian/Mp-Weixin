@@ -3,6 +3,7 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
+import { uploadUrl } from '@/common/config'
 // url所有传参获取
 export function getQueryObject(url: string) {
   url = url || window.location.href
@@ -312,6 +313,27 @@ export const imageUrlToFile = async (url: string) => {
   return file
 }
 
+export const wxUploadImage = (filePath: any) => {
+  return new Promise((resolve, reject) => {
+    uni.uploadFile({
+      url: uploadUrl,
+      filePath,
+      name: 'object',
+      header: {
+        Authorization: `Bearer ${uni.getStorageSync('accessToken') || ''}`
+      },
+      success: (res) => {
+        console.log('上传成功')
+        resolve(JSON.parse(res.data))
+      },
+      fail: (err) => {
+        console.log(err)
+        reject(err)
+      }
+    })
+  })
+}
+
 export default {
   getQueryObject,
   getQueryVariable,
@@ -327,5 +349,6 @@ export default {
   isEmptyObject,
   isMObile,
   $toast,
-  imageUrlToFile
+  imageUrlToFile,
+  wxUploadImage
 }

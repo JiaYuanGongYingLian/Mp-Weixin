@@ -65,7 +65,7 @@ function handleTabBarChange(index: any) {
       url: toPage.hy_pagePath
     })
   } else if (uni.getStorageSync('shopFullPath')) {
-    uni.redirectTo({ url: uni.getStorageSync('shopFullPath')})
+    uni.redirectTo({ url: uni.getStorageSync('shopFullPath') })
   } else {
     uni.redirectTo({
       url: toPage.hy_path
@@ -119,7 +119,10 @@ onPullDownRefresh(() => {
           </view>
           <!-- #endif -->
           <!-- #ifdef MP-WEIXIN -->
-          <u-avatar :src="userInfo.avatar" v-if="userInfo.avatar"></u-avatar>
+          <u-avatar
+            :src="getImgFullPath(userInfo?.avatar)"
+            v-if="userInfo.avatar"
+          ></u-avatar>
           <view v-else class="avatar">
             <open-data type="userAvatarUrl"></open-data>
           </view>
