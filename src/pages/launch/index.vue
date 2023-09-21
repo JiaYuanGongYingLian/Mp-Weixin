@@ -109,7 +109,7 @@ onLoad(async (option) => {
       uni.setStorageSync('redirect_url', url)
     }
   }
-  if (from === 'login') {
+  if (option?.from === 'login') {
     // eslint-disable-next-line no-shadow
     const redirect_url = uni.getStorageSync('redirect_url')
     if (redirect_url) {

@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-09-09 16:20:03
+ * @LastEditTime: 2023-09-20 11:12:09
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -61,7 +61,7 @@ const swiperCurrent = ref(0)
 const showControl = ref(true)
 const swiperList = ref([])
 const pageIndex = ref(1)
-const pageSize = ref(20)
+const pageSize = ref(100)
 const finished = ref(false)
 const isPreview = ref(false)
 watch(hasNewDynamic, (n) => {
@@ -81,7 +81,7 @@ async function dynamicList(dynamicId?: any, isFocused?: boolean) {
       otherColumns: `favorited,focused,${isFocused ? '' : 'hot'}`,
       sortJson: '[{"column":"createTime","direction":"DESC"}]'
     })
-    swiperList.value.push(...data.records)
+    swiperList.value.push(...randomFn(data.records))
     if (data.current < data.pages) {
       pageIndex.value += 1
     } else {
@@ -116,14 +116,28 @@ function videoPlay(index: any) {
     }
   }
 }
-function animationfinishFn(e: { detail: { current: number } }) {
-  console.log(e.detail.current, 'animationfinishFn')
+function animationfinishFn() {
+  opacity.value = 1
+}
+function swiperChange(e: { detail: { current: number } }) {
   if (swiperCurrent.value !== e.detail.current) {
     swiperCurrent.value = e.detail.current
     videoPlay(swiperCurrent.value)
   }
   if (swiperList.value.length - 1 === e.detail.current) {
     getNextFn()
+  }
+}
+const opacity = ref(1)
+function handleTrans(e: { detail: { dx: any; dy: any } }) {
+  const { dy } = e.detail
+  if (dy < 20) {
+    opacity.value = 1
+  } else if (dy < 100) {
+    opacity.value = 0.5
+  } else if (dy < 200) {
+    opacity.value = 0.3
+    showControl.value = false
   }
 }
 async function getNextFn() {
@@ -191,6 +205,13 @@ async function focusAdd(item: { userId: any; focused: boolean }) {
 }
 function destroyVideo() {
   swiperList.value = []
+}
+// 随机打乱
+function randomFn(arr: any[]) {
+  if (!arr) return []
+  return arr.sort(() => {
+    return 0.5 - Math.random()
+  })
 }
 onLoad((option) => {
   type.value = option?.type
@@ -289,7 +310,9 @@ onPullDownRefresh(() => {
       v-else
       class="swiper"
       :current="swiperCurrent"
-      @change="animationfinishFn"
+      @change="swiperChange"
+      @transition="handleTrans"
+      @animationfinish="animationfinishFn"
       duration="300"
       :vertical="true"
     >
@@ -307,11 +330,12 @@ onPullDownRefresh(() => {
           :loop="true"
           :src="getImgFullPath(item.videoUrl)"
           :poster="getImgFullPath(item.previewImage) + ',ar_auto'"
-          :controls="true"
+          :controls="showControl"
           :show-fullscreen-btn="true"
           :show-play-btn="false"
           :show-center-play-btn="false"
           :object-fit="'contain'"
+          :http-cache="true"
           @controlstoggle="controlFn"
           @fullscreenchange="fullscreenchangeFn"
         ></video>
@@ -321,7 +345,13 @@ onPullDownRefresh(() => {
           class="play"
           src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newHome/play.png"
         ></image>
-        <view class="sideBar" v-if="!isPreview">
+        <view
+          class="sideBar"
+          :style="{
+            opacity: opacity
+          }"
+          v-if="!isPreview"
+        >
           <view class="avatar">
             <u-image
               :src="
@@ -364,6 +394,9 @@ onPullDownRefresh(() => {
           :class="showControl ? 'footer showControl' : 'footer'"
           id="footer"
           v-if="!fullScreen"
+          :style="{
+            opacity: opacity
+          }"
         >
           <view class="top">
             <view class="name" @click="toBusinessCardHome(item, index)"

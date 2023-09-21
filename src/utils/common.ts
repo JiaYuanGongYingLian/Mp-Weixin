@@ -219,7 +219,7 @@ export const updateTimelineShareData = (data: {
 
 // 参数拼接
 export const parseParams = (uri: string, params: { [x: string]: any }) => {
-  if (!uri) return
+  if (!uri) return ''
   const paramsArray: string[] = []
   Object.keys(params).forEach(
     (key) => params[key] && paramsArray.push(`${key}=${params[key]}`)

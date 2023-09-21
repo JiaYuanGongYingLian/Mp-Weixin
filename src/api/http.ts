@@ -177,15 +177,11 @@ class RequestHttp {
                 })
                 // #endif
                 // #ifdef H5
-                // const isWeChatBrowser = isWeChat()
-                // if (isWeChatBrowser) {
-                //   const { pathname } = window.location
-                //   window.location.href = pathname
-                // } else {
-                //   uni.navigateTo({
-                //     url: '/pages/login/index'
-                //   })
-                // }
+                const pages = getCurrentPages()
+                const page = pages[pages.length - 1]
+                if (!page.$page.fullPath.includes('/pages/login/index')) {
+                  uni.setStorageSync('redirect_url', page.$page.fullPath)
+                }
                 uni.navigateTo({
                   url: '/pages/login/index'
                 })

@@ -85,7 +85,9 @@ async function submit() {
     })
     userStore.syncSetToken(data.accessToken)
     await getUserInfo()
-    uni.navigateBack()
+    uni.reLaunch({
+      url: '/pages/launch/index?from=login'
+    })
     if (!isWeChatOfficial.value) return
     if (!uni.getStorageSync('openid')) {
       await userStore.wxAuth()
