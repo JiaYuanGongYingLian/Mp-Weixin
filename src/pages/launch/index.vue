@@ -20,6 +20,7 @@ import { useUserStore, useConfigStore, useChatStore } from '@/store'
 import { getQueryObject, getQueryVariable, parseParams } from '@/utils/common'
 import { baseApi } from '@/api'
 import jpushIM from '@/common/jim/jim.js'
+import wxShare from '@/common/wechat-share'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
@@ -38,6 +39,17 @@ async function getConfig(fieldName = 'mini_project_chat') {
     fieldName
   })
   configStore.videoPageOpen = data.fieldValue !== '0'
+}
+async function getWxSdkConfig() {
+  const { data } = await baseApi.getWxSdkConfig({
+    url: window.location.origin
+  })
+  wxShare.jsSdkConfig({
+    appId: data.appId,
+    timestamp: data.timestamp,
+    nonceStr: data.noncestr,
+    signature: data.sign
+  })
 }
 const uncertainShareCodeLinks = [
   '/pages/physicalShopCheck/index',
@@ -84,7 +96,6 @@ onLoad(async (option) => {
   let url = ''
   const origin_url = getQueryVariable('redirect_url') || ''
   const qrcode = getQueryVariable('qrcode')
-  const from = getQueryVariable('from')
   const shareCode = getQueryVariable('shareCode')
   if (shareCode) {
     uni.setStorageSync('shareCode', shareCode)
@@ -127,6 +138,8 @@ onLoad(async (option) => {
     await chatStore.jimLoginFn()
     console.log('jpush断线重连结束')
   })
+  // 配置微信h5分享
+  getWxSdkConfig()
 })
 </script>
 

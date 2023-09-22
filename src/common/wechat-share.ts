@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-08 15:03:59
- * @LastEditTime: 2023-08-24 17:48:13
+ * @LastEditTime: 2023-09-22 16:56:08
  * @LastEditors:  Please set LastEditors
  */
 
@@ -17,7 +17,7 @@ export const jsSdkConfig = (data: {
   nonceStr: any
   signature: any
 }) => {
-  wx.config({
+  jWeixin.config({
     debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
     appId: data.appId, // 必填，公众号的唯一标识
     timestamp: data.timestamp, // 必填，生成签名的时间戳
@@ -35,7 +35,8 @@ export const updateAppMessageShareData = (data: {
   link: any
   imgUrl: any
 }) => {
-  wx.updateAppMessageShareData({
+  debugger
+  jWeixin.updateAppMessageShareData({
     title: data.title, // 分享标题
     desc: data.desc, // 分享描述
     link: data.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
@@ -54,7 +55,7 @@ export const updateTimelineShareData = (data: {
   link: any
   imgUrl: any
 }) => {
-  wx.updateTimelineShareData({
+  jWeixin.updateTimelineShareData({
     title: data.title, // 分享标题
     desc: data.desc, // 分享描述
     link: data.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
@@ -82,8 +83,28 @@ export const sharePathFormat = (data: { [x: string]: any }) => {
     ...data
   })
 }
+/**
+ * wechat web分享路径格式化
+ * @return{ path:string } 携带参数的完整路径
+ */
+export const webSharePathFormat = (data: { [x: string]: any }) => {
+  const pages = getCurrentPages()
+  let redirect_url = `/${pages[pages.length - 1]?.route}`
+  const shareCode = uni.getStorageSync('userInfo')?.shareCode
+  if (data.redirect_url) {
+    redirect_url = data.redirect_url
+    delete data.redirect_url
+  }
+  return parseParams('https://wap.blacksilverscore.com/', {
+    redirect_url,
+    shareCode,
+    ...data
+  })
+}
 export default {
+  jsSdkConfig,
   updateAppMessageShareData,
   updateTimelineShareData,
-  sharePathFormat
+  sharePathFormat,
+  webSharePathFormat
 }

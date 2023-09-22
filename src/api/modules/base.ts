@@ -58,6 +58,12 @@ function aliAddFile(data: any) {
 function getSystemConfigInfo(data: any) {
   return http.get('/base/api/v1/system/config/info', data)
 }
+/**
+ * 获取wx jsSdk签名配置
+ */
+function getWxSdkConfig(data: any) {
+  return http.post('/base/api/v1/wx/getJsSdkSign', data)
+}
 
 export default {
   getCategoryList,
@@ -67,5 +73,6 @@ export default {
   reverseGeocoding,
   getAliOssToken,
   aliAddFile,
-  getSystemConfigInfo
+  getSystemConfigInfo,
+  getWxSdkConfig
 }

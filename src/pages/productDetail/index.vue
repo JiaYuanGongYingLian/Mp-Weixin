@@ -9,7 +9,7 @@ import { productApi, couponApi } from '@/api'
 import { getImgFullPath, previewImage, checkLoginState } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 import { useUserStore } from '@/store'
-import { sharePathFormat } from '@/common/wechat-share'
+import { sharePathFormat, webSharePathFormat } from '@/common/wechat-share'
 
 const userStore = useUserStore()
 const { hasLogin, userInfo, useShareCode } = storeToRefs(userStore)
@@ -259,6 +259,8 @@ async function confirm() {
   }
 }
 
+const shareData = ref({})
+
 onLoad(async (option) => {
   if (!option?.shareCode) {
     userStore.syncSetUseShareCode(false)
@@ -271,13 +273,28 @@ onLoad(async (option) => {
   await getProductInfo()
   await getFavoriteInfo()
   await getCartProductNumFn()
-})
-onShareAppMessage(() => {
-  return {
+  shareData.value = {
     title: productData.value.name,
+    desc: productData.value.subtitle ?? '',
+    // #ifdef MP-WEIXIN
     imageUrl: getImgFullPath(productData.value.image),
-    path: sharePathFormat({ productId: productId.value, shopId: shopId.value })
+    path: sharePathFormat({ productId: productId.value, shopId: shopId.value }),
+    // #endif
+    // #ifdef H5
+    imgUrl: getImgFullPath(productData.value.image),
+    link: webSharePathFormat({
+      productId: productId.value,
+      shopId: shopId.value
+    })
+    // #endif
   }
+})
+const shareComp = ref()
+function showShare() {
+  shareComp.value.showPop()
+}
+onShareAppMessage(() => {
+  return shareData.value
 })
 </script>
 <template>
@@ -318,18 +335,20 @@ onShareAppMessage(() => {
         </view>
       </view>
       <view class="intro-top">
-        <view>
+        <view class="intro-top-tit">
           <view class="title f-m">{{ productData.name }}</view>
+          <view class="subtitle">{{ productData.subtitle }}</view>
         </view>
-        <!-- #ifdef MP-WEIXIN -->
         <view class="share-content">
           <image
             class="img"
             src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/share01.png"
           ></image>
           <view class="text">分享</view>
-          <button open-type="share" class="btn"></button>
+          <button open-type="share" class="btn" @click="showShare"></button>
         </view>
+        <!-- #ifdef H5 -->
+        <hy-share ref="shareComp" :shareData="shareData" />
         <!-- #endif -->
       </view>
     </view>
@@ -519,15 +538,6 @@ onShareAppMessage(() => {
   padding: 40rpx 30rpx;
   position: relative;
 
-  .title {
-    font-size: 32rpx;
-    color: #242526;
-    line-height: 50rpx;
-    display: block;
-    width: 600rpx;
-    font-weight: bold;
-  }
-
   .price-box {
     display: flex;
     align-items: center;
@@ -617,7 +627,17 @@ onShareAppMessage(() => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  overflow: hidden;
+  .intro-top-tit {
+    flex: 1;
+    .title {
+      font-size: 32rpx;
+      color: #242526;
+      line-height: 50rpx;
+      display: block;
+      width: 600rpx;
+      font-weight: bold;
+    }
+  }
   &.price {
     margin-bottom: 16rpx;
   }
@@ -625,6 +645,11 @@ onShareAppMessage(() => {
     color: #f74e3f;
     font-size: 26rpx;
     margin-top: 16rpx;
+  }
+  .subtitle {
+    margin-top: 10rpx;
+    font-size: 26rpx;
+    color: #a1a1a1;
   }
 }
 .c-list {
