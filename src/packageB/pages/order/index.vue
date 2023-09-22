@@ -185,6 +185,7 @@ onLoad((option) => {
 </script>
 <template>
   <div class="container">
+    <hy-nav-bar :title="'订单列表'"></hy-nav-bar>
     <view class="navbar">
       <view
         v-for="(item, index) in navList"

@@ -270,7 +270,7 @@ function handleTabBarChange(index: any) {
     })
   }
 }
-const imgHeight = ref('200rpx')
+const imgHeight = ref('240rpx')
 const bannerHeight = ref(400)
 onLoad(async (option) => {
   shopId.value = option.shopId
@@ -288,7 +288,7 @@ onLoad(async (option) => {
   uni.getSystemInfo({
     success: (res) => {
       const { windowWidth } = res
-      imgHeight.value = `${(windowWidth - 10) / 2}rpx`
+      imgHeight.value = `${windowWidth / 1.2}rpx`
       bannerHeight.value = windowWidth / 2 + 200
     }
   })

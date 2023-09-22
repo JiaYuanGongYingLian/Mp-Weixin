@@ -15,7 +15,7 @@ export default defineConfig({
     // host: '0.0.0.0',
     proxy: {
       '/api/': {
-        // target: 'http://192.168.169.152:8000',
+        // target: 'http://192.168.169.199:8000',
         target: 'https://api.blacksilverscore.com',
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/api/, '')
