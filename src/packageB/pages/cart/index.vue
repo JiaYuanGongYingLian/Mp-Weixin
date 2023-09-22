@@ -185,6 +185,7 @@ onLoad((option) => {
 </script>
 <template>
   <div class="container">
+    <hy-nav-bar :title="'购物车'"></hy-nav-bar>
     <!-- 空白页 -->
     <view v-if="!hasLogin || empty === true" class="empty">
       <u-empty text="购物车为空" mode="car"> </u-empty>

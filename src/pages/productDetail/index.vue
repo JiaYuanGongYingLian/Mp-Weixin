@@ -291,7 +291,9 @@ onLoad(async (option) => {
 })
 const shareComp = ref()
 function showShare() {
+  // #ifdef H5
   shareComp.value.showPop()
+  // #endif
 }
 onShareAppMessage(() => {
   return shareData.value
