@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-08 15:03:59
- * @LastEditTime: 2023-09-22 16:56:08
+ * @LastEditTime: 2023-09-22 18:06:30
  * @LastEditors:  Please set LastEditors
  */
 
@@ -35,7 +35,6 @@ export const updateAppMessageShareData = (data: {
   link: any
   imgUrl: any
 }) => {
-  debugger
   jWeixin.updateAppMessageShareData({
     title: data.title, // 分享标题
     desc: data.desc, // 分享描述

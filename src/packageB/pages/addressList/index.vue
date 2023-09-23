@@ -11,7 +11,8 @@ const type = ref()
 async function loadData() {
   const { data } = await userApi.getAddressList({
     noPaging: true,
-    detail: true
+    detail: true,
+    sortJson: '[{"column":"createTime","direction":"DESC"}]'
   })
   list.value = data
   loaded.value = true
