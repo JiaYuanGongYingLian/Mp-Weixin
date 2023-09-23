@@ -101,6 +101,7 @@ onLoad((option) => {})
 </script>
 <template>
   <div class="container">
+    <hy-nav-bar :title="'设置'"></hy-nav-bar>
     <u-cell-group>
       <!-- <button
         class="customBtn"

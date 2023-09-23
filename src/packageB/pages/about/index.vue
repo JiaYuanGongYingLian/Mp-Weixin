@@ -21,6 +21,7 @@ onShareAppMessage((_res) => {
 </script>
 <template>
   <div class="container about">
+    <hy-nav-bar :title="'关于我们'"></hy-nav-bar>
     <image :src="logo" class="logo"></image>
     <view class="tit">黑银生活</view>
     <view class="ver">V{{ version }}</view>
