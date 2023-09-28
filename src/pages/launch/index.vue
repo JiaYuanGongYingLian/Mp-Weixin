@@ -138,7 +138,7 @@ onLoad(async (option) => {
     await chatStore.jimLoginFn()
     console.log('jpush断线重连结束')
   })
-  // 配置微信h5分享
+  // 配置微信js-sdk
   getWxSdkConfig()
 })
 </script>
