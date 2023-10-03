@@ -202,6 +202,13 @@ async function onSubmit() {
     })
     return
   }
+  if (selectedPayWay.payWay === 2 && isWeChat()) {
+    uni.showToast({
+      title: '此支付方式仅限支付宝App付款',
+      icon: 'none'
+    })
+    return
+  }
   const shopId = order.value.orderProductSkus[0].shopId || ''
   const { code, data } = await orderApi.orderPay({
     orderId: order.value.id,
