@@ -80,7 +80,7 @@ onLoad(async (option) => {
       await userStore.getUserInfo()
       toTargetPage(url_rewirte)
       getConfig('mini_project_chat')
-      getConfig('mini_project_video')
+      // getConfig('mini_project_video')
     },
     fail: () => {
       uni.hideLoading()

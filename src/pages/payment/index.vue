@@ -61,6 +61,21 @@ const payWay = reactive([
 const sms_code = ref()
 const wallet = ref({})
 
+// 获取系统默认支持支付方式
+async function getSystemConfig(fieldName = 'pay_way_h5') {
+  const { data } = await baseApi.getSystemConfigInfo({
+    fieldName
+  })
+  const pay_way = JSON.parse(data.fieldValue)
+  payWay.forEach((item) => {
+    if (pay_way.includes(item.payWay)) {
+      item.available = true
+    } else {
+      item.available = false
+      item.selected = false
+    }
+  })
+}
 // 获取订单的钱包规则
 async function getWalletRuleList() {
   try {
@@ -98,6 +113,7 @@ async function getWalletRuleList() {
     console.log(err)
   }
 }
+
 // 单选选择支付方式
 function handleSlect(way: { selected: boolean }) {
   payWay.forEach((item) => {
@@ -172,7 +188,7 @@ enum payPlatform_enum {
 }
 async function onSubmit() {
   const selectedPayWay = payWay.find((item) => item.selected)
-  if (!selectedPayWay) {
+  if (!selectedPayWay || selectedPayWay.available === false) {
     uni.showToast({
       title: '请选择支付方式',
       icon: 'none'
@@ -275,7 +291,10 @@ onLoad(async (option) => {
     order.value = JSON.parse(uni.getStorageSync('orderJson'))
     info.money = order.value.money
     info.moneyUnit = order.value.moneyUnit
-    getWalletRuleList()
+    // #ifdef H5
+    await getSystemConfig()
+    // #endif
+    await getWalletRuleList()
   }
 })
 </script>
