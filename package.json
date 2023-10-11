@@ -53,6 +53,7 @@
     "@dcloudio/uni-mp-toutiao": "3.0.0-alpha-3080220230511001",
     "@dcloudio/uni-mp-weixin": "3.0.0-alpha-3080220230511001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-alpha-3080220230511001",
+    "@zxing/library": "^0.20.0",
     "ali-oss": "^6.17.1",
     "axios": "^0.27.2",
     "crypto-js": "^4.1.1",

@@ -49,7 +49,7 @@ BASEURL = import.meta.env.VITE_APP_AXIOS_BASE_URL
 // @ts-ignore
 BASEURL = 'https://api.blacksilverscore.com'
 // #endif
-enum RequestEnums {
+export enum RequestEnums {
   TIMEOUT = 20000,
   OVERDUE = 401, // 登录失效
   FAIL = 999, // 请求失败
@@ -58,10 +58,11 @@ enum RequestEnums {
 const CONFIG = {
   baseURL: BASEURL,
   timeout: RequestEnums.TIMEOUT as number,
-  withCredentials: true
+  withCredentials: true,
+  success: null
 }
 
-class RequestHttp {
+export class RequestHttp {
   static instance: any
 
   showModal: boolean
@@ -153,7 +154,7 @@ class RequestHttp {
 
     this.service.interceptors.response.use(
       (response: AxiosResponse) => {
-        const { data, config } = response
+        const { data } = response
         if (data.code === RequestEnums.OVERDUE) {
           // 登录信息失效，应跳转到登录页面，并清空本地的token
           store.syncClearToken()
@@ -194,8 +195,10 @@ class RequestHttp {
           })
           return Promise.reject(data)
         } // 全局错误信息拦截（防止下载文件得时候返回数据流，没有code，直接报错）
-        if (data.code !== RequestEnums.SUCCESS) {
-          this.handleCode(data.code, data.msg)
+        if (
+          data.code !== config.isIot ? config.success : RequestEnums.SUCCESS
+        ) {
+          this.handleCode(data, config)
           return Promise.reject(data)
         }
         return data
@@ -209,8 +212,11 @@ class RequestHttp {
     )
   }
 
-  handleCode(code: number, msg?: string): void {
-    switch (code) {
+  handleCode(
+    data: { code: any; desc: any; msg: any },
+    config: AxiosRequestConfig<any> | undefined
+  ): void {
+    switch (data.code) {
       case 401:
         uni.showToast({
           icon: 'error',
@@ -220,7 +226,7 @@ class RequestHttp {
       default:
         uni.showToast({
           icon: 'none',
-          title: msg
+          title: config.isIot ? data.desc : data.msg
         })
     }
   }

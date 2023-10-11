@@ -276,6 +276,14 @@
 						"navigationStyle": "custom",
 						"backgroundColor": "#F5F5F5"
 					}
+				},
+				{
+					"path": "pages/powerBank/index",
+					"style": {
+						"navigationBarTitleText": "黑银移动充电宝",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
 				}
 			]
 		}
@@ -294,6 +302,10 @@
 			"packages": ["packageA"]
 		},
 		"packageA/pages/publish/index": {
+			"network": "all",
+			"packages": ["packageA"]
+		},
+		"packageB/pages/powerBank/index": {
 			"network": "all",
 			"packages": ["packageA"]
 		}
