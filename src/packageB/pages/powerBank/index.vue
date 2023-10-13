@@ -10,12 +10,7 @@ import { baseApi, powerBankApi, userApi } from '@/api'
 import { checkLoginState, getImgFullPath } from '@/utils/index'
 import { upload } from '@/common/ali-oss'
 import { useUserStore, useChatStore } from '@/store'
-import {
-  isWeChat,
-  base64ToFile,
-  imageUrlToFile,
-  wxUploadImage
-} from '@/utils/common'
+import { getQueryObject, parseParams } from '@/utils/common'
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
@@ -131,10 +126,11 @@ function openScan() {
   codeReader.value.decodeFromVideoDevice(
     deviceId.value,
     'video_id',
-    (res, err) => {
+    (res: { text: string }, err: any) => {
       if (res) {
         console.log(122, res)
         showScan.value = false
+        toDetail(getQueryObject(res.text))
       }
       if (err && !err) {
         uni.showModal({
@@ -147,6 +143,11 @@ function openScan() {
 }
 function close() {
   showScan.value = false
+}
+function toDetail(data = {}) {
+  uni.navigateTo({
+    url: parseParams('/packageB/pages/powerBank/detail', data)
+  })
 }
 onLoad((option) => {
   const currentLocation = uni.getStorageSync('currentLocation')
@@ -175,6 +176,7 @@ onMounted(() => {
       :markers="mapOption.covers"
       :scale="mapOption.scale"
       :show-location="mapOption.showLocation"
+      @callouttap="toDetail"
     >
     </map>
     <view class="location-btn" @click="getLocation">

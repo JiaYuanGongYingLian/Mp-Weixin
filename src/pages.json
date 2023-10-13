@@ -284,6 +284,14 @@
 						"navigationStyle": "custom",
 						"backgroundColor": "#F5F5F5"
 					}
+				},
+				{
+					"path": "pages/powerBank/detail",
+					"style": {
+						"navigationBarTitleText": "设备详情",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
 				}
 			]
 		}

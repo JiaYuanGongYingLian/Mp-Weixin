@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-10 16:46:56
- * @LastEditTime: 2023-10-10 18:02:48
+ * @LastEditTime: 2023-10-13 16:20:18
  * @LastEditors:  Please set LastEditors
  */
 import { RequestHttp, RequestEnums } from '../http'
@@ -22,7 +22,35 @@ const http = new RequestHttp(CONFIG)
 function siteList(data: any) {
   return http.get('/siteList', data)
 }
+/**
+ * 洗车机设备详情信息
+ */
+function getDeviceDetail(data: any) {
+  return http.get('/getDeviceDetail', data)
+}
+/**
+ * 启动设备
+ */
+function deviceStart(data: any) {
+  return http.get('/start', data)
+}
+/**
+ * 获取订单消费方式，单次、会员余额、卡等方式
+ */
+function getOrderConsumeType(data: any) {
+  return http.get('/getOrderConsumeType', data)
+}
+/**
+ * 获取订单消费方式，单次、会员余额、卡等方式
+ */
+function getCustomerWashingOrder(data: any) {
+  return http.get('/getCustomerWashingOrder', data)
+}
 
 export default {
-  siteList
+  siteList,
+  getDeviceDetail,
+  deviceStart,
+  getOrderConsumeType,
+  getCustomerWashingOrder
 }
