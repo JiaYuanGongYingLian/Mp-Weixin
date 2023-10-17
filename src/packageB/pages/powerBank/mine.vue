@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-16 17:48:25
- * @LastEditTime: 2023-10-16 18:13:00
+ * @LastEditTime: 2023-10-17 18:15:08
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -30,6 +30,10 @@ const siteInfo = ref({})
 const deviceSn = ref()
 const serviceType = ref()
 onLoad((option) => {
+  const userInfo = uni.getStorageSync('userInfo')
+  if (userInfo) {
+    userStore.syncSetUserInfo(userInfo)
+  }
 })
 </script>
 <template>
@@ -40,6 +44,18 @@ onLoad((option) => {
         mode="scaleToFill"
         class="bg"
       />
+      <view class="top_box">
+        <view class="avatar_box">
+          <u-avatar
+            class="avatar"
+            :src="getImgFullPath(userInfo?.avatar)"
+          ></u-avatar>
+          <view class="name_box">
+            <view class="name">kerwin</view>
+            <view class="phone">17628281756</view>
+          </view>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -48,21 +64,37 @@ onLoad((option) => {
 .container {
   min-height: 100vh;
   background-color: #f7f7f7;
-  .topBox {
-    background: #50939c;
-    padding: 40rpx;
-    .tit {
-      font-size: 36rpx;
-      color: #fff;
+  .top_bg {
+    width: 100%;
+    height: 440rpx;
+    position: relative;
+    .bg {
+      width: 100%;
+      height: 100%;
     }
-    .wrap {
-      background: rgba(255, 255, 255, 0.4);
-      border-radius: 20rpx;
-      color: #fff;
-      padding: 10rpx 20rpx;
-      line-height: 44rpx;
-      margin-top: 20rpx;
-      font-size: 26rpx;
+  }
+  .top_box {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0 30rpx;
+    .avatar_box {
+      display: flex;
+      align-items: center;
+      margin-bottom: 60rpx;
+      .name_box {
+        margin-left: 20rpx;
+        .name {
+          font-size: 30rpx;
+          margin-bottom: 8rpx;
+          font-weight: bold;
+        }
+        .phone {
+          font-size: 20rpx;
+          color: #999;
+        }
+      }
     }
   }
 }

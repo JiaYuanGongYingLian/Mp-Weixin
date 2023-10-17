@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-10 16:46:56
- * @LastEditTime: 2023-10-13 16:20:18
+ * @LastEditTime: 2023-10-17 13:56:56
  * @LastEditors:  Please set LastEditors
  */
 import { RequestHttp, RequestEnums } from '../http'
@@ -41,7 +41,7 @@ function getOrderConsumeType(data: any) {
   return http.get('/getOrderConsumeType', data)
 }
 /**
- * 获取订单消费方式，单次、会员余额、卡等方式
+ * 获取正在进行的订单
  */
 function getCustomerWashingOrder(data: any) {
   return http.get('/getCustomerWashingOrder', data)

@@ -4,13 +4,14 @@ import * as Pinia from 'pinia'
 import uView from 'vk-uview-ui'
 import App from './App.vue'
 import wechatShare from './common/wechat-share'
+// #ifdef H5
 import '@/common/JSBridge'
+// #endif
 // custom css
 import '@/styles/main.scss'
 // unocss
 import 'uno.css'
-// #ifdef MP-WEIXIN
-// #endif
+
 export function createApp() {
   const app = createSSRApp(App)
   app.use(Pinia.createPinia())

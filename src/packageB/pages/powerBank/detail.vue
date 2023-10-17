@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-10-17 10:30:04
+ * @LastEditTime: 2023-10-17 15:42:57
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -27,20 +27,30 @@ const userStore = useUserStore()
 const { userInfo } = storeToRefs(userStore)
 const deviceInfo = ref({})
 const siteInfo = ref({})
-const deviceSn = ref()
+const deviceSn = ref('')
 const serviceType = ref()
-async function getDetail(deviceSn: any) {
+const loading = ref(false)
+async function getDetail() {
   const { data } = await powerBankApi.getDeviceDetail({
-    deviceSn
+    deviceSn: deviceSn.value
   })
   deviceInfo.value = data?.device
   siteInfo.value = data?.site
 }
 async function start() {
-  const { data, code, message } = await powerBankApi.deviceStart({
-    deviceSn: deviceSn.value,
-    serviceType: serviceType.value
+  uni.showLoading({
+    title: '启动中'
   })
+  loading.value = true
+  const { data, code, message } = await powerBankApi
+    .deviceStart({
+      deviceSn: deviceSn.value,
+      serviceType: serviceType.value
+    })
+    .finally(() => {
+      loading.value = false
+      uni.hideLoading()
+    })
   if (code === 0) {
     uni.showModal({
       title: message,
@@ -49,7 +59,7 @@ async function start() {
       confirmText: '确认',
       success: ({ confirm }) => {
         if (confirm) {
-          uni.navigateBack()
+          uni.redirectTo({ url: '/packageB/pages/powerBank/index' })
         }
       }
     })
@@ -58,7 +68,11 @@ async function start() {
 onLoad((option) => {
   deviceSn.value = option?.deviceSn
   serviceType.value = option?.serviceType
-  getDetail(option?.deviceSn)
+  console.log('deviceSn==>', deviceSn.value)
+  console.log('serviceType==>', serviceType.value)
+  // #ifdef H5
+  window.JSBridge.registerEvent('HYUserEvent', getDetail)
+  // #endif
 })
 </script>
 <template>
@@ -89,6 +103,7 @@ onLoad((option) => {
       class="btn"
       :custom-style="{ background: '#50939c', color: '#fff' }"
       @click="start"
+      :loading="loading"
       >点击取出充电宝</u-button
     >
   </view>

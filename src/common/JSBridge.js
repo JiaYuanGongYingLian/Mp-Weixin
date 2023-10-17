@@ -1,19 +1,15 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-useless-constructor */
 /*
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-17 09:58:16
- * @LastEditTime: 2023-10-17 11:06:58
+ * @LastEditTime: 2023-10-17 13:55:15
  * @LastEditors:  Please set LastEditors
  */
 
-import { storeToRefs } from 'pinia'
 import { browserVersion, setCookie } from '@/utils/common'
-import { useUserStore } from '@/store'
-
-const store = useUserStore()
-const { syncSetToken } = storeToRefs(store)
 
 class JSBridgeClass {
   constructor() {}
@@ -71,13 +67,17 @@ class JSBridgeClass {
     } else {
       newMsg = JSON.stringify(msg)
     }
-    localStorage.setItem('userInfo', newMsg)
+    uni.setStorageSync('userInfo', newMsg)
     const data = JSON.parse(newMsg)
-    console.log('用户信息:', data)
+    console.log('JSBridge用户信息:', data)
     const token = data.token || data.auth // ios 和 andiord 给的key不一致
     if (token) {
       token.accessToken && setCookie('HYToken', token.accessToken)
       token.blmToken && setCookie('BLMToken', token.blmToken)
+    }
+    if (data.deviceSn) {
+      setCookie('deviceSn', data.deviceSn)
+      setCookie('serviceType', data.serviceType)
     }
     const bridgeName = 'HYUserEvent'
     this.registerFuncs[bridgeName](data)

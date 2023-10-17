@@ -100,8 +100,9 @@ async function initReader() {
   codeReader.value = new BrowserMultiFormatReader()
   codeReader.value
     .listVideoInputDevices()
-    .then((videoInputDevices) => {
+    .then((videoInputDevices: any[]) => {
       deviceId.value = videoInputDevices[0].deviceId
+      console.log('摄像头列表==》', videoInputDevices)
       if (videoInputDevices.length > 1) {
         // 判断是否后置摄像头
         videoInputDevices.forEach((element) => {
@@ -288,8 +289,8 @@ onMounted(() => {
   justify-content: center;
   z-index: 11;
   .scan-video {
-    width: 250px;
-    height: 250px;
+    width: 100%;
+    height: 100%;
   }
 }
 .box {
