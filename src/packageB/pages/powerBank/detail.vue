@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-10-13 17:52:31
+ * @LastEditTime: 2023-10-17 10:30:04
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -71,10 +71,17 @@ onLoad((option) => {
         <view>2.使用完毕后在归还设备，结束计费</view>
       </view>
     </view>
-    <view>
+    <!-- <view class="section">
       <view class="tit">支付方式说明</view>
       <view> 余额:余额中扣除费用 </view>
       <view> 优惠券:优惠券在洗车过程中会被优先抵扣使用 </view>
+    </view> -->
+    <view class="img_box">
+      <image
+        src="https://image.blacksilverscore.com/uploads/88b4d5ba-0361-4482-85bf-fc449361f0ae.jpg"
+        mode="scaleToFill"
+        class="img"
+      />
     </view>
     <u-button
       ripple
@@ -82,7 +89,7 @@ onLoad((option) => {
       class="btn"
       :custom-style="{ background: '#50939c', color: '#fff' }"
       @click="start"
-      >取出充电宝</u-button
+      >点击取出充电宝</u-button
     >
   </view>
 </template>
@@ -90,7 +97,7 @@ onLoad((option) => {
 <style lang="scss" scoped>
 .container {
   min-height: 100vh;
-  background-color: #f7f7f7;
+  background-color: #fff;
   .topBox {
     background: #50939c;
     padding: 40rpx;
@@ -108,9 +115,25 @@ onLoad((option) => {
       font-size: 26rpx;
     }
   }
+  .section {
+    padding: 30rpx;
+    line-height: 50rpx;
+  }
+  .img_box {
+    .img {
+      width: 100%;
+      margin-top: 200rpx;
+    }
+  }
 }
 
 .btn {
-  margin: 20rpx 40rpx 0 40rpx;
+  margin: 200rpx 30rpx 0 30rpx;
+  // position: absolute;
+  bottom: 0;
+  left: 0;
+  // width: 100%;
+  height: 85rpx;
+  border-radius: 16rpx;
 }
 </style>

@@ -292,6 +292,22 @@
 						"navigationStyle": "custom",
 						"backgroundColor": "#F5F5F5"
 					}
+				},
+				{
+					"path": "pages/powerBank/mine",
+					"style": {
+						"navigationBarTitleText": "个人中心",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "pages/powerBank/order",
+					"style": {
+						"navigationBarTitleText": "订单记录",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
 				}
 			]
 		}

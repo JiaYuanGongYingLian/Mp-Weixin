@@ -149,6 +149,11 @@ function toDetail(data = {}) {
     url: parseParams('/packageB/pages/powerBank/detail', data)
   })
 }
+function jump() {
+  uni.navigateTo({
+    url: '/packageB/pages/powerBank/mine'
+  })
+}
 onLoad((option) => {
   const currentLocation = uni.getStorageSync('currentLocation')
   if (currentLocation) {
@@ -179,6 +184,13 @@ onMounted(() => {
       @callouttap="toDetail"
     >
     </map>
+    <view class="location-btn mine" @click="jump">
+      <u-image
+        width="50rpx"
+        height="50rpx"
+        src="https://image.blacksilverscore.com/uploads/4a8fd3b1-197e-48cc-b13f-5bf1a28b7eea.png"
+      ></u-image>
+    </view>
     <view class="location-btn" @click="getLocation">
       <u-image
         width="50rpx"
@@ -230,7 +242,10 @@ onMounted(() => {
     right: 40rpx;
     background-color: #fff;
     border-radius: 50%;
-    padding: 10rpx;
+    padding: 8rpx;
+    &.mine {
+      bottom: 500rpx;
+    }
   }
 
   .btn {

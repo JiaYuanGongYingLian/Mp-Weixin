@@ -12,7 +12,7 @@ import axios, {
   AxiosResponse
 } from 'axios'
 import { useUserStore } from '@/store'
-import { isWeChat } from '@/utils/common'
+import { isWeChat, getCookie } from '@/utils/common'
 
 const store = useUserStore()
 type ParamsSerializer = AxiosRequestConfig['paramsSerializer']
@@ -120,7 +120,8 @@ export class RequestHttp {
      */
     this.service.interceptors.request.use(
       (config: AxiosRequestConfig) => {
-        const token = uni.getStorageSync('accessToken') || ''
+        const token =
+          uni.getStorageSync('accessToken') || getCookie('HYToken') || ''
         const wxCode = uni.getStorageSync('wxCode') || ''
         const currentLocation = uni.getStorageSync('currentLocation')
         // #ifdef H5

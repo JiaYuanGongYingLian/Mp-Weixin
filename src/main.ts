@@ -4,6 +4,7 @@ import * as Pinia from 'pinia'
 import uView from 'vk-uview-ui'
 import App from './App.vue'
 import wechatShare from './common/wechat-share'
+import '@/common/JSBridge'
 // custom css
 import '@/styles/main.scss'
 // unocss
