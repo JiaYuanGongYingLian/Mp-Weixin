@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-10-17 15:42:57
+ * @LastEditTime: 2023-10-18 17:44:46
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -20,20 +20,29 @@ import {
   isWeChat,
   base64ToFile,
   imageUrlToFile,
-  wxUploadImage
+  wxUploadImage,
+  getCookie,
+  browserVersion
 } from '@/utils/common'
 
 const userStore = useUserStore()
-const { userInfo } = storeToRefs(userStore)
+const { userInfo, hasLogin } = storeToRefs(userStore)
 const deviceInfo = ref({})
 const siteInfo = ref({})
 const deviceSn = ref('')
 const serviceType = ref()
 const loading = ref(false)
 async function getDetail() {
-  const { data } = await powerBankApi.getDeviceDetail({
-    deviceSn: deviceSn.value
+  uni.showLoading({
+    mask: true
   })
+  const { data } = await powerBankApi
+    .getDeviceDetail({
+      deviceSn: deviceSn.value
+    })
+    .finally(() => {
+      uni.hideLoading()
+    })
   deviceInfo.value = data?.device
   siteInfo.value = data?.site
 }
@@ -65,24 +74,46 @@ async function start() {
     })
   }
 }
+
+function jump() {
+  uni.navigateTo({
+    url: '/packageB/pages/powerBank/mine'
+  })
+}
+
 onLoad((option) => {
   deviceSn.value = option?.deviceSn
   serviceType.value = option?.serviceType
   console.log('deviceSn==>', deviceSn.value)
   console.log('serviceType==>', serviceType.value)
-  // #ifdef H5
-  window.JSBridge.registerEvent('HYUserEvent', getDetail)
-  // #endif
+  const isApp = option?.from || browserVersion().isHeiyin
+  if (isApp) {
+    // #ifdef H5
+    console.log('前端注册回调时机==》', new Date())
+    window.JSBridge.registerEvent('HYUserEvent', getDetail)
+    // #endif
+  } else {
+    getDetail()
+  }
 })
 </script>
 <template>
   <view class="container">
     <view class="topBox">
+      <view class="action">
+        <view class="location-btn mine" @click="jump">
+          <u-image
+            width="50rpx"
+            height="50rpx"
+            src="https://image.blacksilverscore.com/uploads/4a8fd3b1-197e-48cc-b13f-5bf1a28b7eea.png"
+          ></u-image>
+        </view>
+      </view>
       <view class="tit">{{ siteInfo.name }}</view>
       <view class="wrap">
         <view>设备使用说明</view>
         <view>1.设备弹出后开始计费</view>
-        <view>2.使用完毕后在归还设备，结束计费</view>
+        <view>2.使用完毕后归还设备，结束计费</view>
       </view>
     </view>
     <!-- <view class="section">

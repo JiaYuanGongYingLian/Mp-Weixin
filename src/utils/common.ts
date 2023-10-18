@@ -284,6 +284,7 @@ export const wxUploadImage = (filePath: any) => {
  */
 export const browserVersion = () => {
   const u = navigator.userAgent
+  console.log('useragent==>', u)
   return {
     trident: u.indexOf('Trident') > -1, // IE内核
     presto: u.indexOf('Presto') > -1, // opera内核
@@ -296,7 +297,8 @@ export const browserVersion = () => {
     weixin: u.indexOf('MicroMessenger') > -1, // 是否微信 （2015-01-22新增）
     qq: u.match(/\sQQ/i) == ' qq', // 是否QQ
     isAndroid: u.indexOf('Android') > -1 || u.indexOf('Adr') > -1, // android终端
-    isIos: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) // ios终端
+    isIos: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
+    isHeiyin: u.indexOf('黑银') > -1 // 黑银
   }
 }
 /**

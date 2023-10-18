@@ -1,8 +1,8 @@
 /*
- * @Description: Description
+ * @Description: 物联网（充电宝）相关接口，使用用的api地址来自蒲哥，文档地址http://47.98.169.155:16588/#/home
  * @Author: Kerwin
  * @Date: 2023-10-10 16:46:56
- * @LastEditTime: 2023-10-17 13:56:56
+ * @LastEditTime: 2023-10-18 14:10:20
  * @LastEditors:  Please set LastEditors
  */
 import { RequestHttp, RequestEnums } from '../http'
@@ -41,16 +41,36 @@ function getOrderConsumeType(data: any) {
   return http.get('/getOrderConsumeType', data)
 }
 /**
- * 获取正在进行的订单
+ * 获取正在进行的订单列表
+ */
+function getCustomerWashingOrders(data: any) {
+  return http.get('/getCustomerWashingOrders', data)
+}
+/**
+ * 获取正在进行的订单详情
  */
 function getCustomerWashingOrder(data: any) {
   return http.get('/getCustomerWashingOrder', data)
 }
-
+/**
+ * 获取所有订单记录
+ */
+function getOrders(data: any) {
+  return http.get('/getOrders', data)
+}
+/**
+ * 获取用户信息、卡信息、优惠券信息（V3删除了用户钱包，分离了优惠券、卡）
+ */
+function getCustomerInfo(data: any) {
+  return http.get('/getCustomerInfo', data)
+}
 export default {
   siteList,
   getDeviceDetail,
   deviceStart,
   getOrderConsumeType,
-  getCustomerWashingOrder
+  getCustomerWashingOrder,
+  getCustomerWashingOrders,
+  getOrders,
+  getCustomerInfo
 }

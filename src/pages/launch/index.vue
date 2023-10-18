@@ -41,6 +41,7 @@ async function getConfig(fieldName = 'mini_project_chat') {
   configStore.videoPageOpen = data.fieldValue !== '0'
 }
 async function getWxSdkConfig() {
+  if (!configStore.isWeChatBrowser) return
   const { data } = await baseApi.getWxSdkConfig({
     url: window.location.origin
   })
@@ -139,7 +140,7 @@ onLoad(async (option) => {
     console.log('jpush断线重连结束')
   })
   // 配置微信js-sdk
-  getWxSdkConfig()
+  // getWxSdkConfig()
 })
 </script>
 
