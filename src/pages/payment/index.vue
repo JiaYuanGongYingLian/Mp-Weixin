@@ -19,9 +19,10 @@ import icon_verify from '@/static/icon_verify.png'
 const configStore = useConfigStore()
 const { isWeChatBrowser, isAlipayClient } = storeToRefs(configStore)
 const userStore = useUserStore()
-const order = ref()
+const order = ref({})
 const info = reactive({
-  money: ''
+  money: '',
+  moneyUnit: ''
 })
 const payWay = reactive([
   {
@@ -56,6 +57,19 @@ const payWay = reactive([
     selected: false,
     available: false,
     payWay: 1
+  },
+  {
+    name: '微信支付（易宝）', // 微信支付易宝
+    icon: icon_wechat,
+    // #ifdef H5
+    selected: false,
+    available: false,
+    // #endif
+    payWay: 31,
+    // #ifdef MP-WEIXIN
+    selected: false,
+    available: true
+    // #endif
   }
 ])
 const sms_code = ref()
@@ -195,13 +209,15 @@ async function onSubmit() {
     })
     return
   }
+  // #ifdef H5
   if (selectedPayWay.payWay === 3 && !isWeChat()) {
     uni.showToast({
-      title: '此支付方式仅限微信App付款',
+      title: '此支付方式仅限微信App中付款',
       icon: 'none'
     })
     return
   }
+  // #endif
   if (selectedPayWay.payWay === 2 && isWeChat()) {
     uni.showToast({
       title: '此支付方式仅限支付宝App付款',
@@ -229,7 +245,7 @@ async function onSubmit() {
     // #endif
   })
   if (code === 200) {
-    if (selectedPayWay?.payWay === 3) {
+    if (selectedPayWay?.payWay === 3 || selectedPayWay?.payWay === 31) {
       const jsonData = data ? JSON.parse(data) : {}
       wxPay(jsonData)
     } else if (selectedPayWay?.payWay === 2) {
@@ -291,9 +307,17 @@ function onBridgeReady(data: any) {
   )
 }
 onLoad(async (option) => {
+  // start===> app跳转来小程序的支付
   if (option?.money) {
     info.money = option.money
   }
+  if (option?.moneyUnit) {
+    info.moneyUnit = order.value.moneyUnit
+  }
+  if (option?.id) {
+    order.value.id = option?.id
+  }
+  // end<===
   if (option?.order) {
     order.value = JSON.parse(uni.getStorageSync('orderJson'))
     info.money = order.value.money
@@ -302,6 +326,7 @@ onLoad(async (option) => {
     await getSystemConfig()
     // #endif
     await getWalletRuleList()
+    await getSystemConfig()
   }
 })
 </script>

@@ -16,11 +16,13 @@ export default defineConfig({
     proxy: {
       '/api/': {
         // target: 'http://192.168.169.198:8000',
+        // target: 'https://250a7c9202.imdo.co',
         target: 'https://api.blacksilverscore.com',
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/api/, '')
       },
       '/api-prod/': {
+        // target: 'https://250a7c9202.imdo.co',
         target: 'https://api.blacksilverscore.com',
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/api-prod/, '')

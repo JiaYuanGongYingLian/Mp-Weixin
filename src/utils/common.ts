@@ -298,7 +298,8 @@ export const browserVersion = () => {
     qq: u.match(/\sQQ/i) == ' qq', // 是否QQ
     isAndroid: u.indexOf('Android') > -1 || u.indexOf('Adr') > -1, // android终端
     isIos: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
-    isHeiyin: u.indexOf('黑银') > -1 // 黑银
+    isHeiyin: u.indexOf('黑银') > -1, // 黑银
+    isMp: u.indexOf('miniProgram') > -1 // 小程序
   }
 }
 /**

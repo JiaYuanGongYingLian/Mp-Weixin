@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-16 17:55:07
- * @LastEditTime: 2023-10-16 17:55:11
+ * @LastEditTime: 2023-10-20 18:13:42
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -11,7 +11,7 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi, orderApi } from '@/api'
+import { powerBankApi, orderApi } from '@/api'
 import { getImgFullPath, dateFormat } from '@/utils/index'
 import $orderStatus from '@/utils/order'
 import { useUserStore } from '@/store'
@@ -22,31 +22,15 @@ const tabCurrentIndex = ref(0)
 const navList = reactive([
   {
     pageIndex: 1,
-    status: 0,
-    text: '全部',
+    status: 1,
+    text: '进行中',
     loadingType: 'more',
     loaded: false,
     orderList: []
   },
   {
     pageIndex: 1,
-    status: 10,
-    text: '待支付',
-    loadingType: 'more',
-    loaded: false,
-    orderList: []
-  },
-  {
-    pageIndex: 1,
-    status: 20,
-    text: '待收货',
-    loadingType: 'more',
-    loaded: false,
-    orderList: []
-  },
-  {
-    pageIndex: 1,
-    status: 60,
+    status: 2,
     text: '已完成',
     loadingType: 'more',
     loaded: false,
@@ -54,8 +38,8 @@ const navList = reactive([
   },
   {
     pageIndex: 1,
-    status: 90,
-    text: '已取消',
+    status: 3,
+    text: '已完成待支付',
     loadingType: 'more',
     loaded: false,
     orderList: []
@@ -80,12 +64,9 @@ async function loadData(source?: string | undefined) {
     return
   }
   navItem.loadingType = 'loading'
-  const { data } = await orderApi.orderList({
-    pageIndex: navItem.pageIndex,
-    detail: true,
-    statuses: getOrderStatuses(navItem.status),
-    userId: userStore.userInfo.id,
-    otherColumns: 'user'
+  const { data } = await powerBankApi.getOrders({
+    pageNo: navItem.pageIndex,
+    serviceType: powerBankApi.serviceType.PORTABLE_CHARGER
   })
   if (navItem.pageIndex === 1) {
     navItem.orderList = []
@@ -154,7 +135,7 @@ function getStatusColor(order: { status: any }) {
   const { status } = order
   let ret = '#fa436a'
   switch (status) {
-    case 91:
+    case 3:
       ret = '#909399'
       break
     default:
@@ -172,6 +153,7 @@ function toOrderDetail(order: { orderId: any }) {
     url: `/packageB/pages/order/detail?orderId=${id}`
   })
 }
+const serviceType = ref('')
 
 onLoad((option) => {
   if (option?.status) {
@@ -296,10 +278,8 @@ onLoad((option) => {
             </view>
 
             <view class="price-box">
-              共
-              <text class="num">{{ getOrderProductSkusCount(item) }}</text>
-              件商品 实付款
-              <text class="price">{{ item.money }}</text>
+              实付款
+              <text class="price">{{ item.actualPayMoney }}</text>
             </view>
             <view class="action-box b-t">
               <button

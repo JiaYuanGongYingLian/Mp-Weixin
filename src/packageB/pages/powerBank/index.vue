@@ -5,7 +5,9 @@
 import { reactive, ref, onMounted } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
+// #ifdef H5
 import { BrowserMultiFormatReader } from '@zxing/library'
+// #endif
 import { baseApi, powerBankApi, userApi } from '@/api'
 import { checkLoginState, getImgFullPath } from '@/utils/index'
 import { upload } from '@/common/ali-oss'
@@ -155,6 +157,7 @@ function jump() {
     url: '/packageB/pages/powerBank/mine'
   })
 }
+const isInBrowser = ref(false)
 onLoad((option) => {
   const currentLocation = uni.getStorageSync('currentLocation')
   if (currentLocation) {
@@ -164,8 +167,13 @@ onLoad((option) => {
   } else {
     getLocation()
   }
+  if (option?.env) {
+    isInBrowser.value = option.env !== 'app'
+  }
 
+  // #ifdef H5
   initReader()
+  // #endif
 })
 onMounted(() => {
   const video = document.querySelector('.uni-video-video')
@@ -205,6 +213,7 @@ onMounted(() => {
       class="btn"
       :custom-style="{ background: '#50939c', color: '#fff' }"
       @click="openScan"
+      v-if="isInBrowser"
       >扫码启动</u-button
     >
     <!-- 扫码区域 -->

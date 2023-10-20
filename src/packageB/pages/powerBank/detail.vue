@@ -1,8 +1,9 @@
+<!-- eslint-disable no-param-reassign -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-10-18 17:44:46
+ * @LastEditTime: 2023-10-20 17:21:14
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -62,15 +63,24 @@ async function start() {
     })
   if (code === 0) {
     uni.showModal({
-      title: message,
-      content: '',
+      title: '提示',
+      content: message,
       showCancel: false,
       confirmText: '确认',
       success: ({ confirm }) => {
         if (confirm) {
-          uni.redirectTo({ url: '/packageB/pages/powerBank/index' })
+          uni.redirectTo({
+            url: `/packageB/pages/powerBank/index?env=${env.value}`
+          })
         }
       }
+    })
+  } else {
+    uni.showModal({
+      title: '提示',
+      content: message,
+      showCancel: false,
+      confirmText: '确认'
     })
   }
 }
@@ -81,6 +91,30 @@ function jump() {
   })
 }
 
+const orders = ref()
+async function getOrderInProgress() {
+  const { data } = await powerBankApi.getCustomerWashingOrders({
+    serviceType: serviceType.value
+  })
+  data.forEach(
+    (item: {
+      serviceType: any
+      text: string
+      deviceDetail: { site: { name: any } }
+    }) => {
+      switch (item?.washOrder?.serviceType) {
+        case 8:
+          item.text = `充电宝使用中！-${item.deviceDetail?.site?.name}-归还后可继续取出。`
+          break
+        default:
+          item.text = `设备使用中！-${item.deviceDetail?.site?.name}-归还后可继续取出。`
+          break
+      }
+    }
+  )
+  orders.value = data
+}
+const env = ref('')
 onLoad((option) => {
   deviceSn.value = option?.deviceSn
   serviceType.value = option?.serviceType
@@ -89,11 +123,16 @@ onLoad((option) => {
   const isApp = option?.from || browserVersion().isHeiyin
   if (isApp) {
     // #ifdef H5
-    console.log('前端注册回调时机==》', new Date())
-    window.JSBridge.registerEvent('HYUserEvent', getDetail)
+    console.log('前端注册回调时机==>', new Date())
+    window.JSBridge.registerEvent('HYUserEvent', () => {
+      getDetail()
+      getOrderInProgress()
+    })
+    env.value = 'app'
     // #endif
   } else {
     getDetail()
+    getOrderInProgress()
   }
 })
 </script>
@@ -101,11 +140,11 @@ onLoad((option) => {
   <view class="container">
     <view class="topBox">
       <view class="action">
-        <view class="location-btn mine" @click="jump">
+        <view class="mine" @click="jump">
           <u-image
             width="50rpx"
             height="50rpx"
-            src="https://image.blacksilverscore.com/uploads/4a8fd3b1-197e-48cc-b13f-5bf1a28b7eea.png"
+            src="https://image.blacksilverscore.com/uploads/6844def4-1bf8-40ce-8995-a0043bf8e5cf.png"
           ></u-image>
         </view>
       </view>
@@ -128,15 +167,26 @@ onLoad((option) => {
         class="img"
       />
     </view>
-    <u-button
-      ripple
-      :hair-line="false"
-      class="btn"
-      :custom-style="{ background: '#50939c', color: '#fff' }"
-      @click="start"
-      :loading="loading"
-      >点击取出充电宝</u-button
-    >
+    <view class="btn_wrap">
+      <view class="order_tips" v-for="(item, index) in orders" :key="index">
+        <u-notice-bar
+          mode="horizontal"
+          :list="[item.text]"
+          :volume-icon="false"
+          :more-icon="true"
+        ></u-notice-bar>
+      </view>
+      <u-button
+        ripple
+        :hair-line="false"
+        class="btn"
+        :custom-style="{ background: '#50939c', color: '#fff' }"
+        @click="start"
+        :loading="loading"
+        :disabled="orders?.length > 0"
+        >点击取出充电宝</u-button
+      >
+    </view>
   </view>
 </template>
 
@@ -160,6 +210,11 @@ onLoad((option) => {
       margin-top: 20rpx;
       font-size: 26rpx;
     }
+    .action {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20rpx;
+    }
   }
   .section {
     padding: 30rpx;
@@ -172,14 +227,22 @@ onLoad((option) => {
     }
   }
 }
-
-.btn {
+.btn_wrap {
   margin: 200rpx 30rpx 0 30rpx;
-  // position: absolute;
-  bottom: 0;
-  left: 0;
-  // width: 100%;
-  height: 85rpx;
-  border-radius: 16rpx;
+
+  .btn {
+    // position: absolute;
+    bottom: 0;
+    left: 0;
+    // width: 100%;
+    height: 100rpx;
+    border-radius: 20rpx;
+  }
+  :deep(.u-btn--default--disabled) {
+    opacity: 0.5;
+  }
+  .order_tips {
+    margin-bottom: 30rpx;
+  }
 }
 </style>

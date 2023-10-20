@@ -1,8 +1,9 @@
+/* eslint-disable no-shadow */
 /*
  * @Description: 物联网（充电宝）相关接口，使用用的api地址来自蒲哥，文档地址http://47.98.169.155:16588/#/home
  * @Author: Kerwin
  * @Date: 2023-10-10 16:46:56
- * @LastEditTime: 2023-10-18 14:10:20
+ * @LastEditTime: 2023-10-20 17:56:30
  * @LastEditors:  Please set LastEditors
  */
 import { RequestHttp, RequestEnums } from '../http'
@@ -56,13 +57,23 @@ function getCustomerWashingOrder(data: any) {
  * 获取所有订单记录
  */
 function getOrders(data: any) {
-  return http.get('/getOrders', data)
+  return http.post('/getOrders', data)
 }
 /**
  * 获取用户信息、卡信息、优惠券信息（V3删除了用户钱包，分离了优惠券、卡）
  */
 function getCustomerInfo(data: any) {
   return http.get('/getCustomerInfo', data)
+}
+enum serviceType {
+  WASH = 1, // "洗车"
+  DPC_CHARGE = 2, // "电瓶车充电"
+  AC_CHARGE = 3, // "交流慢充"
+  DC_CHARGE = 4, // "直流快充"
+  DOOR_WASH = 5, // "上门洗车"
+  HELP_WASH = 6, // "代洗车"
+  WIRELESS_CHARGE = 7, // "隔空无线充电"
+  PORTABLE_CHARGER = 8 // "共享充电宝"
 }
 export default {
   siteList,
@@ -72,5 +83,6 @@ export default {
   getCustomerWashingOrder,
   getCustomerWashingOrders,
   getOrders,
-  getCustomerInfo
+  getCustomerInfo,
+  serviceType
 }

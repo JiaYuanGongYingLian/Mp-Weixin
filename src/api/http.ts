@@ -48,6 +48,7 @@ BASEURL = import.meta.env.VITE_APP_AXIOS_BASE_URL
 // #ifndef H5
 // @ts-ignore
 BASEURL = 'https://api.blacksilverscore.com'
+// BASEURL = 'https://250a7c9202.imdo.co'
 // #endif
 export enum RequestEnums {
   TIMEOUT = 20000,
@@ -197,7 +198,7 @@ export class RequestHttp {
           return Promise.reject(data)
         } // 全局错误信息拦截（防止下载文件得时候返回数据流，没有code，直接报错）
         if (
-          data.code !== config.isIot ? config.success : RequestEnums.SUCCESS
+          data.code !== (config.isIot ? config.success : RequestEnums.SUCCESS)
         ) {
           this.handleCode(data, config)
           return Promise.reject(data)
@@ -207,7 +208,7 @@ export class RequestHttp {
       (error: AxiosError) => {
         const { response } = error
         if (response) {
-          this.handleCode(response.data.code)
+          this.handleCode(response.data.code, config)
         }
       }
     )
