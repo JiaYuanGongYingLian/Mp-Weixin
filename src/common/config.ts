@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-09-18 17:42:38
- * @LastEditTime: 2023-10-17 11:26:41
+ * @LastEditTime: 2023-10-24 09:55:41
  * @LastEditors:  Please set LastEditors
  */
 export const uploadUrl =
@@ -10,4 +10,5 @@ export const uploadUrl =
 export const hy_logo =
   'https://image.blacksilverscore.com/uploads/5e4f28fa-0541-4608-95c2-a7f97bf45f25.png' // 黑银logo
 // export const iotBaseUrl = 'http://47.98.169.155:16588' // 物联网api baseUrl
-export const iotBaseUrl = 'https://wash.blacksilverscore.com/wash' // 物联网api baseUrl
+// export const iotBaseUrl = 'https://wash.blacksilverscore.com/wash' // 物联网api baseUrl
+export const iotBaseUrl = 'https://250a7c9202.imdo.co' // 物联网api baseUrl

@@ -1,9 +1,11 @@
+<!-- eslint-disable radix -->
+<!-- eslint-disable no-useless-escape -->
 <!-- eslint-disable no-param-reassign -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-10-20 17:21:14
+ * @LastEditTime: 2023-10-24 17:57:56
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -23,7 +25,8 @@ import {
   imageUrlToFile,
   wxUploadImage,
   getCookie,
-  browserVersion
+  browserVersion,
+  compareVersion
 } from '@/utils/common'
 
 const userStore = useUserStore()
@@ -115,6 +118,68 @@ async function getOrderInProgress() {
   orders.value = data
 }
 const env = ref('')
+/**
+ * 跳转微信支付分
+ */
+function goToWXScore(queryString: any) {
+  jWeixin.checkJsApi({
+    jsApiList: ['openBusinessView'], // 需要检测的JS接口列表
+    success(res: { checkResult: { openBusinessView: any } }) {
+      // 以键值对的形式返回，可用的api值true，不可用为false
+      // 如：{"checkResult":{"openBusinessView":true},"errMsg":"checkJsApi:ok"}
+      if (res.checkResult.openBusinessView) {
+        WeixinJSBridge.invoke(
+          'openBusinessView',
+          {
+            businessType: 'wxpayScoreUse',
+            queryString
+          },
+          (res: { err_code: string }) => {
+            // 从支付分返回时会执行这个回调函数
+            if (parseInt(res.err_code) === 0) {
+              start()
+              // 返回成功
+            } else {
+              // 返回失败
+              console.log(res)
+              console.log(queryString)
+              uni.showToast({
+                icon: 'none',
+                title: '支付分授权失败'
+              })
+            }
+          }
+        )
+      }
+    }
+  })
+}
+async function getWxPayScore() {
+  const { data } = await powerBankApi.createScoreServiceOrder({
+    paymentSubType: 4
+  })
+  const wechatInfo = navigator.userAgent.match(/MicroMessenger\/([\d\.]+)/i)
+  const wechatVersion = wechatInfo[1]
+  if (compareVersion(wechatVersion, '7.0.5') >= 0) {
+    const obj = {
+      mch_id: data.mchId,
+      package: data.package,
+      timestamp: data.timestamp,
+      nonce_str: data.nonceStr,
+      sign_type: data.signType,
+      sign: data.sign
+    }
+    const paramsArray: string[] = []
+    Object.keys(obj).forEach(
+      (key) => obj[key] && paramsArray.push(`${key}=${obj[key]}`)
+    )
+    goToWXScore(`${paramsArray.join('&')}`)
+  } else {
+    // 提示用户升级微信客户端版本
+    window.href =
+      'https://support.weixin.qq.com/cgi-bin/readtemplate?t=page/common_page__upgrade&text=text005&btn_text=btn_text_0'
+  }
+}
 onLoad((option) => {
   deviceSn.value = option?.deviceSn
   serviceType.value = option?.serviceType
@@ -176,7 +241,7 @@ onLoad((option) => {
           :more-icon="true"
         ></u-notice-bar>
       </view>
-      <u-button
+      <!-- <u-button
         ripple
         :hair-line="false"
         class="btn"
@@ -185,6 +250,23 @@ onLoad((option) => {
         :loading="loading"
         :disabled="orders?.length > 0"
         >点击取出充电宝</u-button
+      > -->
+      <u-button
+        ripple
+        :hair-line="false"
+        class="btn"
+        :custom-style="{ background: '#50939c', color: '#fff' }"
+        @click="getWxPayScore"
+        :loading="loading"
+        :disabled="orders?.length > 0"
+      >
+        <u-icon
+          size="46"
+          name="https://image.blacksilverscore.com/uploads/9f3d9840-082c-4175-a9c6-c482356787f8.png"
+          mr3
+          style="margin-right: 10rpx"
+        ></u-icon>
+        微信⽀付分 先⽤后付</u-button
       >
     </view>
   </view>

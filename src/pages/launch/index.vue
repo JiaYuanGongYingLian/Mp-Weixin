@@ -18,7 +18,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import logo from '@/static/ic_launcher.png'
 import { useUserStore, useConfigStore, useChatStore } from '@/store'
 import { getQueryObject, getQueryVariable, parseParams } from '@/utils/common'
-import { baseApi } from '@/api'
+import { baseApi, powerBankApi } from '@/api';
 import jpushIM from '@/common/jim/jim.js'
 import wxShare from '@/common/wechat-share'
 
@@ -42,9 +42,11 @@ async function getConfig(fieldName = 'mini_project_chat') {
 }
 async function getWxSdkConfig() {
   if (!configStore.isWeChatBrowser) return
-  const { data } = await baseApi.getWxSdkConfig({
-    url: window.location.origin
+  const { data } = await powerBankApi.getWxJsSdkSign({
+    // eslint-disable-next-line no-restricted-globals
+    url: location.href.split('#')[0]
   })
+  console.log('sdkSignData', data)
   wxShare.jsSdkConfig({
     appId: data.appId,
     timestamp: data.timestamp,
@@ -130,6 +132,8 @@ onLoad(async (option) => {
     }
   }
   toTargetPage(url)
+  // 配置微信js-sdk
+  getWxSdkConfig()
   // #endif
 
   jpushIM.onDisconnect(async () => {
@@ -139,8 +143,6 @@ onLoad(async (option) => {
     await chatStore.jimLoginFn()
     console.log('jpush断线重连结束')
   })
-  // 配置微信js-sdk
-  // getWxSdkConfig()
 })
 </script>
 

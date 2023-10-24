@@ -3,7 +3,7 @@
  * @Description: 物联网（充电宝）相关接口，使用用的api地址来自蒲哥，文档地址http://47.98.169.155:16588/#/home
  * @Author: Kerwin
  * @Date: 2023-10-10 16:46:56
- * @LastEditTime: 2023-10-20 17:56:30
+ * @LastEditTime: 2023-10-24 10:02:26
  * @LastEditors:  Please set LastEditors
  */
 import { RequestHttp, RequestEnums } from '../http'
@@ -65,6 +65,18 @@ function getOrders(data: any) {
 function getCustomerInfo(data: any) {
   return http.get('/getCustomerInfo', data)
 }
+/**
+ * 获取用户微信信用分
+ */
+function createScoreServiceOrder(data: any) {
+  return http.post('/createScoreServiceOrder', data)
+}
+/**
+ * 获取wx jsSdk签名配置
+ */
+function getWxJsSdkSign(data: any) {
+  return http.post('/getWxJsSdkSign', data)
+}
 enum serviceType {
   WASH = 1, // "洗车"
   DPC_CHARGE = 2, // "电瓶车充电"
@@ -84,5 +96,7 @@ export default {
   getCustomerWashingOrders,
   getOrders,
   getCustomerInfo,
-  serviceType
+  serviceType,
+  createScoreServiceOrder,
+  getWxJsSdkSign
 }

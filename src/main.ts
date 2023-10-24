@@ -6,6 +6,7 @@ import App from './App.vue'
 import wechatShare from './common/wechat-share'
 // #ifdef H5
 import '@/common/JSBridge'
+import 'jweixin-module'
 // #endif
 // custom css
 import '@/styles/main.scss'

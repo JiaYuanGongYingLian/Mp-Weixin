@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 /* eslint-disable consistent-return */
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-plusplus */
@@ -309,7 +310,12 @@ export const browserVersion = () => {
  * @param {3} seconds 设置cookie在多少秒之后失效 - 单位：秒
  * @param {4} path 设置cookie的路径 - 默认是 / 根目录
  */
-export const setCookie = (key, value, seconds, path = '/') => {
+export const setCookie = (
+  key: any,
+  value: null,
+  seconds: number,
+  path = '/'
+) => {
   const date = new Date()
   date.setTime(date.getTime() - 8 * 3600 * 1000 + seconds * 1000)
   document.cookie = `${key}=${value};expires=${date};path=${path}`
@@ -319,7 +325,7 @@ export const setCookie = (key, value, seconds, path = '/') => {
  * @param {1} key 要获取的cookie的键
  * return 返回想要的键对应的值
  */
-export const getCookie = (key) => {
+export const getCookie = (key: string) => {
   const cookies = document.cookie
   const arr = cookies.split('; ')
   for (let i = 0; i < arr.length; i++) {
@@ -333,8 +339,42 @@ export const getCookie = (key) => {
  * @param {1} key 要删除的cookie的键
  * @param {2} path 要删除的cookie的路径 - 默认为 / 根目录
  */
-export const removeCookie = (key, path = '/') => {
+export const removeCookie = (key: any, path = '/') => {
   setCookie(key, null, -1, path)
+}
+
+/**
+  * 版本号比较
+  * @param {string
+} v1 
+  * @param {string
+} v2 
+  */
+export function compareVersion(v1: any[], v2: any[]) {
+  v1 = v1.split('.')
+  v2 = v2.split('.')
+  const len = Math.max(v1.length, v2.length)
+
+  while (v1.length < len) {
+    v1.push('0')
+  }
+  while (v2.length < len) {
+    v2.push('0')
+  }
+
+  for (let i = 0; i < len; i++) {
+    const num1 = parseInt(v1[i])
+    const num2 = parseInt(v2[i])
+
+    if (num1 > num2) {
+      return 1
+    }
+    if (num1 < num2) {
+      return -1
+    }
+  }
+
+  return 0
 }
 
 export default {
@@ -354,5 +394,6 @@ export default {
   wxUploadImage,
   browserVersion,
   setCookie,
-  getCookie
+  getCookie,
+  compareVersion
 }
