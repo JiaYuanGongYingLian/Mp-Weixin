@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-16 17:55:07
- * @LastEditTime: 2023-10-20 18:13:42
+ * @LastEditTime: 2023-10-26 12:06:21
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -149,11 +149,34 @@ function getOrderStatuses(status: number) {
 }
 function toOrderDetail(order: { orderId: any }) {
   const { id } = order
-  uni.navigateTo({
-    url: `/packageB/pages/order/detail?orderId=${id}`
-  })
+  // uni.navigateTo({
+  //   url: `/packageB/pages/order/detail?orderId=${id}`
+  // })
 }
 const serviceType = ref('')
+
+function getStatusTitle(status) {
+  switch (status) {
+    case 1:
+      return '进行中'
+    case 2:
+      return '已完成'
+    case 3:
+      return '已完成待支付'
+    default:
+      return ''
+  }
+}
+const dType = {
+  1: '洗车',
+  2: '电瓶车充电',
+  3: '交流慢充',
+  4: '直流快充',
+  5: '上门洗车',
+  6: '代洗车',
+  7: '隔空无线充电',
+  8: '共享充电宝'
+}
 
 onLoad((option) => {
   if (option?.status) {
@@ -215,66 +238,13 @@ onLoad((option) => {
             class="order-item"
           >
             <view class="i-top b-b">
-              <text class="time">{{
-                dateFormat(new Date(item.createTime * 1000), 'yyyy-MM-dd hh:mm')
-              }}</text>
+              <text class="time">{{ item.startTime }}</text>
               <text class="state" :style="{ color: getStatusColor(item) }">{{
-                $orderStatus.getStatusTitle(item.status)
+                getStatusTitle(item.status)
               }}</text>
             </view>
-            <view @click="toOrderDetail(item)">
-              <scroll-view
-                v-if="item.orderProductSkus && item.orderProductSkus.length > 1"
-                class="goods-box"
-                scroll-x
-              >
-                <view
-                  v-for="(
-                    orderProductSkuItem, goodsIndex
-                  ) in item.orderProductSkus"
-                  :key="goodsIndex"
-                  class="goods-item"
-                >
-                  <image
-                    class="goods-img"
-                    :src="getImgFullPath(orderProductSkuItem.skuImage)"
-                    mode="aspectFill"
-                  ></image>
-                </view>
-              </scroll-view>
-              <view
-                v-if="
-                  item.orderProductSkus && item.orderProductSkus.length === 1
-                "
-                class="goods-box-single"
-                v-for="(
-                  orderProductSkuItem, goodsIndex
-                ) in item.orderProductSkus"
-                :key="goodsIndex"
-              >
-                <image
-                  class="goods-img"
-                  :src="getImgFullPath(orderProductSkuItem.skuImage)"
-                  mode="aspectFill"
-                ></image>
-                <view
-                  class="right"
-                  v-if="
-                    orderProductSkuItem &&
-                    orderProductSkuItem.shopProductSku &&
-                    orderProductSkuItem.shopProductSku.product
-                  "
-                >
-                  <text class="title clamp">{{
-                    orderProductSkuItem.shopProductSku.product.name
-                  }}</text>
-                  <text class="attr-box"
-                    >{{ orderProductSkuItem.skuName }} x
-                    {{ orderProductSkuItem.count }}</text
-                  >
-                  <text class="price">{{ orderProductSkuItem.money }}</text>
-                </view>
-              </view>
+            <view class="name" @click="toOrderDetail(item)">
+              {{ item.siteName }}-{{ dType[item.serviceType] }}
             </view>
 
             <view class="price-box">
@@ -414,66 +384,8 @@ onLoad((option) => {
     }
   }
 
-  /* 多条商品 */
-  .goods-box {
-    height: 160upx;
-    padding: 20upx 0;
-    white-space: nowrap;
-
-    .goods-item {
-      width: 120upx;
-      height: 120upx;
-      display: inline-block;
-      margin-right: 24upx;
-    }
-
-    .goods-img {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  /* 单条商品 */
-  .goods-box-single {
-    display: flex;
-    padding: 20upx 0;
-
-    .goods-img {
-      display: block;
-      width: 120upx;
-      height: 120upx;
-    }
-
-    .right {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 0 30upx 0 24upx;
-      overflow: hidden;
-
-      .title {
-        font-size: 28rpx;
-        color: #333;
-      }
-
-      .attr-box {
-        font-size: 26rpx;
-        color: $uni-text-color-grey;
-        padding: 10upx 0upx;
-      }
-
-      .price {
-        font-size: 26rpx;
-        color: #333;
-
-        &:before {
-          content: '￥';
-          font-size: 24rpx;
-          margin: 0 2upx 0 0;
-        }
-      }
-    }
+  .name {
+    margin-top: 30rpx;
   }
 
   .price-box {

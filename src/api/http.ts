@@ -208,14 +208,14 @@ export class RequestHttp {
       (error: AxiosError) => {
         const { response } = error
         if (response) {
-          this.handleCode(response.data.code, config)
+          this.handleCode(response.data, config)
         }
       }
     )
   }
 
   handleCode(
-    data: { code: any; desc: any; msg: any },
+    data: { code: any; msg: any; message: any },
     config: AxiosRequestConfig<any> | undefined
   ): void {
     switch (data.code) {
@@ -228,7 +228,7 @@ export class RequestHttp {
       default:
         uni.showToast({
           icon: 'none',
-          title: config.isIot ? data.desc : data.msg
+          title: config.isIot ? data.message : data.msg
         })
     }
   }

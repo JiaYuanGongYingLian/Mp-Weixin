@@ -3,7 +3,7 @@
  * @Description: 物联网（充电宝）相关接口，使用用的api地址来自蒲哥，文档地址http://47.98.169.155:16588/#/home
  * @Author: Kerwin
  * @Date: 2023-10-10 16:46:56
- * @LastEditTime: 2023-10-24 10:02:26
+ * @LastEditTime: 2023-10-25 15:24:35
  * @LastEditors:  Please set LastEditors
  */
 import { RequestHttp, RequestEnums } from '../http'
@@ -69,7 +69,13 @@ function getCustomerInfo(data: any) {
  * 获取用户微信信用分
  */
 function createScoreServiceOrder(data: any) {
-  return http.post('/createScoreServiceOrder', data)
+  return http.get('/createScoreServiceOrder', data)
+}
+/**
+ * 查询信用分订单
+ */
+function queryScoreServiceOrder(data: any) {
+  return http.get('/queryScoreServiceOrder', data)
 }
 /**
  * 获取wx jsSdk签名配置
@@ -98,5 +104,6 @@ export default {
   getCustomerInfo,
   serviceType,
   createScoreServiceOrder,
-  getWxJsSdkSign
+  getWxJsSdkSign,
+  queryScoreServiceOrder
 }

@@ -1,3 +1,4 @@
+<!-- eslint-disable no-unused-expressions -->
 <!-- eslint-disable radix -->
 <!-- eslint-disable no-useless-escape -->
 <!-- eslint-disable no-param-reassign -->
@@ -5,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-10-24 17:57:56
+ * @LastEditTime: 2023-10-26 14:25:44
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -36,6 +37,8 @@ const siteInfo = ref({})
 const deviceSn = ref('')
 const serviceType = ref()
 const loading = ref(false)
+const checked = ref(false)
+
 async function getDetail() {
   uni.showLoading({
     mask: true
@@ -50,6 +53,9 @@ async function getDetail() {
   deviceInfo.value = data?.device
   siteInfo.value = data?.site
 }
+
+const outOrderNo = ref('')
+const paymentSubType = ref(4)
 async function start() {
   uni.showLoading({
     title: '启动中'
@@ -58,7 +64,11 @@ async function start() {
   const { data, code, message } = await powerBankApi
     .deviceStart({
       deviceSn: deviceSn.value,
-      serviceType: serviceType.value
+      serviceType: serviceType.value,
+      consumeType: 83,
+      paymentType: 1,
+      paymentSubType: paymentSubType.value,
+      orderId: outOrderNo.value
     })
     .finally(() => {
       loading.value = false
@@ -134,11 +144,22 @@ function goToWXScore(queryString: any) {
             businessType: 'wxpayScoreUse',
             queryString
           },
-          (res: { err_code: string }) => {
+          async (res: { err_code: string }) => {
             // 从支付分返回时会执行这个回调函数
             if (parseInt(res.err_code) === 0) {
-              start()
               // 返回成功
+              const { data } = await powerBankApi.queryScoreServiceOrder({
+                outOrderNo: outOrderNo.value,
+                paymentSubType: paymentSubType.value
+              })
+              if (data?.state === 'DOING') {
+                start()
+              } else {
+                uni.showToast({
+                  icon: 'none',
+                  title: '支付分授权失败'
+                })
+              }
             } else {
               // 返回失败
               console.log(res)
@@ -155,6 +176,13 @@ function goToWXScore(queryString: any) {
   })
 }
 async function getWxPayScore() {
+  if (!checked.value) {
+    uni.showToast({
+      icon: 'none',
+      title: '请勾选委托扣款授权书'
+    })
+    return
+  }
   const { data } = await powerBankApi.createScoreServiceOrder({
     paymentSubType: 4
   })
@@ -169,6 +197,7 @@ async function getWxPayScore() {
       sign_type: data.signType,
       sign: data.sign
     }
+    outOrderNo.value = data.outOrderNo
     const paramsArray: string[] = []
     Object.keys(obj).forEach(
       (key) => obj[key] && paramsArray.push(`${key}=${obj[key]}`)
@@ -180,6 +209,12 @@ async function getWxPayScore() {
       'https://support.weixin.qq.com/cgi-bin/readtemplate?t=page/common_page__upgrade&text=text005&btn_text=btn_text_0'
   }
 }
+function toAuthLetter() {
+  uni.navigateTo({
+    url: '/packageB/pages/powerBank/authLetter'
+  })
+}
+const mask = ref(false)
 onLoad((option) => {
   deviceSn.value = option?.deviceSn
   serviceType.value = option?.serviceType
@@ -196,8 +231,10 @@ onLoad((option) => {
     env.value = 'app'
     // #endif
   } else {
-    getDetail()
-    getOrderInProgress()
+    mask.value = true
+    // 李总的需求，只通过APP扫码取设备
+    // getDetail()
+    // getOrderInProgress()
   }
 })
 </script>
@@ -268,7 +305,24 @@ onLoad((option) => {
         ></u-icon>
         微信⽀付分 先⽤后付</u-button
       >
+      <view class="check">
+        <u-checkbox v-model="checked" :label-size="26">
+          勾选同意<text style="color: #65a674" @click="toAuthLetter"
+            >《委托扣款授权书》</text
+          ></u-checkbox
+        >
+      </view>
     </view>
+    <u-popup
+      v-model="mask"
+      :mask-close-able="false"
+      :border-radius="12"
+      mode="center"
+      width="400rpx"
+      height="200rpx"
+    >
+      <view class="mask_tips"> 请使用黑银APP扫码 </view>
+    </u-popup>
   </view>
 </template>
 
@@ -276,13 +330,16 @@ onLoad((option) => {
 .container {
   min-height: 100vh;
   background-color: #fff;
+
   .topBox {
     background: #50939c;
     padding: 40rpx;
+
     .tit {
       font-size: 36rpx;
       color: #fff;
     }
+
     .wrap {
       background: rgba(255, 255, 255, 0.4);
       border-radius: 20rpx;
@@ -292,26 +349,30 @@ onLoad((option) => {
       margin-top: 20rpx;
       font-size: 26rpx;
     }
+
     .action {
       display: flex;
       justify-content: flex-end;
       margin-bottom: 20rpx;
     }
   }
+
   .section {
     padding: 30rpx;
     line-height: 50rpx;
   }
+
   .img_box {
     .img {
       width: 100%;
-      margin-top: 200rpx;
+      margin-top: 100rpx;
     }
   }
 }
+
 .btn_wrap {
   margin: 200rpx 30rpx 0 30rpx;
-
+  padding-bottom: 80rpx;
   .btn {
     // position: absolute;
     bottom: 0;
@@ -320,11 +381,24 @@ onLoad((option) => {
     height: 100rpx;
     border-radius: 20rpx;
   }
+
   :deep(.u-btn--default--disabled) {
     opacity: 0.5;
   }
+
   .order_tips {
     margin-bottom: 30rpx;
   }
+}
+.check {
+  text-align: center;
+  margin-top: 40rpx;
+  font-size: 24rpx;
+}
+.mask_tips {
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: bold;
+  margin-top: 60rpx;
 }
 </style>
