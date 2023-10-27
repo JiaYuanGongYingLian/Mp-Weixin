@@ -8,10 +8,11 @@ import { storeToRefs } from 'pinia'
 import { productApi, couponApi } from '@/api'
 import { getImgFullPath, previewImage, checkLoginState } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
-import { useUserStore } from '@/store'
+import { useUserStore, useConfigStore } from '@/store'
 import { sharePathFormat, webSharePathFormat } from '@/common/wechat-share'
 
 const userStore = useUserStore()
+const configStore = useConfigStore()
 const { hasLogin, userInfo, useShareCode } = storeToRefs(userStore)
 const loadingSkeleton = ref(false)
 const productData = ref({})
@@ -258,6 +259,14 @@ async function confirm() {
     addToCart()
   }
 }
+const byShare = ref(false)
+function toHome() {
+  if (byShare.value) {
+    uni.redirectTo({ url: `/pages/physicalShop/index?shopId=${shopId.value} ` })
+  } else {
+    uni.switchTab({ url: '/pages/index/index' })
+  }
+}
 
 const shareData = ref({})
 
@@ -266,6 +275,9 @@ onLoad(async (option) => {
     userStore.syncSetUseShareCode(false)
   } else if (option?.shareCode !== userInfo.value.shareCode) {
     uni.setStorageSync('shareCode', option?.shareCode)
+  }
+  if (option?.qrcode) {
+    byShare.value = !!option?.qrcode
   }
   productId.value = option.productId
   shopId.value = option.shopId
@@ -409,6 +421,14 @@ onShareAppMessage(() => {
     <view class="actionBar">
       <view class="leftBox">
         <view
+          class="car"
+          :class="{ active: productData.userCollect }"
+          @tap="toHome"
+        >
+          <u-icon name="home" size="40" class="pic"></u-icon>
+          <view>首页</view>
+        </view>
+        <!-- <view
           class="p-b-btn"
           :class="{ active: productData.userCollect }"
           @tap="toggleFavorite(productData.userCollect)"
@@ -424,7 +444,7 @@ onShareAppMessage(() => {
             src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/newMall/icon_b_tab_03.png"
           ></image>
           <view>收藏</view>
-        </view>
+        </view> -->
         <view class="car" v-if="!productData.couponSku" @click="toCart">
           <image
             class="pic"
@@ -787,7 +807,7 @@ onShareAppMessage(() => {
     display: flex;
     justify-content: space-between;
     align-content: center;
-    gap: 40rpx;
+    gap: 20rpx;
     .car {
       width: 70rpx;
       position: relative;

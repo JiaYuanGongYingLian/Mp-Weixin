@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-10-26 14:25:44
+ * @LastEditTime: 2023-10-27 17:45:05
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -65,7 +65,7 @@ async function start() {
     .deviceStart({
       deviceSn: deviceSn.value,
       serviceType: serviceType.value,
-      consumeType: 83,
+      consumeType: 5,
       paymentType: 1,
       paymentSubType: paymentSubType.value,
       orderId: outOrderNo.value
@@ -231,10 +231,10 @@ onLoad((option) => {
     env.value = 'app'
     // #endif
   } else {
-    mask.value = true
+    // mask.value = true
     // 李总的需求，只通过APP扫码取设备
-    // getDetail()
-    // getOrderInProgress()
+    getDetail()
+    getOrderInProgress()
   }
 })
 </script>
@@ -278,7 +278,7 @@ onLoad((option) => {
           :more-icon="true"
         ></u-notice-bar>
       </view>
-      <!-- <u-button
+      <u-button
         ripple
         :hair-line="false"
         class="btn"
@@ -287,8 +287,8 @@ onLoad((option) => {
         :loading="loading"
         :disabled="orders?.length > 0"
         >点击取出充电宝</u-button
-      > -->
-      <u-button
+      >
+      <!-- <u-button
         ripple
         :hair-line="false"
         class="btn"
@@ -304,7 +304,7 @@ onLoad((option) => {
           style="margin-right: 10rpx"
         ></u-icon>
         微信⽀付分 先⽤后付</u-button
-      >
+      > -->
       <view class="check">
         <u-checkbox v-model="checked" :label-size="26">
           勾选同意<text style="color: #65a674" @click="toAuthLetter"

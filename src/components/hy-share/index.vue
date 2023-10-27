@@ -3,7 +3,7 @@
  * @Description: 分享弹窗
  * @Author: Kerwin
  * @Date: 2023-09-20 11:50:40
- * @LastEditTime: 2023-09-22 16:52:35
+ * @LastEditTime: 2023-10-27 11:55:06
  * @LastEditors:  Please set LastEditors
 -->
 <template>
@@ -49,8 +49,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, reactive } from 'vue'
-import { onPageScroll } from '@dcloudio/uni-app'
+import { onMounted, ref, reactive, watch } from 'vue'
+import { onPageScroll, onReady } from '@dcloudio/uni-app'
 import { launchClientApp } from '@/utils/common'
 import {
   updateAppMessageShareData,
@@ -116,6 +116,12 @@ function handleShare(i: number) {
 defineExpose({
   showPop,
   closePop
+})
+watch(props.shareData, (data) => {
+  wx.ready(() => {
+    options.value[0].shareFn(data)
+    options.value[1].shareFn(data)
+  })
 })
 </script>
 

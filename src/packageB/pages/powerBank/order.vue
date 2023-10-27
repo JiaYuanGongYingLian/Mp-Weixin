@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-16 17:55:07
- * @LastEditTime: 2023-10-26 12:06:21
+ * @LastEditTime: 2023-10-27 17:46:16
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -65,8 +65,11 @@ async function loadData(source?: string | undefined) {
   }
   navItem.loadingType = 'loading'
   const { data } = await powerBankApi.getOrders({
-    pageNo: navItem.pageIndex,
-    serviceType: powerBankApi.serviceType.PORTABLE_CHARGER
+    page: {
+      pageNo: navItem.pageIndex
+    },
+    serviceType: powerBankApi.serviceType.PORTABLE_CHARGER,
+    status: navItem.status
   })
   if (navItem.pageIndex === 1) {
     navItem.orderList = []

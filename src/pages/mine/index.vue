@@ -246,7 +246,7 @@ onPullDownRefresh(() => {
     </view>
     <hy-tabbar></hy-tabbar>
     <!-- #ifdef H5 -->
-    <!-- 线下店扫码进入的显示此tabbar -->
+    <!-- 线下店扫码/店铺分享进入的显示此tabbar -->
     <hyTabBar
       v-if="enterByStoreQrcode"
       v-model="currentTabbar"
