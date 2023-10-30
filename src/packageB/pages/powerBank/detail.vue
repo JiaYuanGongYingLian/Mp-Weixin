@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-10-27 17:45:05
+ * @LastEditTime: 2023-10-30 11:45:52
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -128,6 +128,20 @@ async function getOrderInProgress() {
   orders.value = data
 }
 const env = ref('')
+async function queryStart() {
+  const { data } = await powerBankApi.queryScoreServiceOrder({
+    outOrderNo: outOrderNo.value,
+    paymentSubType: paymentSubType.value
+  })
+  if (data?.state === 'DOING') {
+    start()
+  } else {
+    uni.showToast({
+      icon: 'none',
+      title: '支付分未授权'
+    })
+  }
+}
 /**
  * 跳转微信支付分
  */
@@ -148,18 +162,7 @@ function goToWXScore(queryString: any) {
             // 从支付分返回时会执行这个回调函数
             if (parseInt(res.err_code) === 0) {
               // 返回成功
-              const { data } = await powerBankApi.queryScoreServiceOrder({
-                outOrderNo: outOrderNo.value,
-                paymentSubType: paymentSubType.value
-              })
-              if (data?.state === 'DOING') {
-                start()
-              } else {
-                uni.showToast({
-                  icon: 'none',
-                  title: '支付分授权失败'
-                })
-              }
+              queryStart()
             } else {
               // 返回失败
               console.log(res)
@@ -175,6 +178,7 @@ function goToWXScore(queryString: any) {
     }
   })
 }
+
 async function getWxPayScore() {
   if (!checked.value) {
     uni.showToast({
@@ -228,6 +232,14 @@ onLoad((option) => {
       getDetail()
       getOrderInProgress()
     })
+    window.JSBridge.registerEvent(
+      'deviceStart',
+      (data: { outOrderNo: string }) => {
+        console.log('is callback===>', data)
+        outOrderNo.value = data.outOrderNo
+        queryStart()
+      }
+    )
     env.value = 'app'
     // #endif
   } else {
@@ -278,7 +290,7 @@ onLoad((option) => {
           :more-icon="true"
         ></u-notice-bar>
       </view>
-      <u-button
+      <!-- <u-button
         ripple
         :hair-line="false"
         class="btn"
@@ -287,8 +299,8 @@ onLoad((option) => {
         :loading="loading"
         :disabled="orders?.length > 0"
         >点击取出充电宝</u-button
-      >
-      <!-- <u-button
+      > -->
+      <u-button
         ripple
         :hair-line="false"
         class="btn"
@@ -304,7 +316,7 @@ onLoad((option) => {
           style="margin-right: 10rpx"
         ></u-icon>
         微信⽀付分 先⽤后付</u-button
-      > -->
+      >
       <view class="check">
         <u-checkbox v-model="checked" :label-size="26">
           勾选同意<text style="color: #65a674" @click="toAuthLetter"

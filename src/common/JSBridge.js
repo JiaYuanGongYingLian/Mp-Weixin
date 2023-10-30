@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-17 09:58:16
- * @LastEditTime: 2023-10-17 13:55:15
+ * @LastEditTime: 2023-10-30 11:23:39
  * @LastEditors:  Please set LastEditors
  */
 
@@ -49,11 +49,13 @@ class JSBridgeClass {
   }
 
   callbackEvent(msg) {
+    console.log('callbackEvent===>', msg)
     if (!(msg instanceof Object)) {
       msg = JSON.parse(msg)
     }
     const { bridgeName } = msg
     const data = msg.data || {}
+    console.log('callbackEvent===>', bridgeName)
     if (bridgeName) {
       this.registerFuncs[bridgeName] && this.registerFuncs[bridgeName](data)
     }
