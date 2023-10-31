@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-10-31 14:16:36
+ * @LastEditTime: 2023-10-31 17:17:57
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -252,10 +252,10 @@ onLoad((option) => {
     paymentSubType.value = 1
     // #endif
   } else {
-    // mask.value = true
+    mask.value = true
     // 李总的需求，只通过APP扫码取设备
-    getDetail()
-    getOrderInProgress()
+    // getDetail()
+    // getOrderInProgress()
   }
 })
 </script>
@@ -380,7 +380,7 @@ onLoad((option) => {
     .action {
       display: flex;
       justify-content: flex-end;
-      margin-bottom: 20rpx;
+      margin-bottom: 10rpx;
     }
   }
 
@@ -398,7 +398,7 @@ onLoad((option) => {
 }
 
 .btn_wrap {
-  margin: 100rpx 30rpx 0 30rpx;
+  margin: 30rpx 30rpx 0 30rpx;
   padding-bottom: 80rpx;
   .btn {
     // position: absolute;
@@ -419,7 +419,7 @@ onLoad((option) => {
 }
 .check {
   text-align: center;
-  margin-top: 40rpx;
+  margin-top: 30rpx;
   font-size: 24rpx;
 }
 .mask_tips {
@@ -433,6 +433,6 @@ onLoad((option) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 40rpx;
+  margin-top: 30rpx;
 }
 </style>
