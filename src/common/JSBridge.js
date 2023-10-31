@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-17 09:58:16
- * @LastEditTime: 2023-10-30 17:19:30
+ * @LastEditTime: 2023-10-31 10:29:33
  * @LastEditors:  Please set LastEditors
  */
 
@@ -28,10 +28,6 @@ class JSBridgeClass {
     this.callbacks[thisId] = callback // 存储 Callback
     const ua = browserVersion()
     // 判断环境，获取不同的 nativeBridge
-    console.log('webview ===>', ua, window)
-    console.log('webview2 ===>', window.webkit)
-    console.log('webview3 ===>', window.webkit.messageHandlers)
-
     if (ua.isAndroid) {
       this.nativeBridge = window.nativeBridge
       console.log('is andiord bridge', this.nativeBridge)

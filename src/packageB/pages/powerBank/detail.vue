@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-10-30 11:45:52
+ * @LastEditTime: 2023-10-31 14:16:36
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -55,7 +55,7 @@ async function getDetail() {
 }
 
 const outOrderNo = ref('')
-const paymentSubType = ref(4)
+const paymentSubType = ref(4) // h5=4，app=11
 async function start() {
   uni.showLoading({
     title: '启动中'
@@ -65,7 +65,8 @@ async function start() {
     .deviceStart({
       deviceSn: deviceSn.value,
       serviceType: serviceType.value,
-      consumeType: 5,
+      // consumeType: 5, // 没有支付分
+      consumeType: 83, // 有支付分
       paymentType: 1,
       paymentSubType: paymentSubType.value,
       orderId: outOrderNo.value
@@ -191,12 +192,12 @@ async function getWxPayScore() {
     // ios client
     window.JSBridge.invoke('CallWXScoreService', {
       bridgeName: 'deviceStart',
-      paymentSubType: 4
+      paymentSubType: paymentSubType.value
     })
     return
   }
   const { data } = await powerBankApi.createScoreServiceOrder({
-    paymentSubType: 4
+    paymentSubType: paymentSubType.value
   })
   const wechatInfo = navigator.userAgent.match(/MicroMessenger\/([\d\.]+)/i)
   const wechatVersion = wechatInfo[1]
@@ -243,12 +244,12 @@ onLoad((option) => {
     window.JSBridge.registerEvent(
       'deviceStart',
       (data: { outOrderNo: string }) => {
-        console.log('is callback===>', data)
         outOrderNo.value = data.outOrderNo
         queryStart()
       }
     )
     env.value = 'app'
+    paymentSubType.value = 1
     // #endif
   } else {
     // mask.value = true
@@ -272,9 +273,12 @@ onLoad((option) => {
       </view>
       <view class="tit">{{ siteInfo.name }}</view>
       <view class="wrap">
-        <view>设备使用说明</view>
+        <view>设备使用说明：</view>
         <view>1.设备弹出后开始计费</view>
         <view>2.使用完毕后归还设备，结束计费</view>
+        <view>计费规则：</view>
+        <view>1.前24小时免费，超过24小时后2元一个小时</view>
+        <view>2.日封顶30元，总封顶99元</view>
       </view>
     </view>
     <!-- <view class="section">
@@ -317,17 +321,20 @@ onLoad((option) => {
         :loading="loading"
         :disabled="orders?.length > 0"
       >
-        <u-icon
+        免押租借
+      </u-button>
+      <view class="tips"
+        ><u-icon
           size="46"
-          name="https://image.blacksilverscore.com/uploads/9f3d9840-082c-4175-a9c6-c482356787f8.png"
+          name="https://image.blacksilverscore.com/uploads/c1f45d56-0d6c-4308-8f77-0203209b4d05.png"
           mr3
           style="margin-right: 10rpx"
         ></u-icon>
-        微信⽀付分 先⽤后付</u-button
-      >
+        <text>微信⽀付分|550及以上有机会免押</text>
+      </view>
       <view class="check">
         <u-checkbox v-model="checked" :label-size="26">
-          勾选同意<text style="color: #65a674" @click="toAuthLetter"
+          勾选表示同意<text style="color: #65a674" @click="toAuthLetter"
             >《委托扣款授权书》</text
           ></u-checkbox
         >
@@ -391,7 +398,7 @@ onLoad((option) => {
 }
 
 .btn_wrap {
-  margin: 200rpx 30rpx 0 30rpx;
+  margin: 100rpx 30rpx 0 30rpx;
   padding-bottom: 80rpx;
   .btn {
     // position: absolute;
@@ -420,5 +427,12 @@ onLoad((option) => {
   font-size: 30rpx;
   font-weight: bold;
   margin-top: 60rpx;
+}
+.tips {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40rpx;
 }
 </style>
