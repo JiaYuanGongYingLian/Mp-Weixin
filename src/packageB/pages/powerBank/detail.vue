@@ -187,6 +187,14 @@ async function getWxPayScore() {
     })
     return
   }
+  if (browserVersion().isHeiyin) {
+    // ios client
+    window.JSBridge.invoke('CallWXScoreService', {
+      bridgeName: 'deviceStart',
+      paymentSubType: 4
+    })
+    return
+  }
   const { data } = await powerBankApi.createScoreServiceOrder({
     paymentSubType: 4
   })

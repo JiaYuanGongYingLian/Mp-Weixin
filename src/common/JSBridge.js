@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-useless-constructor */
@@ -5,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-17 09:58:16
- * @LastEditTime: 2023-10-30 11:23:39
+ * @LastEditTime: 2023-10-30 17:19:30
  * @LastEditors:  Please set LastEditors
  */
 
@@ -22,24 +23,28 @@ class JSBridgeClass {
 
   nativeBridge = null
 
-  invoke(bridgeName, callback, data) {
+  invoke(eventName, data, callback) {
     const thisId = this.id++ // 获取唯一 id
     this.callbacks[thisId] = callback // 存储 Callback
     const ua = browserVersion()
     // 判断环境，获取不同的 nativeBridge
+    console.log('webview ===>', ua, window)
+    console.log('webview2 ===>', window.webkit)
+    console.log('webview3 ===>', window.webkit.messageHandlers)
+
     if (ua.isAndroid) {
       this.nativeBridge = window.nativeBridge
       console.log('is andiord bridge', this.nativeBridge)
     }
     if (ua.isIos) {
-      this.nativeBridge = window.webkit.messageHandlers.nativeBridge // WKWebView
+      this.nativeBridge = window.webkit.messageHandlers.CallbackEvent // WKWebView
       console.log('is ios bridge', this.nativeBridge)
     }
+    // this.registerEvent(data.bridgeName, callback)
     if (this.nativeBridge) {
       this.nativeBridge.postMessage({
-        bridgeName,
-        data: data || {},
-        callbackId: thisId
+        eventName,
+        data: data || {}
       })
     }
   }

@@ -353,6 +353,7 @@ onShareAppMessage(() => {
           <view class="title f-m">{{ productData.name }}</view>
           <view class="subtitle">{{ productData.subtitle }}</view>
         </view>
+        <!-- #ifdef MP -->
         <view class="share-content">
           <image
             class="img"
@@ -361,6 +362,8 @@ onShareAppMessage(() => {
           <view class="text">分享</view>
           <button open-type="share" class="btn" @click="showShare"></button>
         </view>
+        <!-- #endif -->
+
         <!-- #ifdef H5 -->
         <hy-share ref="shareComp" :shareData="shareData" />
         <!-- #endif -->
