@@ -79,7 +79,6 @@
 				"navigationBarTextStyle": "black"
 			}
 		},
-		
 		{
 			"path": "pages/webview/index",
 			"style": {
@@ -317,30 +316,53 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "packageC",
+			"pages": [
+				{
+					"path": "pages/examination/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "售后考评",
+						"backgroundColor": "#F5F5F5"
+					}
+				}
+			]
 		}
 	],
 	"preloadRule": {
 		"packageA/pages/shortVideo/index": {
-		  "network": "all",
-		  "packages": ["packageA"]
+			"network": "all",
+			"packages": [
+				"packageA"
+			]
 		},
 		"packageA/pages/message/index": {
 			"network": "all",
-			"packages": ["packageA"]
+			"packages": [
+				"packageA"
+			]
 		},
 		"packageA/pages/businessCard/index": {
 			"network": "all",
-			"packages": ["packageA"]
+			"packages": [
+				"packageA"
+			]
 		},
 		"packageA/pages/publish/index": {
 			"network": "all",
-			"packages": ["packageA"]
+			"packages": [
+				"packageA"
+			]
 		},
 		"packageB/pages/powerBank/index": {
 			"network": "all",
-			"packages": ["packageA"]
+			"packages": [
+				"packageA"
+			]
 		}
-	},	
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "黑银生活",
