@@ -18,9 +18,8 @@ import { onLoad } from '@dcloudio/uni-app'
 import logo from '@/static/ic_launcher.png'
 import { useUserStore, useConfigStore, useChatStore } from '@/store'
 import { getQueryObject, getQueryVariable, parseParams } from '@/utils/common'
-import { baseApi, powerBankApi } from '@/api';
+import { baseApi } from '@/api'
 import jpushIM from '@/common/jim/jim.js'
-import wxShare from '@/common/wechat-share'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
@@ -40,20 +39,7 @@ async function getConfig(fieldName = 'mini_project_chat') {
   })
   configStore.videoPageOpen = data.fieldValue !== '0'
 }
-async function getWxSdkConfig() {
-  if (!configStore.isWeChatBrowser) return
-  const { data } = await powerBankApi.getWxJsSdkSign({
-    // eslint-disable-next-line no-restricted-globals
-    url: location.href.split('#')[0]
-  })
-  console.log('sdkSignData', data)
-  wxShare.jsSdkConfig({
-    appId: data.appId,
-    timestamp: data.timestamp,
-    nonceStr: data.noncestr,
-    signature: data.sign
-  })
-}
+
 const uncertainShareCodeLinks = [
   '/pages/physicalShopCheck/index',
   '/pages/physicalShop/index',
@@ -132,8 +118,6 @@ onLoad(async (option) => {
     }
   }
   toTargetPage(url)
-  // 配置微信js-sdk
-  getWxSdkConfig()
   // #endif
 
   jpushIM.onDisconnect(async () => {

@@ -64,6 +64,66 @@ function getSystemConfigInfo(data: any) {
 function getWxSdkConfig(data: any) {
   return http.post('/base/api/v1/wx/getJsSdkSign', data)
 }
+/**
+ * 问卷列表接口
+ */
+function questionPaperList(data: any) {
+  return http.get('/base/api/v1/question/paper/list', data)
+}
+/**
+ * 问卷详情接口
+ */
+function questionPaperInfo(data: any) {
+  return http.get('/base/api/v1/question/paper/info', data)
+}
+/**
+ * 问卷题列表接口
+ */
+function questionList(data: any) {
+  return http.get('/base/api/v1/question/list', data)
+}
+/**
+ * 问卷题详情接口
+ */
+function questionInfo(data: any) {
+  return http.get('/base/api/v1/question/info', data)
+}
+/**
+ * 问卷题选项列表接口
+ */
+function questionOptionList(data: any) {
+  return http.get('/base/api/v1/question/option/list', data)
+}
+/**
+ * 问卷题选项列表接口
+ */
+function questionOptionInfo(data: any) {
+  return http.get('/base/api/v1/question/option/info', data)
+}
+/**
+ * 问卷结果新增接口
+ */
+function questionAnsAdd(data: any) {
+  return http.post('/base/api/v1/question/paper/answer/add', data)
+}
+/**
+ * 问卷结果删除接口
+ */
+function questionAnsDel(data: any) {
+  return http.post('/base/api/v1/question/paper/answer/delete', data)
+}
+/**
+ * 问卷结果详情接口
+ */
+function questionAnsInfo(data: any) {
+  return http.post('/base/api/v1/question/paper/answer/info', data)
+}
+/**
+ * 问卷结果列表
+ */
+function questionAnsList(data: any) {
+  return http.get('/base/api/v1/question/paper/answer/list', data)
+}
 
 export default {
   getCategoryList,
@@ -74,5 +134,15 @@ export default {
   getAliOssToken,
   aliAddFile,
   getSystemConfigInfo,
-  getWxSdkConfig
+  getWxSdkConfig,
+  questionPaperList,
+  questionPaperInfo,
+  questionList,
+  questionInfo,
+  questionOptionList,
+  questionOptionInfo,
+  questionAnsAdd,
+  questionAnsDel,
+  questionAnsInfo,
+  questionAnsList
 }
