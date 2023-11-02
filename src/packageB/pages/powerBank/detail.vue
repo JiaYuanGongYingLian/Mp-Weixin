@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-10-31 17:17:57
+ * @LastEditTime: 2023-11-02 17:31:50
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -227,6 +227,9 @@ function toAuthLetter() {
     url: '/packageB/pages/powerBank/authLetter'
   })
 }
+function refresh() {
+  window.location.reload()
+}
 const mask = ref(false)
 onLoad((option) => {
   deviceSn.value = option?.deviceSn
@@ -234,6 +237,8 @@ onLoad((option) => {
   console.log('deviceSn==>', deviceSn.value)
   console.log('serviceType==>', serviceType.value)
   const isApp = option?.from || browserVersion().isHeiyin
+  console.log('isApp==>', isApp)
+
   if (isApp) {
     // #ifdef H5
     console.log('前端注册回调时机==>', new Date())
@@ -252,10 +257,10 @@ onLoad((option) => {
     paymentSubType.value = 1
     // #endif
   } else {
-    mask.value = true
+    // mask.value = true
     // 李总的需求，只通过APP扫码取设备
-    // getDetail()
-    // getOrderInProgress()
+    getDetail()
+    getOrderInProgress()
   }
 })
 </script>
@@ -263,6 +268,7 @@ onLoad((option) => {
   <view class="container">
     <view class="topBox">
       <view class="action">
+        <u-icon color="#fff" :size="40" name="reload" @click="refresh"></u-icon>
         <view class="mine" @click="jump">
           <u-image
             width="50rpx"
@@ -379,8 +385,9 @@ onLoad((option) => {
 
     .action {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       margin-bottom: 10rpx;
+      align-items: center;
     }
   }
 

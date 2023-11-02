@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-16 17:55:07
- * @LastEditTime: 2023-10-27 17:46:16
+ * @LastEditTime: 2023-11-02 17:04:33
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -66,7 +66,8 @@ async function loadData(source?: string | undefined) {
   navItem.loadingType = 'loading'
   const { data } = await powerBankApi.getOrders({
     page: {
-      pageNo: navItem.pageIndex
+      pageNo: navItem.pageIndex,
+      pageSize: 20
     },
     serviceType: powerBankApi.serviceType.PORTABLE_CHARGER,
     status: navItem.status
@@ -200,7 +201,7 @@ onLoad((option) => {
 </script>
 <template>
   <div class="container">
-    <hy-nav-bar :title="'订单列表'"></hy-nav-bar>
+    <!-- <hy-nav-bar :title="'订单列表'"></hy-nav-bar> -->
     <view class="navbar">
       <view
         v-for="(item, index) in navList"
@@ -292,7 +293,7 @@ onLoad((option) => {
 <style lang="scss" scoped>
 .container {
   height: 100vh;
-  padding: 0 20rpx;
+  padding: 0;
 }
 .swiper-box {
   height: calc(100% - 40px);

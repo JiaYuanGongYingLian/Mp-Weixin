@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-17 09:58:16
- * @LastEditTime: 2023-10-31 10:29:33
+ * @LastEditTime: 2023-11-02 17:47:28
  * @LastEditors:  Please set LastEditors
  */
 
@@ -83,7 +83,13 @@ class JSBridgeClass {
       setCookie('serviceType', data.serviceType)
     }
     const bridgeName = 'HYUserEvent'
-    this.registerFuncs[bridgeName](data)
+    let timer = setInterval(() => {
+      if (this.registerFuncs[bridgeName]) {
+        this.registerFuncs[bridgeName](data)
+        clearInterval(timer)
+        timer = null
+      }
+    }, 500)
   }
 }
 const JSBridge = new JSBridgeClass()

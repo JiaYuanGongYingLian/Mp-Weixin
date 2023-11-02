@@ -7,7 +7,6 @@ import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, orderApi, moneyApi } from '@/api'
-import { isWeChat } from '@/utils/common'
 import { useConfigStore, useUserStore } from '@/store'
 import icon_wechat from '@/static/pay_icon_wechat.png'
 import icon_ali from '@/static/pay_icon_alipay.png'
@@ -210,7 +209,7 @@ async function onSubmit() {
     return
   }
   // #ifdef H5
-  if (selectedPayWay.payWay === 3 && !isWeChat()) {
+  if (selectedPayWay.payWay === 3 && !isWeChatBrowser.value) {
     uni.showToast({
       title: '此支付方式仅限微信App中付款',
       icon: 'none'
@@ -218,7 +217,7 @@ async function onSubmit() {
     return
   }
   // #endif
-  if (selectedPayWay.payWay === 2 && isWeChat()) {
+  if (selectedPayWay.payWay === 2 && !isAlipayClient.value) {
     uni.showToast({
       title: '此支付方式仅限支付宝App付款',
       icon: 'none'
