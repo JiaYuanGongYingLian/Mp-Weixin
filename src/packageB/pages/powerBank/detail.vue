@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-11-02 17:31:50
+ * @LastEditTime: 2023-11-02 17:57:01
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -257,10 +257,10 @@ onLoad((option) => {
     paymentSubType.value = 1
     // #endif
   } else {
-    // mask.value = true
+    mask.value = true
     // 李总的需求，只通过APP扫码取设备
-    getDetail()
-    getOrderInProgress()
+    // getDetail()
+    // getOrderInProgress()
   }
 })
 </script>

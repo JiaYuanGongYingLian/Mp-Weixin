@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-16 17:55:07
- * @LastEditTime: 2023-11-02 17:04:33
+ * @LastEditTime: 2023-11-02 18:21:53
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -60,7 +60,7 @@ async function loadData(source?: string | undefined) {
     // tab切换只有第一次需要加载数据
     return
   }
-  if (navItem.loadingType === 'loading' || navItem.loadingType === 'noMore') {
+  if (navItem.loadingType === 'loading' || navItem.loadingType === 'nomore') {
     return
   }
   navItem.loadingType = 'loading'
