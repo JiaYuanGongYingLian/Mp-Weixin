@@ -72,6 +72,7 @@ async function submit() {
     }
     const shopCode = uni.getStorageSync('shopCode')
     const shareCode = uni.getStorageSync('shareCode')
+    const deviceSn = uni.getStorageSync('deviceSn')
     const shopOwnerShareCode = uni.getStorageSync('shopOwnerShareCode')
     if (shareCode) {
       params.inviteCode = shareCode
@@ -79,6 +80,9 @@ async function submit() {
       params.inviteCode = shopOwnerShareCode
     } else if (shopCode) {
       params.shopCode = shopCode
+    }
+    if (deviceSn) {
+      params.inviteDeviceCode = deviceSn
     }
     const { data } = await userApi.register(params)
     userStore.syncSetToken(data.accessToken)

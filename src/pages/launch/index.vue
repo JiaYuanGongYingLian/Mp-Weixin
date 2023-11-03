@@ -6,7 +6,7 @@
 h5分享的链接统一通过此页面重定向
 分享链接或生成二维码的链接有（示例）：
 1.付款链接
-https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShopCheck/index&qrcode=1&shopId=1221
+https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShopCheck/index&qrcode=1&shopId=1073
 2.店铺分享链接
 https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShop/index&qrcode=1&shopId=1073
 3.商品分享链接
@@ -86,12 +86,16 @@ onLoad(async (option) => {
   const origin_url = getQueryVariable('redirect_url') || ''
   const qrcode = getQueryVariable('qrcode')
   const shareCode = getQueryVariable('shareCode')
+  const deviceSn = getQueryVariable('deviceSn')
   if (shareCode) {
     uni.setStorageSync('shareCode', shareCode)
     userStore.syncSetUseShareCode(true)
   } else if (isNoCodeLink(origin_url)) {
     // 扫店铺结算二维码/店铺分享码 如无shareCode，标记下来结算时不携带（防止storage存的被携带）
     userStore.syncSetUseShareCode(false)
+  }
+  if (deviceSn) {
+    uni.setStorageSync('deviceSn', deviceSn)
   }
   const tempParams = getQueryObject(window.location.search)
   if (tempParams.redirect_url) {
@@ -103,8 +107,8 @@ onLoad(async (option) => {
     if (origin_url === '/pages/physicalShopCheck/index') {
       // 扫店铺结算二维码的特殊处理，使结算完成跳转首页为店铺首页
       // eslint-disable-next-line no-shadow
-      const url_rewirte = parseParams('/pages/physicalShop/index', tempParams)
-      uni.setStorageSync('redirect_url', url_rewirte)
+      // const url_rewirte = parseParams('/pages/physicalShop/index', tempParams)
+      // uni.setStorageSync('redirect_url', url_rewirte)
     } else {
       uni.setStorageSync('redirect_url', url)
     }

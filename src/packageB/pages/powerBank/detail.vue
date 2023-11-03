@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-11-02 17:57:01
+ * @LastEditTime: 2023-11-03 14:06:56
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -83,9 +83,10 @@ async function start() {
       confirmText: '确认',
       success: ({ confirm }) => {
         if (confirm) {
-          uni.redirectTo({
-            url: `/packageB/pages/powerBank/index?env=${env.value}`
-          })
+          getOrderInProgress()
+          // uni.redirectTo({
+          //   url: `/packageB/pages/powerBank/index?env=${env.value}`
+          // })
         }
       }
     })
