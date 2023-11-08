@@ -377,6 +377,18 @@ export function compareVersion(v1: any[], v2: any[]) {
   return 0
 }
 
+/**
+ * qs 对象转queryString
+ * @param {1} data 要转换的对象
+ */
+export function qs(data: { [x: string]: any }) {
+  const paramsArray: string[] = []
+  Object.keys(data).forEach(
+    (key) => data[key] && paramsArray.push(`${key}=${data[key]}`)
+  )
+  return paramsArray.join('&')
+}
+
 export default {
   getQueryObject,
   getQueryVariable,
@@ -395,5 +407,6 @@ export default {
   browserVersion,
   setCookie,
   getCookie,
-  compareVersion
+  compareVersion,
+  qs
 }

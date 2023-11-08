@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-11-03 14:06:56
+ * @LastEditTime: 2023-11-08 17:38:10
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -17,6 +17,7 @@ import { reactive, ref, onMounted } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { BrowserMultiFormatReader } from '@zxing/library'
+import axios from 'axios'
 import { baseApi, powerBankApi, userApi } from '@/api'
 import { checkLoginState, getImgFullPath } from '@/utils/index'
 import { useUserStore } from '@/store'
@@ -27,8 +28,10 @@ import {
   wxUploadImage,
   getCookie,
   browserVersion,
-  compareVersion
+  compareVersion,
+  qs
 } from '@/utils/common'
+import { iotBaseUrl as BASEURL } from '@/common/config'
 
 const userStore = useUserStore()
 const { userInfo, hasLogin } = storeToRefs(userStore)
@@ -99,6 +102,22 @@ async function start() {
     })
   }
 }
+async function getOrderConsumeType() {
+  const res = await powerBankApi.getOrderConsumeType({
+    deviceSn: deviceSn.value
+  })
+}
+async function payDeposit() {
+  const data = {
+    amount: '0.01',
+    type: '4',
+    paymentType: '1',
+    paymentSubType: `${paymentSubType.value}`,
+    walletType: '68'
+  }
+  const queryString = qs(data)
+  powerBankApi.pay(queryString)
+}
 
 function jump() {
   uni.navigateTo({
@@ -122,7 +141,7 @@ async function getOrderInProgress() {
           item.text = `充电宝使用中！-${item.deviceDetail?.site?.name}-归还后可继续取出。`
           break
         default:
-          item.text = `设备使用中！-${item.deviceDetail?.site?.name}-归还后可继续取出。`
+          item.text = `设备使用中！-${item.deviceDetail?.site?.name}`
           break
       }
     }
@@ -258,10 +277,11 @@ onLoad((option) => {
     paymentSubType.value = 1
     // #endif
   } else {
-    mask.value = true
     // 李总的需求，只通过APP扫码取设备
-    // getDetail()
-    // getOrderInProgress()
+    // mask.value = true
+    getDetail()
+    getOrderInProgress()
+    getOrderConsumeType()
   }
 })
 </script>
@@ -309,16 +329,7 @@ onLoad((option) => {
           :more-icon="true"
         ></u-notice-bar>
       </view>
-      <!-- <u-button
-        ripple
-        :hair-line="false"
-        class="btn"
-        :custom-style="{ background: '#50939c', color: '#fff' }"
-        @click="start"
-        :loading="loading"
-        :disabled="orders?.length > 0"
-        >点击取出充电宝</u-button
-      > -->
+
       <u-button
         ripple
         :hair-line="false"
@@ -327,10 +338,22 @@ onLoad((option) => {
         @click="getWxPayScore"
         :loading="loading"
         :disabled="orders?.length > 0"
+        v-if="env === 'app'"
       >
         免押租借
       </u-button>
-      <view class="tips"
+      <u-button
+        v-else
+        ripple
+        :hair-line="false"
+        class="btn"
+        :custom-style="{ background: '#50939c', color: '#fff' }"
+        @click="payDeposit"
+        :loading="loading"
+        :disabled="orders?.length > 0"
+        >点击取出充电宝</u-button
+      >
+      <view class="tips" v-if="env === 'app'"
         ><u-icon
           size="46"
           name="https://image.blacksilverscore.com/uploads/c1f45d56-0d6c-4308-8f77-0203209b4d05.png"
