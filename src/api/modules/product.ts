@@ -96,6 +96,13 @@ function walletRuleList(data: any) {
   return http.get('/product/api/v1/shop/product/sku/wallet/rule/list', data)
 }
 
+/**
+ * 门店红包券
+ */
+function shopStatisticsInfo(data: any) {
+  return http.get('/product/api/v1/shop/statistics/info', data)
+}
+
 export default {
   getShopList,
   getShopInfo,
@@ -114,5 +121,6 @@ export default {
   productReviewAdd,
   walletRuleList,
   shopAdd,
-  shopUpdate
+  shopUpdate,
+  shopStatisticsInfo
 }

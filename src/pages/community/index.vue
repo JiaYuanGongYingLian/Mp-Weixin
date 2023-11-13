@@ -7,7 +7,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-08-30 14:29:13
+ * @LastEditTime: 2023-11-13 17:56:20
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -22,9 +22,7 @@ import {
 } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi } from '@/api'
-import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore, useConfigStore } from '@/store'
-import hyNavBar from '@/components/hy-nav-bar/index.vue'
 import c_elebrity from './c_celebrity.vue'
 import c_circle from './c_circle.vue'
 
@@ -39,22 +37,22 @@ let list = [
   {
     name: '圈子'
   },
-  {
-    name: '对接名人'
-  },
+  // {
+  //   name: '对接名人'
+  // },
   {
     name: '短视频'
   }
 ]
 
-const currentTab = ref(1)
+const currentTab = ref(0)
 const buttonRect = ref({})
 // #ifdef MP-WEIXIN
 buttonRect.value = wx.getMenuButtonBoundingClientRect()
 // #endif
 function change(index: any) {
   currentTab.value = index
-  if (index === 2) {
+  if (index === 1) {
     uni.navigateTo({
       url: '/packageA/pages/shortVideo/index',
       success: () => {

@@ -5,9 +5,10 @@ import { reactive, ref, computed, watch } from 'vue'
 import { onLoad, onShow, onReady, onPullDownRefresh } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { useUserStore, useConfigStore } from '@/store'
-import { moneyApi, userApi } from '@/api'
+import { moneyApi, productApi, userApi } from '@/api'
 import { getImgFullPath, checkLoginState } from '@/utils/index'
 import hyTabBar from '@/components/hy-tabbar/index.vue'
+import { isEmptyObject } from '@/utils/common'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
@@ -90,7 +91,7 @@ async function getShopList() {
   const { data } = await productApi.getShopList({
     nopaging: true,
     shopType: 3,
-    userId: userInfo.value.id,
+    userId: userInfo.value?.id,
     status: 20,
     otherColumns: 'vipReserve'
   })
@@ -966,5 +967,10 @@ onPullDownRefresh(() => {
       padding-bottom: 20rpx;
     }
   }
+}
+.btnBox {
+  width: 690rpx;
+  margin: 0 auto;
+  margin-top: 32rpx;
 }
 </style>

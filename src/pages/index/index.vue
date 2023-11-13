@@ -267,13 +267,14 @@ onPullDownRefresh(() => {
     ></u-swiper>
     <view class="hdBar">
       <view class="link" @click="toHeidouShop">
-        <u-icon :name="icon_heidou" size="30"></u-icon>
-        <text class="name">黑豆兑换中心</text>
+        <!-- <u-icon :name="icon_heidou" size="30"></u-icon> -->
+        <text class="name">热门推荐</text>
         <text class="iconfont hy-icon-arrow-right"></text>
       </view>
-      <view class="rest"
-        >可用黑豆：<text class="num">{{ moneyInfo[0].money }}</text>
-      </view>
+      <!-- <view class="rest"
+        >
+        可用黑豆：<text class="num">{{ moneyInfo[0].money }}</text>
+      </view> -->
     </view>
     <view class="container">
       <view
