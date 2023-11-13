@@ -8,10 +8,24 @@ function getShopList(data: any) {
 }
 
 /**
+ * 店铺新增
+ */
+function shopAdd(data: any) {
+  return http.post('/product/api/v1/shop/add', data)
+}
+
+/**
  * 获取店铺详情
  */
 function getShopInfo(data: any) {
   return http.get('/product/api/v1/shop/info', data)
+}
+
+/**
+ * 店铺详情更新
+ */
+function shopUpdate(data: any) {
+  return http.post('/product/api/v1/shop/update', data)
 }
 
 /**
@@ -98,5 +112,7 @@ export default {
   productFavoriteInfo,
   productFavoriteDelete,
   productReviewAdd,
-  walletRuleList
+  walletRuleList,
+  shopAdd,
+  shopUpdate
 }

@@ -14,7 +14,7 @@ onLoad((option) => {})
 onShareAppMessage((_res) => {
   const sourceTime = new Date().getTime()
   return {
-    title: '黑银生活',
+    title: '链通家园',
     path: `/pages/launch/index?sourceTime=${sourceTime}`
   }
 })
@@ -23,9 +23,9 @@ onShareAppMessage((_res) => {
   <div class="container about">
     <hy-nav-bar :title="'关于我们'"></hy-nav-bar>
     <image :src="logo" class="logo"></image>
-    <view class="tit">黑银生活</view>
+    <view class="tit">链通家园</view>
     <view class="ver">V{{ version }}</view>
-    <view class="content">黑银生活，为您提供便捷的生活一体化服务。</view>
+    <view class="content">链通家园，为您提供便捷的生活一体化服务。</view>
     <view class="btnBox" @tap="mobileFn">
       <view>商务合作</view>
       <view

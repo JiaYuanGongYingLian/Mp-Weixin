@@ -197,7 +197,7 @@ onReachBottom(() => {
 onShareAppMessage((_res) => {
   const sourceTime = new Date().getTime()
   return {
-    title: '黑银生活',
+    title: '链通家园',
     path: sharePathFormat({ sourceTime })
   }
 })

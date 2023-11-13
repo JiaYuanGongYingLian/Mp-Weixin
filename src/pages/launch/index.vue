@@ -138,11 +138,11 @@ onLoad(async (option) => {
   <div class="launch">
     <view class="content" style="--num: 150">
       <image class="logo" :src="logo" mode="widthFix" />
-      <text class="name">黑银生活</text>
+      <text class="name">链通家园</text>
       <view class="dot"></view>
     </view>
     <view class="footer">
-      <view class="text">Copyright © 黑银生活版权所有</view>
+      <view class="text">Copyright © 链通家园版权所有</view>
     </view>
   </div>
 </template>

@@ -1,8 +1,11 @@
+<!-- eslint-disable no-use-before-define -->
+<!-- eslint-disable no-param-reassign -->
+<!-- eslint-disable no-shadow -->
 <!--
  * @Description: 售后量表
  * @Author: Kerwin
  * @Date: 2023-11-01 14:51:39
- * @LastEditTime: 2023-11-01 17:33:28
+ * @LastEditTime: 2023-11-11 15:59:29
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -10,56 +13,29 @@
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import { useUserStore } from '@/store'
+import { baseApi } from '@/api'
 
 const userStore = useUserStore()
-const list = ref([
-  {
-    name: 'haha',
-    list: [
-      {
-        name: '1111'
-      },
-      {
-        name: '22222'
-      },
-      {
-        name: '11333311'
-      },
-      {
-        name: '1144411'
-      }
-    ]
-  },
-  {
-    name: 'xixi',
-    list: [
-      {
-        name: '1111'
-      },
-      {
-        name: '22222'
-      },
-      {
-        name: '11333311'
-      },
-      {
-        name: '1144411'
-      }
-    ]
-  }
-])
+const paperInfo = ref({})
+const list = ref([])
 const qIndex = ref(0)
 function pick(item, ans) {
-  if (!item.isMultiple) {
-    item.list.forEach((e) => {
+  if (item.type === 1) {
+    item.questionOptions.forEach((e) => {
       e.checked = false
     })
+    ans.checked = true
+  } else if (item.type === 2) {
     ans.checked = true
   }
 }
 function switchFn(count) {
   if (qIndex.value === 0 && count < 0) return
-  if (!list.value[qIndex.value].list.some((elm) => elm.checked) && count > 0) {
+  if (
+    list.value[qIndex.value]?.questionOptions &&
+    !list.value[qIndex.value].questionOptions.some((elm) => elm.checked) &&
+    count > 0
+  ) {
     uni.showToast({
       icon: 'none',
       title: '请选择答案！'
@@ -69,17 +45,88 @@ function switchFn(count) {
   if (qIndex.value === list.value.length - 1 && count > 0) return
   qIndex.value += count
 }
-function submit() {
-  if (!list.value[qIndex.value].list.some((elm) => elm.checked)) {
+const answerScore = ref(0)
+async function submit() {
+  if (
+    list.value[qIndex.value]?.questionOptions &&
+    !list.value[qIndex.value]?.questionOptions.some(
+      (elm: { checked: any }) => elm.checked
+    )
+  ) {
     uni.showToast({
       icon: 'none',
       title: '请选择答案！'
     })
     return
   }
-  console.log(list.value)
+  const questionAnswers = list.value.map((item) => {
+    item.questionId = item.id
+    const data = JSON.parse(JSON.stringify(removeProp(item)))
+    switch (data.type) {
+      case 20:
+        data.answer = data.remark
+        break
+      default:
+        const ans = data.questionOptions.filter(
+          (e: { checked: any }) => e.checked
+        )
+        data.answer = ans.map((e: { id: any }) => e.id).join(',')
+        data.answerScore = 0
+        ans.forEach((e: { score: number }) => {
+          data.answerScore += e.score
+          answerScore.value += e.score
+        })
+    }
+    if (data.questionOptions) {
+      data.questionOptions = data.questionOptions.map(
+        (e: { [x: string]: any }) => {
+          e.questionId = data.questionId
+          return removeProp(e)
+        }
+      )
+    }
+    return data
+  })
+  function removeProp(data: { [x: string]: any }) {
+    const keys = ['id', 'createTime', 'updateTime', 'moduleStr']
+    keys.forEach((key) => {
+      if (data[key]) {
+        delete data[key]
+      }
+    })
+    return data
+  }
+  const { code } = await baseApi.questionAnsAdd({
+    name: paperInfo.value.name,
+    score: paperInfo.value.score,
+    answerScore: answerScore.value,
+    shopId: shopId.value,
+    userId: userStore.userInfo.id,
+    questionPaperId: paperInfo.value.id,
+    questionAnswers
+  })
+  if (code === 200) {
+    uni.showModal({
+      title: '提示',
+      content: '提交成功！',
+      success: () => {}
+    })
+  }
 }
-onLoad((option) => {})
+async function getData(id: any) {
+  if (!id) return
+  const { data } = await baseApi.questionPaperInfo({
+    id,
+    detail: true
+  })
+  paperInfo.value = data
+  list.value = data.questions
+}
+const shopId = ref('')
+onLoad((option) => {
+  getData(option?.questionPaperId)
+  shopId.value = option?.shopId
+})
 </script>
 <template>
   <view class="container">
@@ -93,6 +140,10 @@ onLoad((option) => {})
       :border-bottom="false"
       back-icon-color="#fff"
     ></u-navbar> -->
+    <view class="ptit">
+      {{ paperInfo.name }}
+    </view>
+    <view class="remark">{{ paperInfo.remark }} </view>
     <view class="content">
       <view class="cir">
         <u-circle-progress
@@ -113,10 +164,20 @@ onLoad((option) => {})
         :key="item.id"
         v-show="qIndex === index"
       >
-        <view class="name">{{ item.name }}：</view>
-        <view class="alist">
+        <view class="name">{{ item.name }}</view>
+        <view class="alist" v-if="item.type === 20">
+          <u-input
+            v-model="item.remark"
+            :height="280"
+            type="textarea"
+            placeholder="请输入内容，如无建议可直接点击提交"
+            border
+            mt3
+          ></u-input>
+        </view>
+        <view class="alist" v-else>
           <view
-            v-for="ans in item.list"
+            v-for="ans in item.questionOptions"
             :key="ans.id"
             class="aitem"
             :class="{ active: ans.checked }"
@@ -165,6 +226,18 @@ onLoad((option) => {})
   line-height: 40rpx;
   min-height: 100vh;
   background: linear-gradient(180deg, #caedfe, #f4fbff);
+
+  .ptit {
+    font-size: 46rpx;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 30rpx;
+  }
+
+  .remark {
+    margin-top: 30rpx;
+    color: #666;
+  }
 
   .section {
     margin-top: 40rpx;

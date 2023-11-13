@@ -1,6 +1,7 @@
+<!-- eslint-disable no-use-before-define -->
 <!-- eslint-disable no-param-reassign -->
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, watch } from 'vue'
 import { onLoad, onShow, onReady, onPullDownRefresh } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { useUserStore, useConfigStore } from '@/store'
@@ -10,7 +11,9 @@ import hyTabBar from '@/components/hy-tabbar/index.vue'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
-const { userInfo, wxUserInfo, hasLogin, walletList } = storeToRefs(userStore)
+const { userInfo, wxUserInfo, hasLogin, walletList, currentShop } =
+  storeToRefs(userStore)
+const { isStoreUiModel } = storeToRefs(configStore)
 const { enterByStoreQrcode } = storeToRefs(configStore)
 const moneyInfo = ref([
   {
@@ -79,8 +82,62 @@ async function getMoney() {
     userStore.syncSetWalletList(data)
   }
 }
+
+const myShopList = ref([])
+const showPicker = ref(false)
+const shopStatisticsInfo = ref({})
+async function getShopList() {
+  const { data } = await productApi.getShopList({
+    nopaging: true,
+    shopType: 3,
+    userId: userInfo.value.id,
+    status: 20,
+    otherColumns: 'vipReserve'
+  })
+  if (data && data.records.length > 0) {
+    myShopList.value = data.records
+    userStore.syncSetMyShopList(myShopList.value)
+    if (myShopList.value.length > 0 && isEmptyObject(currentShop.value)) {
+      userStore.syncSetCurrentShop(myShopList.value[0])
+    }
+    getShopStatisticsInfo()
+  }
+}
+function changeShop(e: any[]) {
+  const i = e[0]
+  const shop = myShopList.value[i]
+  userStore.syncSetCurrentShop(shop)
+}
+watch(currentShop, (newValue, oldValue) => {
+  if (newValue) {
+    getShopStatisticsInfo()
+  }
+})
+// 切换界面模式
+function changeModel() {
+  if (isStoreUiModel.value) {
+    configStore.setUiModel('user')
+  } else {
+    configStore.setUiModel('store')
+    getShopStatisticsInfo()
+  }
+  uni.pageScrollTo({
+    scrollTop: 0,
+    duration: 300
+  })
+}
+// 获取商户红包券信息
+async function getShopStatisticsInfo() {
+  if (currentShop.value && currentShop.value.id) {
+    const { data } = await productApi.shopStatisticsInfo({
+      shopId: currentShop.value.id
+    })
+    shopStatisticsInfo.value = data
+  }
+}
 onLoad((option) => {
   getMoney()
+  getShopList()
 })
 onPullDownRefresh(() => {
   setTimeout(async () => {
@@ -136,9 +193,17 @@ onPullDownRefresh(() => {
             <view v-else class="name" @tap="goUrlFn" :data-url="false">{{
               '点击登录'
             }}</view>
+            <u-picker
+              mode="selector"
+              v-model="showPicker"
+              :default-selector="[0]"
+              :range="myShopList"
+              @confirm="changeShop"
+              range-key="name"
+            ></u-picker>
           </view>
         </view>
-        <view class="labelBox">
+        <view class="labelBox" v-if="!isStoreUiModel">
           <view class="item" data-url="/pages/mine/myBalance" @tap="goUrlFn">
             <view class="con">{{ hasLogin ? moneyInfo[0].money : '--' }}</view>
             <view class="name">余额</view>
@@ -149,6 +214,89 @@ onPullDownRefresh(() => {
             <view class="con">{{ hasLogin ? moneyInfo[1].money : '--' }}</view>
             <view class="name">黑银积分</view>
           </view>
+        </view>
+      </view>
+      <!-- 商家红包券 -->
+      <view class="myBox" v-if="isStoreUiModel">
+        <view class="dataBox">
+          <view class="item">
+            <view class="num">{{
+              shopStatisticsInfo.couponTodayCountCompleted
+            }}</view>
+            <view class="name">核券次数(日)</view>
+          </view>
+          <view class="item">
+            <view class="num">
+              {{ shopStatisticsInfo.couponMonthCountCompleted }}
+            </view>
+            <view class="name">核券次数(月)</view>
+          </view>
+          <view class="item">
+            <view class="num">
+              {{ shopStatisticsInfo.couponTotalCountCompleted }}
+            </view>
+            <view class="name">核券次数(历史)</view>
+          </view>
+          <view class="item">
+            <view class="num">
+              {{ shopStatisticsInfo.couponTodayMoneyCompleted }}
+            </view>
+            <view class="name">核券金额(日)</view>
+          </view>
+          <view class="item">
+            <view class="num">
+              {{ shopStatisticsInfo.couponMonthMoneyCompleted }}
+            </view>
+            <view class="name">核券金额(月)</view>
+          </view>
+          <view class="item">
+            <view class="num">
+              {{ shopStatisticsInfo.couponTotalMoneyCompleted }}
+            </view>
+            <view class="name">核券金额(历史)</view>
+          </view>
+          <view class="item">
+            <view class="num">
+              {{ shopStatisticsInfo.couponUserCountCompleted }}
+            </view>
+            <view class="name">核券人数</view>
+          </view>
+          <view class="item">
+            <view class="num">
+              {{ shopStatisticsInfo.couponUserRepurchaseRateCompleted }}
+            </view>
+            <view class="name">复购率</view>
+          </view>
+        </view>
+        <view class="box">
+          <!-- <view class="bar" data-url="/pages/storeVip/index" @tap="goUrlFn">
+            <u-icon
+              custom-prefix="custom-icon"
+              name="goumai"
+              size="36"
+            ></u-icon>
+            <text>购买VIP</text>
+          </view>
+          <view class="bar" data-url="/pages/storeVip/share" @tap="goUrlFn">
+            <u-icon custom-prefix="custom-icon" name="VIP" size="40"></u-icon>
+            <text>赠送VIP</text>
+          </view>
+          <view class="bar" data-url="/pages/vip/index" @tap="goUrlFn">
+            <u-icon
+              custom-prefix="custom-icon"
+              name="youhuiquan"
+              size="40"
+            ></u-icon>
+            <text>门店发券</text>
+          </view>
+          <view class="bar">
+            <u-icon
+              custom-prefix="custom-icon"
+              name="waihuimaimai"
+              size="40"
+            ></u-icon>
+            <text>门店买券</text>
+          </view> -->
         </view>
       </view>
 
@@ -241,7 +389,41 @@ onPullDownRefresh(() => {
             ></image
             >设置
           </view>
+          <view
+            class="bar"
+            @tap="goUrlFn"
+            data-url="/packageC/pages/myShop/index"
+            v-if="myShopList.length > 0"
+          >
+            <u-icon
+              custom-prefix="custom-icon"
+              name="wodedianpu"
+              size="52"
+              color="#FEA917"
+              class="icon"
+            ></u-icon>
+            我的店铺
+          </view>
+          <view
+            class="bar"
+            @tap="goUrlFn"
+            data-url="/packageC/pages/shopEnter/index"
+          >
+            <u-icon
+              custom-prefix="custom-icon"
+              name="shangjiaruzhu"
+              size="52"
+              color="#FEA917"
+              class="icon"
+            ></u-icon>
+            店铺入驻
+          </view>
         </view>
+      </view>
+      <view class="btnBox" v-if="myShopList.length > 0">
+        <u-button type="primary" ripple @click="changeModel">{{
+          isStoreUiModel ? '切换为用户模式' : '切换为商家模式'
+        }}</u-button>
       </view>
     </view>
     <hy-tabbar></hy-tabbar>
@@ -673,6 +855,10 @@ onPullDownRefresh(() => {
         font-size: 26rpx;
         color: #242426;
         position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
 
         > image {
           display: block;
@@ -686,7 +872,12 @@ onPullDownRefresh(() => {
             transform: rotate(90deg);
           }
         }
-
+        .icon {
+          margin-bottom: 10rpx;
+        }
+        > text {
+          margin-top: 10rpx;
+        }
         .feedback {
           position: absolute;
           left: 0;

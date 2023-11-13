@@ -251,7 +251,7 @@ onHide(() => {
 onShareAppMessage((_res) => {
   const dynamic = swiperList.value[swiperCurrent.value] || {}
   return {
-    title: dynamic.name || '黑银生活短视频',
+    title: dynamic.name || '链通家园短视频',
     content: dynamic.content,
     desc: dynamic.content,
     imageUrl: getImgFullPath(dynamic.previewImage) || '',

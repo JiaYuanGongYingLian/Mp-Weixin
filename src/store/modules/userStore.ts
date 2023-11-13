@@ -1,6 +1,6 @@
 /* eslint-disable no-empty */
 import { defineStore } from 'pinia'
-import { getQueryVariable } from '@/utils/common'
+import { getQueryVariable,isEmptyObject } from '@/utils/common'
 import useChatStore from './chatStore'
 import useConfigStore from './configStore'
 const BASEURL = 'https://api.blacksilverscore.com'
@@ -16,12 +16,23 @@ const userStore = defineStore('user', {
     wxUserInfo: {},
     walletList: [],
     hasNewDynamic: false,
-    useShareCode: true
+    useShareCode: true,
+    myShopList: [], // 用户拥有的店铺
+    currentShop: {} // 用户当前切换的店铺
   }),
   getters: {
     hasLogin: (state) => Boolean(state.accessToken)
   },
   actions: {
+    syncSetMyShopList(list: any) {
+      this.myShopList = list
+      uni.setStorageSync('myShopList', list)
+    },
+    syncSetCurrentShop(shop: {}) {
+      if(isEmptyObject(shop)) return
+      this.currentShop = shop
+      uni.setStorageSync('currentShop', shop)
+    },
     syncSetUseShareCode(flag: boolean) {
       this.useShareCode = flag
     },

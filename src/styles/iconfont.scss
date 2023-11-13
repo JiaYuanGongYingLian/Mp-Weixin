@@ -1,8 +1,8 @@
 @font-face {
   font-family: "custom-icon"; /* Project id 3983494 */
-  src: url('//at.alicdn.com/t/c/font_3983494_4nn246y9qi7.woff2?t=1695362075528') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3983494_4nn246y9qi7.woff?t=1695362075528') format('woff'),
-       url('//at.alicdn.com/t/c/font_3983494_4nn246y9qi7.ttf?t=1695362075528') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3983494_8n3urfmcgvf.woff2?t=1699861376871') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3983494_8n3urfmcgvf.woff?t=1699861376871') format('woff'),
+       url('//at.alicdn.com/t/c/font_3983494_8n3urfmcgvf.ttf?t=1699861376871') format('truetype');
 }
 .custom-icon {
 	/* 引用上面声明的"custom-icon"字体 */
@@ -23,6 +23,25 @@
 
 .custom-icon-pengyouquan:before {
   content: "\e667";
+}
+.custom-icon-shangjiaruzhu:before {
+  content: "\fd37";
+}
+
+.custom-icon-wodedianpu:before {
+  content: "\e612";
+}
+
+.custom-icon-goumai:before {
+  content: "\e61f";
+}
+
+.custom-icon-youhuiquan:before {
+  content: "\e8c0";
+}
+
+.custom-icon-waihuimaimai:before {
+  content: "\e606";
 }
 
 @font-face {

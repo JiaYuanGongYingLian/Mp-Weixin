@@ -327,6 +327,60 @@
 						"navigationBarTitleText": "售后考评",
 						"backgroundColor": "#F5F5F5"
 					}
+				},
+				{
+					"path": "pages/shopEnter/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "店铺信息",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "pages/myShop/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "我的店铺",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "pages/storeVip/index",
+					"style": {
+						"navigationBarTitleText": "商户vip",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "pages/storeVip/share",
+					"style": {
+						"navigationBarTitleText": "商户赠送会员",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "pages/coupon/index",
+					"style": {
+						"navigationBarTitleText": "我的券包",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "pages/getSharedVip/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "领取会员",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "pages/couponWriteOff/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "优惠券核销",
+						"backgroundColor": "#F5F5F5"
+					}
 				}
 			]
 		}
@@ -365,7 +419,7 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "黑银生活",
+		"navigationBarTitleText": "链通家园",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8",
 		"onReachBottomDistance": 50

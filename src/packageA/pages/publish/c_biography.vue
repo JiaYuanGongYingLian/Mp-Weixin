@@ -21,7 +21,7 @@ import { storeToRefs } from 'pinia'
 import { baseApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore } from '@/store'
-import { isMObile } from '@/utils/common'
+import { isMobile } from '@/utils/common'
 import c_recorder from './c_recorder.vue'
 import rules from './rules.ts'
 

@@ -13,14 +13,20 @@ const useStore = defineStore('config', {
     cardDefualtCoverImage:
       'https://image.blacksilverscore.com/uploads/cdac802e-2c3e-448e-a4ff-089bd7a3888e.jpg', // 名片默认背景
     uploadUrl: 'https://api.blacksilverscore.com/base/api/v1/ali/sendFile', // oss上传地址
-    staticUrl: 'https://image.blacksilverscore.com/'
+    staticUrl: 'https://image.blacksilverscore.com/',
+    uiModel: 'user' // 用户界面：默认用户模式，可选商家模式 store
   }),
   getters: {
-    enterByStoreQrcode: (state) => state.enterType === 'storeQrcode' // 是否通过商家二维码链接进入页面
+    enterByStoreQrcode: (state) => state.enterType === 'storeQrcode', // 是否通过商家二维码链接进入页面
+    isStoreUiModel: (state) => state.uiModel === 'store'
   },
   actions: {
     setEnterType(type: any) {
       this.enterType = type
+    },
+    setUiModel(model: string) {
+      this.uiModel = model
+      uni.setStorageSync('uiModel', model)
     }
   }
 })

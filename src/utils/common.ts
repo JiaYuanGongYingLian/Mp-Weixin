@@ -185,7 +185,7 @@ export const isEmptyObject = (value: { constructor?: any }) => {
 }
 
 // 判断手机号正确性
-export const isMObile = (value: string) => {
+export const isMobile = (value: string) => {
   return /^1[3-9]\d{9}$/.test(value)
 }
 
@@ -400,7 +400,7 @@ export default {
   generateId,
   parseParams,
   isEmptyObject,
-  isMObile,
+  isMobile,
   $toast,
   imageUrlToFile,
   wxUploadImage,

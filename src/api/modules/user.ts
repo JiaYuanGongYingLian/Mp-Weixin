@@ -71,6 +71,9 @@ function deleteAddressInfo(data: any) {
 function addressAdd(data: any) {
   return http.post('/ups/api/v1/user/address/add', data)
 }
+function roleUpdate(data: any) {
+  return http.post('/ups/api/v1/user/reserve/role/update', data)
+}
 
 export default {
   login,
@@ -86,5 +89,6 @@ export default {
   userInfo,
   userInfoUpdate,
   wxUserPhoneNumber,
-  LOGIN_TYPE_ENUM
+  LOGIN_TYPE_ENUM,
+  roleUpdate
 }
