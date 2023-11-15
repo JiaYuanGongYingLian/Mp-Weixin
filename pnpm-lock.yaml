@@ -44,6 +44,12 @@ dependencies:
   '@dcloudio/uni-quickapp-webview':
     specifier: 3.0.0-alpha-3080220230511001
     version: registry.npmmirror.com/@dcloudio/uni-quickapp-webview@3.0.0-alpha-3080220230511001(postcss@8.4.23)(ts-node@10.9.1)(vue@3.3.2)
+  '@rongcloud/engine':
+    specifier: ^5.8.5
+    version: registry.npmmirror.com/@rongcloud/engine@5.8.5
+  '@rongcloud/imlib-next':
+    specifier: ^5.8.5
+    version: registry.npmmirror.com/@rongcloud/imlib-next@5.8.5(@rongcloud/engine@5.8.5)
   '@zxing/library':
     specifier: ^0.20.0
     version: registry.npmmirror.com/@zxing/library@0.20.0
@@ -3994,6 +4000,23 @@ packages:
       estree-walker: registry.npmmirror.com/estree-walker@2.0.2
       picomatch: registry.npmmirror.com/picomatch@2.3.1
     dev: true
+
+  registry.npmmirror.com/@rongcloud/engine@5.8.5:
+    resolution: {integrity: sha512-H3Nn4uC0KZcbc49uL7/EBG1xES1rF8dWCk4zVoklTzLUX5cretostZ4kocydkqYhbrSsBnis4vTEt8TbDnmABw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@rongcloud/engine/-/engine-5.8.5.tgz}
+    name: '@rongcloud/engine'
+    version: 5.8.5
+    dev: false
+
+  registry.npmmirror.com/@rongcloud/imlib-next@5.8.5(@rongcloud/engine@5.8.5):
+    resolution: {integrity: sha512-wx1dCYzW80qH9S6mHMoiD5ydCUZNN6628nwzSW3WsVRtSOT4LIsiHEdahgCQ2SvzfJYTRKkqkPrSuopIxfMGEQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@rongcloud/imlib-next/-/imlib-next-5.8.5.tgz}
+    id: registry.npmmirror.com/@rongcloud/imlib-next/5.8.5
+    name: '@rongcloud/imlib-next'
+    version: 5.8.5
+    peerDependencies:
+      '@rongcloud/engine': '=5.8.5'
+    dependencies:
+      '@rongcloud/engine': registry.npmmirror.com/@rongcloud/engine@5.8.5
+    dev: false
 
   registry.npmmirror.com/@sinonjs/commons@1.8.6:
     resolution: {integrity: sha512-Ky+XkAkqPZSm3NLBeUng77EBQl3cmeJhITaGHdYH8kjVB+aun3S4XBRti2zt17mtt0mIUDiNxYeoJm6drVvBJQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@sinonjs/commons/-/commons-1.8.6.tgz}

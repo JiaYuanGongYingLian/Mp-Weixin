@@ -382,11 +382,24 @@ export function compareVersion(v1: any[], v2: any[]) {
  * @param {1} data 要转换的对象
  */
 export function qs(data: { [x: string]: any }) {
+  if (!data) return ''
   const paramsArray: string[] = []
   Object.keys(data).forEach(
     (key) => data[key] && paramsArray.push(`${key}=${data[key]}`)
   )
   return paramsArray.join('&')
+}
+
+/**
+ * route 跳转
+ * @param {1} url 跳转路径
+ * @param {2} params 参数
+ */
+export function route(data: { url: any; params?: any }) {
+  const { url, params } = data
+  uni.navigateTo({
+    url: `${url}?${qs(params)}`
+  })
 }
 
 export default {
@@ -408,5 +421,6 @@ export default {
   setCookie,
   getCookie,
   compareVersion,
-  qs
+  qs,
+  route
 }
