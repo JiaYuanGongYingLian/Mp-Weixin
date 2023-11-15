@@ -9,8 +9,7 @@ import {
   getImgFullPath,
   getDistance,
   handleMapLocation,
-  makePhoneCall,
-  checkLoginState
+  makePhoneCall
 } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 import hyTabBar from '@/components/hy-tabbar/index.vue'
@@ -104,7 +103,7 @@ function getLocation() {
 // 付款
 // eslint-disable-next-line no-shadow
 function handleCheck(shop: { name: any; id: any }) {
-  if (checkLoginState()) {
+  if (userStore.checkLoginState()) {
     const { name, id } = shop
     uni.navigateTo({
       url: `/pages/physicalShopCheck/index?name=${name}&shopId=${id}`
@@ -222,7 +221,7 @@ function tabsChange(index: any) {
   })
 }
 function toProductDetail(id: any) {
-  if (checkLoginState()) {
+  if (userStore.checkLoginState()) {
     if (!id) return
     let url = `/pages/productDetail/index?shopId=${shopId.value}&productId=${id}`
     if (shareCode.value) {

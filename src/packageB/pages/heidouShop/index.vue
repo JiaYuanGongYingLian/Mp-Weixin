@@ -90,15 +90,6 @@ function doSearch() {
   item.finished = false
   getHeidouProductList()
 }
-function checkLoginState() {
-  if (!hasLogin.value) {
-    uni.navigateTo({
-      url: '/pages/login/index'
-    })
-    return false
-  }
-  return true
-}
 onLoad(() => {})
 onReady(async () => {
   await getTabs()

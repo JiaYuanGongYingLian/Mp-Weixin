@@ -4,7 +4,6 @@
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { useUserStore, useChatStore } from '@/store'
-import { onMounted } from 'vue';
 
 const userStore = useUserStore()
 const chatStore = useChatStore()
@@ -29,23 +28,15 @@ onLaunch(() => {
 onShow(async () => {
   console.log('App Show')
   if (!accessToken.value) {
-    userStore.$patch((v) => {
+    userStore.$patch((v: { accessToken: any; userInfo: any }) => {
       v.accessToken = uni.getStorageSync('accessToken') || ''
       v.userInfo = uni.getStorageSync('userInfo') || null
     })
-  }
-  console.log('chatHasLogin', chatHasLogin.value)
-  if (!chatHasLogin.value) {
-    await chatStore.jimInit()
-    await chatStore.jimLoginFn()
   }
 })
 onHide(() => {
   console.log('App Hide')
 })
-// onMounted(()=>{
-
-// })
 </script>
 <style lang="scss">
 @import 'vk-uview-ui/index.scss';

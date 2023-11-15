@@ -229,16 +229,7 @@ export function previewImage(pics: any, current?: any) {
     indicator: 'default'
   })
 }
-// 检查登录态
-export function checkLoginState() {
-  if (!hasLogin.value) {
-    uni.navigateTo({
-      url: '/pages/login/index'
-    })
-    return false
-  }
-  return true
-}
+
 // 调用电话
 export function makePhoneCall(phoneNumber: any) {
   if (!phoneNumber) return
@@ -254,7 +245,6 @@ export default {
   getDistance,
   getDistanceMatrix,
   previewImage,
-  checkLoginState,
   makePhoneCall,
   dateFormat
 }

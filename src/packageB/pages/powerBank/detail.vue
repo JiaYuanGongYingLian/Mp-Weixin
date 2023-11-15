@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-13 11:41:12
- * @LastEditTime: 2023-11-08 17:38:10
+ * @LastEditTime: 2023-11-15 17:46:16
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -19,7 +19,6 @@ import { storeToRefs } from 'pinia'
 import { BrowserMultiFormatReader } from '@zxing/library'
 import axios from 'axios'
 import { baseApi, powerBankApi, userApi } from '@/api'
-import { checkLoginState, getImgFullPath } from '@/utils/index'
 import { useUserStore } from '@/store'
 import {
   isWeChat,

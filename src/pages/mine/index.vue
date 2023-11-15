@@ -6,7 +6,7 @@ import { onLoad, onShow, onReady, onPullDownRefresh } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { useUserStore, useConfigStore } from '@/store'
 import { moneyApi, productApi, userApi } from '@/api'
-import { getImgFullPath, checkLoginState } from '@/utils/index'
+import { getImgFullPath } from '@/utils/index'
 import hyTabBar from '@/components/hy-tabbar/index.vue'
 import { isEmptyObject } from '@/utils/common'
 
@@ -53,7 +53,7 @@ const tabList = ref([
 const currentTabbar = ref(1)
 function goUrlFn(e: { currentTarget: { dataset: { url: any } } }) {
   const { url } = e.currentTarget.dataset
-  if (checkLoginState()) {
+  if (userStore.checkLoginState()) {
     if (url) {
       uni.navigateTo({
         url

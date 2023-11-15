@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-08-30 15:08:59
- * @LastEditTime: 2023-09-01 18:07:01
+ * @LastEditTime: 2023-11-15 17:44:52
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-empty -->
@@ -13,7 +13,7 @@ import { reactive, ref, onMounted } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { socialApi } from '@/api'
-import { getImgFullPath, checkLoginState } from '@/utils/index'
+import { getImgFullPath } from '@/utils/index'
 import { useUserStore } from '@/store'
 
 const userStore = useUserStore()

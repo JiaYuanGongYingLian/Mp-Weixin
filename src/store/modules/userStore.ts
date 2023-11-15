@@ -192,6 +192,13 @@ const userStore = defineStore('user', {
         console.log(CODE,888999)
         resolve({ code: CODE })
       })
+    },
+    checkLoginState() {
+      if (!this.hasLogin) {
+        uni.navigateTo({
+          url: '/pages/login/index'
+        })
+      }
     }
   }
 })

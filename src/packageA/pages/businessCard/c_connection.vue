@@ -4,7 +4,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 04:42:53
- * @LastEditTime: 2023-08-23 16:45:40
+ * @LastEditTime: 2023-11-15 17:39:31
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -14,7 +14,7 @@ import { reactive, ref, onMounted } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { orderApi, userApi } from '@/api'
-import { getImgFullPath, checkLoginState } from '@/utils/index'
+import { getImgFullPath } from '@/utils/index'
 import { useUserStore } from '@/store'
 
 const userStore = useUserStore()

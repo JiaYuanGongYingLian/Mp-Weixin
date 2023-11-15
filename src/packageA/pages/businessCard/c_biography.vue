@@ -2,7 +2,7 @@
  * @Description: 传记
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-28 17:15:21
+ * @LastEditTime: 2023-11-15 17:39:11
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -12,7 +12,7 @@ import { reactive, ref, onMounted } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi } from '@/api'
-import { getImgFullPath, checkLoginState, previewImage } from '@/utils/index'
+import { getImgFullPath, previewImage } from '@/utils/index'
 import { useUserStore } from '@/store'
 
 const userStore = useUserStore()

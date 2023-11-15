@@ -10,7 +10,7 @@ import {
   getDistanceMatrix
 } from '@/utils/index'
 import { useUserStore } from '@/store'
-import { makePhoneCall, checkLoginState } from '@/utils'
+import { makePhoneCall } from '@/utils'
 
 const userStore = useUserStore()
 const { hasLogin } = storeToRefs(userStore)
@@ -168,7 +168,7 @@ function toShopDetail(id: any) {
 }
 // 点击付款按钮
 function handleCheck(shop: { name: any; id: any }) {
-  if (checkLoginState()) {
+  if (userStore.checkLoginState()) {
     const { name, id } = shop
     uni.navigateTo({
       url: `/pages/physicalShopCheck/index?name=${name}&shopId=${id}`
@@ -177,7 +177,7 @@ function handleCheck(shop: { name: any; id: any }) {
 }
 // 领券
 async function couponAdd(coupon: { id: any }) {
-  if (checkLoginState()) {
+  if (userStore.checkLoginState()) {
     const { data } = await couponApi.userCouponAdd({
       couponId: coupon.id
     })

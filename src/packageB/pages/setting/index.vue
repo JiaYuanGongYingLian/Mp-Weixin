@@ -4,7 +4,7 @@ import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, userApi } from '@/api'
-import { checkLoginState, getImgFullPath } from '@/utils/index'
+import { getImgFullPath } from '@/utils/index'
 import { upload } from '@/common/ali-oss'
 import { useUserStore, useChatStore } from '@/store'
 import {
@@ -18,7 +18,7 @@ const userStore = useUserStore()
 const chatStore = useChatStore()
 const { userInfo } = storeToRefs(userStore)
 function goUrlFn(url: any) {
-  if (checkLoginState()) {
+  if (userStore.checkLoginState()) {
     if (url) {
       uni.navigateTo({
         url

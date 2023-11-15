@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-15 14:03:12
- * @LastEditTime: 2023-11-13 16:09:49
+ * @LastEditTime: 2023-11-15 17:47:38
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -11,13 +11,13 @@ import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { productApi, couponApi } from '@/api'
-import { checkLoginState, dateFormat } from '@/utils/index'
+import { dateFormat } from '@/utils/index'
 import { useUserStore } from '@/store'
 
 const userStore = useUserStore()
 const { currentShop, myShopList, userInfo } = storeToRefs(userStore)
 async function getShopList() {
-  if (!checkLoginState()) return
+  if (!userStore.checkLoginState()) return
   const { data } = await productApi.getShopList({
     nopaging: true,
     shopType: 3,
@@ -35,7 +35,7 @@ async function getShopList() {
 }
 const coupon = ref({ id: '' })
 async function getCouponInfo() {
-  if (!checkLoginState()) return
+  if (!userStore.checkLoginState()) return
   const { data, code } = await couponApi.userCouponInfo({
     detail: 1,
     id: coupon.value.id

@@ -95,14 +95,14 @@ const pageslist = [
     selectedIconPath: '/static/ic_bar_circle_checked.png',
     text: '圈子'
   },
-  {
-    path: '/packageA/pages/shortVideo/index',
-    iconPath: '/static/ic_bar_video.png',
-    selectedIconPath: '/static/ic_bar_circle_checked.png',
-    customIcon: true,
-    iconSize: 46,
-    text: '短视频'
-  },
+  // {
+  //   path: '/packageA/pages/shortVideo/index',
+  //   iconPath: '/static/ic_bar_video.png',
+  //   selectedIconPath: '/static/ic_bar_circle_checked.png',
+  //   customIcon: true,
+  //   iconSize: 46,
+  //   text: '短视频'
+  // },
   {
     pagePath: '/pages/mine/index',
     iconPath: '/static/ic_bar_mine.png',

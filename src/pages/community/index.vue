@@ -7,7 +7,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-11-13 17:56:20
+ * @LastEditTime: 2023-11-15 17:26:31
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -40,9 +40,9 @@ let list = [
   // {
   //   name: '对接名人'
   // },
-  {
-    name: '短视频'
-  }
+  // {
+  //   name: '短视频'
+  // }
 ]
 
 const currentTab = ref(0)
@@ -132,7 +132,7 @@ onPullDownRefresh(() => {
       <!-- <u-empty text="暂未开放" mode="page" style="margin-top: 100px"></u-empty> -->
     </view>
     <!-- 对接名人 -->
-    <view class="celebrity" v-show="currentTab === 1">
+    <view class="celebrity" v-if="currentTab === 1">
       <c_elebrity />
     </view>
     <view class="edit" @click="toEdit">

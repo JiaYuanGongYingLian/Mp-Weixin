@@ -6,7 +6,7 @@ import { reactive, ref } from 'vue'
 import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { productApi, couponApi } from '@/api'
-import { getImgFullPath, previewImage, checkLoginState } from '@/utils/index'
+import { getImgFullPath, previewImage } from '@/utils/index'
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 import { useUserStore, useConfigStore } from '@/store'
 import { sharePathFormat, webSharePathFormat } from '@/common/wechat-share'
@@ -80,7 +80,7 @@ async function getUserCouponList(couponId: any) {
 
 // 收藏
 async function toggleFavorite(flag: any) {
-  if (!checkLoginState()) return
+  if (!userStore.checkLoginState()) return
   const executor = flag
     ? productApi.productFavoriteDelete
     : productApi.productFavoriteAdd
@@ -99,7 +99,7 @@ function togglePopupFn(flag: boolean) {
 // 选择sku
 const actionType = ref()
 function chooseSku(type: number) {
-  if (!checkLoginState()) return
+  if (!userStore.checkLoginState()) return
   const typeMap = ['toCart', 'toBuyNow', 'default']
   actionType.value = typeMap[type]
   if (productData.value.count === 0) {
@@ -155,7 +155,7 @@ async function getCartProductNumFn() {
 
 // 跳转至购物车页面
 function toCart() {
-  if (!checkLoginState()) return
+  if (!userStore.checkLoginState()) return
   uni.navigateTo({
     url: '/packageB/pages/cart/index',
     success: () => {

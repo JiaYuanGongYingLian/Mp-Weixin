@@ -211,7 +211,7 @@ onPullDownRefresh(() => {
 <template>
   <view class="index-page">
     <!-- #ifdef H5 -->
-    <hyDownloadTips v-if="!isAlipayClient()" :top="'0px'" />
+    <!-- <hyDownloadTips v-if="!isAlipayClient()" :top="'0px'" /> -->
     <!-- #endif -->
     <searchBar @on-search="onSearch" />
     <u-swiper

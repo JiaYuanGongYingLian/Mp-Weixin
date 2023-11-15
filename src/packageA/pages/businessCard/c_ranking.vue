@@ -3,7 +3,7 @@
  * @Description: 排行榜
  * @Author: Kerwin
  * @Date: 2023-07-22 05:42:06
- * @LastEditTime: 2023-08-14 17:54:32
+ * @LastEditTime: 2023-11-15 17:39:45
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -13,7 +13,7 @@ import { reactive, ref, onMounted } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { socialApi } from '@/api'
-import { getImgFullPath, checkLoginState } from '@/utils/index'
+import { getImgFullPath } from '@/utils/index'
 import { useUserStore } from '@/store'
 
 const userStore = useUserStore()

@@ -9,7 +9,6 @@ import { storeToRefs } from 'pinia'
 import { BrowserMultiFormatReader } from '@zxing/library'
 // #endif
 import { baseApi, powerBankApi, userApi } from '@/api'
-import { checkLoginState, getImgFullPath } from '@/utils/index'
 import { upload } from '@/common/ali-oss'
 import { useUserStore, useChatStore } from '@/store'
 import { getQueryObject, parseParams } from '@/utils/common'

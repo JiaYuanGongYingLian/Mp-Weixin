@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-10-16 17:48:25
- * @LastEditTime: 2023-10-18 16:20:47
+ * @LastEditTime: 2023-11-15 17:46:50
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-shadow -->
@@ -14,7 +14,7 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { BrowserMultiFormatReader } from '@zxing/library'
 import { baseApi, powerBankApi, userApi } from '@/api'
-import { checkLoginState, getImgFullPath } from '@/utils/index'
+import { getImgFullPath } from '@/utils/index'
 import { useUserStore } from '@/store'
 
 const userStore = useUserStore()

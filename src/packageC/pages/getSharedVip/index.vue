@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-15 10:52:15
- * @LastEditTime: 2023-11-13 16:29:37
+ * @LastEditTime: 2023-11-15 17:48:22
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -12,7 +12,6 @@ import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, userApi } from '@/api'
-import { checkLoginState } from '@/utils/index'
 import { useUserStore } from '@/store'
 
 const userStore = useUserStore()
@@ -20,7 +19,7 @@ const { hasLogin } = storeToRefs(userStore)
 const shopId = ref('')
 const shopInfo = ref({})
 async function getShopInfo() {
-  // if (!checkLoginState()) return
+  // if (!userStore.checkLoginState()) return
   try {
     const { data } = await productApi.getShopInfo({
       id: shopId.value,
@@ -30,7 +29,7 @@ async function getShopInfo() {
   } catch {}
 }
 async function getVip() {
-  if (checkLoginState()) {
+  if (userStore.checkLoginState()) {
     try {
       const { code, msg } = await userApi.roleUpdate({
         shopId: shopId.value

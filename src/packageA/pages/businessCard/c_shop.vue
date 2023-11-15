@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-22 03:31:09
- * @LastEditTime: 2023-08-21 10:41:01
+ * @LastEditTime: 2023-11-15 17:40:39
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -13,7 +13,7 @@ import { reactive, ref, onMounted, watch } from 'vue'
 import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi } from '@/api'
-import { getImgFullPath, checkLoginState } from '@/utils/index'
+import { getImgFullPath } from '@/utils/index'
 import { useUserStore } from '@/store'
 
 const userStore = useUserStore()
@@ -55,7 +55,7 @@ watch(props, (nweProps) => {
 })
 function toProductDetail(product: any) {
   const { shopId, productId } = product
-  if (checkLoginState()) {
+  if (userStore.checkLoginState()) {
     uni.navigateTo({
       url: `/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
     })

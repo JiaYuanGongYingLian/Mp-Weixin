@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-14 15:17:59
- * @LastEditTime: 2023-11-13 16:15:47
+ * @LastEditTime: 2023-11-15 17:48:54
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -12,7 +12,6 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, orderApi, productApi } from '@/api'
 import { useUserStore } from '@/store'
-import { checkLoginState } from '@/utils'
 
 const userStore = useUserStore()
 const { currentShop, myShopList } = storeToRefs(userStore)
@@ -41,7 +40,7 @@ function cardClick(index: number) {
   vipList.value[index].select = true
 }
 const submit = async () => {
-  if (checkLoginState()) {
+  if (userStore.checkLoginState()) {
     const vip = vipList.value.find((item) => item.select) || {}
     const orderData = {
       orderProductSkus: [
