@@ -3,7 +3,7 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-11-15 17:45:14
+ * @LastEditTime: 2023-11-16 17:15:55
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -125,7 +125,6 @@ function sendImageItem(
     params.target_gid = groupInfo.value.gid
     params.target_gname = groupInfo.value.name
   }
-  debugger
   chatStore[isSingle.value ? 'jimSendSinglePic' : 'jimSendGroupPic'](params)
   content.value = ''
   if (isUpload.value) {

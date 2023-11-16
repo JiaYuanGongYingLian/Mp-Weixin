@@ -15,15 +15,14 @@ export default defineConfig({
     // host: '0.0.0.0',
     proxy: {
       '/api/': {
-        // target: 'http://192.168.169.198:8000',
-        // target: 'https://250a7c9202.imdo.co',
-        target: 'https://eduapi.songzi-it.com',
+        target: 'https://api.blacksilverscore.com',
+        // target: 'https://eduapi.songzi-it.com',
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/api/, '')
       },
       '/api-prod/': {
         // target: 'https://250a7c9202.imdo.co',
-        target: 'https://api.blacksilverscore.com',
+        target: 'https://eduapi.songzi-it.com',
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/api-prod/, '')
       }

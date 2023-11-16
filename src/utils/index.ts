@@ -58,7 +58,7 @@ function padLeftZero(str: string | any[]) {
  * 拼接图片地址
  * @param {String} suffix
  */
-const FILE_URL = 'https://image.blacksilverscore.com/'
+const FILE_URL = 'https://eduimage.songzi-it.com/'
 export const getImgFullPath = (suffix: string) => {
   if (!suffix) return
   if (suffix.includes('http' || 'https')) {

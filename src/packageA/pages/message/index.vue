@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-08-17 18:27:47
- * @LastEditTime: 2023-09-04 16:21:49
+ * @LastEditTime: 2023-11-16 18:04:57
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -15,13 +15,11 @@ import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance, dateFormat } from '@/utils/index'
-import { useUserStore, useChatStore } from '@/store'
-import $config from '@/common/jim/config.js'
+import { useUserStore } from '@/store'
 
 const userStore = useUserStore()
-const chatStore = useChatStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)
-const { conversation } = storeToRefs(chatStore)
+const conversation = ref([])
 const singleConversations = computed(() => {
   return conversation.value?.filter((item) => item?.type === 3)
 })
@@ -124,11 +122,7 @@ onReachBottom(() => {
             width="120rpx"
             height="120rpx"
             border-radius="10rpx"
-            :src="
-              item?.avatar.slice(0, 5) == 'qiniu'
-                ? $config.jimLocalhost + item?.avatar
-                : item?.avatar
-            "
+            :src="item?.avatar"
           ></u-image>
         </view>
 

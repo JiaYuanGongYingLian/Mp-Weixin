@@ -10,7 +10,7 @@ let client: {
   put: (arg0: string, arg1: any) => Promise<any>
   multipartUpload: (arg0: string, arg1: any, arg2: any) => Promise<any>
 } | null = null
-const ENDPOINT = 'https://image.blacksilverscore.com/uploads'
+const ENDPOINT = 'https://eduimage.songzi-it.com/uploads'
 export const getAliOss = async () => {
   const { data } = await baseApi.getAliOssToken({ id: new Date().getTime() })
   return (client = new OSS({

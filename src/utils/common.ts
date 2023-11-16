@@ -117,8 +117,8 @@ export const launchClientApp = () => {
       window.location.href = isAndroid ? Android.scheme : Ios.scheme
       const timer = setTimeout(() => {
         uni.showModal({
-          content: '此功能需访问黑银APP',
-          confirmText: '下载黑银APP',
+          content: '此功能需访问开心家园APP',
+          confirmText: '下载开心家园APP',
           success(res) {
             if (res.confirm) {
               window.location.href = isAndroid

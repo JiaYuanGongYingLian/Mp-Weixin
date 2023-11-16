@@ -377,7 +377,7 @@ onLoad((option) => {
       width="400rpx"
       height="200rpx"
     >
-      <view class="mask_tips"> 请使用黑银APP扫码 </view>
+      <view class="mask_tips"> 请使用APP扫码 </view>
     </u-popup>
   </view>
 </template>

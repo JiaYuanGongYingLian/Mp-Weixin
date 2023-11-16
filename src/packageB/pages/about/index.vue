@@ -25,8 +25,10 @@ onShareAppMessage((_res) => {
     <image :src="logo" class="logo"></image>
     <view class="tit">链通家园</view>
     <view class="ver">V{{ version }}</view>
-    <view class="content">链通家园，为您提供便捷的生活一体化服务。</view>
-    <view class="btnBox" @tap="mobileFn">
+    <view class="content"
+      >提供优质商品，高性价比服务，让人人0元参与创业，就业，共创共富，轻松赚钱的副业服务平台!</view
+    >
+    <!-- <view class="btnBox" @tap="mobileFn">
       <view>商务合作</view>
       <view
         >{{ phoneNumber
@@ -34,7 +36,7 @@ onShareAppMessage((_res) => {
           src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/right-g.png"
         ></image
       ></view>
-    </view>
+    </view> -->
   </div>
 </template>
 

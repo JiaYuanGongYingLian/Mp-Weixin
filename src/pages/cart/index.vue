@@ -179,7 +179,7 @@ function createOrder() {
 function back() {
   uni.navigateBack()
 }
-onLoad((option) => {
+onShow((option) => {
   loadData()
 })
 </script>
@@ -188,7 +188,7 @@ onLoad((option) => {
     <!-- 空白页 -->
     <view v-if="!hasLogin || empty === true" class="empty">
       <u-empty text="购物车为空" mode="car"> </u-empty>
-      <u-button type="primary" size="mini" @click="back">返回上一页</u-button>
+      <!-- <u-button type="primary" size="mini" @click="back">返回上一页</u-button> -->
     </view>
     <view v-else>
       <!-- 列表 -->

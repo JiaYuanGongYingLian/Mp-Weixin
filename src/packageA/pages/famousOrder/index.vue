@@ -8,7 +8,6 @@ import { baseApi, productApi, orderApi, socialApi } from '@/api'
 import { getImgFullPath, dateFormat } from '@/utils/index'
 import $orderStatus from '@/utils/order'
 import { useUserStore } from '@/store'
-import config from '@/common/jim/config.js'
 
 const userStore = useUserStore()
 const { hasLogin, userInfo } = storeToRefs(userStore)
@@ -219,7 +218,7 @@ onLoad(async (option) => {
                     class="goods-img"
                     :src="
                       getImgFullPath(
-                        item?.user?.avatar || config.$defaultAvatar
+                        item?.user?.avatar
                       )
                     "
                     mode="aspectFill"

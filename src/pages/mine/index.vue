@@ -25,7 +25,7 @@ const moneyInfo = ref([
   {
     money: 0,
     walletRuleId: 7,
-    name: '黑银积分'
+    name: '积分'
   }
 ])
 moneyInfo.value.forEach((e) => {
@@ -136,9 +136,11 @@ async function getShopStatisticsInfo() {
     shopStatisticsInfo.value = data
   }
 }
-onLoad((option) => {
-  getMoney()
-  getShopList()
+onShow(() => {
+  if (hasLogin.value) {
+    getMoney()
+    getShopList()
+  }
 })
 onPullDownRefresh(() => {
   setTimeout(async () => {
@@ -179,7 +181,7 @@ onPullDownRefresh(() => {
           <!-- #ifdef MP-WEIXIN -->
           <u-avatar
             :src="getImgFullPath(userInfo?.avatar)"
-            v-if="userInfo.avatar"
+            v-if="userInfo?.avatar"
           ></u-avatar>
           <view v-else class="avatar">
             <open-data type="userAvatarUrl"></open-data>
@@ -213,7 +215,7 @@ onPullDownRefresh(() => {
 
           <view class="item" data-url="/packageB/myCoupon" @tap="goUrlFn">
             <view class="con">{{ hasLogin ? moneyInfo[1].money : '--' }}</view>
-            <view class="name">黑银积分</view>
+            <view class="name">积分</view>
           </view>
         </view>
       </view>

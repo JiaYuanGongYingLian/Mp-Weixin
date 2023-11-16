@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-16 09:49:21
- * @LastEditTime: 2023-11-13 15:56:25
+ * @LastEditTime: 2023-11-16 17:31:21
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -140,9 +140,7 @@ function toProtocol() {
 const upload1 = ref()
 const upload2 = ref()
 const upload3 = ref()
-const uploadUrl = ref(
-  'https://api.blacksilverscore.com/base/api/v1/ali/sendFile'
-)
+const uploadUrl = ref('https://eduapi.songzi-it.com/base/api/v1/ali/sendFile')
 const tempImageData = reactive({
   avatar: '',
   license: '',

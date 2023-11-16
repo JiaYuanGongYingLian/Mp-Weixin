@@ -47,8 +47,8 @@ BASEURL = import.meta.env.VITE_APP_AXIOS_BASE_URL
 // #endif
 // #ifndef H5
 // @ts-ignore
-BASEURL = 'https://api.blacksilverscore.com'
-// BASEURL = 'https://eduapi.songzi-it.com'
+// BASEURL = 'https://api.blacksilverscore.com'
+BASEURL = 'https://eduapi.songzi-it.com'
 // #endif
 export enum RequestEnums {
   TIMEOUT = 20000,
@@ -121,8 +121,7 @@ export class RequestHttp {
      */
     this.service.interceptors.request.use(
       (config: AxiosRequestConfig) => {
-        const token =
-          uni.getStorageSync('accessToken') || getCookie('HYToken') || ''
+        const token = uni.getStorageSync('accessToken') || ''
         const wxCode = uni.getStorageSync('wxCode') || ''
         const currentLocation = uni.getStorageSync('currentLocation')
         // #ifdef H5

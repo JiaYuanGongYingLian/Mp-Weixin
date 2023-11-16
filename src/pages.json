@@ -193,29 +193,29 @@
 						"backgroundColor": "#F5F5F5"
 					}
 				},
-				{
-					"path": "pages/chat/index",
-					"style": {
-						"navigationBarTitleText": "圈子群聊",
-						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5"
-					}
-				},
+				// {
+				// 	"path": "pages/chat/index",
+				// 	"style": {
+				// 		"navigationBarTitleText": "圈子群聊",
+				// 		"navigationStyle": "custom",
+				// 		"backgroundColor": "#F5F5F5"
+				// 	}
+				// },
 				{
 					"path": "pages/message/index",
 					"style": {
 						"navigationBarTitleText": "消息",
 						"backgroundColor": "#F5F5F5"
 					}
-				},
-				{
-					"path": "pages/chatGroup/index",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "群列表",
-						"backgroundColor": "#F5F5F5"
-					}
 				}
+				// {
+				// 	"path": "pages/chatGroup/index",
+				// 	"style": {
+				// 		"navigationStyle": "custom",
+				// 		"navigationBarTitleText": "群列表",
+				// 		"backgroundColor": "#F5F5F5"
+				// 	}
+				// }
 			]
 		},
 		{
@@ -280,7 +280,7 @@
 				{
 					"path": "pages/powerBank/index",
 					"style": {
-						"navigationBarTitleText": "黑银移动充电宝",
+						"navigationBarTitleText": "移动充电宝",
 						"navigationStyle": "custom",
 						"backgroundColor": "#F5F5F5"
 					}

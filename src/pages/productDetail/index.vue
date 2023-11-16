@@ -157,7 +157,7 @@ async function getCartProductNumFn() {
 function toCart() {
   if (!userStore.checkLoginState()) return
   uni.switchTab({
-    url: '/packageB/pages/cart/index',
+    url: '/pages/cart/index',
     success: () => {
       uni.$on('cartNum', (num) => {
         totalCartNum.value = num

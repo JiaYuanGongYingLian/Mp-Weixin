@@ -32,7 +32,7 @@
             "
           />
         </div>
-        <div class="carousel">打开黑银APP，享排队免单</div>
+        <div class="carousel">打开APP，享排队免单</div>
         <u-button
           class="btn"
           type="primary"

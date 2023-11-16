@@ -3,11 +3,11 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { useUserStore, useChatStore } from '@/store'
+import { ref } from 'vue'
+import { useUserStore } from '@/store'
 
 const userStore = useUserStore()
-const chatStore = useChatStore()
-const { chatHasLogin } = storeToRefs(chatStore)
+const chatHasLogin = ref(false)
 const { accessToken } = storeToRefs(userStore)
 
 onLaunch(() => {
