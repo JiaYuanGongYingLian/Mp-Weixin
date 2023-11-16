@@ -184,8 +184,7 @@ onLoad((option) => {
 })
 </script>
 <template>
-  <div class="container">
-    <hy-nav-bar :title="'购物车'"></hy-nav-bar>
+  <view class="container">
     <!-- 空白页 -->
     <view v-if="!hasLogin || empty === true" class="empty">
       <u-empty text="购物车为空" mode="car"> </u-empty>
@@ -285,7 +284,8 @@ onLoad((option) => {
         </button>
       </view>
     </view>
-  </div>
+    <hy-tabbar></hy-tabbar>
+  </view>
 </template>
 
 <style lang="scss" scoped>
@@ -419,7 +419,7 @@ onLoad((option) => {
   /* #endif */
   position: fixed;
   left: 0;
-  bottom: 0rpx;
+  bottom: 90rpx;
   z-index: 95;
   display: flex;
   align-items: center;

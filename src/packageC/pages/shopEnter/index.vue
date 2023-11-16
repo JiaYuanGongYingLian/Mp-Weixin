@@ -187,7 +187,7 @@ async function shopUpdate() {
 const submit = () => {
   // if (!agree.value) {
   //   uni.showModal({
-  //     content: '入驻前需阅读并同意木木《商家入驻协议》',
+  //     content: '入驻前需阅读并同意开心《商家入驻协议》',
   //     success: ({ confirm, cancel }) => {
   //       if (confirm) {
   //         agree.value = true
@@ -464,7 +464,7 @@ onReady(() => {
           ><u-input
             v-model="formData.invitePhone"
             input-align="right"
-            placeholder="请填写木木客服专员电话"
+            placeholder="请填写开心客服专员电话"
         /></u-form-item>
       </view>
       <view class="section">

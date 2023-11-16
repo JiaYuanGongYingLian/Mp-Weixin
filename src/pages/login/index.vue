@@ -116,6 +116,7 @@ async function getPhoneNumber(res: { detail: { code: any } }) {
       accessToken: userStore.wxAccessToken,
       code: res.detail.code
     })
+    console.log(data)
     uni.redirectTo({
       url: `/pages/register/bindPhone?phone=${data.phoneNumber}`
     })

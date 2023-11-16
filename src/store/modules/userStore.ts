@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 import { getQueryVariable,isEmptyObject } from '@/utils/common'
 import useChatStore from './chatStore'
 import useConfigStore from './configStore'
-const BASEURL = 'https://api.blacksilverscore.com'
+// const BASEURL = 'https://api.blacksilverscore.com'
+const BASEURL = 'https://eduapi.songzi-it.com'
 const userStore = defineStore('user', {
   state: () => ({
     isAuthorize: false, // 是否授权
@@ -56,8 +57,8 @@ const userStore = defineStore('user', {
       this.userInfo = data
       uni.setStorageSync('userInfo', data)
       // 登陆极光IM
-      const chatStore = useChatStore()
-      await chatStore.jimLoginFn()
+      // const chatStore = useChatStore()
+      // await chatStore.jimLoginFn()
     },
     syncClearToken() {
       this.accessToken = ''
@@ -198,7 +199,9 @@ const userStore = defineStore('user', {
         uni.navigateTo({
           url: '/pages/login/index'
         })
+        return false
       }
+      return true
     }
   }
 })

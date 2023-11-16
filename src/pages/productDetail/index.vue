@@ -156,7 +156,7 @@ async function getCartProductNumFn() {
 // 跳转至购物车页面
 function toCart() {
   if (!userStore.checkLoginState()) return
-  uni.navigateTo({
+  uni.switchTab({
     url: '/packageB/pages/cart/index',
     success: () => {
       uni.$on('cartNum', (num) => {

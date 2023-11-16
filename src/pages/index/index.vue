@@ -216,7 +216,7 @@ onPullDownRefresh(() => {
     <searchBar @on-search="onSearch" />
     <u-swiper
       :list="bannerList"
-      height="200"
+      height="230"
       mode="rect"
       @click="handleBannerClick($event, bannerList)"
     ></u-swiper>

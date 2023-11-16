@@ -130,6 +130,14 @@
 				"backgroundColor": "#F5F5F5",
 				"enablePullDownRefresh": true
 			}
+		},
+		{
+			"path": "pages/cart/index",
+			"style": {
+				"navigationBarTitleText": "购物车",
+				"backgroundColor": "#F5F5F5",
+				"enablePullDownRefresh": true
+			}
 		}
 	],
 	"subPackages": [
@@ -216,14 +224,7 @@
 				{
 					"path": "pages/heidouShop/index",
 					"style": {
-						"navigationBarTitleText": "黑豆商城"
-					}
-				},
-				{
-					"path": "pages/cart/index",
-					"style": {
-						"navigationBarTitleText": "购物车",
-						"navigationStyle": "custom"
+						"navigationBarTitleText": "开心商城"
 					}
 				},
 				{
@@ -331,7 +332,6 @@
 				{
 					"path": "pages/shopEnter/index",
 					"style": {
-						"navigationStyle": "custom",
 						"navigationBarTitleText": "店铺信息",
 						"backgroundColor": "#F5F5F5"
 					}
@@ -339,7 +339,6 @@
 				{
 					"path": "pages/myShop/index",
 					"style": {
-						"navigationStyle": "custom",
 						"navigationBarTitleText": "我的店铺",
 						"backgroundColor": "#F5F5F5"
 					}
@@ -437,10 +436,10 @@
 				"text": "首页"
 			},
 			{
-				"pagePath": "pages/community/index",
-				"iconPath": "static/ic_bar_circle.png",
-				"selectedIconPath": "static/ic_bar_circle_checked.png",
-				"text": "圈子"
+				"pagePath": "pages/cart/index",
+				"iconPath": "static/ic_bar_bag_gray.png",
+				"selectedIconPath": "static/ic_bar_bag_checked.png",
+				"text": "购物车"
 			},
 			{
 				"pagePath": "pages/mine/index",

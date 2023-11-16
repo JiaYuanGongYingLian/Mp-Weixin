@@ -48,7 +48,7 @@ BASEURL = import.meta.env.VITE_APP_AXIOS_BASE_URL
 // #ifndef H5
 // @ts-ignore
 BASEURL = 'https://api.blacksilverscore.com'
-// BASEURL = 'https://250a7c9202.imdo.co'
+// BASEURL = 'https://eduapi.songzi-it.com'
 // #endif
 export enum RequestEnums {
   TIMEOUT = 20000,

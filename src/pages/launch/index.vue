@@ -138,11 +138,11 @@ onLoad(async (option) => {
   <div class="launch">
     <view class="content" style="--num: 150">
       <image class="logo" :src="logo" mode="widthFix" />
-      <text class="name">链通家园</text>
+      <text class="name">开心家园</text>
       <view class="dot"></view>
     </view>
     <view class="footer">
-      <view class="text">Copyright © 链通家园版权所有</view>
+      <view class="text">Copyright © 开心家园版权所有</view>
     </view>
   </div>
 </template>
@@ -169,7 +169,6 @@ onLoad(async (option) => {
     .logo {
       width: 200rpx;
       height: 200rpx;
-      border-radius: 50%;
       margin-top: 20rpx;
     }
 
@@ -193,7 +192,7 @@ onLoad(async (option) => {
         transform: translateX(-50%);
         width: 14px;
         height: 14px;
-        background: #00a6bc;
+        background: $bg-primary;
         border-radius: 50%;
       }
     }
