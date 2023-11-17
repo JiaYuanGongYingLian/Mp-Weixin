@@ -15,8 +15,8 @@ export default defineConfig({
     // host: '0.0.0.0',
     proxy: {
       '/api/': {
-        target: 'https://api.blacksilverscore.com',
-        // target: 'https://eduapi.songzi-it.com',
+        // target: 'https://api.blacksilverscore.com',
+        target: 'https://eduapi.songzi-it.com',
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/api/, '')
       },
