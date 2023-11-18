@@ -34,7 +34,11 @@ onLoad((option) => {
       <view class="coupon_voucher">
         <view class="line"></view>
         <view class="coupon_voucher_head">
-          <image class="icon" src="@/static/card_logo.png" mode="widthFix" />
+          <image
+            class="icon"
+            src="@/static/icon/card_logo.png"
+            mode="widthFix"
+          />
           <view class="con">
             <view class="name">{{ coupon.name }}</view>
             <view class="date">有效时间：{{ coupon.limitEndTime }}</view>

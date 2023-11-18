@@ -7,7 +7,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { Md5 } from 'ts-md5'
 import { useUserStore, useChatStore, useConfigStore } from '@/store'
 import { baseApi, powerBankApi, userApi } from '@/api'
-import logo from '@/static/ic_launcher.png'
+import logo from '@/static/icon/ic_launcher.png'
 import { isWeChat, getQueryVariable } from '@/utils/common'
 import wxShare from '@/common/wechat-share'
 

@@ -8,12 +8,12 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, orderApi, moneyApi } from '@/api'
 import { useConfigStore, useUserStore } from '@/store'
-import icon_wechat from '@/static/pay_icon_wechat.png'
-import icon_ali from '@/static/pay_icon_alipay.png'
-import icon_hy from '@/static/pay_icon_money.png'
-import icon_select from '@/static/ic_pop_select_normal.png'
-import icon_selected from '@/static/ic_pop_select_selected.png'
-import icon_verify from '@/static/icon_verify.png'
+import icon_wechat from '@/static/icon/pay_icon_wechat.png'
+import icon_ali from '@/static/icon/pay_icon_alipay.png'
+import icon_hy from '@/static/icon/pay_icon_money.png'
+import icon_select from '@/static/icon/ic_pop_select_normal.png'
+import icon_selected from '@/static/icon/ic_pop_select_selected.png'
+import icon_verify from '@/static/icon/icon_verify.png'
 
 const configStore = useConfigStore()
 const { isWeChatBrowser, isAlipayClient } = storeToRefs(configStore)

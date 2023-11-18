@@ -101,7 +101,7 @@ onReachBottom(() => {
     <view v-for="(item, index) in couponList" :key="index">
       <view class="tabBox" v-if="currentTab === index">
         <view class="coupon" v-for="coupon in item.list" :key="coupon.id">
-          <image class="icon" src="@/static/card_logo.png" mode="widthFix" />
+          <image class="icon" src="@/static/icon/card_logo.png" mode="widthFix" />
           <view class="con">
             <view class="name">{{ coupon.name }}</view>
             <view class="date">

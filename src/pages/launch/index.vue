@@ -15,7 +15,7 @@ https://wap.blacksilverscore.com/?redirect_url=/pages/productDetail/index&qrcode
 
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app'
-import logo from '@/static/ic_launcher.png'
+import logo from '@/static/icon/ic_launcher.png'
 import { useUserStore, useConfigStore } from '@/store'
 import { getQueryObject, getQueryVariable, parseParams } from '@/utils/common'
 import { baseApi } from '@/api'

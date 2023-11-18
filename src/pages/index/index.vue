@@ -18,6 +18,7 @@ import hyDownloadTips from '@/components/hy-download-tips/index.vue'
 import icon_heidou from '@/static/mine_hei_dou.png'
 import { isAlipayClient, isWeChat } from '@/utils/common'
 import { sharePathFormat } from '@/common/wechat-share'
+import c_cates from './c_cates.vue'
 
 const userStore = useUserStore()
 const { hasLogin, walletList } = storeToRefs(userStore)
@@ -246,6 +247,7 @@ onPullDownRefresh(() => {
     <!-- <hyDownloadTips v-if="!isAlipayClient()" :top="'0px'" /> -->
     <!-- #endif -->
     <searchBar @on-search="onSearch" />
+    <c_cates />
     <u-swiper
       :list="bannerList"
       height="200"

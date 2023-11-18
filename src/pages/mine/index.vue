@@ -38,14 +38,14 @@ moneyInfo.value.forEach((e) => {
 })
 const tabList = ref([
   {
-    iconPath: '/static/ic_bar_main_pg.png',
-    selectedIconPath: '/static/ic_bar_main_page_checked.png',
+    iconPath: '/static/icon/ic_bar_main_pg.png',
+    selectedIconPath: '/static/icon/ic_bar_main_page_checked.png',
     hy_path: '/pages/physicalShop/index',
     text: '首页'
   },
   {
-    iconPath: '/static/ic_bar_mine.png',
-    selectedIconPath: '/static/ic_bar_mine_checked.png',
+    iconPath: '/static/icon/ic_bar_mine.png',
+    selectedIconPath: '/static/icon/ic_bar_mine_checked.png',
     hy_pagePath: '/pages/mine/index',
     text: '我的'
   }

@@ -85,8 +85,8 @@
 const pageslist = [
   {
     pagePath: '/pages/index/index',
-    iconPath: '/static/ic_bar_main_pg.png',
-    selectedIconPath: '/static/ic_bar_main_page_checked.png',
+    iconPath: '/static/icon/ic_bar_main_pg.png',
+    selectedIconPath: '/static/icon/ic_bar_main_page_checked.png',
     text: '首页'
   },
   // {
@@ -97,8 +97,8 @@ const pageslist = [
   // },
   {
     pagePath: '/pages/cart/index',
-    iconPath: '/static/ic_bar_bag_gray.png',
-    selectedIconPath: '/static/ic_bar_bag_checked.png',
+    iconPath: '/static/icon/ic_bar_bag_gray.png',
+    selectedIconPath: '/static/icon/ic_bar_bag_checked.png',
     text: '购物车'
   },
   // {
@@ -111,8 +111,8 @@ const pageslist = [
   // },
   {
     pagePath: '/pages/mine/index',
-    iconPath: '/static/ic_bar_mine.png',
-    selectedIconPath: '/static/ic_bar_mine_checked.png',
+    iconPath: '/static/icon/ic_bar_mine.png',
+    selectedIconPath: '/static/icon/ic_bar_mine_checked.png',
     text: '我的'
   }
 ]
