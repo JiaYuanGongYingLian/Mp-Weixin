@@ -1,12 +1,6 @@
 <template>
   <view class="rf-search-bar bg-primary">
-    <view
-      class="header"
-      :style="{
-        width: clientInfo.width + 'px',
-        marginTop: clientInfo.inputTop + 'px'
-      }"
-    >
+    <view class="header">
       <!-- 搜索框 -->
       <view class="input-box" @tap="toSearch">
         <input class="input" disabled />
@@ -21,12 +15,6 @@
       </view>
     </view>
   </view>
-  <view
-    class="placeholder-box"
-    :style="{
-      height: clientInfo.height + 'px'
-    }"
-  ></view>
 </template>
 
 <script setup lang="ts">
@@ -54,26 +42,6 @@ const clientInfo = reactive({
   width: 0,
   height: 0,
   inputTop: 0
-})
-// #ifdef MP-WEIXIN
-const obj = wx.getMenuButtonBoundingClientRect()
-// #endif
-// #ifdef H5
-const obj = {
-  top: 15,
-  height: 40
-}
-// #endif
-uni.getSystemInfo({
-  success: (res) => {
-    clientInfo.width = obj.left || res.windowWidth
-    clientInfo.height = obj.top
-      ? obj.top + obj.height + props.topDistance
-      : res.statusBarHeight
-    clientInfo.inputTop = obj.top
-      ? obj.top + (obj.height - 30) / 2
-      : res.statusBarHeight + 7
-  }
 })
 
 // 扫一扫
@@ -128,12 +96,7 @@ const toSearch = () => {
 
 <style lang="scss" scoped>
 .rf-search-bar {
-  padding-bottom: 36rpx;
-  position: fixed;
   width: 100%;
-  top: 0;
-  left: 0;
-  z-index: 10;
 
   .header {
     display: flex;

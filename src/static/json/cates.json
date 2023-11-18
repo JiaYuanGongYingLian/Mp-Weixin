@@ -1,22 +1,22 @@
 [
     {
         "name": "商学院",
-        "icon": ""
+        "icon": "/static/icon/shangxueyuan.svg"
     },
     {
       "name": "PK场",
-      "icon": ""
+      "icon": "/static/icon/PK.svg"
     },
     {
       "name": "素材中心",
-      "icon": ""
+      "icon": "/static/icon/sucai.svg"
     },
     {
       "name": "今日大事",
-      "icon": ""
+      "icon": "/static/icon/jinridashi.svg"
     },
     {
       "name": "客服中心",
-      "icon": ""
+      "icon": "/static/icon/service.svg"
     }
 ]

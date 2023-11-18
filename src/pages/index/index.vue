@@ -22,6 +22,21 @@ import c_cates from './c_cates.vue'
 
 const userStore = useUserStore()
 const { hasLogin, walletList } = storeToRefs(userStore)
+const tabList = ref([
+  {
+    name: '推荐'
+  },
+  {
+    name: '商品'
+  },
+  {
+    name: '短视频'
+  }
+])
+const current = ref(0)
+const change = (index: any) => {
+  console.log(index)
+}
 const categoryList = reactive({
   list1: [],
   list2: []
@@ -240,133 +255,156 @@ onPullDownRefresh(() => {
     uni.stopPullDownRefresh()
   }, 1000)
 })
+const topBtn = reactive({
+  top: 0
+})
+// #ifdef MP-WEIXIN
+const obj = wx.getMenuButtonBoundingClientRect()
+topBtn.top = obj?.top + obj?.height
+// #endif
 </script>
 <template>
-  <view class="index-page">
-    <!-- #ifdef H5 -->
-    <!-- <hyDownloadTips v-if="!isAlipayClient()" :top="'0px'" /> -->
-    <!-- #endif -->
-    <searchBar @on-search="onSearch" />
-    <c_cates />
-    <u-swiper
-      :list="bannerList"
-      height="200"
-      mode="rect"
-      @click="handleBannerClick($event, bannerList)"
-    ></u-swiper>
-    <view class="section" v-if="categoryList.list2.length">
-      <view class="tit">线下好店</view>
-      <view class="actions">
-        <view
-          :class="['item', `${item.objectType}`]"
-          v-for="item in categoryList.list1"
-          :key="item.id"
-          @tap="handleClick(item)"
-        >
-          <image
-            class="icon"
-            :src="getImgFullPath(item.imageUrl)"
-            mode="auto"
-          />
-          <view>{{ item.name }}</view>
+  <view>
+    <view class="top-bg"></view>
+    <view
+      class="index-page"
+      :style="{
+        paddingTop: topBtn.top + 'px'
+      }"
+    >
+      <!-- #ifdef H5 -->
+      <!-- <hyDownloadTips v-if="!isAlipayClient()" :top="'0px'" /> -->
+      <!-- #endif -->
+      <u-tabs
+        :list="tabList"
+        :is-scroll="false"
+        v-model="current"
+        @change="change"
+        bg-color="transparent"
+        active-color="#fff"
+        inactive-color="#fff"
+        font-size="32"
+      />
+      <view style="height: 30rpx"></view>
+      <hy-search-bar @on-search="onSearch" />
+      <view style="height: 30rpx"></view>
+      <c_cates />
+      <view style="height: 30rpx"></view>
+      <u-swiper
+        :list="bannerList"
+        height="200"
+        mode="rect"
+        :border-radius="24"
+        @click="handleBannerClick($event, bannerList)"
+      ></u-swiper>
+      <view class="section" v-if="categoryList.list2.length">
+        <view class="tit">线下好店</view>
+        <view class="actions">
+          <view
+            :class="['item', `${item.objectType}`]"
+            v-for="item in categoryList.list1"
+            :key="item.id"
+            @tap="handleClick(item)"
+          >
+            <image
+              class="icon"
+              :src="getImgFullPath(item.imageUrl)"
+              mode="auto"
+            />
+            <view>{{ item.name }}</view>
+          </view>
         </view>
       </view>
-    </view>
-    <view class="section" v-if="categoryList.list2.length">
-      <view class="tit">宴会定制</view>
-      <view class="actions">
-        <view
-          class="item"
-          :objectType="item.objectType"
-          v-for="item in categoryList.list2"
-          :key="item.id"
-          @tap="handleClick(item)"
-        >
-          <image
-            class="icon"
-            :src="getImgFullPath(item.imageUrl)"
-            mode="auto"
-          />
-          <view>{{ item.name }}</view>
+      <view class="section" v-if="categoryList.list2.length">
+        <view class="tit">宴会定制</view>
+        <view class="actions">
+          <view
+            class="item"
+            :objectType="item.objectType"
+            v-for="item in categoryList.list2"
+            :key="item.id"
+            @tap="handleClick(item)"
+          >
+            <image
+              class="icon"
+              :src="getImgFullPath(item.imageUrl)"
+              mode="auto"
+            />
+            <view>{{ item.name }}</view>
+          </view>
         </view>
       </view>
-    </view>
-    <u-swiper
-      v-if="bannerList2?.length > 0"
-      :list="bannerList2"
-      height="200"
-      mode="none"
-      interval="3500"
-      duration="1000"
-      @click="handleBannerClick($event, bannerList2)"
-    ></u-swiper>
-    <view class="hdBar">
-      <view class="link">
-        <!-- <u-icon :name="icon_heidou" size="30"></u-icon> -->
-        <text class="name">热门推荐</text>
-        <text class="iconfont hy-icon-arrow-right"></text>
-      </view>
-      <!-- <view class="rest"
+      <u-swiper
+        v-if="bannerList2?.length > 0"
+        :list="bannerList2"
+        height="200"
+        mode="none"
+        interval="3500"
+        duration="1000"
+        @click="handleBannerClick($event, bannerList2)"
+      ></u-swiper>
+      <view class="hdBar">
+        <!-- <view class="rest"
         >
         可用黑豆：<text class="num">{{ moneyInfo[0].money }}</text>
       </view> -->
-    </view>
-    <view class="container">
-      <view class="shop" v-for="shop in shopList.list" :key="shop.id">
-        <view class="contentBox" @click="toShopDetail(shop.id)">
-          <view class="imgCover">
-            <u-image
-              class="img"
-              border-radius="10rpx"
-              :src="getImgFullPath(shop.avatar)"
-              height="160rpx"
-              :lazy-load="true"
-              mode="scaleToFill"
-            />
-            <text class="type">{{ shop.type }}</text>
-          </view>
-          <view class="content">
-            <text class="name">{{ shop.name }}</text>
-            <text class="remark">{{ shop.remark }}</text>
-            <!-- <view class="addr">
+      </view>
+      <view class="container">
+        <view class="shop" v-for="shop in shopList.list" :key="shop.id">
+          <view class="contentBox" @click="toShopDetail(shop.id)">
+            <view class="imgCover">
+              <u-image
+                class="img"
+                border-radius="10rpx"
+                :src="getImgFullPath(shop.avatar)"
+                height="160rpx"
+                :lazy-load="true"
+                mode="scaleToFill"
+              />
+              <text class="type">{{ shop.type }}</text>
+            </view>
+            <view class="content">
+              <text class="name">{{ shop.name }}</text>
+              <text class="remark">{{ shop.remark }}</text>
+              <!-- <view class="addr">
               <view class="msg">
                 <u-icon name="map-fill" class="icon"></u-icon>
                 <text>{{ shop.addr }}</text>
               </view>
               <text class="distance">{{ shop.distance }}</text>
             </view> -->
-            <text class="vip" v-if="shop.vipReserveRoleCount > 0"
-              >消费领会员</text
+              <text class="vip" v-if="shop.vipReserveRoleCount > 0"
+                >消费领会员</text
+              >
+            </view>
+          </view>
+          <view class="couponBox">
+            <view
+              class="coupon_voucher"
+              v-for="item in shop.coupons"
+              :key="item.id"
             >
-          </view>
-        </view>
-        <view class="couponBox">
-          <view
-            class="coupon_voucher"
-            v-for="item in shop.coupons"
-            :key="item.id"
-          >
-            <view class="coupon_voucher_main">
-              <view class="price">
-                <text class="unit">￥</text>
-                <text class="num"> {{ item.money }}</text></view
-              >
-              <view class="name">{{ item.name }}</view>
-            </view>
-            <view class="coupon_voucher_foot">
-              <u-button
-                class="btn"
-                size="mini"
-                type="primary"
-                plain
-                ripple
-                @click="couponAdd(item)"
-                >立即领取</u-button
-              >
+              <view class="coupon_voucher_main">
+                <view class="price">
+                  <text class="unit">￥</text>
+                  <text class="num"> {{ item.money }}</text></view
+                >
+                <view class="name">{{ item.name }}</view>
+              </view>
+              <view class="coupon_voucher_foot">
+                <u-button
+                  class="btn"
+                  size="mini"
+                  type="primary"
+                  plain
+                  ripple
+                  @click="couponAdd(item)"
+                  >立即领取</u-button
+                >
+              </view>
             </view>
           </view>
-        </view>
-        <!-- <view class="actionBox">
+          <!-- <view class="actionBox">
           <text class="rule" v-if="shop.shopMoneyRule">{{
             shop.shopMoneyRule.userMoneyRuleName
           }}</text>
@@ -406,22 +444,36 @@ onPullDownRefresh(() => {
             >
           </view>
         </view> -->
+        </view>
       </view>
+      <u-loadmore :status="status" />
+      <u-back-top :scroll-top="scrollTop"></u-back-top>
+      <hy-tabbar></hy-tabbar>
     </view>
-    <u-loadmore :status="status" />
-    <u-back-top :scroll-top="scrollTop"></u-back-top>
-    <hy-tabbar></hy-tabbar>
   </view>
 </template>
 
 <style lang="scss" scoped>
 @import '@/styles/helper.scss';
 
+.top-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 460rpx;
+  background: $bg-primary;
+}
 .index-page {
   font-style: normal;
   text-align: center;
   min-height: 100vh;
   background-color: #f6f6f6;
+  position: relative;
+  background: transparent;
+  z-index: 2;
+  width: 686rpx;
+  margin: 0 auto;
 }
 
 .section {
@@ -460,38 +512,6 @@ onPullDownRefresh(() => {
   .item {
     width: 100%;
     height: 100%;
-  }
-}
-.hdBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #fff;
-  padding: 30rpx;
-  margin-top: 20rpx;
-  .link {
-    display: flex;
-    align-items: center;
-    .name {
-      font-weight: 600;
-      font-size: 30rpx;
-      margin-left: 10rpx;
-    }
-    .hy-icon-arrow-right {
-      margin-left: 10rpx;
-      font-size: 26rpx;
-      font-weight: bold;
-    }
-  }
-  .rest {
-    font-size: 26rpx;
-    color: $uni-text-color-light;
-    font-weight: 600;
-    .num {
-      font-weight: 600;
-      font-size: 30rpx;
-      color: $uni-text-color;
-    }
   }
 }
 
