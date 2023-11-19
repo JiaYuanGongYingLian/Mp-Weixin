@@ -6,8 +6,8 @@ import { reactive, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { Md5 } from 'ts-md5'
 import { useUserStore, useChatStore, useConfigStore } from '@/store'
-import { baseApi, powerBankApi, userApi } from '@/api'
-import logo from '@/static/icon/ic_launcher.png'
+import { baseApi, userApi } from '@/api'
+import { logo } from '@/common/config'
 import { isWeChat, getQueryVariable } from '@/utils/common'
 import wxShare from '@/common/wechat-share'
 
@@ -161,22 +161,22 @@ async function sendSmsCode() {
 function codeChange(text: string) {
   codeText.value = text
 }
-async function getWxSdkConfig() {
-  try {
-    if (!configStore.isWeChatBrowser) return
-    const { data } = await powerBankApi.getWxJsSdkSign({
-      // eslint-disable-next-line no-restricted-globals
-      url: location.href.split('#')[0]
-    })
-    console.log('sdkSignData', data)
-    wxShare.jsSdkConfig({
-      appId: data.appId,
-      timestamp: data.timestamp,
-      nonceStr: data.noncestr,
-      signature: data.sign
-    })
-  } catch {}
-}
+// async function getWxSdkConfig() {
+//   try {
+//     if (!configStore.isWeChatBrowser) return
+//     const { data } = await powerBankApi.getWxJsSdkSign({
+//       // eslint-disable-next-line no-restricted-globals
+//       url: location.href.split('#')[0]
+//     })
+//     console.log('sdkSignData', data)
+//     wxShare.jsSdkConfig({
+//       appId: data.appId,
+//       timestamp: data.timestamp,
+//       nonceStr: data.noncestr,
+//       signature: data.sign
+//     })
+//   } catch {}
+// }
 onLoad(async (option) => {
   // #ifdef H5
   isWeChatOfficial.value = isWeChat()

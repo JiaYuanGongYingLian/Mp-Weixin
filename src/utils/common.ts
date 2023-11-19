@@ -388,7 +388,17 @@ export function qs(data: { [x: string]: any }) {
   )
   return paramsArray.join('&')
 }
-
+/**
+ * route 跳转
+ * @param {1} url 跳转路径
+ * @param {2} params 参数
+ */
+export function route(data: { url: any; params?: any }) {
+  const { url, params } = data
+  uni.navigateTo({
+    url: `${url}?${qs(params || {})}`
+  })
+}
 export default {
   getQueryObject,
   getQueryVariable,
@@ -408,5 +418,6 @@ export default {
   setCookie,
   getCookie,
   compareVersion,
-  qs
+  qs,
+  route
 }

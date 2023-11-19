@@ -28,6 +28,15 @@
 			}
 		},
 		{
+			
+			"path": "pages/messege/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "消息"
+			}
+		},
+		{
+			
 			"path": "pages/unocss/index",
 			"style": {
 				"navigationBarTitleText": "UnoCSS 示例"
@@ -276,45 +285,6 @@
 						"navigationStyle": "custom",
 						"backgroundColor": "#F5F5F5"
 					}
-				},
-				{
-					"path": "pages/powerBank/index",
-					"style": {
-						"navigationBarTitleText": "移动充电宝",
-						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5"
-					}
-				},
-				{
-					"path": "pages/powerBank/detail",
-					"style": {
-						"navigationBarTitleText": "设备详情",
-						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5"
-					}
-				},
-				{
-					"path": "pages/powerBank/mine",
-					"style": {
-						"navigationBarTitleText": "个人中心",
-						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5"
-					}
-				},
-				{
-					"path": "pages/powerBank/order",
-					"style": {
-						"navigationBarTitleText": "订单记录",
-						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5"
-					}
-				},
-				{
-					"path": "pages/powerBank/authLetter",
-					"style": {
-						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5"
-					}
 				}
 			]
 		},
@@ -382,6 +352,35 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "packageD",
+			"pages": [
+				{
+					"path": "pages/message/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "聊天",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "pages/message/message_group",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "添加群",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "pages/message/addgroup",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "添加群",
+						"backgroundColor": "#F5F5F5"
+					}
+				}
+			]	
 		}
 	],
 	"preloadRule": {
@@ -408,12 +407,6 @@
 			"packages": [
 				"packageA"
 			]
-		},
-		"packageB/pages/powerBank/index": {
-			"network": "all",
-			"packages": [
-				"packageA"
-			]
 		}
 	},
 	"globalStyle": {
@@ -436,10 +429,10 @@
 				"text": "首页"
 			},
 			{
-				"pagePath": "pages/cart/index",
-				"iconPath": "static/icon/ic_bar_bag_gray.png",
-				"selectedIconPath": "static/icon/ic_bar_bag_checked.png",
-				"text": "购物车"
+				"pagePath": "pages/messege/index",
+				"iconPath": "static/icon/heart.png",
+				"selectedIconPath": "static/icon/heart_active.png",
+				"text": "消息"
 			},
 			{
 				"pagePath": "pages/mine/index",

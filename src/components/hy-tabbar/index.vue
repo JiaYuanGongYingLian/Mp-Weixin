@@ -93,13 +93,14 @@ const pageslist = [
   //   pagePath: '/pages/community/index',
   //   iconPath: '/static/ic_bar_circle.png',
   //   selectedIconPath: '/static/ic_bar_circle_checked.png',
-  //   text: '圈子'
+  //   text: '分类'
   // },
   {
-    pagePath: '/pages/cart/index',
-    iconPath: '/static/icon/ic_bar_bag_gray.png',
-    selectedIconPath: '/static/icon/ic_bar_bag_checked.png',
-    text: '购物车'
+    pagePath: '/pages/messege/index',
+    iconPath: '/static/icon/heart.png',
+    selectedIconPath: '/static/icon/heart_active.png',
+    text: '消息',
+    midButton: true
   },
   // {
   //   path: '/packageA/pages/shortVideo/index',
@@ -156,12 +157,12 @@ export default {
     // 激活时的演示，包括字体图标，提示文字等的演示
     activeColor: {
       type: String,
-      default: '#303133'
+      default: '#F1B04A'
     },
     // 未激活时的颜色
     inactiveColor: {
       type: String,
-      default: '#606266'
+      default: '#CCCCCC'
     },
     // 是否显示中部的凸起按钮
     midButton: {
@@ -427,10 +428,10 @@ export default {
 }
 /* #ifdef H5 */
 .tabIcon {
-  top: 10rpx !important;
+  // top: 10rpx !important;
 }
 .u-tabbar__content__item__text {
-  bottom: 10rpx;
+  // bottom: 10rpx;
 }
 /* #endif */
 </style>

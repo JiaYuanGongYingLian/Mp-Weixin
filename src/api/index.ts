@@ -5,7 +5,6 @@ export { default as orderApi } from './modules/order'
 export { default as couponApi } from './modules/coupon'
 export { default as moneyApi } from './modules/money'
 export { default as socialApi } from './modules/social'
-export { default as powerBankApi } from './modules/powerBank'
 export { default as enumAll } from './enum'
 export const getMockData = (name: any) => {
   return new Promise((resolve, reject) => {

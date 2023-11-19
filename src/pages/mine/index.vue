@@ -155,7 +155,7 @@ onPullDownRefresh(() => {
       <image
         class="bg"
         mode="widthFix"
-        src="https://naoyuekang-weixindev.oss-cn-chengdu.aliyuncs.com/mine/extension_bg_01.png"
+        src="https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/64a2cb6b-e64f-47ab-ab84-0d5aedc7d1fd.png"
       ></image>
       <view class="city"></view>
     </view>
@@ -429,7 +429,7 @@ onPullDownRefresh(() => {
         }}</u-button>
       </view>
     </view>
-    <hy-tabbar></hy-tabbar>
+    <hy-tabbar :midButton="true" :border-top="false"></hy-tabbar>
     <!-- #ifdef H5 -->
     <!-- 线下店扫码/店铺分享进入的显示此tabbar -->
     <hyTabBar

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady, onShareAppMessage } from '@dcloudio/uni-app'
-import logo from '@/static/icon/ic_launcher.png'
+import { logo } from '@/common/config'
 
 const version = ref('0001')
 const phoneNumber = ref('4006381238')
