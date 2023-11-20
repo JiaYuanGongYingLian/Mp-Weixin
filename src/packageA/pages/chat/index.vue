@@ -5,12 +5,18 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-20 14:56:04
+ * @LastEditTime: 2023-11-20 18:31:10
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
+import {
+  imkit,
+  CoreEvent,
+  DisabledMessageContextMenu,
+  DisabledConversationontextMenu
+} from '@rongcloud/imkit'
 import { reactive, ref, computed, onBeforeMount, watch } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
@@ -67,6 +73,7 @@ function setChatScrollTop(arg_isScrollHeight?: boolean | undefined) {
   }, 200)
 }
 const chatType = ref('single')
+const messageList = ref()
 onLoad((option) => {
   thouUsername.value = option?.username || ''
   groupInfo.gid = option?.groupId
@@ -107,7 +114,8 @@ function toDetail(data: { userId: any }) {
       :title="chatType === 'group' ? groupInfo.name : singleInfo.nickname"
     ></hy-nav-bar>
     <view class="l-chat-body" @tap="onChatClick">
-      <scroll-view
+      <message-list ref="messageList" base-size="10px" />
+      <!-- <scroll-view
         scroll-y="true"
         class="l-char-scroll"
         scroll-with-animation
@@ -116,7 +124,6 @@ function toDetail(data: { userId: any }) {
       >
         <view class="l-char-scroll-content">
           <view class="l-char-empty"> 已经没有聊天记录了~ </view>
-          <!-- chatList -->
           <view
             class="l-chat-item"
             v-for="(s, i) in chatList"
@@ -129,7 +136,6 @@ function toDetail(data: { userId: any }) {
               {{ dateFormat(new Date(s.ctime_ms), 'MM-dd hh:mm') }}
             </view>
             <view class="l-chat-item-content">
-              <!-- {{ s }} -->
               <view class="l-chat-avatar">
                 <u-image
                   shape="circle"
@@ -187,11 +193,6 @@ function toDetail(data: { userId: any }) {
                     <view class="l-cfv-name">
                       {{ s.content }}
                     </view>
-                    <!-- <image
-                              class="l-chat-file-img"
-                              src="../../static/wenjian.png"
-                              mode="aspectFill"
-                            ></image> -->
                   </view>
                   <view class="l-chat-file-size"> 5.9MB </view>
                 </button>
@@ -199,7 +200,7 @@ function toDetail(data: { userId: any }) {
             </view>
           </view>
         </view>
-      </scroll-view>
+      </scroll-view> -->
     </view>
     <c_foot ref="footerRef" @on-focus="setChatScrollTop" :chatType="chatType" />
   </view>

@@ -2,6 +2,9 @@ import { createSSRApp } from 'vue'
 import * as Pinia from 'pinia'
 // @ts-ignore
 import uView from 'vk-uview-ui'
+// imkit 为核心模块
+import { defineCustomElements, imkit } from '@rongcloud/imkit'
+import * as RongIMLib from '@rongcloud/imlib-next'
 import App from './App.vue'
 import wechatShare from './common/wechat-share'
 // #ifdef H5
@@ -13,6 +16,7 @@ import '@/styles/main.scss'
 // unocss
 import 'uno.css'
 
+defineCustomElements()
 export function createApp() {
   const app = createSSRApp(App)
   app.use(Pinia.createPinia())
