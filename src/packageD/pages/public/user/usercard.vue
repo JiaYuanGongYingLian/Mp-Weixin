@@ -68,20 +68,20 @@ export default {
   },
   onLoad(opt) {
     console.log(opt)
-    if (!this.vuex_user || !opt.type) {
+    if (!this.pinia_user || !opt.type) {
       uni.navigateBack()
       return false
     }
-    this.user = this.vuex_user
+    this.user = this.pinia_user
     this.type = opt.type
   },
   methods: {
     add() {
-      // console.log(this.vuex_user.id)
-      this.$u.api.addfriends({ adduser: this.vuex_user.id }).then((res) => {
+      // console.log(this.pinia_user.id)
+      this.$u.api.addfriends({ adduser: this.pinia_user.id }).then((res) => {
         console.log(res)
         // if(res.code == 1){
-        // 	this.$u.vuex('vuex_user', res.msg);
+        // 	this.$u.vuex('pinia_user', res.msg);
         // 	route({
         // 		url: 'pages/public/user/usercard'
         // 	})

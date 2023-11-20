@@ -45,9 +45,9 @@
       ></u-search>
     </view>
     <view
-      v-if="ryStore.vuex_home_loading"
+      v-if="ryStore.pinia_home_loading"
       class="u-border-bottom"
-      v-for="(item, index) in ryStore.vuex_latestConversationList[
+      v-for="(item, index) in ryStore.pinia_latestConversationList[
         ryStore.userinfo.id
       ]"
       :key="index"
@@ -72,7 +72,7 @@
                 border-radius="12"
                 height="100"
                 v-if="!ingroup(item.targetId)"
-                :image="ryStore.vuex_nlist[item.targetId].avatar"
+                :image="ryStore.pinia_nlist[item.targetId].avatar"
                 threshold="300"
                 img-mode="aspectFill"
               ></u-lazy-load>
@@ -81,7 +81,7 @@
                 border-radius="12"
                 height="100"
                 v-if="ingroup(item.targetId)"
-                :image="ryStore.vuex_grouplist[item.targetId].avatar"
+                :image="ryStore.pinia_grouplist[item.targetId].avatar"
                 threshold="300"
                 img-mode="aspectFill"
               ></u-lazy-load>
@@ -94,10 +94,10 @@
             <view class="content">
               <view class="title">
                 <view v-if="!ingroup(item.targetId)">
-                  {{ ryStore.vuex_nlist[item.targetId].nickname }}
+                  {{ ryStore.pinia_nlist[item.targetId].nickname }}
                 </view>
                 <view v-if="ingroup(item.targetId)">
-                  {{ ryStore.vuex_grouplist[item.targetId].name }}
+                  {{ ryStore.pinia_grouplist[item.targetId].name }}
                 </view>
               </view>
               <view class="head_right">
@@ -117,9 +117,9 @@
       </u-swipe-action>
     </view>
     <u-tabbar
-      v-model="ryStore.vuex_current"
-      :activeColor="ryStore.vuex_activeColor"
-      :list="ryStore.vuex_tabbar"
+      v-model="ryStore.pinia_current"
+      :activeColor="ryStore.pinia_activeColor"
+      :list="ryStore.pinia_tabbar"
       bg-color="rgba(249,249,249)"
     ></u-tabbar>
   </view>
@@ -156,11 +156,11 @@ function click(index, index1) {
     // 点击了置顶
   } else if (index1 === 1) {
     // 点击了删除
-    this.vuex_latestConversationList[this.userinfo.id][index].show = false
+    this.pinia_latestConversationList[this.userinfo.id][index].show = false
     setTimeout(() => {
       WEBIM.delMessageList(
-        this.vuex_latestConversationList[this.userinfo.id][index].targetId,
-        this.vuex_latestConversationList[this.userinfo.id][index].type,
+        this.pinia_latestConversationList[this.userinfo.id][index].targetId,
+        this.pinia_latestConversationList[this.userinfo.id][index].type,
         index
       )
     }, 500)

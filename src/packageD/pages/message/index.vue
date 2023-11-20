@@ -1,78 +1,173 @@
+<!-- eslint-disable consistent-return -->
 <template>
   <view>
-    <u-navbar :title="ryStore.vuex_nlist[uuid].nickname" :background="ryStore.head_background" :title-bold="true">
+    <u-navbar
+      :title="ryStore.pinia_nlist[uuid]?.nickname"
+      :background="ryStore.head_background"
+      :title-bold="true"
+    >
       <view slot="right">
         <u-icon class="u-m-r-30" name="more-dot-fill" size="40"></u-icon>
       </view>
     </u-navbar>
     <view class="cu-chat">
-      <view class="cu-item" :class="item.messageDirection == 1 ? 'self' : ''" v-for="(item, index) in list" :key="index">
-        <u-avatar v-if="item.messageDirection == 2" :src="vuex_nlist[uuid].avatar" mode="square"></u-avatar>
+      <view
+        class="cu-item"
+        :class="item.messageDirection == 1 ? 'self' : ''"
+        v-for="(item, index) in list"
+        :key="index"
+      >
+        <u-avatar
+          v-if="item.messageDirection == 2"
+          :src="pinia_nlist[uuid].avatar"
+          mode="square"
+        ></u-avatar>
         <view class="main">
-          <view v-if="item.messageType == 'RC:TxtMsg'" class="content" :style="item.messageDirection == 1
-            ? 'background-color:rgba(169,234,122)'
-            : 'background-color:#FFFFFF;'
-            ">
+          <view
+            v-if="item.messageType == 'RC:TxtMsg'"
+            class="content"
+            :style="
+              item.messageDirection == 1
+                ? 'background-color:rgba(169,234,122)'
+                : 'background-color:#FFFFFF;'
+            "
+          >
             <text>{{ item.content.content }}</text>
           </view>
-          <view v-if="item.messageType == 'app:hongbao'" class="message-red-packet" style="background: #f09d47"
-            @click="openhb(item.content.content.hongbaoid)">
+          <view
+            v-if="item.messageType == 'app:hongbao'"
+            class="message-red-packet"
+            style="background: #f09d47"
+            @click="openhb(item.content.content.hongbaoid)"
+          >
             <view class="contents">
-              <image style="z-index: 100" src="../../static/img/hongbao.png"></image>
+              <image
+                style="z-index: 100"
+                src="../../static/img/hongbao.png"
+              ></image>
               <view class="packet">{{ item.content.content.ps }}</view>
             </view>
             <view class="footer u-border-top">红包</view>
-            <view :class="item.messageDirection == 1
-              ? 'arrow-org-right'
-              : 'arrow-org-left'
-              " style="background: #f09d47"></view>
+            <view
+              :class="
+                item.messageDirection == 1
+                  ? 'arrow-org-right'
+                  : 'arrow-org-left'
+              "
+              style="background: #f09d47"
+            ></view>
           </view>
         </view>
-        <u-avatar v-if="item.messageDirection == 1" :src="userinfo.avatar" mode="square"></u-avatar>
+        <u-avatar
+          v-if="item.messageDirection == 1"
+          :src="userinfo.avatar"
+          mode="square"
+        ></u-avatar>
       </view>
     </view>
 
     <view class="form u-border-top" :style="'bottom:' + bottom">
-      <view class="u-flex u-m-b-20" :class="!show ? 'safe-area-inset-bottom' : ''">
-        <u-icon class="u-m-r-20" name="yuyin" custom-prefix="iconfont-sj" size="55"></u-icon>
-        <u-input type="text" v-model="value" border-color="#ffffff" :custom-style="input_style" placeholder=""
-          confirm-type="send" @confirm="submit" />
-        <u-icon class="u-m-l-20" name="plus-circle" size="50" @click="show = !show"></u-icon>
+      <view
+        class="u-flex u-m-b-20"
+        :class="!show ? 'safe-area-inset-bottom' : ''"
+      >
+        <u-icon
+          class="u-m-r-20"
+          name="yuyin"
+          custom-prefix="iconfont-sj"
+          size="55"
+        ></u-icon>
+        <u-input
+          type="text"
+          v-model="value"
+          border-color="#ffffff"
+          :custom-style="input_style"
+          placeholder=""
+          confirm-type="send"
+          @confirm="submit"
+        />
+        <u-icon
+          class="u-m-l-20"
+          name="plus-circle"
+          size="50"
+          @click="show = !show"
+        ></u-icon>
       </view>
     </view>
-    <u-popup v-model="show" mode="bottom" length="300" :mask="false" duration="0" @open="showpopup()"
-      @close="hidepopup()">
-      <view class="u-border-top" style="
+    <u-popup
+      v-model="show"
+      mode="bottom"
+      length="300"
+      :mask="false"
+      duration="0"
+      @open="showpopup()"
+      @close="hidepopup()"
+    >
+      <view
+        class="u-border-top"
+        style="
           width: 100%;
           height: 100%;
           background-color: rgba(246, 246, 246, 246);
-        ">
+        "
+      >
         <u-grid :col="4" :border="false">
-          <u-grid-item bg-color="rgba(246, 246, 246, 246)" @click="hongbaoshow = !hongbaoshow">
+          <u-grid-item
+            bg-color="rgba(246, 246, 246, 246)"
+            @click="hongbaoshow = !hongbaoshow"
+          >
             <u-icon name="red-packet-fill" :size="50"></u-icon>
             <view class="grid-text">红包</view>
           </u-grid-item>
         </u-grid>
       </view>
     </u-popup>
-    <u-popup v-model="hongbaoshow" mode="bottom" length="100%" duration="200" :mask="false" z-index="10100">
-      <view style="width: 100%; height: 100%; background-color: rgba(237, 237, 237)">
+    <u-popup
+      v-model="hongbaoshow"
+      mode="bottom"
+      length="100%"
+      duration="200"
+      :mask="false"
+      z-index="10100"
+    >
+      <view
+        style="width: 100%; height: 100%; background-color: rgba(237, 237, 237)"
+      >
         <u-top-tips ref="uTips"></u-top-tips>
-        <u-navbar back-icon-name="close" back-icon-size="30" title="发红包" :background="head_background" :title-bold="true"
-          :custom-back="sethongbaoshow"></u-navbar>
+        <u-navbar
+          back-icon-name="close"
+          back-icon-size="30"
+          title="发红包"
+          :background="head_background"
+          :title-bold="true"
+          :custom-back="sethongbaoshow"
+        ></u-navbar>
         <view class="sendhongbao">
           <view class="item">
             <view class="label">金额</view>
             <view class="content-text">
-              <u-input type="digit" :clearable="false" maxlength="10" v-model="value2" input-align="right"
-                placeholder="0.00" />
+              <u-input
+                type="digit"
+                :clearable="false"
+                maxlength="10"
+                v-model="value2"
+                input-align="right"
+                placeholder="0.00"
+              />
             </view>
             <view class="foot">元</view>
           </view>
           <view class="item" style="height: 130rpx">
             <view class="content-textarea">
-              <u-input v-model="ps" :custom-style="input_style2" :auto-height="true" type="textarea" maxlength="16"
-                placeholder-style="font-size: 35rpx;" placeholder="恭喜发财,大吉大利" />
+              <u-input
+                v-model="ps"
+                :custom-style="input_style2"
+                :auto-height="true"
+                type="textarea"
+                maxlength="16"
+                placeholder-style="font-size: 35rpx;"
+                placeholder="恭喜发财,大吉大利"
+              />
             </view>
           </view>
           <view class="money">¥ {{ value3.toFixed(2) }}</view>
@@ -84,7 +179,14 @@
         </view>
       </view>
     </u-popup>
-    <u-popup v-model="openhongbao" width="80%" height="60%" negative-top="35%" border-radius="16" mode="center">
+    <u-popup
+      v-model="openhongbao"
+      width="80%"
+      height="60%"
+      negative-top="35%"
+      border-radius="16"
+      mode="center"
+    >
       <view class="openhongbao">
         <view class="bj"></view>
         <view class="head">
@@ -92,7 +194,9 @@
           <view class="info">{{ hongbaoinfo.hongbaops }}</view>
         </view>
         <view class="an">
-          <view class="an1" @click="receive_hongbao(hongbaoinfo.hongbaoid)">開</view>
+          <view class="an1" @click="receive_hongbao(hongbaoinfo.hongbaoid)"
+            >開</view
+          >
         </view>
       </view>
     </u-popup>
@@ -100,11 +204,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, watch } from 'vue';
+import { reactive, ref, computed, watch } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { route } from '@/utils/common'
 import { WEBIM } from '@/common/webim.js'
 import { useRyStore } from '@/store'
-import { onLoad } from '@dcloudio/uni-app'
 
 const ryStore = useRyStore()
 const bottom = ref('0rpx')
@@ -144,7 +248,7 @@ const buttomStyle = computed(() => {
   return style
 })
 watch(ryStore, (store) => {
-  if (store.vuex_messagelist) {
+  if (store.pinia_messagelist) {
     console.log('数据更新')
     setTimeout(() => {
       uni.pageScrollTo({
@@ -154,21 +258,22 @@ watch(ryStore, (store) => {
     }, 50)
   }
 })
-watch(value2, (new) => {
-  if(new.value !== '') {
-  const money = Math.floor(new * 100) / 100
-  value2.value = money
-  value3.value = money
-}
-})
+// watch(value2, (new) => {
+//   if(new.value !== '') {
+//   const money = Math.floor(new * 100) / 100
+//   value2.value = money
+//   value3.value = money
+// }
+// })
 
-onLoad((opt) => {
-  if (!opt.uuid || !opt.type) {
+// eslint-disable-next-line consistent-return
+onLoad(async (opt) => {
+  if (!opt?.uuid || !opt?.type) {
     uni.navigateBack()
     return false
   }
   uuid.value = opt.uuid
-  list.value = ryStore.vuex_messagelist[ryStore.userinfo.id][uuid.value]
+  list.value = ryStore.pinia_messagelist[ryStore.userinfo.id][uuid.value]
   console.log(list.value)
   await WEBIM.delMessage(uuid.value, false)
   setTimeout(() => {
@@ -300,23 +405,23 @@ page {
   position: relative;
 }
 
-.cu-chat .cu-item>.cu-avatar {
+.cu-chat .cu-item > .cu-avatar {
   width: 80upx;
   height: 80upx;
 }
 
-.cu-chat .cu-item>.main {
+.cu-chat .cu-item > .main {
   max-width: calc(100% - 260upx);
   margin: 0 30upx;
   display: flex;
   align-items: center;
 }
 
-.cu-chat .cu-item>image {
+.cu-chat .cu-item > image {
   height: 320upx;
 }
 
-.cu-chat .cu-item>.main .content {
+.cu-chat .cu-item > .main .content {
   padding: 20upx;
   border-radius: 6upx;
   display: inline-flex;
@@ -329,7 +434,7 @@ page {
   text-align: left;
 }
 
-.cu-chat .cu-item>.main .content:not([class*='bg-']) {
+.cu-chat .cu-item > .main .content:not([class*='bg-']) {
   background-color: #ffffff;
   color: #333333;
 }
@@ -349,7 +454,7 @@ page {
   align-items: center;
 }
 
-.cu-chat .cu-item>.main .content::after {
+.cu-chat .cu-item > .main .content::after {
   content: '';
   top: 27upx;
   transform: rotate(45deg);
@@ -364,12 +469,12 @@ page {
   background-color: inherit;
 }
 
-.cu-chat .cu-item.self>.main .content::after {
+.cu-chat .cu-item.self > .main .content::after {
   left: auto;
   right: -12upx;
 }
 
-.cu-chat .cu-item>.main .content::before {
+.cu-chat .cu-item > .main .content::before {
   content: '';
   top: 30upx;
   transform: rotate(45deg);
@@ -386,12 +491,12 @@ page {
   opacity: 0.3;
 }
 
-.cu-chat .cu-item>.main .content:not([class*='bg-'])::before {
+.cu-chat .cu-item > .main .content:not([class*='bg-'])::before {
   background-color: #333333;
   opacity: 0.1;
 }
 
-.cu-chat .cu-item.self>.main .content::before {
+.cu-chat .cu-item.self > .main .content::before {
   left: auto;
   right: -12upx;
 }

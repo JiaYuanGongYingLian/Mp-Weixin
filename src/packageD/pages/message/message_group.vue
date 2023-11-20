@@ -1,7 +1,7 @@
 <template>
   <view>
     <u-navbar
-      :title="vuex_grouplist[uuid].name"
+      :title="pinia_grouplist[uuid].name"
       :background="head_background"
       :title-bold="true"
     >
@@ -222,7 +222,7 @@
 
 <script>
 import { route } from '@/utils/common'
-import { WEBIM } from '@/packageD/common/webim.js';
+import { WEBIM } from '@/common/webim.js'
 
 export default {
   data() {
@@ -265,7 +265,7 @@ export default {
     }
   },
   watch: {
-    '$store.state.vuex_messagelist': {
+    '$store.state.pinia_messagelist': {
       handler() {
         console.log('数据更新')
         setTimeout(() => {
@@ -293,7 +293,7 @@ export default {
       return false
     }
     this.uuid = opt.uuid
-    this.list = this.vuex_messagelist[this.uuid]
+    this.list = this.pinia_messagelist[this.uuid]
     await WEBIM.delMessage(this.uuid, true)
     setTimeout(() => {
       uni.pageScrollTo({

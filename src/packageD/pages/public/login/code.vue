@@ -85,11 +85,11 @@ export default {
       if (res.code == 1) {
         that.$u.vuex('userinfo', res.data.userinfo)
         const { id } = res.data.userinfo
-        if (!this.vuex_messagelist.id) {
-          that.$u.vuex(`vuex_messagelist.${id}`, {})
+        if (!this.pinia_messagelist.id) {
+          that.$u.vuex(`pinia_messagelist.${id}`, {})
         }
-        if (!this.vuex_latestConversationList.id) {
-          that.$u.vuex(`vuex_latestConversationList.${id}`, [])
+        if (!this.pinia_latestConversationList.id) {
+          that.$u.vuex(`pinia_latestConversationList.${id}`, [])
         }
         await this.$u.api.getfriendlist().then((res) => {
           console.log('更新好友数据')
@@ -99,19 +99,19 @@ export default {
               return val.letter
             })
             const list = { letterArr, list: friends }
-            this.$u.vuex('vuex_nlist', res.data.nlist)
-            this.$u.vuex('vuex_indexList', list)
-            this.$u.vuex('vuex_addfriendslist', res.data.addfriends)
+            this.$u.vuex('pinia_nlist', res.data.nlist)
+            this.$u.vuex('pinia_indexList', list)
+            this.$u.vuex('pinia_addfriendslist', res.data.addfriends)
           }
         })
         await this.$u.api.getGrouplist().then((res) => {
           console.log('更新群组数据')
           if (res.code == 1) {
-            this.$u.vuex('vuex_grouplist', res.data)
+            this.$u.vuex('pinia_grouplist', res.data)
           }
         })
         await WEBIM.rongInit(res.data.userinfo.imtoken)
-        this.$u.vuex('vuex_home_loading', true)
+        this.$u.vuex('pinia_home_loading', true)
         uni.switchTab({
           url: '/pages/index/home'
         })

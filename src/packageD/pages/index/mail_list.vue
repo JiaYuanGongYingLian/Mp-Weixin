@@ -60,9 +60,9 @@
     <u-index-list
       :scrollTop="scrollTop"
       :sticky="false"
-      :indexList="vuex_indexList.letterArr"
+      :indexList="pinia_indexList.letterArr"
     >
-      <view v-for="(item, index) in vuex_indexList.list" :key="index">
+      <view v-for="(item, index) in pinia_indexList.list" :key="index">
         <u-index-anchor :use-slot="true" :index="item.letter">
           <view class="u-m-l-10">{{ item.letter }}</view>
         </u-index-anchor>
@@ -90,9 +90,9 @@
       </view>
     </u-index-list>
     <u-tabbar
-      v-model="vuex_current"
-      :activeColor="vuex_activeColor"
-      :list="vuex_tabbar"
+      v-model="pinia_current"
+      :activeColor="pinia_activeColor"
+      :list="pinia_tabbar"
       bg-color="rgba(249,249,249)"
     ></u-tabbar>
   </view>
@@ -147,9 +147,9 @@ export default {
     //       return val.letter
     //     })
     //     const list = { letterArr, list: friends }
-    //     this.$u.vuex('vuex_nlist', res.data.nlist)
-    //     this.$u.vuex('vuex_indexList', list)
-    //     this.$u.vuex('vuex_addfriendslist', res.data.addfriends)
+    //     this.$u.vuex('pinia_nlist', res.data.nlist)
+    //     this.$u.vuex('pinia_indexList', list)
+    //     this.$u.vuex('pinia_addfriendslist', res.data.addfriends)
     //   }
     // })
   },

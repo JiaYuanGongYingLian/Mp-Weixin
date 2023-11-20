@@ -26,3 +26,9 @@ page {
     fill: currentColor;
     overflow: hidden;
 }
+/* #ifdef H5 */
+html,body {
+    max-width: 820px;
+    margin: 0 auto;
+}
+/* #endif */

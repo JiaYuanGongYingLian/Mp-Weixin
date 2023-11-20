@@ -5,7 +5,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-09-12 15:28:50
+ * @LastEditTime: 2023-11-20 14:56:04
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -23,10 +23,10 @@ import {
   handleMapLocation
 } from '@/utils/index'
 import { useUserStore, useChatStore } from '@/store'
-import $config from '@/common/jim/config.js'
-import { emojiAllJson } from '@/common/jim/emoji.js'
 import c_foot from './c_foot.vue'
 
+const $config = reactive({})
+const emojiAllJson = reactive([])
 const userStore = useUserStore()
 const chatStore = useChatStore()
 const {
@@ -182,83 +182,19 @@ function toDetail(data: { userId: any }) {
                     {{ s.content.msg_body.text || '' }}
                   </view>
                 </template>
-                <template v-else-if="s.content.msg_type === 'image'">
-                  <view>
-                    <image
-                      @tap="previewImage([s.content.msg_body.image])"
-                      v-if="s.content.msg_body.type"
-                      :src="s.content.msg_body.image"
-                      :style="{
-                        'max-width': '250rpx',
-                        width: s.content.msg_body.width,
-                        height:
-                          s.content.msg_body.width < 500
-                            ? s.content.msg_body.height
-                            : (500 / s.content.msg_body.width) *
-                              s.content.msg_body.height
-                      }"
-                      mode="widthFix"
-                      class="l-upload-img"
-                    ></image>
-                    <image
-                      v-else
-                      @tap="
-                        previewImage([
-                          $config.jimLocalhost + s.content.msg_body.media_id
-                        ])
-                      "
-                      :src="$config.jimLocalhost + s.content.msg_body.media_id"
-                      :style="{
-                        'max-width': '250rpx',
-                        width: s.content.msg_body.width,
-                        height:
-                          s.content.msg_body.width < 500
-                            ? s.content.msg_body.height
-                            : (500 / s.content.msg_body.width) *
-                              s.content.msg_body.height
-                      }"
-                      mode="widthFix"
-                      class="l-upload-img"
-                    ></image>
-                  </view>
-                </template>
-                <template v-else-if="s.content.msg_type === 'location'">
-                  <!-- {{ s.content }} -->
-                  <view
-                    class="l-chat-location"
-                    @click="
-                      handleMapLocation({
-                        latitude: s.content.msg_body.latitude,
-                        longitude: s.content.msg_body.longitude,
-                        addr: s.content.msg_body.label
-                      })
-                    "
-                  >
-                    <view class="l-chat-con">
-                      <view class="name">{{ s.content.msg_body.label }}</view>
+                <button class="l-chat-file">
+                  <view class="l-chat-flie-view">
+                    <view class="l-cfv-name">
+                      {{ s.content }}
                     </view>
-                    <map
-                      :longitude="s.content.msg_body.longitude"
-                      :latitude="s.content.msg_body.latitude"
-                      style="width: 350rpx; height: 180rpx"
-                    ></map>
-                  </view>
-                </template>
-                <template v-else>
-                  <button class="l-chat-file">
-                    <view class="l-chat-flie-view">
-                      <view class="l-cfv-name">
-                        {{ s.content }}
-                      </view>
-                      <!-- <image
+                    <!-- <image
                               class="l-chat-file-img"
                               src="../../static/wenjian.png"
                               mode="aspectFill"
                             ></image> -->
-                    </view>
-                    <view class="l-chat-file-size"> 5.9MB </view>
-                  </button>
-                </template>
+                  </view>
+                  <view class="l-chat-file-size"> 5.9MB </view>
+                </button>
               </view>
             </view>
           </view>

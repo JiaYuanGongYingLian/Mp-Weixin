@@ -45,9 +45,9 @@
       ></u-search>
     </view>
     <view
-      v-if="ryStore.vuex_home_loading"
+      v-if="ryStore.pinia_home_loading"
       class="u-border-bottom"
-      v-for="(item, index) in ryStore.vuex_latestConversationList[
+      v-for="(item, index) in ryStore.pinia_latestConversationList[
         ryStore.userinfo.id
       ]"
       :key="index"
@@ -72,7 +72,7 @@
                 border-radius="12"
                 height="100"
                 v-if="!ingroup(item.targetId)"
-                :image="ryStore.vuex_nlist[item.targetId].avatar"
+                :image="ryStore.pinia_nlist[item.targetId].avatar"
                 threshold="300"
                 img-mode="aspectFill"
               ></u-lazy-load>
@@ -81,7 +81,7 @@
                 border-radius="12"
                 height="100"
                 v-if="ingroup(item.targetId)"
-                :image="ryStore.vuex_grouplist[item.targetId].avatar"
+                :image="ryStore.pinia_grouplist[item.targetId].avatar"
                 threshold="300"
                 img-mode="aspectFill"
               ></u-lazy-load>
@@ -94,10 +94,10 @@
             <view class="content">
               <view class="title">
                 <view v-if="!ingroup(item.targetId)">
-                  {{ ryStore.vuex_nlist[item.targetId].nickname }}
+                  {{ ryStore.pinia_nlist[item.targetId].nickname }}
                 </view>
                 <view v-if="ingroup(item.targetId)">
-                  {{ ryStore.vuex_grouplist[item.targetId].name }}
+                  {{ ryStore.pinia_grouplist[item.targetId].name }}
                 </view>
               </view>
               <view class="head_right">
@@ -116,10 +116,59 @@
         <!-- <u-line color="info" length="80%" /> -->
       </u-swipe-action>
     </view>
+    <view class="container">
+      <view
+        class="circle"
+        v-for="item in circleList.list"
+        :key="item.id"
+        @click="toGroupChat(item?.friendCircle)"
+      >
+        <view class="c-bot">
+          <view class="avatar-wrap">
+            <u-badge
+              :is-dot="true"
+              type="success"
+              is-center
+              v-if="item.unread_msg_count > 0"
+            ></u-badge>
+            <u-image
+              class="avatar"
+              width="120rpx"
+              height="120rpx"
+              border-radius="10rpx"
+              :src="getImgFullPath(item.friendCircle?.avatar)"
+            ></u-image>
+          </view>
+          <view class="con">
+            <view class="top">
+              <view class="name">{{ item.friendCircle?.name }}</view>
+              <view class="date">{{
+                dateFormat(
+                  new Date(item.friendCircle?.createTime * 1000),
+                  'MM-dd hh:mm'
+                )
+              }}</view>
+            </view>
+            <view class="desc"> {{ item?.friendCircle?.remark }}</view>
+          </view>
+        </view>
+      </view>
+      <u-empty
+        text="暂无消息"
+        mode="message"
+        v-if="!circleList.list.length"
+        margin-top="100"
+      ></u-empty>
+      <u-loadmore
+        v-if="circleList.list.length > 3"
+        :status="status"
+        margin-top="30"
+      />
+    </view>
     <!-- <u-tabbar
-      v-model="ryStore.vuex_current"
-      :activeColor="ryStore.vuex_activeColor"
-      :list="ryStore.vuex_tabbar"
+      v-model="ryStore.pinia_current"
+      :activeColor="ryStore.pinia_activeColor"
+      :list="ryStore.pinia_tabbar"
       bg-color="rgba(249,249,249)"
     ></u-tabbar> -->
     <hy-tabbar :midButton="true" :border-top="false"></hy-tabbar>
@@ -127,11 +176,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onMounted, reactive, ref } from 'vue'
+import { onLoad, onReachBottom } from '@dcloudio/uni-app'
 import { route } from '@/utils/common'
+import { getImgFullPath, dateFormat } from '@/utils/index'
 import { WEBIM } from '@/common/webim.js'
 import { useRyStore, useUserStore } from '@/store'
+import { socialApi } from '@/api'
 
 const ryStore = useRyStore()
 const userStore = useUserStore()
@@ -157,11 +208,11 @@ function click(index, index1) {
     // 点击了置顶
   } else if (index1 === 1) {
     // 点击了删除
-    this.vuex_latestConversationList[this.userinfo.id][index].show = false
+    this.pinia_latestConversationList[this.userinfo.id][index].show = false
     setTimeout(() => {
       WEBIM.delMessageList(
-        this.vuex_latestConversationList[this.userinfo.id][index].targetId,
-        this.vuex_latestConversationList[this.userinfo.id][index].type,
+        this.pinia_latestConversationList[this.userinfo.id][index].targetId,
+        this.pinia_latestConversationList[this.userinfo.id][index].type,
         index
       )
     }, 500)
@@ -202,13 +253,67 @@ function tabgroup(e) {
     }
   })
 }
+const circleList = reactive({
+  list: [],
+  loading: true,
+  pageIndex: 1,
+  pageSize: 20
+})
+const status = ref('loadmore')
+async function getList() {
+  if (status.value === 'nomore') return
+  try {
+    const { data } = await socialApi.circleUserList({
+      pageIndex: circleList.pageIndex,
+      pageSize: circleList.pageSize,
+      detail: true,
+      type: 0,
+      userId: userStore.userInfo.id
+    })
+    const { records, current, pages } = data
+    circleList.list.push(...records)
+    if (current < pages && pages !== 0) {
+      circleList.pageIndex += 1
+    } else {
+      status.value = 'nomore'
+    }
+    console.log(circleList.list)
+  } catch {}
+}
+async function toGroupChat(item: {
+  type?: any
+  chatGroupId: any
+  id: any
+  name?: any
+  joined?: boolean
+}) {
+  uni.navigateTo({
+    url: `/packageA/pages/chat/index?uuid=${item.chatGroupId}&groupName=${item.name}&type=1`
+    // url: `/packageA/pages/chat/index?groupId=75293282&groupName=${item.name}`
+  })
+}
+function toChat(data: { username: any }) {
+  uni.navigateTo({
+    url: `/packageA/pages/chat/index?username=${data?.username}`
+  })
+}
 onLoad(async (opt) => {
-  console.log('rongToken===> ',userStore.userInfo?.rongToken)
-  await WEBIM.rongInit(userStore.userInfo?.rongToken)
+  console.log('rongToken===> ', userStore.userInfo?.rongToken)
+  // await WEBIM.rongInit(userStore.userInfo?.rongToken)
+  await WEBIM.rongInit(
+    'jIayahCklyCLcAumQMPQKk5wth+1k2ccmxFDx9sZP5s=@d7fv.cn.rongnav.com;d7fv.cn.rongcfg.com'
+  )
+})
+onMounted(() => {
+  getList()
+})
+onReachBottom(() => {
+  getList()
 })
 </script>
 
 <style lang="scss">
+@import '@/styles/helper.scss';
 .list-wrap {
   padding: 18rpx;
   .body-item {
@@ -277,6 +382,53 @@ onLoad(async (opt) => {
     border-style: solid;
     border-color: transparent rgba(76, 76, 76, 76) transparent transparent;
     transform: rotate(90deg); /*顺时针旋转90°*/
+  }
+}
+.container {
+  padding: 20rpx;
+}
+
+.circle {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 10rpx;
+
+  .c-bot {
+    display: flex;
+    align-items: flex-start;
+    .avatar-wrap {
+      position: relative;
+    }
+    .avatar {
+      flex-shrink: 0;
+    }
+
+    .con {
+      margin-left: 20rpx;
+      flex: 1;
+
+      .top {
+        display: flex;
+        justify-content: space-between;
+
+        .name {
+          font-weight: bold;
+          font-size: 30rpx;
+        }
+
+        .date {
+          font-size: 24rpx;
+          color: #999;
+        }
+      }
+
+      .desc {
+        margin-top: 20rpx;
+        @include ellipsis(2);
+        color: #666;
+      }
+    }
   }
 }
 </style>

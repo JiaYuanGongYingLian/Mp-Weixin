@@ -202,14 +202,14 @@
 						"backgroundColor": "#F5F5F5"
 					}
 				},
-				// {
-				// 	"path": "pages/chat/index",
-				// 	"style": {
-				// 		"navigationBarTitleText": "圈子群聊",
-				// 		"navigationStyle": "custom",
-				// 		"backgroundColor": "#F5F5F5"
-				// 	}
-				// },
+				{
+					"path": "pages/chat/index",
+					"style": {
+						"navigationBarTitleText": "群聊",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5"
+					}
+				},
 				{
 					"path": "pages/message/index",
 					"style": {

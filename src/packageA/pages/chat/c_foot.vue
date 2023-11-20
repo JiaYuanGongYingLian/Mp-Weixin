@@ -3,7 +3,7 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-11-16 17:15:55
+ * @LastEditTime: 2023-11-20 16:06:42
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -15,9 +15,10 @@ import { storeToRefs } from 'pinia'
 import { socialApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { $toast } from '@/utils/common'
-import { useUserStore, useChatStore } from '@/store'
-import { emoji } from '@/common/jim/emoji.js'
+import { useUserStore, useChatStore, useRyStore } from '@/store'
+import { WEBIM } from '@/common/webim.js'
 
+const emoji = reactive([])
 const props = withDefaults(
   defineProps<{
     chatType?: string
@@ -31,6 +32,7 @@ const isSingle = computed(() => {
 })
 const userStore = useUserStore()
 const chatStore = useChatStore()
+const ryStore = useRyStore()
 const { chatHasLogin, singleInfo, groupInfo } = storeToRefs(chatStore)
 const videoList = reactive({
   list: [],
@@ -197,7 +199,7 @@ function sendMsg() {
       target_gname: groupInfo.value.name
     }
   }
-  chatStore[isSingle.value ? 'jimSendSingleMsg' : 'jimSendGroupMsg'](params)
+  // WEBIM.send_message(uuid, content, type, group = false)
   content.value = ''
 }
 

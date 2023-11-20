@@ -40,9 +40,9 @@
       </u-cell-group>
     </view>
     <u-tabbar
-      v-model="ryStore.vuex_current"
-      :activeColor="ryStore.vuex_activeColor"
-      :list="ryStore.vuex_tabbar"
+      v-model="ryStore.pinia_current"
+      :activeColor="ryStore.pinia_activeColor"
+      :list="ryStore.pinia_tabbar"
       bg-color="rgba(249,249,249)"
     ></u-tabbar>
   </view>

@@ -19,9 +19,9 @@ try {
 // 需要永久存储，且下次应用启动需要取出的，在state中的变量名
 const saveStateKeys = [
   'userinfo',
-  'vuex_latestConversationList',
-  'vuex_messagelist'
-] // vuex_nlist vuex_grouplist
+  'pinia_latestConversationList',
+  'pinia_messagelist'
+] // pinia_nlist pinia_grouplist
 // 保存变量到本地存储中
 const saveLifeData = (key: string, value: any) => {
   // 判断变量名是否在需要存储的数组中
@@ -41,25 +41,25 @@ const useStore = defineStore('ry', {
     totalUnreadCount: { home: 0, list: 0 },
     friendsUnreadCount: 0,
 
-    vuex_latestConversationList: lifeData.vuex_latestConversationList
-      ? lifeData.vuex_latestConversationList
+    pinia_latestConversationList: lifeData.pinia_latestConversationList
+      ? lifeData.pinia_latestConversationList
       : {},
-    vuex_messagelist: lifeData.vuex_messagelist
-      ? lifeData.vuex_messagelist
+    pinia_messagelist: lifeData.pinia_messagelist
+      ? lifeData.pinia_messagelist
       : {},
-    vuex_nlist: {}, // lifeData.vuex_nlist ? lifeData.vuex_nlist :
-    vuex_indexList: [],
-    vuex_friendslist: [],
-    vuex_grouplist: [],
-    vuex_addfriendslist: [],
-    vuex_user: null,
-    vuex_home_loading: false,
+    pinia_nlist: {}, // lifeData.pinia_nlist ? lifeData.pinia_nlist :
+    pinia_indexList: [],
+    pinia_friendslist: [],
+    pinia_grouplist: [],
+    pinia_addfriendslist: [],
+    pinia_user: null,
+    pinia_home_loading: false,
 
     head_background: { backgroundColor: 'rgba(237,237,237)' },
     api_url: 'http://127.0.0.1/',
-    vuex_current: 1,
-    vuex_activeColor: '#5098FF',
-    vuex_tabbar: [
+    pinia_current: 1,
+    pinia_activeColor: '#5098FF',
+    pinia_tabbar: [
       {
         iconPath: 'chat',
         selectedIconPath: 'chat-fill',

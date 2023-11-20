@@ -21,7 +21,7 @@
 				}
 				this.$u.api.getfriends({username:this.value}).then(res => {
 					if(res.code == 1){
-						this.$u.vuex('vuex_user', res.msg);
+						this.$u.vuex('pinia_user', res.msg);
 						route({
 							url: 'pages/public/user/usercard',
 							params:{

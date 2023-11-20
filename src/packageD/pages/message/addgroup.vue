@@ -4,9 +4,9 @@
     <u-index-list
       :scrollTop="scrollTop"
       :sticky="false"
-      :indexList="ryStore.vuex_indexList.letterArr"
+      :indexList="ryStore.pinia_indexList.letterArr"
     >
-      <view v-for="(item, index) in ryStore.vuex_indexList.list" :key="index">
+      <view v-for="(item, index) in ryStore.pinia_indexList.list" :key="index">
         <u-index-anchor :use-slot="true" :index="item.letter">
           <view class="u-m-l-10">{{ item.letter }}</view>
         </u-index-anchor>

@@ -21,7 +21,7 @@ import { WEBIM } from '@/packageD/common/webim.js';
       @click="click"
       :options="options"
       :index="index"
-      v-for="(item, index) in vuex_addfriendslist"
+      v-for="(item, index) in pinia_addfriendslist"
     >
       <view class="list-wrap">
         <view class="body-item">
@@ -74,7 +74,7 @@ export default {
     this.$u.api.getfriendlist().then((res) => {
       console.log('更新好友数据')
       if (res.code == 1) {
-        this.$u.vuex('vuex_addfriendslist', res.data.addfriends)
+        this.$u.vuex('pinia_addfriendslist', res.data.addfriends)
       }
     })
   },
@@ -86,16 +86,16 @@ export default {
     },
     click(index, index1) {
       WEBIM.delMessageList(
-        this.vuex_friendslist[index].targetId,
-        this.vuex_friendslist[index].type,
+        this.pinia_friendslist[index].targetId,
+        this.pinia_friendslist[index].type,
         index
       )
-      // console.log(this.vuex_friendslist[index])
+      // console.log(this.pinia_friendslist[index])
     },
     usercard(username) {
       this.$u.api.getfriends({ username }).then((res) => {
         if (res.code == 1) {
-          this.$u.vuex('vuex_user', res.msg)
+          this.$u.vuex('pinia_user', res.msg)
           route({
             url: 'pages/public/user/usercard',
             params: {
