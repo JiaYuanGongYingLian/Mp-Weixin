@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady, onShareAppMessage } from '@dcloudio/uni-app'
-import { logo } from '@/common/config'
+import { LOGO } from '@/common/config'
 
 const version = ref('0001')
 const phoneNumber = ref('4006381238')
@@ -22,7 +22,7 @@ onShareAppMessage((_res) => {
 <template>
   <div class="container about">
     <hy-nav-bar :title="'关于我们'"></hy-nav-bar>
-    <image :src="logo" class="logo"></image>
+    <image :src="LOGO" class="logo"></image>
     <view class="tit">链通家园</view>
     <view class="ver">V{{ version }}</view>
     <view class="content"

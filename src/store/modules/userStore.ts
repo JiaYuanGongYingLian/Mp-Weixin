@@ -1,10 +1,9 @@
 /* eslint-disable no-empty */
 import { defineStore } from 'pinia'
 import { getQueryVariable,isEmptyObject } from '@/utils/common'
-import useChatStore from './chatStore'
+import { BASEURL } from '@/common/config'
+import useRyStore from './ryStore'
 import useConfigStore from './configStore'
-// const BASEURL = 'https://api.blacksilverscore.com'
-const BASEURL = 'https://eduapi.songzi-it.com'
 const userStore = defineStore('user', {
   state: () => ({
     isAuthorize: false, // 是否授权
@@ -59,6 +58,9 @@ const userStore = defineStore('user', {
       // 登陆极光IM
       // const chatStore = useChatStore()
       // await chatStore.jimLoginFn()
+      // 登陆融云IM
+      const ryStore = useRyStore()
+      ryStore.connect(this.userInfo?.rongToken)
     },
     syncClearToken() {
       this.accessToken = ''

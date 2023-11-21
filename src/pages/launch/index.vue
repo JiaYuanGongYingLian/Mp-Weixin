@@ -15,7 +15,7 @@ https://wap.blacksilverscore.com/?redirect_url=/pages/productDetail/index&qrcode
 
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app'
-import { logo } from '@/common/config'
+import { LOGO } from '@/common/config'
 import { useUserStore, useConfigStore } from '@/store'
 import { getQueryObject, getQueryVariable, parseParams } from '@/utils/common'
 import { baseApi } from '@/api'
@@ -131,7 +131,7 @@ onLoad(async (option) => {
 <template>
   <div class="launch">
     <view class="content" style="--num: 150">
-      <image class="logo" :src="logo" mode="widthFix" />
+      <image class="logo" :src="LOGO" mode="widthFix" />
       <text class="name">开心家园</text>
       <view class="dot"></view>
     </view>

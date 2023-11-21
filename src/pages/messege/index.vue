@@ -180,7 +180,6 @@ import { onMounted, reactive, ref } from 'vue'
 import { onLoad, onReachBottom } from '@dcloudio/uni-app'
 import { route } from '@/utils/common'
 import { getImgFullPath, dateFormat } from '@/utils/index'
-import { WEBIM } from '@/common/webim.js'
 import { useRyStore, useUserStore } from '@/store'
 import { socialApi } from '@/api'
 
@@ -288,7 +287,7 @@ async function toGroupChat(item: {
   joined?: boolean
 }) {
   uni.navigateTo({
-    url: `/packageA/pages/chat/index?uuid=${item.chatGroupId}&groupName=${item.name}&type=1`
+    url: `/packageA/pages/chat/index?targetId=${item.chatGroupId}&groupName=${item.name}&type=1`
     // url: `/packageA/pages/chat/index?groupId=75293282&groupName=${item.name}`
   })
 }
@@ -297,13 +296,7 @@ function toChat(data: { username: any }) {
     url: `/packageA/pages/chat/index?username=${data?.username}`
   })
 }
-onLoad(async (opt) => {
-  console.log('rongToken===> ', userStore.userInfo?.rongToken)
-  // await WEBIM.rongInit(userStore.userInfo?.rongToken)
-  await WEBIM.rongInit(
-    'jIayahCklyCLcAumQMPQKk5wth+1k2ccmxFDx9sZP5s=@d7fv.cn.rongnav.com;d7fv.cn.rongcfg.com'
-  )
-})
+onLoad(async (opt) => {})
 onMounted(() => {
   getList()
 })

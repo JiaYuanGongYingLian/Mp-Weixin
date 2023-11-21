@@ -1,3 +1,4 @@
+<!-- eslint-disable consistent-return -->
 <!-- eslint-disable no-plusplus -->
 <!-- eslint-disable no-unused-expressions -->
 <!-- eslint-disable no-use-before-define -->
@@ -5,19 +6,13 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-20 18:31:10
+ * @LastEditTime: 2023-11-21 17:24:48
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import {
-  imkit,
-  CoreEvent,
-  DisabledMessageContextMenu,
-  DisabledConversationontextMenu
-} from '@rongcloud/imkit'
-import { reactive, ref, computed, onBeforeMount, watch } from 'vue'
+import { reactive, ref, computed, onBeforeMount, watch, onUnmounted } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi } from '@/api'
@@ -35,16 +30,8 @@ const $config = reactive({})
 const emojiAllJson = reactive([])
 const userStore = useUserStore()
 const chatStore = useChatStore()
-const {
-  chatHasLogin,
-  chatList,
-  jimUserInfo,
-  singleInfo,
-  singleInfoAvatar,
-  jimUserInfoAvatar,
-  syncConversation,
-  groupMemberList
-} = storeToRefs(chatStore)
+const { chatList, singleInfo, syncConversation, groupMemberList } =
+  storeToRefs(chatStore)
 watch(
   [chatList, syncConversation],
   (n) => {
@@ -54,7 +41,6 @@ watch(
   },
   { deep: true }
 )
-
 const chatScrollTop = ref(999999)
 const thouUsername = ref('')
 const groupInfo = reactive({
@@ -72,50 +58,24 @@ function setChatScrollTop(arg_isScrollHeight?: boolean | undefined) {
     chatScrollTop.value += 1
   }, 200)
 }
-const chatType = ref('single')
-const messageList = ref()
+const chatType = ref(0)
+const targetId = ref()
 onLoad((option) => {
   thouUsername.value = option?.username || ''
   groupInfo.gid = option?.groupId
   groupInfo.name = option?.groupName
-  if (thouUsername.value) {
-    chatHasLogin.value && chatStore.jimGetSingleInfo(thouUsername.value)
-  } else {
-    chatHasLogin.value && chatStore.jimGetGroupInfo(groupInfo.gid)
-    chatType.value = 'group'
-  }
+  chatType.value = Number(option?.type)
+  targetId.value = option?.targetId
 })
-function showTime(i: number) {
-  if (i === 0) return true
-  const s_time = chatList.value[i - 1]?.ctime_ms
-  const e_time = chatList.value[i]?.ctime_ms
-  return e_time - s_time > 60 * 1000
-}
-function getGroupMemberAvatar(username: any) {
-  for (let i = 0; i < groupMemberList.value.length; i++) {
-    if (
-      groupMemberList.value[i].username === username &&
-      groupMemberList.value[i].avatar
-    ) {
-      return `${$config.jimLocalhost}${groupMemberList.value[i].avatar}`
-    }
-  }
-  return $config.$defaultAvatar
-}
-function toDetail(data: { userId: any }) {
-  // uni.navigateTo({
-  //   url: `/packageA/pages/businessCard/index?&userId=${data.userId}`
-  // })
-}
+onUnmounted(() => {})
 </script>
 <template>
   <view class="container">
     <hy-nav-bar
-      :title="chatType === 'group' ? groupInfo.name : singleInfo.nickname"
+      :title="chatType === 1 ? groupInfo.name : singleInfo.nickname"
     ></hy-nav-bar>
     <view class="l-chat-body" @tap="onChatClick">
-      <message-list ref="messageList" base-size="10px" />
-      <!-- <scroll-view
+      <scroll-view
         scroll-y="true"
         class="l-char-scroll"
         scroll-with-animation
@@ -144,7 +104,7 @@ function toDetail(data: { userId: any }) {
                   v-if="s.content.from_id !== jimUserInfo.username"
                   @click="toDetail({ userId: s.content.from_id.split('_')[1] })"
                   :src="
-                    chatType === 'group'
+                    chatType === 1
                       ? getGroupMemberAvatar(s.content.from_id)
                       : singleInfoAvatar
                   "
@@ -160,7 +120,7 @@ function toDetail(data: { userId: any }) {
                 ></u-image>
               </view>
               <view class="l-chat-view">
-                <view class="l-chat-name" v-if="chatType === 'group'">
+                <view class="l-chat-name" v-if="chatType === 1">
                   {{
                     s.content.from_id === jimUserInfo.username
                       ? jimUserInfo.nickname || jimUserInfo.username
@@ -200,9 +160,14 @@ function toDetail(data: { userId: any }) {
             </view>
           </view>
         </view>
-      </scroll-view> -->
+      </scroll-view>
     </view>
-    <c_foot ref="footerRef" @on-focus="setChatScrollTop" :chatType="chatType" />
+    <c_foot
+      ref="footerRef"
+      @on-focus="setChatScrollTop"
+      :chatType="chatType"
+      :target-id="targetId"
+    />
   </view>
 </template>
 

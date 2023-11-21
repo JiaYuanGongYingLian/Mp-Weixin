@@ -3,20 +3,16 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 22:57:23
- * @LastEditTime: 2023-11-20 16:05:18
+ * @LastEditTime: 2023-11-21 15:09:39
  * @LastEditors:  Please set LastEditors
  */
 /* eslint-disable consistent-return */
 // import Vue from 'vue'
-import * as RongIMLib from '@rongcloud/imlib-next'
+import RongIMLib from './im_init'
 import { useRyStore } from '@/store'
 
 const store = useRyStore()
-
-RongIMLib.init({ appkey: 'x18ywvqfxzu6c' })
-console.log('融云初始化=======>', RongIMLib)
 const { Events } = RongIMLib
-
 RongIMLib.addEventListener(Events.CONNECTING, () => {
   console.log('正在链接服务器')
 })
@@ -28,7 +24,7 @@ RongIMLib.addEventListener(Events.MESSAGES, (evt) => {
 })
 const { state } = store
 // RongIMLib.registerMessageType('app:hongbao', true, true)
-const WEBIM = {
+export default WEBIM = {
   ScanAudio() {
     const innerAudioContext = uni.createInnerAudioContext()
     innerAudioContext.autoplay = true
@@ -100,7 +96,7 @@ const WEBIM = {
       .then((res) => {
         if (res.code === RongIMLib.ErrorCode.SUCCESS) {
           // this.rongWatch()
-          this.getlist()
+          // this.getlist()
           // RongIMLib.Conversation.getTotalUnreadCount().then(function(totalUnreadCount) {
           //   console.log('获取未读总数成功', totalUnreadCount);
           // })
@@ -120,7 +116,7 @@ const WEBIM = {
     const that = this
     RongIMLib.getConversationList()
       .then((res) => {
-        console.log(res,899)
+        console.log(res, 899)
         const { code, data: conversationList } = res
         if (code === 0) {
           console.log('获取会话列表成功', conversationList)
@@ -218,5 +214,3 @@ const WEBIM = {
     })
   }
 }
-
-export { WEBIM, RongIMLib }

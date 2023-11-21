@@ -2,7 +2,7 @@
 <template>
   <view>
     <u-navbar
-      :title="ryStore.pinia_nlist[uuid]?.nickname"
+      :title="ryStore.pinia_nlist[targetId]?.nickname"
       :background="ryStore.head_background"
       :title-bold="true"
     >
@@ -19,7 +19,7 @@
       >
         <u-avatar
           v-if="item.messageDirection == 2"
-          :src="pinia_nlist[uuid].avatar"
+          :src="ryStore.pinia_nlist[targetId].avatar"
           mode="square"
         ></u-avatar>
         <view class="main">
@@ -207,17 +207,17 @@
 import { reactive, ref, computed, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { route } from '@/utils/common'
-import { WEBIM } from '@/common/webim.js'
 import { useRyStore } from '@/store'
 
 const ryStore = useRyStore()
+const WEBIM = {}
 const bottom = ref('0rpx')
 const show = ref(false)
 const hongbaoshow = ref(false)
 const openhongbao = ref(false)
 const avatar = ref(null)
 const nickname = ref(null)
-const uuid = ref(null)
+const targetId = ref(null)
 const list = ref([])
 const value = ref('')
 const value2 = ref('')
@@ -268,14 +268,15 @@ watch(ryStore, (store) => {
 
 // eslint-disable-next-line consistent-return
 onLoad(async (opt) => {
-  if (!opt?.uuid || !opt?.type) {
+  if (!opt?.targetId || !opt?.type) {
     uni.navigateBack()
     return false
   }
-  uuid.value = opt.uuid
-  list.value = ryStore.pinia_messagelist[ryStore.userinfo.id][uuid.value]
+  targetId.value = opt.targetId
+  list.value =
+    ryStore.pinia_messagelist[ryStore.userinfo.id][targetId.value] || []
   console.log(list.value)
-  await WEBIM.delMessage(uuid.value, false)
+  await ryStore.delMessage(targetId.value, false)
   setTimeout(() => {
     uni.pageScrollTo({
       scrollTop: 99999,
@@ -287,7 +288,7 @@ function submit() {
   if (!value.value) {
     return
   }
-  WEBIM.send_message(uuid.value, value.value, 'RC:TxtMsg')
+  WEBIM.send_message(targetId.value, value.value, 'RC:TxtMsg')
   value.value = ''
 }
 function showpopup() {
@@ -315,7 +316,7 @@ function submithb() {
     })
   }
   // this.$u.api
-  //   .sendHB({ to: this.uuid, size: 1, money: this.value2, ps: this.ps })
+  //   .sendHB({ to: this.targetId, size: 1, money: this.value2, ps: this.ps })
   //   .then((res) => {
   //     console.log(res)
   //     if (res.code == 1) {
@@ -323,7 +324,7 @@ function submithb() {
   //         hongbaoid: res.data.id,
   //         ps: res.data.ps
   //       }
-  //       WEBIM.send_message(this.uuid, param, 'app:hongbao')
+  //       WEBIM.send_message(this.targetId, param, 'app:hongbao')
   //       this.sethongbaoshow()
   //       this.$u.toast(res.msg)
   //     } else {
@@ -715,3 +716,4 @@ page {
   }
 }
 </style>
+@/common/rongYun/webim.js

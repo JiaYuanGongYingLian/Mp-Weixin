@@ -7,7 +7,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { Md5 } from 'ts-md5'
 import { useUserStore, useChatStore, useConfigStore } from '@/store'
 import { baseApi, userApi } from '@/api'
-import { logo } from '@/common/config'
+import { LOGO } from '@/common/config'
 import { isWeChat, getQueryVariable } from '@/utils/common'
 import wxShare from '@/common/wechat-share'
 
@@ -216,7 +216,7 @@ onLoad(async (option) => {
       :title-bold="true"
       color="#333"
     ></u-navbar>
-    <image class="logo" :src="logo" mode="widthFix" />
+    <image class="logo" :src="LOGO" mode="widthFix" />
     <view class="form">
       <!-- #ifdef H5 -->
       <view v-if="!isWeChatOfficial">

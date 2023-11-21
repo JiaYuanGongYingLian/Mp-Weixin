@@ -1,3 +1,4 @@
+<!-- eslint-disable consistent-return -->
 <template>
   <view>
     <u-navbar
@@ -222,7 +223,9 @@
 
 <script>
 import { route } from '@/utils/common'
-import { WEBIM } from '@/common/webim.js'
+import { useRyStore } from '@/store'
+
+const ryStore = useRyStore()
 
 export default {
   data() {
@@ -294,7 +297,7 @@ export default {
     }
     this.uuid = opt.uuid
     this.list = this.pinia_messagelist[this.uuid]
-    await WEBIM.delMessage(this.uuid, true)
+    await ryStore.delMessage(this.uuid, true)
     setTimeout(() => {
       uni.pageScrollTo({
         scrollTop: 99999,
@@ -307,7 +310,7 @@ export default {
       if (!this.value) {
         return
       }
-      WEBIM.send_message(this.uuid, this.value, 'RC:TxtMsg', true)
+      ryStore.send_message(this.uuid, this.value, 'RC:TxtMsg', true)
       this.value = ''
     },
     showpopup() {
@@ -324,7 +327,7 @@ export default {
       this.hongbaoshow = !this.hongbaoshow
     },
     submithb() {
-      if (this.value2 == '') {
+      if (this.value2 === '') {
         return false
       }
       if (!this.$u.test.amount(this.value2)) {
@@ -356,7 +359,7 @@ export default {
               hongbaoid: res.data.id,
               ps: res.data.ps
             }
-            WEBIM.send_message(this.uuid, param, 'app:hongbao', true)
+            ryStore.send_message(this.uuid, param, 'app:hongbao', true)
             this.sethongbaoshow()
             this.$u.toast(res.msg)
           } else {
@@ -402,12 +405,12 @@ export default {
       })
     },
     receive_hongbao(e) {
-      if (e == '') {
+      if (e === '') {
         return false
       }
       this.$u.api.openHB({ id: e }).then((res) => {
         console.log(res)
-        if (res.code == 1) {
+        if (res.code === 1) {
           this.openhongbao = false
           route({
             url: 'pages/message/hongbao_record',
@@ -421,7 +424,7 @@ export default {
       })
     },
     tabhbinfo(e) {
-      if (e == '') {
+      if (e === '') {
         return false
       }
       route({

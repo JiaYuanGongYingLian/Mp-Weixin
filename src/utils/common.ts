@@ -4,7 +4,7 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
-import { uploadUrl } from '@/common/config'
+import { UPLOADURL } from '@/common/config'
 // url所有传参获取
 export function getQueryObject(url: string) {
   url = url || window.location.href
@@ -261,7 +261,7 @@ export const imageUrlToFile = async (url: string) => {
 export const wxUploadImage = (filePath: any) => {
   return new Promise((resolve, reject) => {
     uni.uploadFile({
-      url: uploadUrl,
+      url: UPLOADURL,
       filePath,
       name: 'object',
       header: {

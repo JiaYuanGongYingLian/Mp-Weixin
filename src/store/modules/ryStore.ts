@@ -1,16 +1,22 @@
+/* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-empty */
-/*
- * @Description: 融云
- * @Author: Kerwin
- * @Date: 2023-11-14 17:49:27
- * @LastEditTime: 2023-11-18 16:16:23
- * @LastEditors:  Please set LastEditors
- */
-import { defineStore } from 'pinia'
 
+import { defineStore } from 'pinia'
+import RongIMLib from '@/common/rongYun/im_init'
+
+const { Events } = RongIMLib
+RongIMLib.addEventListener(Events.CONNECTING, () => {
+  console.log('正在链接服务器')
+})
+RongIMLib.addEventListener(Events.CONNECTED, () => {
+  console.log('已经链接到服务器')
+})
+RongIMLib.addEventListener(Events.MESSAGES, (evt) => {
+  console.log(evt.messages)
+})
 let lifeData = {}
 try {
   // 尝试获取本地是否存在lifeData变量，第一次启动应用时是不存在的
@@ -37,16 +43,11 @@ const saveLifeData = (key: string, value: any) => {
 }
 const useStore = defineStore('ry', {
   state: () => ({
-    userinfo: lifeData.userinfo ? lifeData.userinfo : null,
+    userinfo: lifeData.userinfo ?? null,
     totalUnreadCount: { home: 0, list: 0 },
     friendsUnreadCount: 0,
-
-    pinia_latestConversationList: lifeData.pinia_latestConversationList
-      ? lifeData.pinia_latestConversationList
-      : {},
-    pinia_messagelist: lifeData.pinia_messagelist
-      ? lifeData.pinia_messagelist
-      : {},
+    pinia_latestConversationList: lifeData.pinia_latestConversationList ?? {},
+    pinia_messagelist: lifeData.pinia_messagelist ?? {},
     pinia_nlist: {}, // lifeData.pinia_nlist ? lifeData.pinia_nlist :
     pinia_indexList: [],
     pinia_friendslist: [],
@@ -54,7 +55,6 @@ const useStore = defineStore('ry', {
     pinia_addfriendslist: [],
     pinia_user: null,
     pinia_home_loading: false,
-
     head_background: { backgroundColor: 'rgba(237,237,237)' },
     api_url: 'http://127.0.0.1/',
     pinia_current: 1,
@@ -83,28 +83,308 @@ const useStore = defineStore('ry', {
     ]
   }),
   actions: {
-    $uStore(
-      state: { [x: string]: any },
-      payload: { name: string; value: any }
-    ) {
+    $uStore(name: string, value: RongIMLib.IAReceivedConversation[]) {
+      // debugger
       // 判断是否多层级调用，state中为对象存在的情况，诸如user.info.score = 1
-      const nameArr = payload.name.split('.')
+      const nameArr = name.split('.')
       let saveKey = ''
       const len = nameArr.length
       if (len >= 2) {
-        let obj = state[nameArr[0]]
+        let obj = this[nameArr[0]]
         for (let i = 1; i < len - 1; i++) {
           obj = obj[nameArr[i]]
         }
-        obj[nameArr[len - 1]] = payload.value
+        obj[nameArr[len - 1]] = value
         saveKey = nameArr[0]
       } else {
         // 单层级变量，在state就是一个普通变量的情况
-        state[payload.name] = payload.value
-        saveKey = payload.name
+        this[name] = value
+        saveKey = name
       }
       // 保存变量到本地，见顶部函数定义
-      saveLifeData(saveKey, state[saveKey])
+      saveLifeData(saveKey, this[saveKey])
+    },
+    // 建立链接
+    connect(token: string) {
+      RongIMLib.connect(token)
+        .then((res) => {
+          if (res.code === RongIMLib.ErrorCode.SUCCESS) {
+            // this.rongWatch()
+            // this.getlist()
+            // RongIMLib.Conversation.getTotalUnreadCount().then(function(totalUnreadCount) {
+            //   console.log('获取未读总数成功', totalUnreadCount);
+            // })
+            res.data.id = res.data?.userId
+            this.userinfo = res.data
+            console.log('链接成功, 链接用户 id 为: ', res.data.userId)
+          } else {
+            console.warn('链接失败, code:', res)
+          }
+        })
+        .catch((error) => {
+          uni.showToast({ title: '连接服务器失败', icon: 'none' })
+          console.log('链接失败: ', error)
+        })
+    },
+    ScanAudio() {
+      const innerAudioContext = uni.createInnerAudioContext()
+      innerAudioContext.autoplay = true
+      innerAudioContext.src = '../static/raw/Message_prompt.mp3'
+      innerAudioContext.play()
+    },
+    // 全局更新
+    setvar(name: string, value: RongIMLib.IAReceivedConversation[]) {
+      this.$uStore(name, value)
+    },
+    // 初始化监听
+    rongWatch() {
+      const that = this
+      RongIMLib.watch({
+        conversation(event: { updatedConversationList: any }) {
+          const conversationList =
+            this.pinia_latestConversationList[this.userinfo.id]
+          const { updatedConversationList } = event
+          if (typeof updatedConversationList[0].latestMessage !== 'undefined') {
+            if (
+              updatedConversationList[0].latestMessage.messageType ==
+              'RC:ContactNtf'
+            ) {
+              const conversationLists = this.pinia_friendslist
+              const latestConversationLists = RongIMLib.Conversation.merge({
+                conversationLists,
+                updatedConversationList
+              })
+              console.log(conversationLists, latestConversationLists)
+              return false
+            }
+          }
+          console.log('会话更新', updatedConversationList)
+          const latestConversationList = RongIMLib.Conversation.merge({
+            conversationList,
+            updatedConversationList
+          })
+          console.log('计算会话', latestConversationList)
+          that.setvar(
+            `pinia_latestConversationList.${this.userinfo.id}`,
+            latestConversationList
+          )
+        },
+        async message(event: { message: any }) {
+          that.ScanAudio()
+          const { message } = event
+          const connect = message.content.content
+          const { id } = this.userinfo
+          const pinia_messagelist = this.pinia_messagelist[id]
+          // if(!this.pinia_messagelist[message.targetId]){
+          // 	pinia_messagelist[message.targetId] = [];
+          // 	that.setvar('pinia_messagelist.',pinia_messagelist);
+          // }
+          pinia_messagelist[message.targetId].push(message)
+          that.setvar(
+            `pinia_messagelist.${this.userinfo.id}`,
+            pinia_messagelist
+          )
+          console.log(message)
+          console.log('接收消息成功，消息内容为:', message.content.content)
+        },
+        status(event: { status: any }) {
+          const { status } = event
+          console.log('正在连接；连接状态码:', status)
+        }
+      })
+    },
+
+    // 获取会话列表
+    getlist() {
+      const that = this
+      RongIMLib.getConversationList()
+        .then((res) => {
+          console.log(res, 899)
+          const { code, data: conversationList } = res
+          if (code === 0) {
+            console.log('获取会话列表成功', conversationList)
+            const list = []
+            const friendslist = []
+            const homeUnreadCount = 0
+            const friendsUnreadCount = 0
+            const { id } = this.userinfo
+            const messagelist = this.pinia_messagelist[id]
+            console.log(messagelist)
+            for (let i = 0; i < conversationList.length; i++) {
+              const index = conversationList[i]
+              const uuid = index.targetId
+              if (index.latestMessage.messageType !== 'RC:ContactNtf') {
+                index.show = false
+                list.push(index)
+                if (!messagelist[uuid]) {
+                  messagelist[index.targetId] = []
+                  that.setvar(`pinia_messagelist.${id}`, messagelist)
+                }
+                // homeUnreadCount = homeUnreadCount+index.unreadMessageCount;
+              } else if (
+                index.latestMessage.messageType === 'RC:ContactNtf' &&
+                index.type === 6
+              ) {
+                // index.read = false;
+                // friendslist.push(index);
+                // friendsUnreadCount = friendsUnreadCount+1;
+              }
+            }
+            console.log('消息会话', list)
+            // // console.log(friendslist)
+            // this.pinia_tabbar[0].count = homeUnreadCount;
+            // this.pinia_tabbar[1].count = friendsUnreadCount;
+            this.setvar(`pinia_latestConversationList.${id}`, list)
+            // // this.setvar('pinia_friendslist',friendslist);
+            // this.setvar('friendsUnreadCount',friendsUnreadCount);
+          } else {
+            console.log('获取会话列表失败: ', error.code, error.msg)
+          }
+        })
+        .catch((error) => {
+          console.log('获取会话列表失败: ', error)
+        })
+    },
+
+    delMessage(uuid: any, group = false) {
+      const conversation = RongIMLib.Conversation.get({
+        targetId: uuid,
+        type: group
+          ? RongIMLib.ConversationType.GROUP
+          : RongIMLib.ConversationType.PRIVATE
+      })
+      conversation.read().then(() => {
+        console.log('清除未读数成功') // RongIMLib.watch conversation 将被触发
+      })
+    },
+
+    delMessageList(uuid: any, type: any, id: any) {
+      const conversation = RongIMLib.Conversation.get({
+        targetId: uuid,
+        type
+      })
+      conversation.destory().then(() => console.log('删除会话成功'))
+      const uid = this.userinfo.id
+      const list = this.pinia_latestConversationList[uid]
+      list.splice(id, 1)
+      this.setvar(`pinia_latestConversationList.${uid}`, list)
+    },
+    buildMsg(data: {
+      targetId?: any
+      content?: any
+      msgType: any
+      group?: any
+    }) {
+      const { msgType, content } = data
+      let message: RongIMLib.BaseMessage<any> | null = null
+      switch (msgType) {
+        case 1:
+          message = new RongIMLib.TextMessage({ content })
+          break
+        case 2:
+          message = new RongIMLib.ImageMessage({
+            content, // 图片缩略图，应为 Base64 字符串，且不可超过 80KB
+            imageUri: '' // 图片的远程访问地址
+          })
+          break
+        case 3:
+          message = new RongIMLib.FileMessage({
+            name: '',
+            size: 1000,
+            type: '',
+            fileUrl: ''
+          })
+          break
+        case 4:
+          message = new RongIMLib.HQVoiceMessage({
+            remoteUrl: '<aac 文件地址>',
+            duration: 60
+          })
+          break
+        case 5:
+          message = new RongIMLib.SightMessage({
+            sightUrl: '<视频资源的远程地址>',
+            content: '<缩略图base64>',
+            duration: 10,
+            size: 100,
+            name: '视频名称'
+          })
+          break
+        case 6:
+          message = new RongIMLib.GIFMessage({
+            gifDataSize: 30,
+            remoteUrl: '<图片地址>',
+            width: 300,
+            height: 200
+          })
+          break
+        case 7:
+          message = new RongIMLib.ReferenceMessage({
+            referMsgUserId: '<引用消息的用户ID>',
+            referMsg: {
+              content: '引用消息文本'
+            },
+            content: '发送的消息内容',
+            objName: RongIMLib.MessageType.TEXT
+          })
+          break
+        case 8:
+          message = new RongIMLib.LocationMessage({
+            latitude: '<位置的经度>',
+            longitude: '<位置的纬度>',
+            poi: '位置信息',
+            content: '<base64>'
+          })
+          break
+        case 9:
+          message = new RongIMLib.RichContentMessage({
+            title: '标题',
+            content: '内容简介',
+            imageUri: '<图片地址>',
+            url: '<文章链接地址>'
+          })
+          break
+        default:
+          message = new RongIMLib.TextMessage({ content })
+          break
+      }
+      return message
+    },
+    // 发送消息
+    sendMessage(data: {
+      targetId: any
+      content: any
+      msgType: any
+      group: any
+    }) {
+      const { targetId, content, msgType, group } = data
+      const conversation = {
+        targetId,
+        conversationType: group
+          ? RongIMLib.ConversationType.GROUP
+          : RongIMLib.ConversationType.PRIVATE
+      }
+      const message = this.buildMsg(data)
+      // 发送消息
+      RongIMLib.sendMessage(conversation, message).then(({ code, data }) => {
+        if (code === 0) {
+          console.log('消息发送成功：', data)
+          // debugger
+          const { userId } = this.userinfo
+          if (!this.pinia_messagelist[userId]) {
+            this.pinia_messagelist[userId] = {}
+          }
+          if (!this.pinia_messagelist[userId][targetId]) {
+            this.pinia_messagelist[userId][targetId] = []
+          }
+          const messagelist = this.pinia_messagelist[userId][targetId]
+          messagelist.push(message)
+          console.log(`pinia_messagelist.${userId}.${targetId}`)
+          this.setvar(`pinia_messagelist.${userId}.${targetId}`, messagelist)
+        } else {
+          console.log('消息发送失败：', code)
+        }
+      })
     }
   }
 })

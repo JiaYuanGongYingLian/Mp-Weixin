@@ -279,3 +279,4 @@ onLoad(async (opt) => {
   }
 }
 </style>
+@/common/rongYun/webim.js

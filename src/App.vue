@@ -1,3 +1,4 @@
+<!-- eslint-disable no-unused-expressions -->
 <!-- eslint-disable no-param-reassign -->
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
@@ -28,10 +29,11 @@ onLaunch(() => {
 onShow(async () => {
   console.log('App Show')
   if (!accessToken.value) {
-    userStore.$patch((v: { accessToken: any; userInfo: any }) => {
+    userStore.$patch((v: { accessToken: any }) => {
       v.accessToken = uni.getStorageSync('accessToken') || ''
-      v.userInfo = uni.getStorageSync('userInfo') || null
     })
+    const userInfo = uni.getStorageSync('userInfo') || null
+    userInfo && userStore.syncSetUserInfo(userInfo)
   }
 })
 onHide(() => {

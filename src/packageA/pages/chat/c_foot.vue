@@ -3,7 +3,7 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-11-20 16:06:42
+ * @LastEditTime: 2023-11-21 17:41:39
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -16,19 +16,19 @@ import { socialApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { $toast } from '@/utils/common'
 import { useUserStore, useChatStore, useRyStore } from '@/store'
-import { WEBIM } from '@/common/webim.js'
 
 const emoji = reactive([])
 const props = withDefaults(
   defineProps<{
-    chatType?: string
+    chatType?: number
+    targetId?: number
   }>(),
   {
-    chatType: 'single'
+    chatType: 0
   }
 )
 const isSingle = computed(() => {
-  return props.chatType === 'single'
+  return props.chatType === 0
 })
 const userStore = useUserStore()
 const chatStore = useChatStore()
@@ -184,22 +184,13 @@ function sendMsg() {
     $toast('请先输入内容')
     return
   }
-  let params
-  if (isSingle.value) {
-    params = {
-      content: content.value,
-      appkey: singleInfo.value.appkey,
-      target_username: singleInfo.value.username,
-      target_nickname: singleInfo.value.nickname
-    }
-  } else {
-    params = {
-      content: content.value,
-      target_gid: groupInfo.value.gid,
-      target_gname: groupInfo.value.name
-    }
+  const params = {
+    targetId: props?.targetId,
+    content: content.value,
+    msgType: 1,
+    group: !isSingle.value
   }
-  // WEBIM.send_message(uuid, content, type, group = false)
+  ryStore.sendMessage(params)
   content.value = ''
 }
 
@@ -491,3 +482,4 @@ onMounted((option) => {})
   transition: height 0.3s;
 }
 </style>
+@/common/rongYun/webim.js
