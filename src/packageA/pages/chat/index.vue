@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-21 17:24:48
+ * @LastEditTime: 2023-11-22 03:50:06
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -15,6 +15,7 @@
 import { reactive, ref, computed, onBeforeMount, watch, onUnmounted } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
+import RongIMLib from '@/common/rongYun/im_init'
 import { baseApi, productApi } from '@/api'
 import {
   getImgFullPath,
@@ -23,17 +24,35 @@ import {
   dateFormat,
   handleMapLocation
 } from '@/utils/index'
-import { useUserStore, useChatStore } from '@/store'
+import { useUserStore, useChatStore, useRyStore } from '@/store'
+import { RY_AVATAR } from '@/common/config'
 import c_foot from './c_foot.vue'
 
 const $config = reactive({})
 const emojiAllJson = reactive([])
 const userStore = useUserStore()
 const chatStore = useChatStore()
-const { chatList, singleInfo, syncConversation, groupMemberList } =
-  storeToRefs(chatStore)
+const ryStore = useRyStore()
+const { singleInfo, syncConversation, groupMemberList } = storeToRefs(chatStore)
+const { userinfo, pinia_messagelist } = storeToRefs(ryStore)
+const chatType = ref(0)
+const targetId = ref()
+// const chatList = ref([])
+const chatList = computed(() => {
+  if (!ryStore.userinfo?.id) return []
+  if (!targetId.value) return []
+  if (!pinia_messagelist.value[ryStore.userinfo.id]) return []
+  return pinia_messagelist.value[ryStore.userinfo.id][targetId.value] || []
+})
+const isScrollHeight = ref(false)
+function setChatScrollTop(arg_isScrollHeight?: boolean | undefined) {
+  isScrollHeight.value = arg_isScrollHeight || false
+  setTimeout(() => {
+    chatScrollTop.value += 1
+  }, 1000)
+}
 watch(
-  [chatList, syncConversation],
+  chatList.value,
   (n) => {
     if (n) {
       setChatScrollTop()
@@ -41,6 +60,16 @@ watch(
   },
   { deep: true }
 )
+// watch(
+//   userinfo,
+//   (n) => {
+//     if (n.id) {
+//       chatList.value =
+//         ryStore.pinia_messagelist[ryStore.userinfo.id][targetId.value] || []
+//     }
+//   },
+//   { deep: true }
+// )
 const chatScrollTop = ref(999999)
 const thouUsername = ref('')
 const groupInfo = reactive({
@@ -51,21 +80,44 @@ const footerRef = ref()
 function onChatClick() {
   footerRef.value.onChatClick()
 }
-const isScrollHeight = ref(false)
-function setChatScrollTop(arg_isScrollHeight?: boolean | undefined) {
-  isScrollHeight.value = arg_isScrollHeight ?? false
-  setTimeout(() => {
-    chatScrollTop.value += 1
-  }, 200)
+
+// 是否显示消息日期
+function showTime(i: number) {
+  if (i === 0) return true
+  const s_time = chatList.value[i - 1]?.sentTime
+  const e_time = chatList.value[i]?.sentTime
+  return e_time - s_time > 60 * 1000
 }
-const chatType = ref(0)
-const targetId = ref()
-onLoad((option) => {
+
+onLoad(async (option) => {
   thouUsername.value = option?.username || ''
   groupInfo.gid = option?.groupId
   groupInfo.name = option?.groupName
   chatType.value = Number(option?.type)
   targetId.value = option?.targetId
+  // if (userinfo.value?.id) {
+  //   chatList.value =
+  //     ryStore.pinia_messagelist[ryStore.userinfo.id][targetId.value] || []
+  // }
+  await ryStore.clearMessagesUnreadStatus({
+    targetId: targetId.value,
+    isGroup: false
+  })
+})
+const { Events } = RongIMLib
+RongIMLib.addEventListener(Events.CONNECTING, () => {
+  console.log('正在链接服务器')
+})
+RongIMLib.addEventListener(Events.CONNECTED, () => {
+  console.log('已经链接到服务器')
+})
+RongIMLib.addEventListener(Events.MESSAGES, (evt) => {
+  const { messages } = evt
+  if (messages && messages.length > 0) {
+    messages.forEach((message) => {
+      ryStore.setMessage(message)
+    })
+  }
 })
 onUnmounted(() => {})
 </script>
@@ -89,11 +141,11 @@ onUnmounted(() => {})
             v-for="(s, i) in chatList"
             :key="i"
             :class="{
-              'l-chat-mine': s.content.from_id === jimUserInfo.username
+              'l-chat-mine': s.messageDirection === 1
             }"
           >
             <view class="l-chat-item-time" v-if="showTime(i)">
-              {{ dateFormat(new Date(s.ctime_ms), 'MM-dd hh:mm') }}
+              {{ dateFormat(new Date(s.sentTime), 'MM-dd hh:mm') }}
             </view>
             <view class="l-chat-item-content">
               <view class="l-chat-avatar">
@@ -101,40 +153,16 @@ onUnmounted(() => {})
                   shape="circle"
                   width="80"
                   height="80"
-                  v-if="s.content.from_id !== jimUserInfo.username"
-                  @click="toDetail({ userId: s.content.from_id.split('_')[1] })"
-                  :src="
-                    chatType === 1
-                      ? getGroupMemberAvatar(s.content.from_id)
-                      : singleInfoAvatar
-                  "
-                  mode="aspectFill"
-                ></u-image>
-                <u-image
-                  v-else
-                  shape="circle"
-                  width="80"
-                  height="80"
-                  :src="jimUserInfoAvatar"
+                  :src="RY_AVATAR"
                   mode="aspectFill"
                 ></u-image>
               </view>
               <view class="l-chat-view">
                 <view class="l-chat-name" v-if="chatType === 1">
-                  {{
-                    s.content.from_id === jimUserInfo.username
-                      ? jimUserInfo.nickname || jimUserInfo.username
-                      : s.content.from_name
-                  }}
+                  {{ s.senderUserId }}
                 </view>
-                <template v-if="s.content.msg_type === 'text'">
-                  <view
-                    v-if="
-                      s.content.msg_body.extras &&
-                      s.content.msg_body.extras.isEmoji
-                    "
-                    class="l-chat-text"
-                  >
+                <template v-if="s.messageType == 'RC:TxtMsg'">
+                  <view v-if="s.content.isEmoji" class="l-chat-text">
                     <image
                       :src="
                         '../../../static/emoji/' +
@@ -145,10 +173,48 @@ onUnmounted(() => {})
                     ></image>
                   </view>
                   <view class="l-chat-text" v-else>
-                    {{ s.content.msg_body.text || '' }}
+                    {{ s.content.content || '' }}
                   </view>
                 </template>
-                <button class="l-chat-file">
+                <template v-else-if="s.messageType === 'RC:ImgMsg'">
+                  <view>
+                    <u-image
+                      @tap="previewImage([s.content.imageUri])"
+                      :src="s.content.imageUri"
+                      :style="{
+                        'max-width': '250rpx'
+                      }"
+                      width="250rpx"
+                      height="auto"
+                      mode="widthFix"
+                      border-radius="14"
+                      class="l-upload-img"
+                    ></u-image>
+                  </view>
+                </template>
+                <template v-else-if="s.messageType === 'location'">
+                  <!-- {{ s.content }} -->
+                  <view
+                    class="l-chat-location"
+                    @click="
+                      handleMapLocation({
+                        latitude: s.content.msg_body.latitude,
+                        longitude: s.content.msg_body.longitude,
+                        addr: s.content.msg_body.label
+                      })
+                    "
+                  >
+                    <view class="l-chat-con">
+                      <view class="name">{{ s.content.msg_body.label }}</view>
+                    </view>
+                    <map
+                      :longitude="s.content.msg_body.longitude"
+                      :latitude="s.content.msg_body.latitude"
+                      style="width: 350rpx; height: 180rpx"
+                    ></map>
+                  </view>
+                </template>
+                <button class="l-chat-file" v-else>
                   <view class="l-chat-flie-view">
                     <view class="l-cfv-name">
                       {{ s.content }}

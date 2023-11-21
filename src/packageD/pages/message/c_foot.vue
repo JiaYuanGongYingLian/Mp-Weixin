@@ -1,9 +1,16 @@
+<!--
+ * @Description: Description
+ * @Author: Kerwin
+ * @Date: 2023-11-22 00:10:58
+ * @LastEditTime: 2023-11-22 00:11:33
+ * @LastEditors:  Please set LastEditors
+-->
 <!-- eslint-disable no-use-before-define -->
 <!--
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-11-22 01:06:01
+ * @LastEditTime: 2023-11-21 17:41:39
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -21,7 +28,7 @@ const emoji = reactive([])
 const props = withDefaults(
   defineProps<{
     chatType?: number
-    targetId?: number | string
+    targetId?: number
   }>(),
   {
     chatType: 0
@@ -179,6 +186,9 @@ function chooseLocation() {
     }
   })
 }
+const showPacket = () => {
+  emit('showPacket', true)
+}
 function sendMsg() {
   if (!content.value) {
     $toast('请先输入内容')
@@ -209,9 +219,6 @@ function toggleUpload() {
 function submit(fn: (arg0: any) => void, params: any) {
   collapse()
   fn(params)
-}
-function showPacket() {
-  emit('showPacket', true)
 }
 
 onMounted((option) => {})
@@ -496,3 +503,4 @@ onMounted((option) => {})
   transition: height 0.3s;
 }
 </style>
+@/common/rongYun/webim.js

@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 22:57:23
- * @LastEditTime: 2023-11-21 15:09:39
+ * @LastEditTime: 2023-11-22 03:16:36
  * @LastEditors:  Please set LastEditors
  */
 /* eslint-disable consistent-return */
@@ -12,16 +12,6 @@ import RongIMLib from './im_init'
 import { useRyStore } from '@/store'
 
 const store = useRyStore()
-const { Events } = RongIMLib
-RongIMLib.addEventListener(Events.CONNECTING, () => {
-  console.log('正在链接服务器')
-})
-RongIMLib.addEventListener(Events.CONNECTED, () => {
-  console.log('已经链接到服务器')
-})
-RongIMLib.addEventListener(Events.MESSAGES, (evt) => {
-  console.log(evt.messages)
-})
 const { state } = store
 // RongIMLib.registerMessageType('app:hongbao', true, true)
 export default WEBIM = {

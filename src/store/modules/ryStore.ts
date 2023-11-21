@@ -7,16 +7,6 @@
 import { defineStore } from 'pinia'
 import RongIMLib from '@/common/rongYun/im_init'
 
-const { Events } = RongIMLib
-RongIMLib.addEventListener(Events.CONNECTING, () => {
-  console.log('正在链接服务器')
-})
-RongIMLib.addEventListener(Events.CONNECTED, () => {
-  console.log('已经链接到服务器')
-})
-RongIMLib.addEventListener(Events.MESSAGES, (evt) => {
-  console.log(evt.messages)
-})
 let lifeData = {}
 try {
   // 尝试获取本地是否存在lifeData变量，第一次启动应用时是不存在的
@@ -129,12 +119,29 @@ const useStore = defineStore('ry', {
     ScanAudio() {
       const innerAudioContext = uni.createInnerAudioContext()
       innerAudioContext.autoplay = true
-      innerAudioContext.src = '../static/raw/Message_prompt.mp3'
+      innerAudioContext.src =
+        'https://image.blacksilverscore.com/App/77f3730f-9726-4946-8459-2a80df785ac5.mp3'
       innerAudioContext.play()
     },
     // 全局更新
     setvar(name: string, value: RongIMLib.IAReceivedConversation[]) {
       this.$uStore(name, value)
+    },
+    // 缓存消息
+    setMessage(message: {
+      targetId: string | number
+      content: { content: any }
+    }) {
+      this.ScanAudio()
+      const { id } = this.userinfo
+      const pinia_messagelist = this.pinia_messagelist[id]
+      // if(!this.pinia_messagelist[message.targetId]){
+      // 	pinia_messagelist[message.targetId] = [];
+      // 	that.setvar('pinia_messagelist.',pinia_messagelist);
+      // }
+      pinia_messagelist[message.targetId].push(message)
+      this.setvar(`pinia_messagelist.${this.userinfo.id}`, pinia_messagelist)
+      console.log('接收消息成功，消息内容为:', message.content.content)
     },
     // 初始化监听
     rongWatch() {
@@ -247,9 +254,9 @@ const useStore = defineStore('ry', {
     },
 
     delMessage(uuid: any, group = false) {
-      const conversation = RongIMLib.Conversation.get({
+      const conversation = RongIMLib.getConversation({
         targetId: uuid,
-        type: group
+        conversationType: group
           ? RongIMLib.ConversationType.GROUP
           : RongIMLib.ConversationType.PRIVATE
       })
@@ -257,7 +264,6 @@ const useStore = defineStore('ry', {
         console.log('清除未读数成功') // RongIMLib.watch conversation 将被触发
       })
     },
-
     delMessageList(uuid: any, type: any, id: any) {
       const conversation = RongIMLib.Conversation.get({
         targetId: uuid,
@@ -268,6 +274,26 @@ const useStore = defineStore('ry', {
       const list = this.pinia_latestConversationList[uid]
       list.splice(id, 1)
       this.setvar(`pinia_latestConversationList.${uid}`, list)
+    },
+    clearMessagesUnreadStatus(data: { targetId: any; isGroup: any }) {
+      const { targetId, isGroup } = data
+      // 清除未读数
+      const conversationType = isGroup
+        ? RongIMLib.ConversationType.GROUP
+        : RongIMLib.ConversationType.PRIVATE
+      RongIMLib.clearMessagesUnreadStatus({
+        conversationType,
+        targetId
+      }).then((res) => {
+        if (res.code === 0) {
+          // 清理成功
+          // 发送多端同步未读数消息
+          RongIMLib.sendSyncReadStatusMessage(
+            { conversationType, targetId },
+            Date.now()
+          )
+        }
+      })
     },
     buildMsg(data: {
       targetId?: any
@@ -378,7 +404,7 @@ const useStore = defineStore('ry', {
             this.pinia_messagelist[userId][targetId] = []
           }
           const messagelist = this.pinia_messagelist[userId][targetId]
-          messagelist.push(message)
+          messagelist.push(data)
           console.log(`pinia_messagelist.${userId}.${targetId}`)
           this.setvar(`pinia_messagelist.${userId}.${targetId}`, messagelist)
         } else {

@@ -65,7 +65,6 @@
         ></u-avatar>
       </view>
     </view>
-
     <view class="form u-border-top" :style="'bottom:' + bottom">
       <view
         class="u-flex u-m-b-20"
@@ -138,7 +137,7 @@
           back-icon-name="close"
           back-icon-size="30"
           title="发红包"
-          :background="head_background"
+          :background="ryStore.head_background"
           :title-bold="true"
           :custom-back="sethongbaoshow"
         ></u-navbar>
@@ -208,6 +207,7 @@ import { reactive, ref, computed, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { route } from '@/utils/common'
 import { useRyStore } from '@/store'
+import c_foot from '/c_foot.vue'
 
 const ryStore = useRyStore()
 const WEBIM = {}
@@ -276,7 +276,10 @@ onLoad(async (opt) => {
   list.value =
     ryStore.pinia_messagelist[ryStore.userinfo.id][targetId.value] || []
   console.log(list.value)
-  await ryStore.delMessage(targetId.value, false)
+  await ryStore.clearMessagesUnreadStatus({
+    targetId: targetId.value,
+    isGroup: false
+  })
   setTimeout(() => {
     uni.pageScrollTo({
       scrollTop: 99999,
