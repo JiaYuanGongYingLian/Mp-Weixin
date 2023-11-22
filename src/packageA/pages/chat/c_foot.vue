@@ -3,7 +3,7 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-11-22 01:06:01
+ * @LastEditTime: 2023-11-22 11:31:08
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -114,20 +114,13 @@ function sendImageItem(
   // const fd = new FormData();
   // fd.append('image',tempFilePath)
   const params = {
-    type: 'image',
-    width: info.width,
-    height: info.height,
-    image: tempFilePath
+    targetId: props?.targetId,
+    content: tempFilePath,
+    msgType: 2,
+    imageUri: tempFilePath,
+    group: !isSingle.value
   }
-  if (isSingle.value) {
-    params.appkey = singleInfo.value.appkey
-    params.target_username = singleInfo.value.username
-    params.target_nickname = singleInfo.value.nickname
-  } else {
-    params.target_gid = groupInfo.value.gid
-    params.target_gname = groupInfo.value.name
-  }
-  chatStore[isSingle.value ? 'jimSendSinglePic' : 'jimSendGroupPic'](params)
+  ryStore.sendMessage(params)
   content.value = ''
   if (isUpload.value) {
     isUpload.value = !isUpload.value
@@ -141,7 +134,6 @@ function chooseImage() {
       uni.getImageInfo({
         src: tempFilePath,
         success(info) {
-          console.log(info)
           sendImageItem(tempFilePath, info)
         }
       })
@@ -173,6 +165,15 @@ function chooseLocation() {
   uni.chooseLocation({
     success: async (data) => {
       const { latitude, longitude, name, address } = data
+      const params = {
+        targetId: props?.targetId,
+        content: name,
+        msgType: 8,
+        latitude,
+        longitude,
+        group: !isSingle.value
+      }
+      ryStore.sendMessage(params)
     },
     fail: (error) => {
       console.log('error', error)

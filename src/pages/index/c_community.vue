@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 15:06:58
- * @LastEditTime: 2023-11-19 21:50:28
+ * @LastEditTime: 2023-11-22 14:34:12
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -59,9 +59,9 @@ const mainModules = ref([
     bg: 'linear-gradient(90deg, #FDF7E7 0%, #FAEDCA 100%)'
   }
 ])
-function handleClick(index) {
+function handleClick(data) {
   uni.navigateTo({
-    url: '/packageD/pages/index/home'
+    url: '/pages/physicalShop/index?shopId=3'
   })
 }
 onMounted(async () => {
@@ -84,7 +84,11 @@ onMounted(async () => {
       </view>
     </view>
     <view class="cBox flex">
-      <view class="item" v-for="(item, index) in myCommunities" :key="index">
+      <view
+        class="item"
+        v-for="(item, index) in myCommunities"
+        :key="index"
+      >
         <view class="top">
           <u-image width="88rpx" height="88rpx" :src="item.icon"></u-image>
           <view class="right">
@@ -117,6 +121,7 @@ onMounted(async () => {
         v-for="(item, index) in mainModules"
         :key="index"
         :style="{ background: item.bg }"
+        @click="handleClick(item)"
       >
         <view class="con">
           <view class="name">

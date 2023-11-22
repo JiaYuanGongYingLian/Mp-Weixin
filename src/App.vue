@@ -5,9 +5,11 @@
 import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
-import { useUserStore } from '@/store'
+import { useUserStore, useRyStore } from '@/store'
+import RongIMLib from '@/common/rongYun/im_init'
 
 const userStore = useUserStore()
+const ryStore = useRyStore()
 const chatHasLogin = ref(false)
 const { accessToken } = storeToRefs(userStore)
 
@@ -23,6 +25,21 @@ onLaunch(() => {
     }
     if (!isConnected) {
       chatHasLogin.value = false
+    }
+  })
+  const { Events } = RongIMLib
+  RongIMLib.addEventListener(Events.CONNECTING, () => {
+    console.log('正在链接服务器')
+  })
+  RongIMLib.addEventListener(Events.CONNECTED, () => {
+    console.log('已经链接到服务器')
+  })
+  RongIMLib.addEventListener(Events.MESSAGES, (evt) => {
+    const { messages } = evt
+    if (messages && messages.length > 0) {
+      messages.forEach((message) => {
+        ryStore.setMessage(message)
+      })
     }
   })
 })

@@ -6,14 +6,14 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-22 03:50:06
+ * @LastEditTime: 2023-11-22 11:34:50
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref, computed, onBeforeMount, watch, onUnmounted } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onHide } from '@dcloudio/uni-app';
 import { storeToRefs } from 'pinia'
 import RongIMLib from '@/common/rongYun/im_init'
 import { baseApi, productApi } from '@/api'
@@ -37,11 +37,11 @@ const { singleInfo, syncConversation, groupMemberList } = storeToRefs(chatStore)
 const { userinfo, pinia_messagelist } = storeToRefs(ryStore)
 const chatType = ref(0)
 const targetId = ref()
-// const chatList = ref([])
 const chatList = computed(() => {
   if (!ryStore.userinfo?.id) return []
   if (!targetId.value) return []
   if (!pinia_messagelist.value[ryStore.userinfo.id]) return []
+  onChatClick()
   return pinia_messagelist.value[ryStore.userinfo.id][targetId.value] || []
 })
 const isScrollHeight = ref(false)
@@ -49,10 +49,10 @@ function setChatScrollTop(arg_isScrollHeight?: boolean | undefined) {
   isScrollHeight.value = arg_isScrollHeight || false
   setTimeout(() => {
     chatScrollTop.value += 1
-  }, 1000)
+  }, 200)
 }
 watch(
-  chatList.value,
+  chatList,
   (n) => {
     if (n) {
       setChatScrollTop()
@@ -60,16 +60,6 @@ watch(
   },
   { deep: true }
 )
-// watch(
-//   userinfo,
-//   (n) => {
-//     if (n.id) {
-//       chatList.value =
-//         ryStore.pinia_messagelist[ryStore.userinfo.id][targetId.value] || []
-//     }
-//   },
-//   { deep: true }
-// )
 const chatScrollTop = ref(999999)
 const thouUsername = ref('')
 const groupInfo = reactive({
@@ -78,7 +68,7 @@ const groupInfo = reactive({
 })
 const footerRef = ref()
 function onChatClick() {
-  footerRef.value.onChatClick()
+  footerRef.value?.onChatClick()
 }
 
 // 是否显示消息日期
@@ -104,21 +94,7 @@ onLoad(async (option) => {
     isGroup: false
   })
 })
-const { Events } = RongIMLib
-RongIMLib.addEventListener(Events.CONNECTING, () => {
-  console.log('正在链接服务器')
-})
-RongIMLib.addEventListener(Events.CONNECTED, () => {
-  console.log('已经链接到服务器')
-})
-RongIMLib.addEventListener(Events.MESSAGES, (evt) => {
-  const { messages } = evt
-  if (messages && messages.length > 0) {
-    messages.forEach((message) => {
-      ryStore.setMessage(message)
-    })
-  }
-})
+
 onUnmounted(() => {})
 </script>
 <template>
@@ -192,24 +168,24 @@ onUnmounted(() => {})
                     ></u-image>
                   </view>
                 </template>
-                <template v-else-if="s.messageType === 'location'">
+                <template v-else-if="s.messageType === 'RC:LBSMsg'">
                   <!-- {{ s.content }} -->
                   <view
                     class="l-chat-location"
                     @click="
                       handleMapLocation({
-                        latitude: s.content.msg_body.latitude,
-                        longitude: s.content.msg_body.longitude,
-                        addr: s.content.msg_body.label
+                        latitude: s.content.latitude,
+                        longitude: s.content.longitude,
+                        addr: s.content.content
                       })
                     "
                   >
                     <view class="l-chat-con">
-                      <view class="name">{{ s.content.msg_body.label }}</view>
+                      <view class="name">{{ s.content.content }}</view>
                     </view>
                     <map
-                      :longitude="s.content.msg_body.longitude"
-                      :latitude="s.content.msg_body.latitude"
+                      :longitude="s.content.longitude"
+                      :latitude="s.content.latitude"
                       style="width: 350rpx; height: 180rpx"
                     ></map>
                   </view>
@@ -217,10 +193,10 @@ onUnmounted(() => {})
                 <button class="l-chat-file" v-else>
                   <view class="l-chat-flie-view">
                     <view class="l-cfv-name">
-                      {{ s.content }}
+                      {{ s.content.content}}
                     </view>
                   </view>
-                  <view class="l-chat-file-size"> 5.9MB </view>
+                  <!-- <view class="l-chat-file-size"> 5.9MB </view> -->
                 </button>
               </view>
             </view>
@@ -398,7 +374,8 @@ onUnmounted(() => {})
   background-color: #fff;
   border: 8rpx;
   overflow: hidden;
-
+  max-width: 350rpx;
+  border-radius: 20rpx;
   .l-chat-con {
     padding: 20rpx;
     font-size: 26rpx;

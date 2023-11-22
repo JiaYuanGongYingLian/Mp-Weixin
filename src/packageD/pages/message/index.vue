@@ -207,8 +207,6 @@ import { reactive, ref, computed, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { route } from '@/utils/common'
 import { useRyStore } from '@/store'
-import c_foot from '/c_foot.vue'
-
 const ryStore = useRyStore()
 const WEBIM = {}
 const bottom = ref('0rpx')

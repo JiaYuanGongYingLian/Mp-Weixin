@@ -970,6 +970,41 @@ onPullDownRefresh(() => {
     }
   }
 }
+.dataBox {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20rpx;
+  .item {
+    width: 25%;
+    font-size: 24rpx;
+    text-align: center;
+    height: 80rpx;
+    // font-weight: bold;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    &:nth-child(4n) {
+      &::after {
+        display: none;
+      }
+    }
+    &::after {
+      content: '';
+      display: inline-block;
+      width: 1px;
+      height: 40rpx;
+      position: absolute;
+      right: 0;
+      top: 20rpx;
+      background-color: #eee;
+    }
+    .name {
+      margin-top: 8rpx;
+    }
+  }
+}
 .btnBox {
   width: 690rpx;
   margin: 0 auto;

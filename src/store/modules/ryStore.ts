@@ -134,14 +134,16 @@ const useStore = defineStore('ry', {
     }) {
       this.ScanAudio()
       const { id } = this.userinfo
+      if (!this.pinia_messagelist[id]) {
+        this.pinia_messagelist[id] = {}
+      }
       const pinia_messagelist = this.pinia_messagelist[id]
-      // if(!this.pinia_messagelist[message.targetId]){
-      // 	pinia_messagelist[message.targetId] = [];
-      // 	that.setvar('pinia_messagelist.',pinia_messagelist);
-      // }
+      if (!pinia_messagelist[message.targetId]) {
+        pinia_messagelist[message.targetId] = []
+      }
       pinia_messagelist[message.targetId].push(message)
       this.setvar(`pinia_messagelist.${this.userinfo.id}`, pinia_messagelist)
-      console.log('接收消息成功，消息内容为:', message.content.content)
+      console.log('接收消息成功，消息内容为:', message, message.content.content)
     },
     // 初始化监听
     rongWatch() {
@@ -299,9 +301,11 @@ const useStore = defineStore('ry', {
       targetId?: any
       content?: any
       msgType: any
+      imageUri?: string
       group?: any
+      latitude?: any
     }) {
-      const { msgType, content } = data
+      const { msgType, content, imageUri,latitude,longitude } = data
       let message: RongIMLib.BaseMessage<any> | null = null
       switch (msgType) {
         case 1:
@@ -310,7 +314,7 @@ const useStore = defineStore('ry', {
         case 2:
           message = new RongIMLib.ImageMessage({
             content, // 图片缩略图，应为 Base64 字符串，且不可超过 80KB
-            imageUri: '' // 图片的远程访问地址
+            imageUri // 图片的远程访问地址
           })
           break
         case 3:
@@ -356,10 +360,10 @@ const useStore = defineStore('ry', {
           break
         case 8:
           message = new RongIMLib.LocationMessage({
-            latitude: '<位置的经度>',
-            longitude: '<位置的纬度>',
-            poi: '位置信息',
-            content: '<base64>'
+            latitude,
+            longitude,
+            poi: '',
+            content
           })
           break
         case 9:
