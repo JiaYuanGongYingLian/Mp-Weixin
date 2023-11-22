@@ -54,7 +54,6 @@
     "@dcloudio/uni-mp-weixin": "3.0.0-alpha-3080220230511001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-alpha-3080220230511001",
     "@rongcloud/engine": "^5.8.5",
-    "@rongcloud/imkit": "^5.6.6",
     "@rongcloud/imlib-next": "^5.8.5",
     "@zxing/library": "^0.20.0",
     "ali-oss": "^6.17.1",
