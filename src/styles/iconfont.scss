@@ -1,22 +1,25 @@
 @font-face {
-  font-family: "custom-icon"; /* Project id 3983494 */
+  font-family: "custom-icon";
+  /* Project id 3983494 */
   src: url('//at.alicdn.com/t/c/font_3983494_8n3urfmcgvf.woff2?t=1699861376871') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3983494_8n3urfmcgvf.woff?t=1699861376871') format('woff'),
-       url('//at.alicdn.com/t/c/font_3983494_8n3urfmcgvf.ttf?t=1699861376871') format('truetype');
+    url('//at.alicdn.com/t/c/font_3983494_8n3urfmcgvf.woff?t=1699861376871') format('woff'),
+    url('//at.alicdn.com/t/c/font_3983494_8n3urfmcgvf.ttf?t=1699861376871') format('truetype');
 }
+
 .custom-icon {
-	/* 引用上面声明的"custom-icon"字体 */
-	font-family: "custom-icon" !important;
-	font-size: 16px;
-	font-style: normal;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+  /* 引用上面声明的"custom-icon"字体 */
+  font-family: "custom-icon" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* uview自定义字体图标的前缀为"custom-icon-" */
 .custom-icon-group:before {
   content: "\e634";
 }
+
 .custom-icon-weixin:before {
   content: "\e666";
 }
@@ -24,6 +27,7 @@
 .custom-icon-pengyouquan:before {
   content: "\e667";
 }
+
 .custom-icon-shangjiaruzhu:before {
   content: "\fd37";
 }
@@ -45,10 +49,11 @@
 }
 
 @font-face {
-  font-family: "iconfont"; /* Project id 3983494 */
-  src: url('//at.alicdn.com/t/c/font_3983494_4nn246y9qi7.woff2?t=1695362075528') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3983494_4nn246y9qi7.woff?t=1695362075528') format('woff'),
-       url('//at.alicdn.com/t/c/font_3983494_4nn246y9qi7.ttf?t=1695362075528') format('truetype');
+  font-family: "iconfont";
+  /* Project id 3983494 */
+  src:  url('//at.alicdn.com/t/c/font_3983494_nb58v4r62wk.woff2?t=1700732288315') format('woff2'),
+  url('//at.alicdn.com/t/c/font_3983494_nb58v4r62wk.woff?t=1700732288315') format('woff'),
+  url('//at.alicdn.com/t/c/font_3983494_nb58v4r62wk.ttf?t=1700732288315') format('truetype');
 }
 
 .iconfont {
@@ -58,9 +63,34 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.hy-icon-shoucang:before {
+  content: "\e604";
+}
+
+.hy-icon-zhuanfa:before {
+  content: "\e627";
+}
+
+.hy-icon-fuzhi_o:before {
+  content: "\e610";
+}
+
+.hy-icon-yinyong:before {
+  content: "\ec81";
+}
+
+.hy-icon-chehui:before {
+  content: "\e7a2";
+}
+
+.hy-icon-shanchu:before {
+  content: "\e756";
+}
 .hy-icon-group:before {
   content: "\e634";
 }
+
 .hy-icon-video:before {
   content: "\e876";
 }

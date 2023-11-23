@@ -305,7 +305,7 @@ const useStore = defineStore('ry', {
       group?: any
       latitude?: any
     }) {
-      const { msgType, content, imageUri,latitude,longitude } = data
+      const { msgType, content, imageUri, latitude, longitude } = data
       let message: RongIMLib.BaseMessage<any> | null = null
       switch (msgType) {
         case 1:
@@ -415,6 +415,35 @@ const useStore = defineStore('ry', {
           console.log('消息发送失败：', code)
         }
       })
+    },
+    // 撤回消息
+    recallMessage(data: {
+      targetId: any
+      messageUId: any
+      sentTime: any
+      group: any
+    }) {
+      const { targetId, messageUId, sentTime, group } = data
+      const conversation = {
+        targetId,
+        conversationType: group
+          ? RongIMLib.ConversationType.GROUP
+          : RongIMLib.ConversationType.PRIVATE
+      }
+      RongIMLib.recallMessage(conversation, {
+        messageUId,
+        sentTime
+      })
+        .then((res) => {
+          if (res.code === 0) {
+            console.log(res.code, res.data)
+          } else {
+            console.log(res.code, res.msg)
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
   }
 })

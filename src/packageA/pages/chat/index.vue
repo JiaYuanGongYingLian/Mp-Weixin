@@ -6,14 +6,14 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-22 11:34:50
+ * @LastEditTime: 2023-11-23 17:19:26
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref, computed, onBeforeMount, watch, onUnmounted } from 'vue'
-import { onLoad, onShow, onReady, onHide } from '@dcloudio/uni-app';
+import { onLoad, onShow, onReady, onHide } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import RongIMLib from '@/common/rongYun/im_init'
 import { baseApi, productApi } from '@/api'
@@ -27,6 +27,7 @@ import {
 import { useUserStore, useChatStore, useRyStore } from '@/store'
 import { RY_AVATAR } from '@/common/config'
 import c_foot from './c_foot.vue'
+import c_msgpup from './c_msgpup.vue'
 
 const $config = reactive({})
 const emojiAllJson = reactive([])
@@ -78,6 +79,17 @@ function showTime(i: number) {
   const e_time = chatList.value[i]?.sentTime
   return e_time - s_time > 60 * 1000
 }
+// 长按消息监听
+const msgPupData = ref({})
+const msgpupRef = ref()
+function onLongPress(e: { message?: any; my_user_id?: any }, message: any) {
+  e.message = message
+  msgPupData.value = e
+  setTimeout(() => {
+    msgpupRef.value?.showPop()
+  }, 200)
+  console.log(msgPupData.value)
+}
 
 onLoad(async (option) => {
   thouUsername.value = option?.username || ''
@@ -119,6 +131,7 @@ onUnmounted(() => {})
             :class="{
               'l-chat-mine': s.messageDirection === 1
             }"
+            @longpress="onLongPress($event, s)"
           >
             <view class="l-chat-item-time" v-if="showTime(i)">
               {{ dateFormat(new Date(s.sentTime), 'MM-dd hh:mm') }}
@@ -193,7 +206,7 @@ onUnmounted(() => {})
                 <button class="l-chat-file" v-else>
                   <view class="l-chat-flie-view">
                     <view class="l-cfv-name">
-                      {{ s.content.content}}
+                      {{ s.content.content }}
                     </view>
                   </view>
                   <!-- <view class="l-chat-file-size"> 5.9MB </view> -->
@@ -201,6 +214,11 @@ onUnmounted(() => {})
               </view>
             </view>
           </view>
+          <c_msgpup
+            ref="msgpupRef"
+            :chatType="chatType"
+            :msgPupData="msgPupData"
+          ></c_msgpup>
         </view>
       </scroll-view>
     </view>
@@ -264,7 +282,7 @@ onUnmounted(() => {})
   align-items: center;
   justify-content: center;
   height: 92rpx;
-  font-size: 28rpx;
+  font-size: 24rpx;
   color: #999999;
 }
 
