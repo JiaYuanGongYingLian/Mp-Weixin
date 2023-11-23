@@ -1,9 +1,10 @@
+<!-- eslint-disable no-shadow -->
 <!-- eslint-disable no-use-before-define -->
 <!--
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-11-22 11:31:08
+ * @LastEditTime: 2023-11-24 03:01:18
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -16,8 +17,24 @@ import { socialApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { $toast } from '@/utils/common'
 import { useUserStore, useChatStore, useRyStore } from '@/store'
+// #ifdef MP-WEIXIN
+const RongEmoji = require('../../static/js/RongIMEmoji-2.2.6.js')
+// #endif
+const emoji = ref([])
+// #ifdef H5
+RongIMLib.RongIMEmoji.init()
+for (let i = 0; i < RongIMLib.RongIMEmoji.list.length; i += 36) {
+  emoji.value.push(RongIMLib.RongIMEmoji.list.slice(i, i + 36))
+}
+// #endif
+// #ifdef MP-WEIXIN
+RongEmoji.init()
+for (let i = 0; i < RongEmoji.list.length; i += 36) {
+  emoji.value.push(RongEmoji.list.slice(i, i + 36))
+}
+// #endif
 
-const emoji = reactive([])
+console.log(emoji.value)
 const props = withDefaults(
   defineProps<{
     chatType?: number
@@ -65,33 +82,8 @@ watch([isEmoji, isUpload], (n) => {
     }
   }
 })
-function sendEmojiItem(item: { alt: any }) {
-  let params
-  if (isSingle.value) {
-    params = {
-      content: item.alt || '',
-      extras: {
-        isEmoji: true
-      },
-      appkey: singleInfo.value.appkey,
-      target_username: singleInfo.value.username,
-      target_nickname: singleInfo.value.nickname
-    }
-  } else {
-    params = {
-      target_gid: groupInfo.value.gid,
-      content: item.alt || '',
-      extras: {
-        isEmoji: true
-      },
-      target_gname: groupInfo.value.name
-    }
-  }
-  chatStore[isSingle.value ? 'jimSendSingleMsg' : 'jimSendGroupMsg'](params)
-  content.value = ''
-  if (isEmoji.value) {
-    isEmoji.value = !isEmoji.value
-  }
+function sendEmojiItem(emoji: { emoji: string }) {
+  content.value += emoji.emoji
 }
 function sendFilesItem(tempFilePaths: any) {
   const params = {
@@ -270,14 +262,13 @@ onMounted((option) => {})
         <swiper :indicator-dots="true">
           <swiper-item v-for="(s, i) in emoji" :key="i">
             <view class="l-swiper-item">
-              <image
+              <view
                 @tap="sendEmojiItem(emoji)"
                 v-for="(emoji, index) in s"
                 :key="index"
-                :src="'../../../static/emoji/' + emoji.url"
-                mode="aspectFit"
                 class="l-icon-emoji"
-              ></image>
+                >{{ emoji.emoji }}</view
+              >
             </view>
           </swiper-item>
         </swiper>
@@ -285,7 +276,7 @@ onMounted((option) => {})
 
       <view
         :class="{ 'l-chat-emoji-height': isUpload }"
-        class="l-chat-emoji-item l-chat-head-upload"
+        class="l-chat-head-upload"
       >
         <swiper :indicator-dots="false">
           <swiper-item>
@@ -369,6 +360,10 @@ onMounted((option) => {})
     height: 0;
     transition: height 0.3s;
     overflow: hidden;
+    .l-swiper-item {
+      display: flex;
+      flex-wrap: wrap;
+    }
   }
 
   .l-chat-emoji-height {
@@ -411,16 +406,10 @@ onMounted((option) => {})
   }
 
   .l-icon-emoji {
-    width: 54rpx;
-    height: 54rpx;
-    margin: 30rpx calc((100% / 8 - 54rpx) / 2) 0;
+    width: 36rpx;
+    height: 36rpx;
+    margin: 20rpx calc((100% / 9 - 36rpx) / 2) 0;
   }
-
-  .l-icon-emoji-m {
-    width: 54rpx;
-    height: 54rpx;
-  }
-
   .l-chat-form {
     flex: 1;
     margin-right: 30rpx;
