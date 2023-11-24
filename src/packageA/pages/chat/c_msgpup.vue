@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-23 14:36:33
- * @LastEditTime: 2023-11-23 18:33:29
+ * @LastEditTime: 2023-11-24 16:29:48
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -29,6 +29,8 @@ const props = withDefaults(
     }
   }
 )
+const emit = defineEmits(['reference'])
+
 const isSingle = computed(() => {
   return props.chatType === 0
 })
@@ -43,8 +45,14 @@ const navList = ref([
   {
     name: '复制',
     icon: 'fuzhi_o',
-    show: true,
-    fn: () => {}
+    show: false,
+    fn: (data: { content: any }) => {
+      const { content } = data
+      uni.setClipboardData({
+        data: content.content,
+        success() {}
+      })
+    }
   },
   {
     name: '转发',
@@ -77,7 +85,9 @@ const navList = ref([
     name: '引用',
     icon: 'yinyong',
     show: true,
-    fn: () => {}
+    fn: (data: any) => {
+      emit('reference', data)
+    }
   },
   {
     name: '删除',
@@ -106,11 +116,8 @@ function showPop() {
   const end = timestamp
   const utc = end - start
   const m = Number((utc / (60 * 1000)).toFixed(2))
-  if (m < 3) {
-    navList.value[3].show = true
-  } else {
-    navList.value[3].show = false
-  }
+  navList.value[3].show = m < 3
+  navList.value[0].show = props.msgPupData.message.messageType === "RC:TxtMsg"
 
   // 显示弹窗
   showPup.value = true

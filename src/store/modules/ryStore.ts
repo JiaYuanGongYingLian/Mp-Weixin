@@ -304,8 +304,9 @@ const useStore = defineStore('ry', {
       imageUri?: string
       group?: any
       latitude?: any
+      referMsg?: any
     }) {
-      const { msgType, content, imageUri, latitude, longitude } = data
+      const { msgType, content, imageUri, latitude, longitude, referMsg } = data
       let message: RongIMLib.BaseMessage<any> | null = null
       switch (msgType) {
         case 1:
@@ -350,11 +351,11 @@ const useStore = defineStore('ry', {
           break
         case 7:
           message = new RongIMLib.ReferenceMessage({
-            referMsgUserId: '<引用消息的用户ID>',
+            referMsgUserId: referMsg.senderUserId,
             referMsg: {
-              content: '引用消息文本'
+              content: referMsg.content.content
             },
-            content: '发送的消息内容',
+            content,
             objName: RongIMLib.MessageType.TEXT
           })
           break

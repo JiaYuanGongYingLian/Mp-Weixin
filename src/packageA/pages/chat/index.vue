@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-23 17:19:26
+ * @LastEditTime: 2023-11-24 18:03:35
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -90,6 +90,11 @@ function onLongPress(e: { message?: any; my_user_id?: any }, message: any) {
   }, 200)
   console.log(msgPupData.value)
 }
+// 引用消息
+const referMessage = ref<null | Object>(null)
+function setReferFn(data: Object | null) {
+  referMessage.value = data
+}
 
 onLoad(async (option) => {
   thouUsername.value = option?.username || ''
@@ -139,7 +144,6 @@ onUnmounted(() => {})
             <view class="l-chat-item-content">
               <view class="l-chat-avatar">
                 <u-image
-                  shape="circle"
                   width="80"
                   height="80"
                   :src="RY_AVATAR"
@@ -151,17 +155,7 @@ onUnmounted(() => {})
                   {{ s.senderUserId }}
                 </view>
                 <template v-if="s.messageType == 'RC:TxtMsg'">
-                  <view v-if="s.content.isEmoji" class="l-chat-text">
-                    <image
-                      :src="
-                        '../../../static/emoji/' +
-                        emojiAllJson[s.content.msg_body.text]
-                      "
-                      mode="aspectFit"
-                      class="l-icon-emoji-m"
-                    ></image>
-                  </view>
-                  <view class="l-chat-text" v-else>
+                  <view class="l-chat-text">
                     {{ s.content.content || '' }}
                   </view>
                 </template>
@@ -203,6 +197,16 @@ onUnmounted(() => {})
                     ></map>
                   </view>
                 </template>
+                <template v-else-if="s.messageType === 'RC:ReferenceMsg'">
+                  <view class="l-chat-text">
+                    {{ s.content.content || '' }}
+                  </view>
+                  <view class="l-chat-text-refer"
+                    >{{ s.content.referMsgUserId }}:{{
+                      s.content.referMsg.content
+                    }}</view
+                  >
+                </template>
                 <button class="l-chat-file" v-else>
                   <view class="l-chat-flie-view">
                     <view class="l-cfv-name">
@@ -218,6 +222,7 @@ onUnmounted(() => {})
             ref="msgpupRef"
             :chatType="chatType"
             :msgPupData="msgPupData"
+            @reference="setReferFn"
           ></c_msgpup>
         </view>
       </scroll-view>
@@ -227,6 +232,8 @@ onUnmounted(() => {})
       @on-focus="setChatScrollTop"
       :chatType="chatType"
       :target-id="targetId"
+      :referMessage="referMessage"
+      @closeRefer="setReferFn"
     />
   </view>
 </template>
@@ -303,39 +310,49 @@ onUnmounted(() => {})
 
 .l-chat-view {
   max-width: 515rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .l-chat-name {
   width: 100%;
   font-size: 24rpx;
   color: #666666;
-  margin-bottom: 20rpx;
+  margin-bottom: 10rpx;
 }
 
 .l-chat-text {
   min-width: 100rpx;
   max-width: 515rpx;
-  padding: 20rpx 30rpx;
+  padding: 15rpx 30rpx;
   box-sizing: border-box;
   background-color: #ffffff;
-  margin: 0 0 0 15rpx;
   position: relative;
   word-break: break-all;
   border-radius: 3px;
-  font-size: 28rpx;
+  font-size: 30rpx;
 }
 
 .l-chat-text::after {
   content: ' ';
   display: block;
   position: absolute;
-  top: 40rpx;
+  top: 34rpx;
   width: 0;
   height: 0;
-  left: -28rpx;
+  left: -18rpx;
   transform: translate(0, -50%);
-  border: 15rpx solid;
+  border: 10rpx solid;
   border-color: transparent #ffffff transparent transparent;
+}
+.l-chat-text-refer {
+  background: rgba(0, 0, 0, 0.05);
+  margin-top: 10rpx;
+  border-radius: 6rpx;
+  font-size: 27rpx;
+  color: #333;
+  padding: 10rpx;
 }
 
 .l-chat-text-wapper {
@@ -357,7 +374,7 @@ onUnmounted(() => {})
   top: 40rpx;
   width: 0;
   height: 0;
-  left: -28rpx;
+  left: -10rpx;
   transform: translate(0, -50%);
   border: 15rpx solid;
   border-color: transparent #ffffff transparent transparent;
@@ -378,14 +395,18 @@ onUnmounted(() => {})
 .l-chat-mine .l-chat-text {
   background-color: #95eb6c;
   color: #000;
-  margin: 0 15rpx 0 0;
   border-radius: 3px;
 }
 
 .l-chat-mine .l-chat-text::after {
   left: auto;
-  right: -28rpx;
+  right: -18rpx;
   border-color: transparent transparent transparent #95eb6c;
+}
+.l-chat-mine {
+  .l-chat-view {
+    align-items: flex-end;
+  }
 }
 
 .l-chat-location {
@@ -411,11 +432,6 @@ onUnmounted(() => {})
 
 .l-chat-flie-view {
   display: flex;
-}
-
-.l-icon-emoji-m {
-  width: 54rpx;
-  height: 54rpx;
 }
 
 .l-upload-img {

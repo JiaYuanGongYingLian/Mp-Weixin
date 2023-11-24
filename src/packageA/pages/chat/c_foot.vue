@@ -4,7 +4,7 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-11-24 03:01:18
+ * @LastEditTime: 2023-11-24 17:33:16
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -39,11 +39,22 @@ const props = withDefaults(
   defineProps<{
     chatType?: number
     targetId?: number | string
+    referMessage?: object | null
   }>(),
   {
-    chatType: 0
+    chatType: 0,
+    referMessage: () => {
+      return null
+    }
   }
 )
+const referMsg = computed(() => {
+  if (props.referMessage) {
+    const { senderUserId, senderUserName, content } = props.referMessage
+    return { senderUserId, senderUserName, content }
+  }
+  return null
+})
 const isSingle = computed(() => {
   return props.chatType === 0
 })
@@ -60,7 +71,7 @@ const videoList = reactive({
 })
 const isEmoji = ref(false)
 const isUpload = ref(false)
-const emit = defineEmits(['onFocus', 'showPacket'])
+const emit = defineEmits(['onFocus', 'showPacket', 'closeRefer'])
 const content = ref('')
 const onFocus = (isScrollHeight: boolean) => {
   emit('onFocus', isScrollHeight)
@@ -86,14 +97,6 @@ function sendEmojiItem(emoji: { emoji: string }) {
   content.value += emoji.emoji
 }
 function sendFilesItem(tempFilePaths: any) {
-  const params = {
-    type: 'file',
-    file: tempFilePaths,
-    appkey: singleInfo.value.appkey,
-    target_username: singleInfo.value.username,
-    target_nickname: singleInfo.value.nickname
-  }
-  chatStore.jimSendSingleFile(params)
   content.value = ''
   if (isUpload.value) {
     isUpload.value = !isUpload.value
@@ -183,8 +186,13 @@ function sendMsg() {
     msgType: 1,
     group: !isSingle.value
   }
+  if (referMsg.value) {
+    params.msgType = 7
+    params.referMsg = referMsg.value
+  }
   ryStore.sendMessage(params)
   content.value = ''
+  closeRefer()
 }
 
 function collapse() {
@@ -206,6 +214,9 @@ function submit(fn: (arg0: any) => void, params: any) {
 function showPacket() {
   emit('showPacket', true)
 }
+function closeRefer() {
+  emit('closeRefer', null)
+}
 
 onMounted((option) => {})
 </script>
@@ -219,9 +230,20 @@ onMounted((option) => {})
             v-model="content"
             @focus="onFocus(false)"
             auto-height
-            placeholder="请输入"
+            placeholder=""
             :cursor-spacing="20"
           />
+          <view class="refer" v-if="referMsg">
+            <view class="txt">
+              {{ referMsg.senderUserId }}:{{ referMsg.content.content }}
+            </view>
+            <u-icon
+              name="close-circle-fill"
+              size="26"
+              color="#999"
+              @click="closeRefer"
+            ></u-icon>
+          </view>
         </view>
         <view class="l-chat-handle">
           <image
@@ -409,6 +431,7 @@ onMounted((option) => {})
     width: 36rpx;
     height: 36rpx;
     margin: 20rpx calc((100% / 9 - 36rpx) / 2) 0;
+    font-size: 38rpx;
   }
   .l-chat-form {
     flex: 1;
@@ -418,15 +441,31 @@ onMounted((option) => {})
     box-sizing: border-box;
     min-height: 64rpx;
     padding: 10rpx 0;
-    background-color: #ffffff;
-  }
-
-  .l-chat-textarea {
-    flex: 1;
-    width: 100%;
-    line-height: 1.5;
-    padding: 0 20rpx;
-    font-size: 30rpx;
+    flex-wrap: wrap;
+    .l-chat-textarea {
+      flex: 1;
+      width: 100%;
+      padding: 10rpx 20rpx;
+      font-size: 30rpx;
+      border-radius: 6rpx;
+      background-color: #ffffff;
+    }
+    .refer {
+      margin-top: 16rpx;
+      border-radius: 6rpx;
+      font-size: 22rpx;
+      color: #666;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.05);
+      padding: 10rpx 20rpx;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .refer {
+        flex: 1;
+        margin-right: 20rpx;
+      }
+    }
   }
 
   .l-chat-handle {
@@ -464,7 +503,7 @@ onMounted((option) => {})
 
 .l-chat-send-btn {
   width: 0;
-  height: 46rpx;
+  height: 50rpx;
   font-size: 28rpx;
   display: flex;
   margin: 0;
@@ -472,7 +511,7 @@ onMounted((option) => {})
   color: #ffffff;
   transition: width 0.3s;
   align-items: center;
-  background-color: #007aff;
+  background-color: #19be6b;
   justify-content: center;
 
   &.l-chat-send-btn-100 {
