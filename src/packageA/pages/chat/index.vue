@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-24 18:03:35
+ * @LastEditTime: 2023-11-25 10:36:08
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -201,11 +201,22 @@ onUnmounted(() => {})
                   <view class="l-chat-text">
                     {{ s.content.content || '' }}
                   </view>
-                  <view class="l-chat-text-refer"
-                    >{{ s.content.referMsgUserId }}:{{
-                      s.content.referMsg.content
-                    }}</view
-                  >
+                  <view class="l-chat-text-refer">
+                    <view class="rname">{{ s.content.referMsgUserId }}:</view>
+                    <view class="rcon" v-if="s.content.objName == 'RC:TxtMsg'">
+                      {{ s.content.referMsg.content }}
+                    </view>
+                    <view class="rimg" v-if="s.content.objName == 'RC:ImgMsg'">
+                      <u-image
+                        :src="s.content.referMsg.imageUri"
+                        :width="'100%'"
+                        :height="'auto'"
+                        mode="widthFix"
+                        border-radius="10"
+                        @tap="previewImage([s.content.referMsg.imageUri])"
+                      ></u-image>
+                    </view>
+                  </view>
                 </template>
                 <button class="l-chat-file" v-else>
                   <view class="l-chat-flie-view">
@@ -239,6 +250,7 @@ onUnmounted(() => {})
 </template>
 
 <style lang="scss" scoped>
+@import '@/styles/helper.scss';
 .l-chat-body {
   width: 100%;
   flex: 1;
@@ -353,6 +365,20 @@ onUnmounted(() => {})
   font-size: 27rpx;
   color: #333;
   padding: 10rpx;
+  max-width: 400rpx;
+  word-break: break-all;
+  display: flex;
+  align-items: flex-start;
+  .rname {
+    flex-shrink: 0;
+    margin-right: 10rpx;
+  }
+  .rcon {
+    @include ellipsis(2);
+  }
+  .rimg {
+    width: 100rpx;
+  }
 }
 
 .l-chat-text-wapper {
