@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-25 10:36:08
+ * @LastEditTime: 2023-11-27 01:24:10
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -129,106 +129,106 @@ onUnmounted(() => {})
       >
         <view class="l-char-scroll-content">
           <view class="l-char-empty"> 已经没有聊天记录了~ </view>
-          <view
-            class="l-chat-item"
-            v-for="(s, i) in chatList"
-            :key="i"
-            :class="{
-              'l-chat-mine': s.messageDirection === 1
-            }"
-            @longpress="onLongPress($event, s)"
-          >
-            <view class="l-chat-item-time" v-if="showTime(i)">
-              {{ dateFormat(new Date(s.sentTime), 'MM-dd hh:mm') }}
-            </view>
-            <view class="l-chat-item-content">
-              <view class="l-chat-avatar">
-                <u-image
-                  width="80"
-                  height="80"
-                  :src="RY_AVATAR"
-                  mode="aspectFill"
-                ></u-image>
+          <template v-for="(s, i) in chatList" :key="i">
+            <view
+              class="l-chat-item"
+              :class="{
+                'l-chat-mine': s.messageDirection === 1
+              }"
+              v-if="s.messageType !== 'RC:SRSMsg'"
+              @longpress="onLongPress($event, s)"
+            >
+              <view class="l-chat-item-time" v-if="showTime(i)">
+                {{ dateFormat(new Date(s.sentTime), 'MM-dd hh:mm') }}
               </view>
-              <view class="l-chat-view">
-                <view class="l-chat-name" v-if="chatType === 1">
-                  {{ s.senderUserId }}
+              <view class="l-chat-item-content">
+                <view class="l-chat-avatar">
+                  <u-image
+                    width="80"
+                    height="80"
+                    :src="RY_AVATAR"
+                    mode="aspectFill"
+                  ></u-image>
                 </view>
-                <template v-if="s.messageType == 'RC:TxtMsg'">
-                  <view class="l-chat-text">
-                    {{ s.content.content || '' }}
+                <view class="l-chat-view">
+                  <view class="l-chat-name" v-if="chatType === 1">
+                    {{ s.senderUserId }}
                   </view>
-                </template>
-                <template v-else-if="s.messageType === 'RC:ImgMsg'">
-                  <view>
-                    <u-image
-                      @tap="previewImage([s.content.imageUri])"
-                      :src="s.content.imageUri"
-                      :style="{
-                        'max-width': '250rpx'
-                      }"
-                      width="250rpx"
-                      height="auto"
-                      mode="widthFix"
-                      border-radius="14"
-                      class="l-upload-img"
-                    ></u-image>
-                  </view>
-                </template>
-                <template v-else-if="s.messageType === 'RC:LBSMsg'">
-                  <!-- {{ s.content }} -->
-                  <view
-                    class="l-chat-location"
-                    @click="
-                      handleMapLocation({
-                        latitude: s.content.latitude,
-                        longitude: s.content.longitude,
-                        addr: s.content.content
-                      })
-                    "
-                  >
-                    <view class="l-chat-con">
-                      <view class="name">{{ s.content.content }}</view>
+                  <template v-if="s.messageType == 'RC:TxtMsg'">
+                    <view class="l-chat-text">
+                      {{ s.content.content || '' }}
                     </view>
-                    <map
-                      :longitude="s.content.longitude"
-                      :latitude="s.content.latitude"
-                      style="width: 350rpx; height: 180rpx"
-                    ></map>
-                  </view>
-                </template>
-                <template v-else-if="s.messageType === 'RC:ReferenceMsg'">
-                  <view class="l-chat-text">
-                    {{ s.content.content || '' }}
-                  </view>
-                  <view class="l-chat-text-refer">
-                    <view class="rname">{{ s.content.referMsgUserId }}:</view>
-                    <view class="rcon" v-if="s.content.objName == 'RC:TxtMsg'">
-                      {{ s.content.referMsg.content }}
-                    </view>
-                    <view class="rimg" v-if="s.content.objName == 'RC:ImgMsg'">
+                  </template>
+                  <template v-else-if="s.messageType === 'RC:ImgMsg'">
+                    <view>
                       <u-image
-                        :src="s.content.referMsg.imageUri"
-                        :width="'100%'"
-                        :height="'auto'"
+                        @tap="previewImage([s.content.imageUri])"
+                        :src="s.content.imageUri"
+                        :style="{
+                          'max-width': '250rpx'
+                        }"
+                        width="250rpx"
+                        height="auto"
                         mode="widthFix"
-                        border-radius="10"
-                        @tap="previewImage([s.content.referMsg.imageUri])"
+                        border-radius="14"
+                        class="l-upload-img"
                       ></u-image>
                     </view>
-                  </view>
-                </template>
-                <button class="l-chat-file" v-else>
-                  <view class="l-chat-flie-view">
-                    <view class="l-cfv-name">
-                      {{ s.content.content }}
+                  </template>
+                  <template v-else-if="s.messageType === 'RC:LBSMsg'">
+                    <!-- {{ s.content }} -->
+                    <view
+                      class="l-chat-location"
+                      @click="
+                        handleMapLocation({
+                          latitude: s.content.latitude,
+                          longitude: s.content.longitude,
+                          addr: s.content.content
+                        })
+                      "
+                    >
+                      <view class="l-chat-con">
+                        <view class="name">{{ s.content.content }}</view>
+                      </view>
+                      <map
+                        :longitude="s.content.longitude"
+                        :latitude="s.content.latitude"
+                        style="width: 350rpx; height: 180rpx"
+                      ></map>
                     </view>
-                  </view>
-                  <!-- <view class="l-chat-file-size"> 5.9MB </view> -->
-                </button>
+                  </template>
+                  <template v-else-if="s.messageType === 'RC:ReferenceMsg'">
+                    <view class="l-chat-text">
+                      {{ s.content.content || '' }}
+                    </view>
+                    <view class="l-chat-text-refer">
+                      <view class="rname">{{ s.content.referMsgUserId }}:</view>
+                      <view
+                        class="rcon"
+                        v-if="s.content.objName == 'RC:TxtMsg'"
+                      >
+                        {{ s.content.referMsg.content }}
+                      </view>
+                      <view
+                        class="rimg"
+                        v-if="s.content.objName == 'RC:ImgMsg'"
+                      >
+                        <u-image
+                          :src="s.content.referMsg.imageUri"
+                          :width="'100%'"
+                          :height="'auto'"
+                          mode="widthFix"
+                          border-radius="10"
+                          @tap="previewImage([s.content.referMsg.imageUri])"
+                        ></u-image>
+                      </view>
+                    </view>
+                  </template>
+                </view>
               </view>
             </view>
-          </view>
+          </template>
+
           <c_msgpup
             ref="msgpupRef"
             :chatType="chatType"

@@ -4,7 +4,7 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-11-24 17:33:16
+ * @LastEditTime: 2023-11-27 01:28:29
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -34,7 +34,6 @@ for (let i = 0; i < RongEmoji.list.length; i += 36) {
 }
 // #endif
 
-console.log(emoji.value)
 const props = withDefaults(
   defineProps<{
     chatType?: number
