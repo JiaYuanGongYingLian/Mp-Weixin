@@ -1,7 +1,7 @@
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady, onPageScroll } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onPageScroll, onShareAppMessage } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { useConfigStore, useUserStore } from '@/store'
 import { baseApi, productApi } from '@/api'
@@ -14,6 +14,7 @@ import {
 import pageSkeleton from '@/components/hy-page-skeleton/index.vue'
 import hyTabBar from '@/components/hy-tabbar/index.vue'
 import { isWeChat } from '@/utils/common'
+import { sharePathFormat } from '@/common/wechat-share'
 
 const configStore = useConfigStore()
 const userStore = useUserStore()
@@ -304,6 +305,15 @@ onLoad(async (option) => {
 })
 onPageScroll((e) => {
   scrollTop.value = e.scrollTop
+})
+onShareAppMessage(() => {
+  return {
+    title: shop.value.name,
+    desc: shop.value.remark ?? '',
+    // #ifdef MP-WEIXIN
+    imageUrl: getImgFullPath(shop.value.avatar),
+    path: sharePathFormat({ shopId: shop.value.id })
+  }
 })
 </script>
 <template>

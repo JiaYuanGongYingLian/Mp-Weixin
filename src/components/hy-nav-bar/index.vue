@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-07 15:41:52
- * @LastEditTime: 2023-07-25 14:52:36
+ * @LastEditTime: 2023-11-27 22:40:38
  * @LastEditors:  Please set LastEditors
 -->
 <template>
@@ -16,7 +16,7 @@
       :back-icon-color="backIconColor"
       :back-icon-name="backIconName"
     >
-      <view class="slot-wrap"></view>
+      <slot name="right"></slot>
     </u-navbar>
   </view>
 </template>

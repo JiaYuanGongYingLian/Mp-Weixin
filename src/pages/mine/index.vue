@@ -374,17 +374,6 @@ onPullDownRefresh(() => {
           <view
             class="bar"
             @tap="goUrlFn"
-            data-url="/packageA/pages/message/index"
-            v-if="configStore.videoPageOpen"
-          >
-            <image
-              src="https://image.blacksilverscore.com/uploads/9a62ef97-4a3c-4107-8f4b-abf65f6d1f85.png"
-            ></image
-            >消息
-          </view>
-          <view
-            class="bar"
-            @tap="goUrlFn"
             data-url="/packageB/pages/setting/index"
           >
             <image

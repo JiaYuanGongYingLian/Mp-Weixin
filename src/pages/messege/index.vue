@@ -183,16 +183,6 @@ function tabmsg(res) {
     }
   })
 }
-function tabaddfriend() {
-  route({
-    url: '/packageD/pages/public/user/addfriends'
-  })
-}
-function addgroup() {
-  route({
-    url: '/packageD/pages/message/addgroup'
-  })
-}
 function ingroup(e) {
   const arr = e.split('_')
   if (arr[1] === 'group') {

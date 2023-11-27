@@ -4,14 +4,14 @@
  * @Description: 群聊列表
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-09-04 18:10:55
+ * @LastEditTime: 2023-11-28 01:55:31
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref, computed, onBeforeMount, watch } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi } from '@/api'
 import {
@@ -21,6 +21,7 @@ import {
   dateFormat,
   handleMapLocation
 } from '@/utils/index'
+import { UPLOADURL } from '@/common/config'
 import { useUserStore, useChatStore, useConfigStore } from '@/store'
 
 const userStore = useUserStore()
@@ -32,7 +33,6 @@ const { userInfo } = storeToRefs(userStore)
 const userDetailName = ref('')
 const friendCircleId = ref(null)
 const userDetailId = ref(null)
-const groupList = ref([])
 const showPop = ref(false)
 const formData = reactive({
   type: 20,
@@ -53,15 +53,44 @@ const header = {
 function addNewGroup() {
   showPop.value = true
 }
-async function getGroupList() {
-  if (!friendCircleId.value) return
-  const { data } = await socialApi.circleList({
-    noPaging: true,
-    chatGroupId: friendCircleId.value,
-    detail: true,
-    type: 20
-  })
-  groupList.value = data
+const title = ref('群聊')
+const groupList = reactive({
+  list: [],
+  loading: true,
+  pageIndex: 1,
+  pageSize: 20
+})
+const roleList = ref([
+  {
+    name: '我的主群',
+    roleId: 401
+  },
+  {
+    name: '我的副群',
+    roleId: 0
+  }
+])
+const roleNow = ref({})
+const status = ref('loadmore')
+async function getList() {
+  if (status.value === 'nomore') return
+  try {
+    const { data } = await socialApi.circleUserList({
+      pageIndex: groupList.pageIndex,
+      pageSize: groupList.pageSize,
+      detail: true,
+      type: 0,
+      userId: userStore.userInfo.id,
+      roleId: roleNow.value.roleId
+    })
+    const { records, current, pages } = data
+    groupList.list.push(...records)
+    if (current < pages && pages !== 0) {
+      groupList.pageIndex += 1
+    } else {
+      status.value = 'nomore'
+    }
+  } catch {}
 }
 function uploadSuccess(data: any, index: any, lists: any, name: string) {
   tempImageData[name] = data.data
@@ -88,70 +117,74 @@ async function submit() {
     })
     return
   }
-  // Object.keys(tempImageData).forEach((key: string) => {
-  //   if (tempImageData[key]) {
-  //     formData[key] = tempImageData[key]
-  //   }
-  // })
   const { code, data } = await socialApi.circleAdd({
     ...formData,
     ...tempImageData
   })
   if (code === 200) {
-    friendCircleId.value = data.chatGroupId
-    const res = await socialApi.userDetailUpdate({
-      id: userDetailId.value,
-      friendCircleId: friendCircleId.value
-    })
-    if (res.code === 200) {
-      uni.showToast({
-        icon: 'none',
-        title: '创建成功'
-      })
-      getGroupList()
-    }
-  }
-}
-async function joinGroup(item: { id: any; joined: boolean }) {
-  const { code } = await socialApi.circleUserAdd({
-    friendCircleId: item.id,
-    chatGroupId: friendCircleId.value,
-    nickname: userDetailName.value || userInfo.value.nickname,
-    userId: userInfo.value.id
-  })
-  if (code === 200) {
+    // friendCircleId.value = data.chatGroupId
+    // const res = await socialApi.userDetailUpdate({
+    //   id: userDetailId.value,
+    //   friendCircleId: friendCircleId.value
+    // })
     uni.showToast({
       icon: 'none',
-      title: '加入成功',
-      success() {
-        item.joined = true
-        toChat(item)
-      }
+      title: '创建成功'
     })
+    getList()
   }
 }
-function toChat(item: any) {
-  if (!item.joined) {
-    joinGroup(item)
+// 切换主副群
+function switchType() {
+  if (roleNow.value.roleId === roleList.value[0].roleId) {
+    roleNow.value = roleList.value[1]
   } else {
-    uni.navigateTo({
-      url: `/packageA/pages/chat/index?groupId=${item.chatGroupId}&groupName=${item.name}`
-    })
+    roleNow.value = roleList.value[0]
   }
+  groupList.list = []
+  groupList.pageIndex = 1
+  status.value = 'loadmore'
+  getList()
+}
+async function toGroupChat(item: {
+  type?: any
+  chatGroupId: any
+  id: any
+  name?: any
+  joined?: boolean
+}) {
+  uni.navigateTo({
+    url: `/packageA/pages/chat/index?targetId=${item.chatGroupId}&groupName=${item.name}&type=1`
+  })
 }
 onLoad((option) => {
   userDetailName.value = `${option?.username}`
   friendCircleId.value = option?.friendCircleId ?? null
   userDetailId.value = option?.userDetailId ?? null
-  getGroupList()
+  if (option?.roleId) {
+    roleNow.value = roleList.value.find((item) => item.roleId == option.roleId)
+  }
+  getList()
+})
+onReachBottom(() => {
+  getList()
 })
 </script>
 <template>
   <view class="container">
-    <hy-nav-bar :title="userDetailName + '的粉丝群'"></hy-nav-bar>
+    <u-navbar :title="roleNow?.name || title">
+      <view slot="right">
+        <u-icon
+          class="u-m-r-30"
+          custom-prefix="custom-icon"
+          name="switch"
+          size="40"
+          @click="switchType"
+        ></u-icon> </view
+    ></u-navbar>
     <view>
-      <view class="new-box" v-if="!friendCircleId">
-        <view class="tips">还没有粉丝群？点击下方按钮新建群聊</view>
+      <view class="new-box" v-if="!groupList?.list?.length">
+        <view class="tips">还没有主群？点击下方按钮新建群聊</view>
         <u-button
           type="error"
           ripple
@@ -160,7 +193,12 @@ onLoad((option) => {
           >+创建群聊</u-button
         >
       </view>
-      <view class="circle" v-for="item in groupList" :key="item.id">
+      <view
+        class="circle"
+        v-for="item in groupList.list"
+        :key="item.id"
+        @click="toGroupChat(item.friendCircle)"
+      >
         <view class="c-bot">
           <view class="avatar-wrap">
             <u-badge
@@ -174,32 +212,19 @@ onLoad((option) => {
               width="120rpx"
               height="120rpx"
               border-radius="10rpx"
-              shape="circle"
-              :src="getImgFullPath(item.avatar)"
+              :src="getImgFullPath(item.friendCircle?.avatar)"
             ></u-image>
           </view>
           <view class="con">
             <view class="top">
-              <view class="name">{{ item?.name }}</view>
+              <view class="name">{{ item.friendCircle?.name }}</view>
               <view class="date">{{
-                dateFormat(new Date(item.createTime), 'MM-dd')
+                dateFormat(new Date(item.friendCircle.createTime), 'MM-dd')
               }}</view>
             </view>
-            <view class="desc"> {{ item?.remark }}</view>
+            <view class="desc"> {{ item.friendCircle?.remark }}</view>
           </view>
         </view>
-        <u-button
-          type="warning"
-          :custom-style="{
-            height: '58rpx',
-            background: item.joined ? '#eee' : '#fc2b55',
-            color: item.joined ? '#333' : '#fff',
-            marginTop: '30rpx'
-          }"
-          ripple
-          @click="toChat(item)"
-          >{{ item.joined ? '发消息' : '申请加入' }}</u-button
-        >
       </view>
     </view>
     <u-popup
@@ -240,14 +265,13 @@ onLoad((option) => {
                 width="140"
                 height="140"
                 ref="upload1"
-                :action="configStore.uploadUrl"
+                :action="UPLOADURL"
                 max-count="1"
                 :header="header"
                 name="object"
                 @on-success="uploadSuccess"
                 index="avatar"
                 :uploadText="null"
-                :file="true"
                 :file-list="
                   formData.avatar
                     ? [{ url: getImgFullPath(formData.avatar) }]
@@ -307,7 +331,7 @@ onLoad((option) => {
   background: #fff;
   border-radius: 16rpx;
   padding: 30rpx;
-  margin-bottom: 10rpx;
+  margin-bottom: 18rpx;
 
   .c-bot {
     display: flex;
