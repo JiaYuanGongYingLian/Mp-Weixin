@@ -273,7 +273,7 @@ function handleTabBarChange(index: any) {
 const imgHeight = ref('240rpx')
 const bannerHeight = ref(400)
 onLoad(async (option) => {
-  shopId.value = option.shopId
+  shopId.value = option?.shopId
   loadingSkeleton.value = true
   getLocation()
   await getShopInfo()
@@ -309,8 +309,7 @@ onPageScroll((e) => {
 onShareAppMessage(() => {
   return {
     title: shop.value.name,
-    desc: shop.value.remark ?? '',
-    // #ifdef MP-WEIXIN
+    desc: shop.value.remark || '',
     imageUrl: getImgFullPath(shop.value.avatar),
     path: sharePathFormat({ shopId: shop.value.id })
   }
