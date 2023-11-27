@@ -1,5 +1,5 @@
 <template>
-  <view class="rf-search-bar bg-primary">
+  <view class="rf-search-bar">
     <view class="header">
       <!-- 搜索框 -->
       <view class="input-box" @tap="toSearch">

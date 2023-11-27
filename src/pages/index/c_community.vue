@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 15:06:58
- * @LastEditTime: 2023-11-22 14:34:12
+ * @LastEditTime: 2023-11-27 09:46:59
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -13,12 +13,14 @@ const myCommunities = ref([
   {
     name: '我的主群',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/5d621db8-da29-429e-80fc-a61276ef5072.svg',
-    msg: '群友们，趁有空赶紧看……'
+    msg: '群友们，趁有空赶紧看……',
+    type: 401
   },
   {
     name: '我的副群',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/b21c2e15-d5d3-4225-8b4a-cf41ea64286e.svg',
-    msg: '群友们，趁有空赶紧看……'
+    msg: '群友们，趁有空赶紧看……',
+    type: 0
   }
 ])
 const mainModules = ref([
@@ -64,6 +66,12 @@ function handleClick(data) {
     url: '/pages/physicalShop/index?shopId=3'
   })
 }
+function toGroup(item: { type: any }) {
+  const { type } = item
+  uni.navigateTo({
+    url: `/packageA/pages/message/index?type=${type}`
+  })
+}
 onMounted(async () => {
   // cates.value = await getMockData('cates')
 })
@@ -84,12 +92,8 @@ onMounted(async () => {
       </view>
     </view>
     <view class="cBox flex">
-      <view
-        class="item"
-        v-for="(item, index) in myCommunities"
-        :key="index"
-      >
-        <view class="top">
+      <view class="item" v-for="(item, index) in myCommunities" :key="index">
+        <view class="top" @click="toGroup(item)">
           <u-image width="88rpx" height="88rpx" :src="item.icon"></u-image>
           <view class="right">
             <view class="name">{{ item.name }}</view>
@@ -108,6 +112,7 @@ onMounted(async () => {
                 borderColor: '#fff'
               }"
               :hair-line="false"
+              @click="toGroup(item)"
               >立即进入</u-button
             >
           </view>

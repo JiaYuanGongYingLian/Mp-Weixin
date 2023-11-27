@@ -215,7 +215,7 @@ topBtn.top = obj?.top + obj?.height
       <!-- #ifdef H5 -->
       <!-- <hyDownloadTips v-if="!isAlipayClient()" :top="'0px'" /> -->
       <!-- #endif -->
-      <u-tabs
+      <!-- <u-tabs
         :list="tabList"
         :is-scroll="false"
         v-model="current"
@@ -224,7 +224,7 @@ topBtn.top = obj?.top + obj?.height
         active-color="#fff"
         inactive-color="#fff"
         font-size="32"
-      />
+      /> -->
       <view style="height: 23rpx"></view>
       <hy-search-bar @on-search="onSearch" />
       <view style="height: 23rpx"></view>
@@ -235,6 +235,7 @@ topBtn.top = obj?.top + obj?.height
         height="200"
         mode="rect"
         :border-radius="24"
+        bg-color="transparent"
         @click="handleBannerClick($event, bannerList)"
       ></u-swiper>
       <view class="section" v-if="categoryList.list2.length">
@@ -284,6 +285,7 @@ topBtn.top = obj?.top + obj?.height
         @click="handleBannerClick($event, bannerList2)"
       ></u-swiper>
       <view style="height: 23rpx"></view>
+      <!-- 超级社群 -->
       <C_COMMUNITY />
       <view style="height: 23rpx"></view>
       <view class="rec">热门推荐</view>
