@@ -26,7 +26,7 @@ const cates = ref([
 ])
 function handleClick(index) {
   uni.navigateTo({
-    url: '/packageD/pages/index/home'
+    url: '/pages/physicalShop/index?shopId=3'
   })
 }
 onMounted(async () => {

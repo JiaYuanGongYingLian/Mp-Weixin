@@ -1,49 +1,6 @@
 <!-- eslint-disable vue/no-use-v-if-with-v-for -->
 <template>
   <view>
-    <u-navbar
-      :is-back="false"
-      title="消息"
-      :background="ryStore.head_background"
-      :border-bottom="false"
-      :title-bold="true"
-    >
-      <view slot="right">
-        <u-icon
-          class="u-m-r-30"
-          name="plus-circle"
-          size="40"
-          @click="ShowHidden = !ShowHidden"
-        ></u-icon>
-        <view class="arrivalNavigation" v-if="ShowHidden">
-          <view class="d4"></view>
-          <view class="sideNavigation">
-            <view class="item" @click="addgroup()"
-              ><u-icon class="u-m-r-30" name="chat-fill" size="35"></u-icon
-              >发起群聊</view
-            >
-            <view class="liBottomBorder"></view>
-            <view class="item" @click="tabaddfriend()"
-              ><u-icon class="u-m-r-30" name="man-add-fill" size="35"></u-icon
-              >添加朋友</view
-            >
-          </view>
-        </view>
-      </view>
-    </u-navbar>
-    <view
-      style="width: 100%; background-color: rgba(237, 237, 237); padding: 15rpx"
-    >
-      <u-search
-        shape="square"
-        height="70"
-        bg-color="#ffffff"
-        color="#909399"
-        :disabled="true"
-        :show-action="false"
-        placeholder="搜索"
-      ></u-search>
-    </view>
     <view
       v-if="ryStore.pinia_home_loading"
       class="u-border-bottom"

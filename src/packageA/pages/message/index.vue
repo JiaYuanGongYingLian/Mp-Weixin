@@ -1,43 +1,119 @@
-<!--
- * @Description: Description
- * @Author: Kerwin
- * @Date: 2023-08-17 18:27:47
- * @LastEditTime: 2023-11-16 18:04:57
- * @LastEditors:  Please set LastEditors
--->
-<!-- eslint-disable no-use-before-define -->
-<!-- eslint-disable no-empty -->
-<!-- eslint-disable @typescript-eslint/no-empty-function -->
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-<script setup lang="ts">
-import { reactive, ref, onMounted, computed } from 'vue'
-import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
-import { storeToRefs } from 'pinia'
-import { baseApi, socialApi } from '@/api'
-import { getImgFullPath, getDistance, dateFormat } from '@/utils/index'
-import { useUserStore } from '@/store'
+<!-- eslint-disable vue/no-use-v-if-with-v-for -->
+<template>
+  <view>
+    <u-navbar
+      :is-back="true"
+      :title="title"
+      :background="ryStore.head_background"
+      :border-bottom="false"
+      :title-bold="true"
+    >
+      <view slot="right">
+        <u-icon
+          class="u-m-r-30"
+          custom-prefix="custom-icon"
+          name="switch"
+          size="40"
+          @click="switchType"
+        ></u-icon>
+      </view>
+    </u-navbar>
+    <view class="container">
+      <view
+        class="circle"
+        v-for="item in circleList.list"
+        :key="item.id"
+        @click="toGroupChat(item?.friendCircle)"
+      >
+        <view class="c-bot">
+          <view class="avatar-wrap">
+            <u-badge
+              :is-dot="true"
+              type="success"
+              is-center
+              v-if="item.unread_msg_count > 0"
+            ></u-badge>
+            <u-image
+              class="avatar"
+              width="120rpx"
+              height="120rpx"
+              border-radius="10rpx"
+              :src="getImgFullPath(item.friendCircle?.avatar)"
+            ></u-image>
+          </view>
+          <view class="con">
+            <view class="top">
+              <view class="name">{{ item.friendCircle?.name }}</view>
+              <view class="date">{{
+                dateFormat(
+                  new Date(item.friendCircle?.createTime * 1000),
+                  'MM-dd hh:mm'
+                )
+              }}</view>
+            </view>
+            <view class="desc"> {{ item?.friendCircle?.remark }}</view>
+          </view>
+        </view>
+      </view>
+      <u-empty
+        text="暂无消息"
+        mode="message"
+        v-if="!circleList.list.length"
+        margin-top="100"
+      ></u-empty>
+      <u-loadmore
+        v-if="circleList.list.length > 3"
+        :status="status"
+        margin-top="30"
+      />
+    </view>
+    <!-- <u-tabbar
+      v-model="ryStore.pinia_current"
+      :activeColor="ryStore.pinia_activeColor"
+      :list="ryStore.pinia_tabbar"
+      bg-color="rgba(249,249,249)"
+    ></u-tabbar> -->
+  </view>
+</template>
 
+<script setup lang="ts">
+import { onMounted, reactive, ref } from 'vue'
+import { onLoad, onReachBottom } from '@dcloudio/uni-app'
+import { route } from '@/utils/common'
+import { getImgFullPath, dateFormat } from '@/utils/index'
+import { useRyStore, useUserStore } from '@/store'
+import { socialApi } from '@/api'
+
+const ryStore = useRyStore()
 const userStore = useUserStore()
-const { hasLogin, userInfo } = storeToRefs(userStore)
-const conversation = ref([])
-const singleConversations = computed(() => {
-  return conversation.value?.filter((item) => item?.type === 3)
-})
+const ShowHidden = ref(false)
+const title = ref('我的主群')
 const circleList = reactive({
   list: [],
   loading: true,
   pageIndex: 1,
   pageSize: 20
 })
+const roleList = ref([
+  {
+    name: '我的主群',
+    roleId: 401
+  },
+  {
+    name: '我的副群',
+    roleId: 0
+  }
+])
 const status = ref('loadmore')
 async function getList() {
   if (status.value === 'nomore') return
   try {
-    const { data } = await socialApi.circleList({
+    const { data } = await socialApi.circleUserList({
       pageIndex: circleList.pageIndex,
       pageSize: circleList.pageSize,
       detail: true,
-      type: 0
+      type: 0,
+      userId: userStore.userInfo.id
     })
     const { records, current, pages } = data
     circleList.list.push(...records)
@@ -48,11 +124,6 @@ async function getList() {
     }
   } catch {}
 }
-function reload() {
-  circleList.list = []
-  circleList.pageIndex = 1
-  getList()
-}
 async function toGroupChat(item: {
   type?: any
   chatGroupId: any
@@ -60,100 +131,100 @@ async function toGroupChat(item: {
   name?: any
   joined?: boolean
 }) {
-  if (!item.joined) {
-    joinGroup(item)
-  } else {
-    uni.navigateTo({
-      // url: `/packageA/pages/chat/index?groupId=${item.chatGroupId}&groupName=${item.name}`
-      url: `/packageA/pages/chat/index?groupId=75293282&groupName=${item.name}`
-    })
-  }
-}
-async function joinGroup(item: {
-  type?: any
-  id: any
-  chatGroupId: any
-  name?: any
-}) {
-  const { code } = await socialApi.circleUserAdd({
-    friendCircleId: item.id,
-    chatGroupId: item.chatGroupId,
-    nickname: userInfo.value.nickname,
-    userId: userInfo.value.id
+  uni.navigateTo({
+    url: `/packageA/pages/chat/index?targetId=${item.chatGroupId}&groupName=${item.name}&type=1`
+    // url: `/packageA/pages/chat/index?groupId=75293282&groupName=${item.name}`
   })
-  if (code === 200) {
-    reload()
-    uni.navigateTo({
-      url: `/packageA/pages/chat/index?groupId=${item.chatGroupId}`
-    })
-  }
 }
 function toChat(data: { username: any }) {
   uni.navigateTo({
     url: `/packageA/pages/chat/index?username=${data?.username}`
   })
 }
-onLoad(() => {
+function switchType() {}
+onLoad(async (opt) => {
+  const roleId = opt?.roleId
+})
+onMounted(() => {
   getList()
 })
 onReachBottom(() => {
   getList()
 })
 </script>
-<template>
-  <!-- <hy-nav-bar title="title"></hy-nav-bar> -->
-  <view class="container">
-    <view
-      class="circle"
-      v-for="item in singleConversations"
-      :key="item.id"
-      @click="toChat(item)"
-    >
-      <view class="c-bot">
-        <view class="avatar-wrap">
-          <u-badge
-            :is-dot="true"
-            type="success"
-            is-center
-            v-if="item.unread_msg_count > 0"
-          ></u-badge>
-          <u-image
-            class="avatar"
-            width="120rpx"
-            height="120rpx"
-            border-radius="10rpx"
-            :src="item?.avatar"
-          ></u-image>
-        </view>
 
-        <view class="con">
-          <view class="top">
-            <view class="name">{{ item?.nickName }}</view>
-            <view class="date">{{
-              dateFormat(new Date(item.mtime), 'MM-dd hh:mm')
-            }}</view>
-          </view>
-          <view class="desc"> {{ item?.content }}</view>
-        </view>
-      </view>
-    </view>
-    <u-empty
-      text="暂无消息"
-      mode="message"
-      v-if="!singleConversations.length"
-      margin-top="100"
-    ></u-empty>
-    <u-loadmore
-      v-if="singleConversations.length > 3"
-      :status="status"
-      margin-top="30"
-    />
-  </view>
-</template>
-
-<style lang="scss" scoped>
+<style lang="scss">
 @import '@/styles/helper.scss';
+.list-wrap {
+  padding: 18rpx;
+  .body-item {
+    display: flex;
+    height: auto;
+    width: 100%;
+    color: #333;
+    .content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-left: 20rpx;
+      .title {
+        display: flex;
+        padding-top: 10rpx;
+        font-size: 35rpx;
+        line-height: 40rpx;
+        font-weight: bold;
+      }
+      .head_right {
+        position: absolute;
+        right: 400rpx;
+        font-size: 25rpx;
+        color: $u-tips-color;
+      }
+      .item_content {
+        color: #82848a;
+        font-size: 28rpx;
+      }
+    }
+  }
+}
 
+.body-item .images {
+  width: 100rpx;
+  // flex: 0 0 100rpx;
+  height: 100rpx;
+}
+
+.arrivalNavigation {
+  width: 250rpx;
+  position: absolute;
+  right: 10rpx;
+  z-index: 99;
+  .sideNavigation {
+    width: 248rpx;
+    background-color: rgba(76, 76, 76, 76);
+    color: #eee;
+    border-radius: 6rpx;
+    .item {
+      height: 85rpx;
+      text-align: center;
+      line-height: 85rpx;
+      font-size: 25rpx;
+    }
+    .liBottomBorder {
+      border: 0.1rpx solid rgba(81, 81, 81, 81);
+    }
+  }
+  .d4 {
+    width: 0;
+    height: 0;
+    margin-left: 200rpx;
+    // margin-top: -10rpx;
+    border-width: 10rpx;
+    border-style: solid;
+    border-color: transparent rgba(76, 76, 76, 76) transparent transparent;
+    transform: rotate(90deg); /*顺时针旋转90°*/
+  }
+}
 .container {
   padding: 20rpx;
 }
@@ -162,7 +233,7 @@ onReachBottom(() => {
   background: #fff;
   border-radius: 16rpx;
   padding: 30rpx;
-  margin-bottom: 10rpx;
+  margin-bottom: 16rpx;
 
   .c-bot {
     display: flex;
