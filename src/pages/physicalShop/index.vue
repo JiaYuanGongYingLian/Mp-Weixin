@@ -189,6 +189,7 @@ async function getShopProduct() {
   const tab = tabs.value[currentTab.value]
   const { pageIndex, pageSize, finished } = item
   if (finished) return
+  if (!configStore.showProduct) return
   const { data } = await productApi.getShopProductList({
     pageIndex,
     pageSize,

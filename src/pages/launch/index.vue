@@ -31,11 +31,17 @@ function toTargetPage(URL?: any, duration = 0) {
     })
   }, duration)
 }
-async function getConfig(fieldName = 'mini_project_chat') {
+async function getConfig(fieldName = 'mini_project') {
   const { data } = await baseApi.getSystemConfigInfo({
     fieldName
   })
-  configStore.videoPageOpen = data.fieldValue !== '0'
+  const config = JSON.parse(data.fieldValue)
+  console.log(config)
+  if (config.version === configStore.version) {
+    configStore.videoPageOpen = !!config.video
+    configStore.hideData = !!config.hideData
+    configStore.shopId = config.shopId
+  }
 }
 
 const uncertainShareCodeLinks = [
@@ -70,8 +76,7 @@ onLoad(async (option) => {
         console.log(err)
       }
       toTargetPage(url_rewirte)
-      getConfig('mini_project_chat')
-      // getConfig('mini_project_video')
+      getConfig('mini_project')
     },
     fail: () => {
       uni.hideLoading()

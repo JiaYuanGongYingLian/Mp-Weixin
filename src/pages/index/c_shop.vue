@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 17:53:57
- * @LastEditTime: 2023-11-19 18:35:23
+ * @LastEditTime: 2023-11-28 18:33:11
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -10,7 +10,9 @@ import { reactive, ref, onMounted } from 'vue'
 import { onReachBottom } from '@dcloudio/uni-app'
 import { productApi } from '@/api'
 import { getImgFullPath } from '@/utils'
+import { useConfigStore } from '@/store'
 
+const configStore = useConfigStore()
 const status = ref('loadmore')
 // 门店列表
 const shopList = reactive({
@@ -32,6 +34,10 @@ const getShopList = async () => {
   })
   const { records, current, pages } = data
   shopList.list.push(...records)
+  const index = shopList.list.findIndex((item) => item.id === 3)
+  if (index > 0 && configStore.hideData) {
+    shopList.list.splice(index, 1)
+  }
   if (current < pages) {
     shopList.pageIndex += 1
   } else {

@@ -2,8 +2,9 @@
 import { reactive, ref } from 'vue'
 import { onLoad, onShow, onReady, onShareAppMessage } from '@dcloudio/uni-app'
 import { LOGO } from '@/common/config'
+import { useConfigStore } from '@/store'
 
-const version = ref('0001')
+const configStore = useConfigStore()
 const phoneNumber = ref('4006381238')
 function mobileFn() {
   uni.makePhoneCall({
@@ -24,7 +25,7 @@ onShareAppMessage((_res) => {
     <hy-nav-bar :title="'关于我们'"></hy-nav-bar>
     <image :src="LOGO" class="logo"></image>
     <view class="tit">链通家园</view>
-    <view class="ver">V{{ version }}</view>
+    <view class="ver">V{{ configStore.version }}</view>
     <view class="content"
       >提供优质商品，高性价比服务，让人人0元参与创业，就业，共创共富，轻松赚钱的副业服务平台!</view
     >

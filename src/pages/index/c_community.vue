@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 15:06:58
- * @LastEditTime: 2023-11-27 09:46:59
+ * @LastEditTime: 2023-11-28 10:57:24
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -39,7 +39,7 @@ const mainModules = ref([
   {
     name: '积分专区',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/c0d66b9c-dcb2-445d-a85e-e8a0f6d471ae.png',
-    msg: '累计权分，总换好物',
+    msg: '累计积分，总换好物',
     bg: 'linear-gradient(90deg, #FDEFE7 0%, #FADBCA 100%)'
   },
   {
@@ -63,7 +63,7 @@ const mainModules = ref([
 ])
 function handleClick(data) {
   uni.navigateTo({
-    url: '/pages/physicalShop/index?shopId=3'
+    url: '/pages/physicalShop/index?shopId=9'
   })
 }
 function toGroup(item: { roleId: any }) {
