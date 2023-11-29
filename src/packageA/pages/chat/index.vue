@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-27 10:21:29
+ * @LastEditTime: 2023-11-29 11:07:53
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -116,9 +116,9 @@ onUnmounted(() => {})
 </script>
 <template>
   <view class="container">
-    <hy-nav-bar
+    <u-navbar
       :title="chatType === 1 ? groupInfo.name : singleInfo.nickname"
-    ></hy-nav-bar>
+    ></u-navbar>
     <view class="l-chat-body" @tap="onChatClick">
       <scroll-view
         scroll-y="true"

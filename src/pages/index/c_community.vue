@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 15:06:58
- * @LastEditTime: 2023-11-28 10:57:24
+ * @LastEditTime: 2023-11-29 10:17:35
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -27,37 +27,37 @@ const mainModules = ref([
   {
     name: '超值拼团',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/53c11fb1-a1e7-4848-9f4e-f3e66b7bcbbb.png',
-    msg: '趣味拼团,约好友一起来...',
+    msg: '趣味拼团,约好友一起来…',
     bg: 'linear-gradient(90deg, #F1F4FE 0%, #DEE5FC 100%)'
   },
   {
     name: '限时秒杀',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/f6b8bcdf-e754-4e4d-aeea-941393a062dc.png',
-    msg: '超值好货 等你来秒',
+    msg: '超值好货 等你来秒…',
     bg: 'linear-gradient(90deg, #FDF7E7 0%, #FAEDCA 100%)'
   },
   {
     name: '积分专区',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/c0d66b9c-dcb2-445d-a85e-e8a0f6d471ae.png',
-    msg: '累计积分，总换好物',
+    msg: '累计积分，总换好物…',
     bg: 'linear-gradient(90deg, #FDEFE7 0%, #FADBCA 100%)'
   },
   {
     name: '福利专区',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/8b03983b-9d5d-4fd8-bbdb-3bfabe211060.png',
-    msg: '源头厂家，红包天天见',
+    msg: '源头厂家，红包天天见…',
     bg: 'linear-gradient(90deg, #F1FAFE 0%, #DEF3FC 100%)'
   },
   {
     name: '学生专区',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/926019bc-8b73-4268-80f4-1a537bcee6de.png',
-    msg: '让每个孩子都能绽放自己',
+    msg: '让每个孩子都能绽放自己…',
     bg: 'linear-gradient(90deg, #F1F4FE 0%, #DEE5FC 100%)'
   },
   {
     name: '生活专区',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/e2437040-69f0-4f3b-82c1-19e943982538.png',
-    msg: '生活缴费,生法服务',
+    msg: '生活缴费,生活服务…',
     bg: 'linear-gradient(90deg, #FDF7E7 0%, #FAEDCA 100%)'
   }
 ])

@@ -4,7 +4,7 @@
  * @Description: 群聊列表
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-28 01:55:31
+ * @LastEditTime: 2023-11-29 11:36:12
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -22,36 +22,16 @@ import {
   handleMapLocation
 } from '@/utils/index'
 import { UPLOADURL } from '@/common/config'
-import { useUserStore, useChatStore, useConfigStore } from '@/store'
+import { useUserStore, useChatStore } from '@/store'
+import c_newGroup from './c_newGroup.vue'
 
 const userStore = useUserStore()
-const chatStore = useChatStore()
-const configStore = useConfigStore()
-const { chatHasLogin, chatList } = storeToRefs(chatStore)
-const { userInfo } = storeToRefs(userStore)
-
 const userDetailName = ref('')
 const friendCircleId = ref(null)
 const userDetailId = ref(null)
-const showPop = ref(false)
-const formData = reactive({
-  type: 20,
-  avatar: '',
-  name: '',
-  userId: userStore.userInfo.id,
-  remark: ''
-})
-const tempImageData = reactive({
-  avatar: ''
-})
-const header = {
-  Authorization: `Bearer ${uni.getStorageSync('accessToken') || ''}`,
-  // #ifdef MP-WEIXIN
-  'Content-Type': 'multipart/form-data'
-  // #endif
-}
+const popRef = ref()
 function addNewGroup() {
-  showPop.value = true
+  popRef.value.addNewGroup()
 }
 const title = ref('群聊')
 const groupList = reactive({
@@ -62,11 +42,11 @@ const groupList = reactive({
 })
 const roleList = ref([
   {
-    name: '我的主群',
+    name: '主群',
     roleId: 401
   },
   {
-    name: '我的副群',
+    name: '副群',
     roleId: 0
   }
 ])
@@ -74,6 +54,7 @@ const roleNow = ref({})
 const status = ref('loadmore')
 async function getList() {
   if (status.value === 'nomore') return
+  uni.showLoading()
   try {
     const { data } = await socialApi.circleUserList({
       pageIndex: groupList.pageIndex,
@@ -91,48 +72,7 @@ async function getList() {
       status.value = 'nomore'
     }
   } catch {}
-}
-function uploadSuccess(data: any, index: any, lists: any, name: string) {
-  tempImageData[name] = data.data
-}
-async function submit() {
-  if (!tempImageData.avatar) {
-    uni.showToast({
-      icon: 'none',
-      title: '请上传群头像'
-    })
-    return
-  }
-  if (!formData.name) {
-    uni.showToast({
-      icon: 'none',
-      title: '请填写群名称'
-    })
-    return
-  }
-  if (!formData.remark) {
-    uni.showToast({
-      icon: 'none',
-      title: '请填写群简介'
-    })
-    return
-  }
-  const { code, data } = await socialApi.circleAdd({
-    ...formData,
-    ...tempImageData
-  })
-  if (code === 200) {
-    // friendCircleId.value = data.chatGroupId
-    // const res = await socialApi.userDetailUpdate({
-    //   id: userDetailId.value,
-    //   friendCircleId: friendCircleId.value
-    // })
-    uni.showToast({
-      icon: 'none',
-      title: '创建成功'
-    })
-    getList()
-  }
+  uni.hideLoading()
 }
 // 切换主副群
 function switchType() {
@@ -172,7 +112,7 @@ onReachBottom(() => {
 </script>
 <template>
   <view class="container">
-    <u-navbar :title="roleNow?.name || title">
+    <u-navbar :title="`我的${roleNow?.name || title}`">
       <view slot="right">
         <u-icon
           class="u-m-r-30"
@@ -183,7 +123,10 @@ onReachBottom(() => {
         ></u-icon> </view
     ></u-navbar>
     <view>
-      <view class="new-box" v-if="!groupList?.list?.length">
+      <view
+        class="new-box"
+        v-if="!groupList?.list?.length && roleNow?.name === '主群'"
+      >
         <view class="tips">还没有主群？点击下方按钮新建群聊</view>
         <u-button
           type="error"
@@ -193,6 +136,12 @@ onReachBottom(() => {
           >+创建群聊</u-button
         >
       </view>
+      <u-empty
+        text="暂无副群"
+        mode="message"
+        v-if="!groupList.list.length && roleNow?.name === '副群'"
+        margin-top="100"
+      ></u-empty>
       <view
         class="circle"
         v-for="item in groupList.list"
@@ -227,86 +176,7 @@ onReachBottom(() => {
         </view>
       </view>
     </view>
-    <u-popup
-      v-model="showPop"
-      mode="center"
-      width="298px"
-      closeable
-      border-radius="20"
-      close-icon-color="#fff"
-      close-icon="close-circle"
-      close-icon-size="40"
-      :z-index="3"
-    >
-      <view class="pop-head">
-        <u-image
-          src="https://image.blacksilverscore.com/uploads/05a779ee-c342-49be-a9da-541f2d9a614d.png"
-          width="100%"
-          height="80px"
-        ></u-image>
-        <view class="head-con">
-          <view class="pop-tit">群聊信息</view>
-        </view>
-      </view>
-      <view class="pop-body">
-        <u-form
-          :model="formData"
-          ref="form"
-          :label-style="{ fontWeight: 'bold' }"
-        >
-          <view class="section">
-            <u-form-item
-              label="群头像"
-              label-width="auto"
-              prop="avatar"
-              required
-            >
-              <u-upload
-                width="140"
-                height="140"
-                ref="upload1"
-                :action="UPLOADURL"
-                max-count="1"
-                :header="header"
-                name="object"
-                @on-success="uploadSuccess"
-                index="avatar"
-                :uploadText="null"
-                :file-list="
-                  formData.avatar
-                    ? [{ url: getImgFullPath(formData.avatar) }]
-                    : []
-                "
-              ></u-upload>
-            </u-form-item>
-            <u-form-item required label="群名称" label-width="auto" prop="name"
-              ><u-input v-model="formData.name" placeholder="请填写群名称"
-            /></u-form-item>
-            <u-form-item
-              :border-bottom="false"
-              label="群简介"
-              label-width="auto"
-              label-position="left"
-              required
-              ><u-input
-                v-model="formData.remark"
-                input-align="left"
-                type="textarea"
-                placeholder="请填写群简介"
-            /></u-form-item>
-          </view>
-        </u-form>
-        <u-button
-          class="btn"
-          @click="submit"
-          shape="circle"
-          type="primary"
-          ripple
-          :custom-style="{ background: '#ff522d', height: '70rpx' }"
-          >保存</u-button
-        >
-      </view>
-    </u-popup>
+    <c_newGroup @onSuccess="getList" ref="popRef" />
   </view>
 </template>
 
@@ -367,51 +237,6 @@ onReachBottom(() => {
         @include ellipsis(2);
         color: #666;
       }
-    }
-  }
-}
-.pop-head {
-  position: relative;
-  color: #fff;
-
-  .head-con {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: 30px;
-
-    .pop-tit {
-      text-align: center;
-      font-size: 32rpx;
-      font-weight: bold;
-    }
-
-    .des {
-      padding: 20rpx;
-      font-size: 24rpx;
-    }
-  }
-}
-
-.pop-body {
-  padding: 30rpx;
-  .btn {
-    margin-top: 30rpx;
-  }
-  :deep(.u-add-wrap) {
-    border-radius: 50%;
-    .u-add-tips {
-      display: none;
-    }
-    .u-preview-wrap {
-      // background: none;
-      border: 0;
-    }
-  }
-  :deep(.u-preview-wrap) {
-    border-radius: 50%;
-    .u-preview-image {
-      border-radius: 50%;
     }
   }
 }

@@ -288,7 +288,7 @@ topBtn.top = obj?.top + obj?.height
       <!-- 超级社群 -->
       <C_COMMUNITY />
       <view style="height: 23rpx"></view>
-      <view class="rec">热门推荐</view>
+      <view class="rec">本地生活</view>
       <C_SHOP />
       <u-back-top :scroll-top="scrollTop"></u-back-top>
       <hy-tabbar :midButton="true" :border-top="false"></hy-tabbar>

@@ -1,78 +1,6 @@
 <!-- eslint-disable vue/no-use-v-if-with-v-for -->
 <template>
   <view>
-    <view
-      v-if="ryStore.pinia_home_loading"
-      class="u-border-bottom"
-      v-for="(item, index) in ryStore.pinia_latestConversationList[
-        ryStore.userinfo.id
-      ]"
-      :key="index"
-    >
-      <!-- u-border-bottom -->
-      <u-swipe-action
-        :options="options"
-        @click="click"
-        :show="item.show"
-        :index="index"
-        @open="item.show = true"
-        @close="item.show = false"
-      >
-        <view
-          class="list-wrap"
-          @click="ingroup(item.targetId) ? tabgroup(item) : tabmsg(item)"
-        >
-          <view class="body-item">
-            <view style="position: relative">
-              <u-lazy-load
-                class="images"
-                border-radius="12"
-                height="100"
-                v-if="!ingroup(item.targetId)"
-                :image="ryStore.pinia_nlist[item.targetId].avatar"
-                threshold="300"
-                img-mode="aspectFill"
-              ></u-lazy-load>
-              <u-lazy-load
-                class="images"
-                border-radius="12"
-                height="100"
-                v-if="ingroup(item.targetId)"
-                :image="ryStore.pinia_grouplist[item.targetId].avatar"
-                threshold="300"
-                img-mode="aspectFill"
-              ></u-lazy-load>
-              <u-badge
-                :count="item.unreadMessageCount"
-                size="mini"
-                :is-center="true"
-              ></u-badge>
-            </view>
-            <view class="content">
-              <view class="title">
-                <view v-if="!ingroup(item.targetId)">
-                  {{ ryStore.pinia_nlist[item.targetId].nickname }}
-                </view>
-                <view v-if="ingroup(item.targetId)">
-                  {{ ryStore.pinia_grouplist[item.targetId].name }}
-                </view>
-              </view>
-              <view class="head_right">
-                {{ item.lastUnreadTime | date('hh:MM') }}
-              </view>
-              <view class="item_content text-line-1 u-m-b-5">
-                {{
-                  item.latestMessage.messageType == 'app:hongbao'
-                    ? '[红包]  ' + item.latestMessage.content.content.ps
-                    : item.latestMessage.content.content
-                }}
-              </view>
-            </view>
-          </view>
-        </view>
-        <!-- <u-line color="info" length="80%" /> -->
-      </u-swipe-action>
-    </view>
     <view class="container">
       <view
         class="circle"
@@ -137,68 +65,10 @@ import { onMounted, reactive, ref } from 'vue'
 import { onLoad, onReachBottom } from '@dcloudio/uni-app'
 import { route } from '@/utils/common'
 import { getImgFullPath, dateFormat } from '@/utils/index'
-import { useRyStore, useUserStore } from '@/store'
+import { useUserStore } from '@/store'
 import { socialApi } from '@/api'
 
-const ryStore = useRyStore()
 const userStore = useUserStore()
-const ShowHidden = ref(false)
-const options = reactive([
-  {
-    text: '置顶',
-    style: {
-      'white-space': 'nowrap',
-      backgroundColor: '#909399'
-    }
-  },
-  {
-    text: '删除',
-    style: {
-      backgroundColor: '#dd524d'
-    }
-  }
-])
-function click(index, index1) {
-  const that = this
-  if (index1 === 0) {
-    // 点击了置顶
-  } else if (index1 === 1) {
-    // 点击了删除
-    this.pinia_latestConversationList[this.userinfo.id][index].show = false
-    setTimeout(() => {
-      WEBIM.delMessageList(
-        this.pinia_latestConversationList[this.userinfo.id][index].targetId,
-        this.pinia_latestConversationList[this.userinfo.id][index].type,
-        index
-      )
-    }, 500)
-  }
-}
-function tabmsg(res) {
-  route({
-    url: '/packageD/pages/message/index',
-    params: {
-      uuid: res.targetId,
-      type: res.type
-    }
-  })
-}
-function ingroup(e) {
-  const arr = e.split('_')
-  if (arr[1] === 'group') {
-    return true
-  }
-  return false
-}
-function tabgroup(e) {
-  route({
-    url: '/packageD/pages/message/message_group',
-    params: {
-      uuid: e.targetId,
-      type: e.type
-    }
-  })
-}
 const circleList = reactive({
   list: [],
   loading: true,
@@ -223,7 +93,6 @@ async function getList() {
     } else {
       status.value = 'nomore'
     }
-    console.log(circleList.list)
   } catch {}
 }
 async function toGroupChat(item: {
@@ -235,12 +104,6 @@ async function toGroupChat(item: {
 }) {
   uni.navigateTo({
     url: `/packageA/pages/chat/index?targetId=${item.chatGroupId}&groupName=${item.name}&type=1`
-    // url: `/packageA/pages/chat/index?groupId=75293282&groupName=${item.name}`
-  })
-}
-function toChat(data: { username: any }) {
-  uni.navigateTo({
-    url: `/packageA/pages/chat/index?username=${data?.username}`
   })
 }
 onLoad(async (opt) => {})
