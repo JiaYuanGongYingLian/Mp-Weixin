@@ -4,7 +4,7 @@
  * @Description: 群聊列表
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-29 16:33:13
+ * @LastEditTime: 2023-11-29 18:50:42
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -104,6 +104,12 @@ async function toGroupChat(item: {
     }
   })
 }
+const permission = computed(() => {
+  const p = userStore.userInfo?.permissions.find(
+    (item: { permission: any }) => item.permission === 'Function_CreateGroup'
+  )
+  return !!p
+})
 onLoad((option) => {
   userDetailName.value = `${option?.username}`
   friendCircleId.value = option?.friendCircleId ?? null
@@ -132,7 +138,9 @@ onReachBottom(() => {
     <view>
       <view
         class="new-box"
-        v-if="!groupList?.list?.length && roleNow?.name === '主群'"
+        v-if="
+          !groupList?.list?.length && roleNow?.name === '主群' && permission
+        "
       >
         <view class="tips">还没有主群？点击下方按钮新建群聊</view>
         <u-button
