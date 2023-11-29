@@ -5,7 +5,7 @@ const useStore = defineStore('config', {
   state: () => ({
     version: '1.0.7',
     shopId: 9,
-    hideData: true,
+    hideData: false,
     navBarHeight: 44,
     enterType: null,
     videoPageOpen: true,
