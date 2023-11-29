@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-29 11:07:53
+ * @LastEditTime: 2023-11-29 17:37:24
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -28,6 +28,8 @@ import { useUserStore, useChatStore, useRyStore } from '@/store'
 import { RY_AVATAR } from '@/common/config'
 import c_foot from './c_foot.vue'
 import c_msgpup from './c_msgpup.vue'
+import { route } from '@/utils/common'
+import hongbao from '../../static/img/hongbao.png'
 
 const $config = reactive({})
 const emojiAllJson = reactive([])
@@ -62,10 +64,10 @@ watch(
   { deep: true }
 )
 const chatScrollTop = ref(999999)
-const thouUsername = ref('')
 const groupInfo = reactive({
   name: '',
-  gid: ''
+  gid: '',
+  cid: ''
 })
 const footerRef = ref()
 function onChatClick() {
@@ -96,9 +98,21 @@ function setReferFn(data: Object | null) {
   referMessage.value = data
 }
 
+function toGroupDetail() {
+  route({
+    url: '/packageA/pages/chatGroup/detail',
+    params: {
+      gid: targetId.value,
+      cid: groupInfo.cid
+    }
+  })
+}
+
+function openhb(id) {}
+
 onLoad(async (option) => {
-  thouUsername.value = option?.username || ''
   groupInfo.gid = option?.groupId
+  groupInfo.cid = option?.cid
   groupInfo.name = option?.groupName
   chatType.value = Number(option?.type)
   targetId.value = option?.targetId
@@ -116,9 +130,16 @@ onUnmounted(() => {})
 </script>
 <template>
   <view class="container">
-    <u-navbar
-      :title="chatType === 1 ? groupInfo.name : singleInfo.nickname"
-    ></u-navbar>
+    <u-navbar :title="chatType === 1 ? groupInfo.name : singleInfo.nickname">
+      <view slot="right">
+        <u-icon
+          class="u-m-r-30"
+          name="more-dot-fill"
+          size="40"
+          @click="toGroupDetail"
+        ></u-icon>
+      </view>
+    </u-navbar>
     <view class="l-chat-body" @tap="onChatClick">
       <scroll-view
         scroll-y="true"
@@ -222,6 +243,24 @@ onUnmounted(() => {})
                           @tap="previewImage([s.content.referMsg.imageUri])"
                         ></u-image>
                       </view>
+                    </view>
+                  </template>
+                  <template v-else-if="s.messageType === 'KX:HongBao'">
+                    <view
+                      class="message-red-packet"
+                      @click="openhb(s.content.content.hongbaoid)"
+                    >
+                      <view class="contents">
+                        <u-image
+                          mode="widthFix"
+                          width="70rpx"
+                          :src="hongbao"
+                        ></u-image>
+                        <view class="packet">{{
+                          s.content.content.ps || '恭喜发财，大吉大利'
+                        }}</view>
+                      </view>
+                      <view class="footer u-border-top">开心红包</view>
                     </view>
                   </template>
                 </view>
@@ -433,6 +472,11 @@ onUnmounted(() => {})
   .l-chat-view {
     align-items: flex-end;
   }
+  .message-red-packet::after {
+    left: auto;
+    right: -18rpx;
+    border-color: transparent transparent transparent orange;
+  }
 }
 
 .l-chat-location {
@@ -462,5 +506,57 @@ onUnmounted(() => {})
 
 .l-upload-img {
   border-radius: 6rpx;
+}
+.message-red-packet {
+  position: relative;
+  border-radius: 8rpx;
+  background: orange;
+  color: #fff;
+  text-align: left;
+  display: inline-table;
+  max-width: 300px;
+  min-width: 200px;
+  height: 70px;
+  box-shadow: 1px 1px 1px 1px #efefef;
+  &::after {
+    content: ' ';
+    display: block;
+    position: absolute;
+    top: 34rpx;
+    width: 0;
+    height: 0;
+    left: -18rpx;
+    transform: translate(0, -50%);
+    border: 10rpx solid;
+    border-color: transparent orange transparent transparent;
+  }
+
+  .contents {
+    padding: 20rpx;
+    display: inline-flex;
+    max-width: 100%;
+    align-items: center;
+    position: relative;
+    min-height: 80rpx;
+    line-height: 40rpx;
+    text-align: left;
+    height: 60px;
+    color: #fff;
+  }
+
+  .packet {
+    padding-left: 15rpx;
+    font-size: 28rpx;
+    font-weight: bold;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    @include ellipsis();
+  }
+
+  .footer {
+    font-size: 20rpx;
+    height: 20px;
+    padding: 4rpx 0 0 16px;
+    color: rgba(255, 255, 255, 0.5);
+  }
 }
 </style>

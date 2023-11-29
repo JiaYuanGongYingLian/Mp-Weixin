@@ -217,6 +217,14 @@
 						"navigationBarTitleText": "群列表",
 						"backgroundColor": "#F5F5F5"
 					}
+				},
+				{
+					"path": "pages/chatGroup/detail",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "群详情",
+						"backgroundColor": "#F5F5F5"
+					}
 				}
 			]
 		},

@@ -5,7 +5,7 @@
 /* eslint-disable no-empty */
 
 import { defineStore } from 'pinia'
-import RongIMLib from '@/common/rongYun/im_init'
+import RongIMLib, { HongBaoMessage } from '@/common/rongYun/im_init'
 
 let lifeData = {}
 try {
@@ -368,11 +368,9 @@ const useStore = defineStore('ry', {
           })
           break
         case 9:
-          message = new RongIMLib.RichContentMessage({
-            title: '标题',
-            content: '内容简介',
-            imageUri: '<图片地址>',
-            url: '<文章链接地址>'
+          message = new HongBaoMessage({
+            title: '恭喜发财，大吉大利',
+            content: '10'
           })
           break
         default:

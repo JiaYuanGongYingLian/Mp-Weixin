@@ -4,7 +4,7 @@
  * @Description: 群聊列表
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-29 11:36:12
+ * @LastEditTime: 2023-11-29 16:33:13
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -24,6 +24,7 @@ import {
 import { UPLOADURL } from '@/common/config'
 import { useUserStore, useChatStore } from '@/store'
 import c_newGroup from './c_newGroup.vue'
+import { route } from '@/utils/common'
 
 const userStore = useUserStore()
 const userDetailName = ref('')
@@ -93,8 +94,14 @@ async function toGroupChat(item: {
   name?: any
   joined?: boolean
 }) {
-  uni.navigateTo({
-    url: `/packageA/pages/chat/index?targetId=${item.chatGroupId}&groupName=${item.name}&type=1`
+  route({
+    url: '/packageA/pages/chat/index',
+    params: {
+      targetId: item.chatGroupId,
+      groupName: item.name,
+      cid: item.id,
+      type: 1
+    }
   })
 }
 onLoad((option) => {
