@@ -102,8 +102,14 @@ async function toGroupChat(item: {
   name?: any
   joined?: boolean
 }) {
-  uni.navigateTo({
-    url: `/packageA/pages/chat/index?targetId=${item.chatGroupId}&groupName=${item.name}&type=1`
+  route({
+    url: '/packageA/pages/chat/index',
+    params: {
+      targetId: item.chatGroupId,
+      groupName: item.name,
+      cid: item.id,
+      type: 1
+    }
   })
 }
 onLoad(async (opt) => {})
