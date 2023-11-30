@@ -1,3 +1,10 @@
+<!--
+ * @Description: Description
+ * @Author: Kerwin
+ * @Date: 2023-11-30 17:32:42
+ * @LastEditTime: 2023-11-30 17:32:46
+ * @LastEditors:  Please set LastEditors
+-->
 <template>
   <view>
     <u-navbar title="选择好友" :background="ryStore.head_background"></u-navbar>

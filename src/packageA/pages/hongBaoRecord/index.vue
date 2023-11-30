@@ -1,63 +1,88 @@
+<!--
+ * @Description: 红包记录
+ * @Author: Kerwin
+ * @Date: 2023-11-30 17:11:21
+ * @LastEditTime: 2023-11-30 17:30:36
+ * @LastEditors:  Please set LastEditors
+-->
+<script setup lang="ts">
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { route } from '@/utils/common'
+import { socialApi } from '@/api'
+
+const id = ref('')
+const loading = ref(false)
+const hongBaoInfo = ref({})
+async function gethongBaoInfo() {
+  uni.showLoading()
+  const { code, data } = await socialApi.circleInfo({})
+  if (code === 200) {
+    hongBaoInfo.value = data
+    this.loading = true
+    uni.hideLoading()
+  }
+}
+onLoad((opt) => {
+  id.value = opt?.id
+  gethongBaoInfo()
+})
+</script>
 <template>
   <view>
-    <u-navbar
-      title=" "
-      :background="backgrounds"
-      back-icon-color="#ffffff"
-    ></u-navbar>
     <view v-if="loading">
       <view class="head">
         <view class="title"
           >{{
-            hongbaoinfo.senduser ? '你' : hongbaoinfo.nickname
+            hongBaoInfo.senduser ? '你' : hongBaoInfo.nickname
           }}发出的红包</view
         >
-        <view class="info">{{ hongbaoinfo.ps }}</view>
-        <view v-if="hongbaoinfo.type == 1">
-          <view class="money" v-if="!hongbaoinfo.senduser"
-            >¥{{ hongbaoinfo.moneys }}</view
+        <view class="info">{{ hongBaoInfo.ps }}</view>
+        <view v-if="hongBaoInfo.type == 1">
+          <view class="money" v-if="!hongBaoInfo.senduser"
+            >¥{{ hongBaoInfo.moneys }}</view
           >
         </view>
-        <view v-if="hongbaoinfo.type == 2">
+        <view v-if="hongBaoInfo.type == 2">
           <view
             class="money"
-            v-if="hongbaoinfo.senduser && hongbaoinfo.moneys != 0"
-            >¥{{ hongbaoinfo.moneys }}</view
+            v-if="hongBaoInfo.senduser && hongBaoInfo.moneys != 0"
+            >¥{{ hongBaoInfo.moneys }}</view
           >
           <view
             class="money"
-            v-if="!hongbaoinfo.senduser && hongbaoinfo.moneys != 0"
-            >¥{{ hongbaoinfo.moneys }}</view
+            v-if="!hongBaoInfo.senduser && hongBaoInfo.moneys != 0"
+            >¥{{ hongBaoInfo.moneys }}</view
           >
         </view>
-        <view class="tip" v-if="hongbaoinfo.moneys != 0"
+        <view class="tip" v-if="hongBaoInfo.moneys != 0"
           >已存入钱包，可用于发红包 ></view
         >
       </view>
-      <view class="item" v-if="hongbaoinfo.senduser || hongbaoinfo.type == 2">
-        <view class="tips" v-if="hongbaoinfo.senduser">
-          <view v-if="hongbaoinfo.balancesize == 0">
-            {{ hongbaoinfo.size }}个红包共{{ hongbaoinfo.money }}元，已被抢完
+      <view class="item" v-if="hongBaoInfo.senduser || hongBaoInfo.type == 2">
+        <view class="tips" v-if="hongBaoInfo.senduser">
+          <view v-if="hongBaoInfo.balancesize == 0">
+            {{ hongBaoInfo.size }}个红包共{{ hongBaoInfo.money }}元，已被抢完
           </view>
           <view v-else>
-            已领取{{ hongbaoinfo.size - hongbaoinfo.balancesize }}/{{
-              hongbaoinfo.size
+            已领取{{ hongBaoInfo.size - hongBaoInfo.balancesize }}/{{
+              hongBaoInfo.size
             }}个
           </view>
         </view>
         <view
           class="tips"
-          v-if="!hongbaoinfo.senduser && hongbaoinfo.type == 2"
+          v-if="!hongBaoInfo.senduser && hongBaoInfo.type == 2"
         >
-          <view v-if="hongbaoinfo.size - hongbaoinfo.balancesize != 0">
-            领取{{ hongbaoinfo.size - hongbaoinfo.balancesize }}/{{
-              hongbaoinfo.size
+          <view v-if="hongBaoInfo.size - hongBaoInfo.balancesize != 0">
+            领取{{ hongBaoInfo.size - hongBaoInfo.balancesize }}/{{
+              hongBaoInfo.size
             }}个
           </view>
-          <view v-else> 共{{ hongbaoinfo.size }}个，已被抢完 </view>
+          <view v-else> 共{{ hongBaoInfo.size }}个，已被抢完 </view>
         </view>
         <view class="u-border-top u-m-t-20 u-m-b-20"></view>
-        <view class="body-item" v-for="(item, index) in hongbaoinfo.log">
+        <view class="body-item" v-for="item in hongBaoInfo.log" :key="item.id">
           <view class="u-m-t-20" style="position: relative">
             <u-lazy-load
               class="images"
@@ -74,7 +99,7 @@
             </view>
             <view class="head_right"> ¥{{ item.money }} </view>
             <view class="item_content text-line-1 u-m-b-5">
-              {{ item.time | date('hh:MM') }}
+              <!-- {{ item.time | date('hh:MM') }} -->
             </view>
           </view>
         </view>
@@ -82,44 +107,6 @@
     </view>
   </view>
 </template>
-
-<script>
-import { route } from '@/utils/common'
-
-export default {
-  data() {
-    return {
-      id: '',
-      backgrounds: {
-        backgroundColor: '#e1604d'
-      },
-      loading: false,
-      hongbaoinfo: null
-    }
-  },
-  onLoad(opt) {
-    const that = this
-    this.id = opt.id
-    if (!opt.id) {
-      uni.navigateBack()
-      return false
-    }
-    uni.showLoading()
-    this.$u.api.infoHB({ id: this.id }).then((res) => {
-      console.log(res)
-      if (res.code == 1) {
-        this.hongbaoinfo = res.data
-        this.loading = true
-        uni.hideLoading()
-        console.log(this.hongbaoinfo)
-      } else {
-        this.$u.toast('红包信息获取失败')
-      }
-    })
-  },
-  methods: {}
-}
-</script>
 
 <style lang="scss">
 .head {

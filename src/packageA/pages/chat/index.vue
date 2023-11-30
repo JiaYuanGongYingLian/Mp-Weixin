@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-30 02:22:15
+ * @LastEditTime: 2023-11-30 17:56:27
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -28,6 +28,7 @@ import { useUserStore, useChatStore, useRyStore } from '@/store'
 import { RY_AVATAR } from '@/common/config'
 import c_foot from './c_foot.vue'
 import c_msgpup from './c_msgpup.vue'
+import c_hongbao from './c_hongbao.vue'
 import { route } from '@/utils/common'
 import hongbao from '../../static/img/hongbao.png'
 
@@ -108,7 +109,15 @@ function toGroupDetail() {
   })
 }
 
-function openhb(id) {}
+// 点击红包
+const hongBaoRef = ref()
+function openhb(e: any) {
+  hongBaoRef.value.openhb(e)
+}
+// 发送红包
+function sendRedPacket() {
+  hongBaoRef.value.sendRedPacketShow()
+}
 
 onLoad(async (option) => {
   groupInfo.gid = option?.groupId
@@ -246,10 +255,7 @@ onUnmounted(() => {})
                     </view>
                   </template>
                   <template v-else-if="s.messageType === 'KX:HongBao'">
-                    <view
-                      class="message-red-packet"
-                      @click="openhb(s.content.content.hongbaoid)"
-                    >
+                    <view class="message-red-packet" @click="openhb(s.content)">
                       <view class="contents">
                         <u-image
                           mode="widthFix"
@@ -267,16 +273,21 @@ onUnmounted(() => {})
               </view>
             </view>
           </template>
-
-          <c_msgpup
-            ref="msgpupRef"
-            :chatType="chatType"
-            :msgPupData="msgPupData"
-            @reference="setReferFn"
-          ></c_msgpup>
         </view>
       </scroll-view>
     </view>
+    <c_msgpup
+      ref="msgpupRef"
+      :chatType="chatType"
+      :msgPupData="msgPupData"
+      @reference="setReferFn"
+    ></c_msgpup>
+    <c_hongbao
+      ref="hongBaoRef"
+      :chatType="chatType"
+      :target-id="targetId"
+      :circleId="groupInfo.cid"
+    />
     <c_foot
       ref="footerRef"
       @on-focus="setChatScrollTop"
@@ -284,6 +295,7 @@ onUnmounted(() => {})
       :target-id="targetId"
       :referMessage="referMessage"
       @closeRefer="setReferFn"
+      @showPacket="sendRedPacket"
     />
   </view>
 </template>

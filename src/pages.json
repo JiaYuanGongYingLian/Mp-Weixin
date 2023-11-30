@@ -353,35 +353,6 @@
 					}
 				}
 			]
-		},
-		{
-			"root": "packageD",
-			"pages": [
-				{
-					"path": "pages/message/index",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "聊天",
-						"backgroundColor": "#F5F5F5"
-					}
-				},
-				{
-					"path": "pages/message/message_group",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "添加群",
-						"backgroundColor": "#F5F5F5"
-					}
-				},
-				{
-					"path": "pages/message/addgroup",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "添加群",
-						"backgroundColor": "#F5F5F5"
-					}
-				}
-			]	
 		}
 	],
 	"preloadRule": {

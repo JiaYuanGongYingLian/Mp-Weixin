@@ -1,23 +1,103 @@
+<!-- eslint-disable consistent-return -->
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi } from '@/api'
+import { baseApi, productApi, socialApi, moneyApi } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
-import { useUserStore } from '@/store'
+import { useUserStore, useRyStore } from '@/store'
+import { route } from '@/utils/common'
 
+const ryStore = useRyStore()
 const userStore = useUserStore()
-const { hasLogin } = storeToRefs(userStore)
-const bannerList = ref([])
-const info = ref()
 const hongbaoshow = ref(false)
-const value2 = ref()
-const value3 = ref()
-function sethongbaoshow() {
-  value2.value = ''
-  value3.value = 0
+const money = ref(0)
+const count = ref(1)
+const content = ref('')
+const totalMoney = computed(() => {
+  return (money.value * count.value).toFixed(2)
+})
+const hbType = ref()
+const hongBaoInfo = ref({})
+const props = withDefaults(
+  defineProps<{
+    chatType?: number
+    targetId?: number | string
+    circleId?: number | string
+  }>(),
+  {
+    chatType: 0
+  }
+)
+const isSingle = computed(() => {
+  return props.chatType === 0
+})
+function sendRedPacketShow() {
   hongbaoshow.value = !hongbaoshow.value
 }
+// 点击红包
+const openhongbao = ref(false)
+function openhb(e: { open: number }) {
+  hongBaoInfo.value = e
+  if (e.status === 200) {
+    route({
+      url: 'pages/message/hongbao_record',
+      params: {
+        id: e
+      }
+    })
+  } else {
+    openhongbao.value = true
+  }
+}
+// 开启红包
+async function receive_hongbao(e: string) {
+  if (e === '') {
+    return false
+  }
+  const { code } = await socialApi.circleInfo({})
+  if (code === 0) {
+    openhongbao.value = false
+    route({
+      url: 'pages/message/hongbao_record',
+      params: {
+        id: e
+      }
+    })
+  }
+}
+// 发起红包
+async function submithb() {
+  if (!money.value) {
+    return false
+  }
+  const { code, data } = await moneyApi.redPacketAdd({
+    userId: userStore.userInfo.id,
+    money: money.value,
+    totalMoney: totalMoney.value,
+    totalCount: count.value,
+    friendCircleId: props.circleId,
+    nickname: userStore.userInfo.nickname
+  })
+  const params = {
+    targetId: props?.targetId,
+    content: content.value,
+    msgType: 8,
+    title: '现金红包',
+    totalCount: count.value,
+    status: 1,
+    group: !isSingle.value
+  }
+  if (hbType.value.userId) {
+    params.toUserId = hbType.value.userId
+  }
+  // ryStore.sendMessage(params)
+}
+
+defineExpose({
+  openhb,
+  sendRedPacketShow
+})
 onLoad((option) => {})
 </script>
 <template>
@@ -38,9 +118,8 @@ onLoad((option) => {})
           back-icon-name="close"
           back-icon-size="30"
           title="发红包"
-          :background="ryStore.head_background"
           :title-bold="true"
-          :custom-back="sethongbaoshow"
+          :custom-back="sendRedPacketShow"
         ></u-navbar>
         <view class="sendhongbao">
           <view class="item">
@@ -50,7 +129,7 @@ onLoad((option) => {})
                 type="digit"
                 :clearable="false"
                 maxlength="10"
-                v-model="value2"
+                v-model="money"
                 input-align="right"
                 placeholder="0.00"
               />
@@ -60,8 +139,8 @@ onLoad((option) => {})
           <view class="item" style="height: 130rpx">
             <view class="content-textarea">
               <u-input
-                v-model="ps"
-                :custom-style="input_style2"
+                v-model="content"
+                :custom-style="{ fontSize: '35rpx' }"
                 :auto-height="true"
                 type="textarea"
                 maxlength="16"
@@ -70,9 +149,9 @@ onLoad((option) => {})
               />
             </view>
           </view>
-          <view class="money">¥ {{ value3.toFixed(2) }}</view>
+          <view class="money">¥ {{ totalMoney }}</view>
           <view class="buttom">
-            <button :style="[buttomStyle]" class="anniu" @tap="submithb">
+            <button class="anniu" :disabled="!totalMoney" @tap="submithb">
               塞钱进红包
             </button>
           </view>
@@ -90,11 +169,13 @@ onLoad((option) => {})
       <view class="openhongbao">
         <view class="bj"></view>
         <view class="head">
-          <view class="title">{{ hongbaoinfo.sendnickname }}发出的红包</view>
-          <view class="info">{{ hongbaoinfo.hongbaops }}</view>
+          <view class="title">{{ hongBaoInfo.sendnickname }}发出的红包</view>
+          <view class="info">{{ hongBaoInfo.content }}</view>
         </view>
         <view class="an">
-          <view class="an1" @click="receive_hongbao(hongbaoinfo.hongbaoid)"
+          <view
+            class="an1"
+            @click="receive_hongbao(hongBaoInfo.friendCircleRedPacketId)"
             >開</view
           >
         </view>
@@ -167,6 +248,53 @@ onLoad((option) => {})
       width: 350rpx;
       border: none;
       color: #ffffff;
+    }
+  }
+}
+.openhongbao {
+  width: 100%;
+  height: 100%;
+  background-color: #e1604c;
+  overflow: hidden;
+  .bj {
+    width: 200%;
+    height: 80%;
+    background-color: #e36754;
+    position: absolute;
+    top: 0;
+    left: -50%;
+    border-radius: 0 0 50% 50%;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 3px 1px;
+  }
+  .head {
+    position: relative;
+    color: #e5cda0;
+    margin-top: 30%;
+    font-size: 35rpx;
+    font-weight: bold;
+    .title {
+      display: flex;
+      justify-content: center;
+    }
+    .info {
+      margin-top: 30rpx;
+      display: flex;
+      justify-content: center;
+    }
+  }
+  .an {
+    display: flex;
+    justify-content: center;
+    .an1 {
+      position: absolute;
+      bottom: 13%;
+      width: 150rpx;
+      height: 150rpx;
+      background-color: #e5cda0;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 150rpx;
+      font-size: 50rpx;
     }
   }
 }
