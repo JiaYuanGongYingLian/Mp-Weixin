@@ -38,7 +38,7 @@ onLaunch(() => {
     const { messages } = evt
     if (messages && messages.length > 0) {
       messages.forEach((message) => {
-        ryStore.setMessage(message)
+        ryStore.setMessage(message, 'add')
       })
     }
   })

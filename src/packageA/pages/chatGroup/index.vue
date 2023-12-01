@@ -4,7 +4,7 @@
  * @Description: 群聊列表
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-30 02:19:15
+ * @LastEditTime: 2023-12-01 10:40:16
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -74,6 +74,11 @@ async function getList() {
     }
   } catch {}
   uni.hideLoading()
+}
+function handleSuccess() {
+  status.value = 'loadmore'
+  getList()
+
 }
 // 切换主副群
 function switchType() {
@@ -191,7 +196,7 @@ onReachBottom(() => {
         </view>
       </view>
     </view>
-    <c_newGroup @onSuccess="getList" ref="popRef" />
+    <c_newGroup @onSuccess="handleSuccess" ref="popRef" />
   </view>
 </template>
 

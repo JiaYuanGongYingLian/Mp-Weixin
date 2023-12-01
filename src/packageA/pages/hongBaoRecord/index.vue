@@ -2,7 +2,7 @@
  * @Description: 红包记录
  * @Author: Kerwin
  * @Date: 2023-11-30 17:11:21
- * @LastEditTime: 2023-11-30 17:30:36
+ * @LastEditTime: 2023-12-01 14:05:25
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -19,7 +19,7 @@ async function gethongBaoInfo() {
   const { code, data } = await socialApi.circleInfo({})
   if (code === 200) {
     hongBaoInfo.value = data
-    this.loading = true
+    loading.value = true
     uni.hideLoading()
   }
 }

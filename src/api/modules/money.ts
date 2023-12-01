@@ -25,11 +25,15 @@ function redPacketInfo(data: any) {
 function redPacketList(data: any) {
   return http.get('/money/api/v1/friend/circle/red/packet/list', data)
 }
+function redPacketDistribution(data: any) {
+  return http.post('/money/api/v1/friend/circle/red/packet/distribution', data)
+}
 
 export default {
   walletList,
   walletInfo,
   redPacketAdd,
   redPacketInfo,
-  redPacketList
+  redPacketList,
+  redPacketDistribution
 }

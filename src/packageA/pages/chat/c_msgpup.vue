@@ -3,7 +3,7 @@
  * @Description: 消息长按弹出操作条
  * @Author: Kerwin
  * @Date: 2023-11-23 14:36:33
- * @LastEditTime: 2023-11-29 14:39:09
+ * @LastEditTime: 2023-12-01 16:41:40
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -29,7 +29,7 @@ const props = withDefaults(
     }
   }
 )
-const emit = defineEmits(['reference'])
+const emit = defineEmits(['reference', 'delete'])
 
 const isSingle = computed(() => {
   return props.chatType === 0
@@ -93,7 +93,9 @@ const navList = ref([
     name: '删除',
     icon: 'shanchu',
     show: true,
-    fn: () => {}
+    fn: (data: any) => {
+      emit('delete', data)
+    }
   }
 ])
 

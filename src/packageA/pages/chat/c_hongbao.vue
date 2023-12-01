@@ -1,21 +1,21 @@
 <!-- eslint-disable consistent-return -->
 <script setup lang="ts">
 import { reactive, ref, computed } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
-import { storeToRefs } from 'pinia'
-import { baseApi, productApi, socialApi, moneyApi } from '@/api'
-import { getImgFullPath, getDistance } from '@/utils/index'
+import { onLoad } from '@dcloudio/uni-app'
+import { moneyApi } from '@/api'
 import { useUserStore, useRyStore } from '@/store'
 import { route } from '@/utils/common'
 
+const emit = defineEmits(['received'])
 const ryStore = useRyStore()
 const userStore = useUserStore()
 const hongbaoshow = ref(false)
-const money = ref(0)
+const money = ref<string | number>('')
 const count = ref(1)
 const content = ref('')
 const totalMoney = computed(() => {
-  return (money.value * count.value).toFixed(2)
+  const m = money.value || 0
+  return Number((m * count.value).toFixed(2))
 })
 const hbType = ref()
 const hongBaoInfo = ref({})
@@ -51,17 +51,20 @@ function openhb(e: { open: number }) {
   }
 }
 // 开启红包
-async function receive_hongbao(e: string) {
-  if (e === '') {
-    return false
-  }
-  const { code } = await socialApi.circleInfo({})
-  if (code === 0) {
+async function receive_hongbao(data: { friendCircleRedPacketId: any }) {
+  const { friendCircleRedPacketId } = data
+  const { code } = await moneyApi.redPacketDistribution({
+    id: friendCircleRedPacketId,
+    userId: userStore.userInfo.id,
+    friendCircleId: props.circleId
+  })
+  if (code === 200) {
+    emit('received', friendCircleRedPacketId)
     openhongbao.value = false
     route({
-      url: 'pages/message/hongbao_record',
+      url: '/packageA/pages/hongBaoRecord/index',
       params: {
-        id: e
+        id: friendCircleRedPacketId
       }
     })
   }
@@ -72,28 +75,37 @@ async function submithb() {
     return false
   }
   const { code, data } = await moneyApi.redPacketAdd({
+    title: '现金红包',
+    status: 1,
     userId: userStore.userInfo.id,
     money: money.value,
+    content: content.value || '恭喜发财，大吉大利',
+    toUserId: '',
     totalMoney: totalMoney.value,
     totalCount: count.value,
     friendCircleId: props.circleId,
     nickname: userStore.userInfo.nickname
   })
-  const params = {
-    targetId: props?.targetId,
-    content: content.value,
-    msgType: 8,
-    title: '现金红包',
-    totalCount: count.value,
-    status: 1,
-    group: !isSingle.value
+  if (code === 200) {
+    sendRedPacketShow()
+    const params = {
+      targetId: props?.targetId,
+      content: content.value || '恭喜发财，大吉大利',
+      msgType: 9,
+      title: '现金红包',
+      totalCount: count.value,
+      totalMoney: totalMoney.value,
+      status: 1,
+      group: !isSingle.value,
+      nickname: userStore.userInfo.nickname,
+      friendCircleRedPacketId: data.id
+    }
+    // if (hbType.value.userId) {
+    //   params.toUserId = hbType.value.userId
+    // }
+    ryStore.sendMessage(params)
   }
-  if (hbType.value.userId) {
-    params.toUserId = hbType.value.userId
-  }
-  // ryStore.sendMessage(params)
 }
-
 defineExpose({
   openhb,
   sendRedPacketShow
@@ -151,9 +163,19 @@ onLoad((option) => {})
           </view>
           <view class="money">¥ {{ totalMoney }}</view>
           <view class="buttom">
-            <button class="anniu" :disabled="!totalMoney" @tap="submithb">
+            <u-button
+              ripple
+              type="warning"
+              :disabled="!totalMoney"
+              :custom-style="{
+                width: '400rpx',
+                backgroundColor: '#FB5353'
+              }"
+              :hair-line="false"
+              @click="submithb"
+            >
               塞钱进红包
-            </button>
+            </u-button>
           </view>
         </view>
       </view>
@@ -169,15 +191,11 @@ onLoad((option) => {})
       <view class="openhongbao">
         <view class="bj"></view>
         <view class="head">
-          <view class="title">{{ hongBaoInfo.sendnickname }}发出的红包</view>
+          <view class="title">{{ hongBaoInfo.nickname }}发出的红包</view>
           <view class="info">{{ hongBaoInfo.content }}</view>
         </view>
         <view class="an">
-          <view
-            class="an1"
-            @click="receive_hongbao(hongBaoInfo.friendCircleRedPacketId)"
-            >開</view
-          >
+          <view class="an1" @click="receive_hongbao(hongBaoInfo)">開</view>
         </view>
       </view>
     </u-popup>

@@ -128,11 +128,14 @@ const useStore = defineStore('ry', {
       this.$uStore(name, value)
     },
     // 缓存消息
-    setMessage(message: {
-      targetId: string | number
-      content: { content: any }
-    }) {
-      this.ScanAudio()
+    setMessage(
+      message: {
+        targetId: string | number
+        content: { content: any }
+      },
+      type: string,
+      index?: number
+    ) {
       const { id } = this.userinfo
       if (!this.pinia_messagelist[id]) {
         this.pinia_messagelist[id] = {}
@@ -141,9 +144,20 @@ const useStore = defineStore('ry', {
       if (!pinia_messagelist[message.targetId]) {
         pinia_messagelist[message.targetId] = []
       }
-      pinia_messagelist[message.targetId].push(message)
+      if (type === 'add') {
+        this.ScanAudio()
+        pinia_messagelist[message.targetId].push(message)
+        console.log(
+          '接收消息成功，消息内容为:',
+          message,
+          message.content.content
+        )
+      } else if (type === 'delete') {
+        pinia_messagelist[message.targetId].splice(index, 1)
+      } else if (type === 'update' && index !== undefined) {
+        pinia_messagelist[message.targetId][index] = message
+      }
       this.setvar(`pinia_messagelist.${this.userinfo.id}`, pinia_messagelist)
-      console.log('接收消息成功，消息内容为:', message, message.content.content)
     },
     // 初始化监听
     rongWatch() {
@@ -304,9 +318,25 @@ const useStore = defineStore('ry', {
       imageUri?: string
       group?: any
       latitude?: any
+      longitude?: any
       referMsg?: any
+      totalCount?: number
+      totalMoney?: number
+      nickname?: string
+      friendCircleRedPacketId?: number
     }) {
-      const { msgType, content, imageUri, latitude, longitude, referMsg } = data
+      const {
+        msgType,
+        content,
+        imageUri,
+        latitude,
+        longitude,
+        referMsg,
+        totalCount,
+        nickname,
+        friendCircleRedPacketId,
+        totalMoney
+      } = data
       let message: RongIMLib.BaseMessage<any> | null = null
       switch (msgType) {
         case 1:
@@ -370,7 +400,12 @@ const useStore = defineStore('ry', {
         case 9:
           message = new HongBaoMessage({
             title: '恭喜发财，大吉大利',
-            content: '10'
+            content,
+            totalCount,
+            totalMoney,
+            status: 1,
+            nickname,
+            friendCircleRedPacketId
           })
           break
         default:
@@ -398,7 +433,6 @@ const useStore = defineStore('ry', {
       RongIMLib.sendMessage(conversation, message).then(({ code, data }) => {
         if (code === 0) {
           console.log('消息发送成功：', data)
-          // debugger
           const { userId } = this.userinfo
           if (!this.pinia_messagelist[userId]) {
             this.pinia_messagelist[userId] = {}

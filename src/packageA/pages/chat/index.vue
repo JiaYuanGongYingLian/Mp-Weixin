@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-30 17:56:27
+ * @LastEditTime: 2023-12-01 17:13:45
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -84,14 +84,17 @@ function showTime(i: number) {
 }
 // 长按消息监听
 const msgPupData = ref({})
+const message_checked = ref({})
+const message_checked_index = ref()
 const msgpupRef = ref()
-function onLongPress(e: { message?: any; my_user_id?: any }, message: any) {
+function onLongPress(e: { message?: any }, message: any, i: number) {
   e.message = message
   msgPupData.value = e
+  message_checked.value = message
+  message_checked_index.value = i
   setTimeout(() => {
     msgpupRef.value?.showPop()
   }, 200)
-  console.log(msgPupData.value)
 }
 // 引用消息
 const referMessage = ref<null | Object>(null)
@@ -111,12 +114,29 @@ function toGroupDetail() {
 
 // 点击红包
 const hongBaoRef = ref()
-function openhb(e: any) {
-  hongBaoRef.value.openhb(e)
+function openhb(message: { content: any }, i: any) {
+  message_checked.value = message
+  message_checked_index.value = i
+  hongBaoRef.value.openhb(message.content)
 }
 // 发送红包
 function sendRedPacket() {
   hongBaoRef.value.sendRedPacketShow()
+}
+
+function msgUpdate() {
+  ryStore.setMessage(
+    message_checked.value,
+    'update',
+    message_checked_index.value
+  )
+}
+function msgDelete() {
+  ryStore.setMessage(
+    message_checked.value,
+    'delete',
+    message_checked_index.value
+  )
 }
 
 onLoad(async (option) => {
@@ -166,7 +186,7 @@ onUnmounted(() => {})
                 'l-chat-mine': s.messageDirection === 1
               }"
               v-if="s.messageType !== 'RC:SRSMsg'"
-              @longpress="onLongPress($event, s)"
+              @longpress="onLongPress($event, s, i)"
             >
               <view class="l-chat-item-time" v-if="showTime(i)">
                 {{ dateFormat(new Date(s.sentTime), 'MM-dd hh:mm') }}
@@ -255,7 +275,7 @@ onUnmounted(() => {})
                     </view>
                   </template>
                   <template v-else-if="s.messageType === 'KX:HongBao'">
-                    <view class="message-red-packet" @click="openhb(s.content)">
+                    <view class="message-red-packet" @click="openhb(s, i)">
                       <view class="contents">
                         <u-image
                           mode="widthFix"
@@ -263,7 +283,7 @@ onUnmounted(() => {})
                           :src="hongbao"
                         ></u-image>
                         <view class="packet">{{
-                          s.content.content.ps || '恭喜发财，大吉大利'
+                          s.content.content || '恭喜发财，大吉大利'
                         }}</view>
                       </view>
                       <view class="footer u-border-top">开心红包</view>
@@ -281,12 +301,14 @@ onUnmounted(() => {})
       :chatType="chatType"
       :msgPupData="msgPupData"
       @reference="setReferFn"
+      @delete="msgDelete"
     ></c_msgpup>
     <c_hongbao
       ref="hongBaoRef"
       :chatType="chatType"
       :target-id="targetId"
       :circleId="groupInfo.cid"
+      @received="msgUpdate"
     />
     <c_foot
       ref="footerRef"
