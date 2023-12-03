@@ -2,93 +2,92 @@
  * @Description: 红包记录
  * @Author: Kerwin
  * @Date: 2023-11-30 17:11:21
- * @LastEditTime: 2023-12-01 14:05:25
+ * @LastEditTime: 2023-12-03 23:59:18
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { route } from '@/utils/common'
-import { socialApi } from '@/api'
+import { getImgFullPath } from '@/utils'
+import { moneyApi } from '@/api'
+import { useUserStore } from '@/store'
 
+const userStore = useUserStore()
 const id = ref('')
 const loading = ref(false)
 const hongBaoInfo = ref({})
+const wallets = [
+  {
+    name: '余额',
+    value: 1
+  },
+  {
+    name: '购物积分',
+    value: 3
+  }
+]
 async function gethongBaoInfo() {
   uni.showLoading()
-  const { code, data } = await socialApi.circleInfo({})
+  const { code, data } = await moneyApi.redPacketInfo({
+    id: id.value,
+    detail: true,
+    otherColumns: 'user,wallet',
+    noPaging: true
+  })
   if (code === 200) {
     hongBaoInfo.value = data
     loading.value = true
     uni.hideLoading()
   }
 }
-onLoad((opt) => {
-  id.value = opt?.id
+const isScoreWalet = computed(() => {
+  return hongBaoInfo.value?.toWalletRuleId === wallets[1].value
+})
+onLoad((optons) => {
+  id.value = optons?.id
   gethongBaoInfo()
 })
 </script>
 <template>
-  <view>
+  <view class="container">
     <view v-if="loading">
       <view class="head">
-        <view class="title"
-          >{{
-            hongBaoInfo.senduser ? '你' : hongBaoInfo.nickname
-          }}发出的红包</view
-        >
-        <view class="info">{{ hongBaoInfo.ps }}</view>
-        <view v-if="hongBaoInfo.type == 1">
-          <view class="money" v-if="!hongBaoInfo.senduser"
-            >¥{{ hongBaoInfo.moneys }}</view
-          >
+        <view class="title">{{ hongBaoInfo?.user.nickname }}发出的红包</view>
+        <view class="info">{{ hongBaoInfo?.content }}</view>
+        <view class="money">
+          <text>{{ hongBaoInfo?.money }}</text>
+          <text class="unit" v-if="!isScoreWalet">元</text>
+          <text class="unit" v-if="isScoreWalet">积分</text>
         </view>
-        <view v-if="hongBaoInfo.type == 2">
-          <view
-            class="money"
-            v-if="hongBaoInfo.senduser && hongBaoInfo.moneys != 0"
-            >¥{{ hongBaoInfo.moneys }}</view
-          >
-          <view
-            class="money"
-            v-if="!hongBaoInfo.senduser && hongBaoInfo.moneys != 0"
-            >¥{{ hongBaoInfo.moneys }}</view
-          >
-        </view>
-        <view class="tip" v-if="hongBaoInfo.moneys != 0"
-          >已存入钱包，可用于发红包 ></view
+        <view class="tip"
+          >已存入{{ isScoreWalet ? '积分' : '' }}钱包，可用于发红包</view
         >
       </view>
-      <view class="item" v-if="hongBaoInfo.senduser || hongBaoInfo.type == 2">
-        <view class="tips" v-if="hongBaoInfo.senduser">
-          <view v-if="hongBaoInfo.balancesize == 0">
-            {{ hongBaoInfo.size }}个红包共{{ hongBaoInfo.money }}元，已被抢完
+      <view class="item">
+        <view class="tips">
+          <view v-if="hongBaoInfo.status == 20">
+            {{ hongBaoInfo.totalCount }}个红包共{{ hongBaoInfo.totalMoney
+            }}{{ isScoreWalet ? '积分' : '元' }}，已被抢完
           </view>
           <view v-else>
-            已领取{{ hongBaoInfo.size - hongBaoInfo.balancesize }}/{{
-              hongBaoInfo.size
+            已领取{{ hongBaoInfo.walletFlows.length }}/{{
+              hongBaoInfo.totalCount
             }}个
           </view>
-        </view>
-        <view
-          class="tips"
-          v-if="!hongBaoInfo.senduser && hongBaoInfo.type == 2"
-        >
-          <view v-if="hongBaoInfo.size - hongBaoInfo.balancesize != 0">
-            领取{{ hongBaoInfo.size - hongBaoInfo.balancesize }}/{{
-              hongBaoInfo.size
-            }}个
-          </view>
-          <view v-else> 共{{ hongBaoInfo.size }}个，已被抢完 </view>
         </view>
         <view class="u-border-top u-m-t-20 u-m-b-20"></view>
-        <view class="body-item" v-for="item in hongBaoInfo.log" :key="item.id">
+        <view
+          class="body-item"
+          v-for="item in hongBaoInfo.walletFlows"
+          :key="item.id"
+        >
           <view class="u-m-t-20" style="position: relative">
             <u-lazy-load
               class="images"
               border-radius="12"
               height="100"
-              :image="item.avatar"
+              :image="getImgFullPath(item.avatar)"
               threshold="300"
               img-mode="aspectFill"
             ></u-lazy-load>
@@ -97,7 +96,11 @@ onLoad((opt) => {
             <view class="title">
               {{ item.nickname }}
             </view>
-            <view class="head_right"> ¥{{ item.money }} </view>
+            <view class="head_right">
+              <text>{{ item?.money }}</text>
+              <text v-if="!isScoreWalet">元</text>
+              <text v-if="isScoreWalet">积分</text>
+            </view>
             <view class="item_content text-line-1 u-m-b-5">
               <!-- {{ item.time | date('hh:MM') }} -->
             </view>
@@ -109,8 +112,10 @@ onLoad((opt) => {
 </template>
 
 <style lang="scss">
+.container {
+  padding-top: 100rpx;
+}
 .head {
-  margin-top: 100rpx;
   .title {
     display: flex;
     justify-content: center;

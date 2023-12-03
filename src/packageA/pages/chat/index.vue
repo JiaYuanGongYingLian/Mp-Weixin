@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-01 17:13:45
+ * @LastEditTime: 2023-12-04 02:30:19
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -31,6 +31,7 @@ import c_msgpup from './c_msgpup.vue'
 import c_hongbao from './c_hongbao.vue'
 import { route } from '@/utils/common'
 import hongbao from '../../static/img/hongbao.png'
+import hongbao_chai from '../../static/img/red-chai.png'
 
 const $config = reactive({})
 const emojiAllJson = reactive([])
@@ -45,21 +46,28 @@ const chatList = computed(() => {
   if (!ryStore.userinfo?.id) return []
   if (!targetId.value) return []
   if (!pinia_messagelist.value[ryStore.userinfo.id]) return []
-  onChatClick()
   return pinia_messagelist.value[ryStore.userinfo.id][targetId.value] || []
 })
-const isScrollHeight = ref(false)
-function setChatScrollTop(arg_isScrollHeight?: boolean | undefined) {
-  isScrollHeight.value = arg_isScrollHeight || false
-  setTimeout(() => {
-    chatScrollTop.value += 1
-  }, 200)
+const promise = Promise.resolve()
+function nextTick(callback?: Function) {
+  return promise.then(callback)
 }
+const isScrollHeight = ref(false)
+const scrollView = ref()
+function setChatScrollHeight(arg_isScrollHeight?: boolean | undefined) {
+  isScrollHeight.value = arg_isScrollHeight || false
+}
+function setChatScrollTop() {
+  chatScrollTop.value += 1
+  bottomId.value = `msg${chatList.value.length - 1}`
+}
+const bottomId = ref(`msg${chatList.value.length - 1}`)
 watch(
   chatList,
   (n) => {
     if (n) {
-      setChatScrollTop()
+      setChatScrollHeight()
+      nextTick(setChatScrollTop)
     }
   },
   { deep: true }
@@ -117,7 +125,16 @@ const hongBaoRef = ref()
 function openhb(message: { content: any }, i: any) {
   message_checked.value = message
   message_checked_index.value = i
-  hongBaoRef.value.openhb(message.content)
+  if (message.content.status === 1) {
+    hongBaoRef.value.openhb(message.content)
+  } else {
+    route({
+      url: '/packageA/pages/hongBaoRecord/index',
+      params: {
+        id: message.content.friendCircleRedPacketId
+      }
+    })
+  }
 }
 // 发送红包
 function sendRedPacket() {
@@ -125,6 +142,7 @@ function sendRedPacket() {
 }
 
 function msgUpdate() {
+  message_checked.value.content.status = 0
   ryStore.setMessage(
     message_checked.value,
     'update',
@@ -145,10 +163,6 @@ onLoad(async (option) => {
   groupInfo.name = option?.groupName
   chatType.value = Number(option?.type)
   targetId.value = option?.targetId
-  // if (userinfo.value?.id) {
-  //   chatList.value =
-  //     ryStore.pinia_messagelist[ryStore.userinfo.id][targetId.value] || []
-  // }
   await ryStore.clearMessagesUnreadStatus({
     targetId: targetId.value,
     isGroup: false
@@ -170,12 +184,14 @@ onUnmounted(() => {})
       </view>
     </u-navbar>
     <view class="l-chat-body" @tap="onChatClick">
+      <!-- :scroll-top="chatScrollTop" -->
+
       <scroll-view
         scroll-y="true"
         class="l-char-scroll"
         scroll-with-animation
+        :scroll-into-view="bottomId"
         :class="{ 'l-char-scroll-height': isScrollHeight }"
-        :scroll-top="chatScrollTop"
       >
         <view class="l-char-scroll-content">
           <view class="l-char-empty"> 已经没有聊天记录了~ </view>
@@ -185,6 +201,7 @@ onUnmounted(() => {})
               :class="{
                 'l-chat-mine': s.messageDirection === 1
               }"
+              :id="'msg' + i"
               v-if="s.messageType !== 'RC:SRSMsg'"
               @longpress="onLongPress($event, s, i)"
             >
@@ -196,7 +213,11 @@ onUnmounted(() => {})
                   <u-image
                     width="80"
                     height="80"
+                    :loading-icon="RY_AVATAR"
+                    :error-icon="RY_AVATAR"
                     :src="RY_AVATAR"
+                    :lazy-load="false"
+                    :fade="false"
                     mode="aspectFill"
                   ></u-image>
                 </view>
@@ -226,7 +247,6 @@ onUnmounted(() => {})
                     </view>
                   </template>
                   <template v-else-if="s.messageType === 'RC:LBSMsg'">
-                    <!-- {{ s.content }} -->
                     <view
                       class="l-chat-location"
                       @click="
@@ -275,16 +295,29 @@ onUnmounted(() => {})
                     </view>
                   </template>
                   <template v-else-if="s.messageType === 'KX:HongBao'">
-                    <view class="message-red-packet" @click="openhb(s, i)">
+                    <view
+                      class="message-red-packet"
+                      :class="{ chai: !s.content.status }"
+                      @click="openhb(s, i)"
+                    >
                       <view class="contents">
                         <u-image
                           mode="widthFix"
-                          width="70rpx"
-                          :src="hongbao"
+                          :loading-icon="hongbao"
+                          :error-icon="hongbao"
+                          :lazy-load="false"
+                          :fade="false"
+                          :width="s.content.status === 1 ? 70 : 60"
+                          :src="s.content.status === 1 ? hongbao : hongbao_chai"
                         ></u-image>
-                        <view class="packet">{{
-                          s.content.content || '恭喜发财，大吉大利'
-                        }}</view>
+                        <view class="packet">
+                          <view class="name">{{
+                            s.content.content || '恭喜发财，大吉大利'
+                          }}</view>
+                          <view class="tips" v-if="s.content.status === 0"
+                            >已领取</view
+                          >
+                        </view>
                       </view>
                       <view class="footer u-border-top">开心红包</view>
                     </view>
@@ -312,7 +345,7 @@ onUnmounted(() => {})
     />
     <c_foot
       ref="footerRef"
-      @on-focus="setChatScrollTop"
+      @on-focus="setChatScrollHeight"
       :chatType="chatType"
       :target-id="targetId"
       :referMessage="referMessage"
@@ -359,6 +392,7 @@ onUnmounted(() => {})
   padding: 0 20rpx 20rpx;
   width: 100%;
   box-sizing: border-box;
+  overflow-y: scroll;
 }
 
 .l-chat-item {
@@ -564,6 +598,9 @@ onUnmounted(() => {})
     border: 10rpx solid;
     border-color: transparent orange transparent transparent;
   }
+  &.chai {
+    opacity: 0.4;
+  }
 
   .contents {
     padding: 20rpx;
@@ -580,10 +617,17 @@ onUnmounted(() => {})
 
   .packet {
     padding-left: 15rpx;
-    font-size: 28rpx;
-    font-weight: bold;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    @include ellipsis();
+    display: flex;
+    flex-direction: column;
+    .name {
+      font-size: 28rpx;
+      font-weight: bold;
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      @include ellipsis();
+    }
+    .tips {
+      font-size: 20rpx;
+    }
   }
 
   .footer {

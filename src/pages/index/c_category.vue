@@ -5,6 +5,7 @@ import { getMockData } from '@/api'
 const cates = ref([
   {
     name: '商学院',
+    url: '/packageC/pages/examination/index?questionPaperId=1',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/5710b1c1-9c97-4d07-92e4-4ba40d4e173c.svg'
   },
   {
@@ -21,12 +22,16 @@ const cates = ref([
   },
   {
     name: '客服中心',
+    url: '',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/ba52fc46-58df-4fe3-8dbd-e99754d2ca44.svg'
   }
 ])
-function handleClick(index) {
+function handleClick(item: { name: any; url: any }) {
+  const { name, url } = item
+  if (name === '客服中心') return
+  if (!url) return
   uni.navigateTo({
-    url: '/pages/physicalShop/index?shopId=9'
+    url
   })
 }
 onMounted(async () => {
@@ -38,9 +43,17 @@ onMounted(async () => {
     <view
       class="item"
       v-for="item in cates"
-      :key="item.id"
-      @click="handleClick"
+      :key="item.name"
+      @click="handleClick(item)"
     >
+      <!-- #ifdef MP-WEIXIN -->
+      <button
+        type="default"
+        open-type="contact"
+        class="service"
+        v-if="item.name === '客服中心'"
+      ></button>
+      <!-- #endif -->
       <u-image width="72rpx" height="72rpx" :src="item.icon"></u-image>
       <view class="name">{{ item.name }}</view>
     </view>
@@ -61,6 +74,14 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+    .service {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      z-index: 2;
+    }
   }
   .name {
     color: #fff;

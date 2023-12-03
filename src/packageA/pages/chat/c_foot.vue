@@ -4,7 +4,7 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-11-27 22:05:09
+ * @LastEditTime: 2023-12-02 17:01:26
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -211,6 +211,7 @@ function submit(fn: (arg0: any) => void, params: any) {
   fn(params)
 }
 function showPacket() {
+  collapse()
   emit('showPacket', true)
 }
 function closeRefer() {

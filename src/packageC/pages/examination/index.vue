@@ -2,7 +2,7 @@
 <!-- eslint-disable no-param-reassign -->
 <!-- eslint-disable no-shadow -->
 <!--
- * @Description: 售后量表
+ * @Description: 商学院量表
  * @Author: Kerwin
  * @Date: 2023-11-01 14:51:39
  * @LastEditTime: 2023-11-11 15:59:29
@@ -130,6 +130,9 @@ onLoad((option) => {
 </script>
 <template>
   <view class="container">
+    <!-- #ifdef MP-WEIXIN -->
+    <hy-nav-bar title="问卷调查" />
+    <!-- #endif -->
     <!-- <u-navbar
       back-text=""
       title=""

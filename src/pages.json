@@ -229,7 +229,6 @@
 				{
 					"path": "pages/hongBaoRecord/index",
 					"style": {
-						"navigationStyle": "custom",
 						"navigationBarTitleText": "红包记录",
 						"backgroundColor": "#F5F5F5"
 					}

@@ -24,7 +24,7 @@ const moneyInfo = ref([
   },
   {
     money: 0,
-    walletRuleId: 7,
+    walletRuleId: 3,
     name: '积分'
   }
 ])
@@ -78,7 +78,7 @@ function handleTabBarChange(index: any) {
 }
 
 async function getMoney() {
-  if (hasLogin.value && !walletList.value.length) {
+  if (hasLogin.value) {
     const { data } = await moneyApi.walletList({ noPaging: true })
     userStore.syncSetWalletList(data)
   }
@@ -146,7 +146,7 @@ onPullDownRefresh(() => {
   setTimeout(async () => {
     getMoney()
     uni.stopPullDownRefresh()
-  }, 1000)
+  }, 500)
 })
 </script>
 <template>
@@ -400,6 +400,7 @@ onPullDownRefresh(() => {
             class="bar"
             @tap="goUrlFn"
             data-url="/packageC/pages/shopEnter/index"
+            v-if="!configStore.hideData"
           >
             <u-icon
               custom-prefix="custom-icon"

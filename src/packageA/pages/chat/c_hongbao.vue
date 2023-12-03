@@ -17,7 +17,39 @@ const totalMoney = computed(() => {
   const m = money.value || 0
   return Number((m * count.value).toFixed(2))
 })
-const hbType = ref()
+const typeMaps = [
+  {
+    name: '普通红包',
+    value: 1
+  },
+  // {
+  //   name: '专属红包',
+  //   value: 2
+  // },
+  {
+    name: '普通积分红包',
+    value: 3
+  }
+  // {
+  //   name: '专属积分红包',
+  //   value: 4
+  // }
+]
+const hbType = ref(typeMaps[1])
+const isScoreWallet = computed(() => {
+  return [3, 4].includes(hbType.value.value)
+})
+const toWalletRuleId = computed(() => {
+  if ([3, 4].includes(hbType.value.value)) {
+    return 3
+  }
+  return 1
+})
+
+const actionSheetCallback = (e: number) => {
+  hbType.value = typeMaps[e]
+}
+const showPicker1 = ref(false)
 const hongBaoInfo = ref({})
 const props = withDefaults(
   defineProps<{
@@ -33,26 +65,21 @@ const isSingle = computed(() => {
   return props.chatType === 0
 })
 function sendRedPacketShow() {
+  money.value = ''
+  count.value = 1
+  content.value = ''
   hongbaoshow.value = !hongbaoshow.value
 }
 // 点击红包
 const openhongbao = ref(false)
 function openhb(e: { open: number }) {
   hongBaoInfo.value = e
-  if (e.status === 200) {
-    route({
-      url: 'pages/message/hongbao_record',
-      params: {
-        id: e
-      }
-    })
-  } else {
-    openhongbao.value = true
-  }
+  openhongbao.value = true
 }
 // 开启红包
 async function receive_hongbao(data: { friendCircleRedPacketId: any }) {
   const { friendCircleRedPacketId } = data
+
   const { code } = await moneyApi.redPacketDistribution({
     id: friendCircleRedPacketId,
     userId: userStore.userInfo.id,
@@ -75,34 +102,33 @@ async function submithb() {
     return false
   }
   const { code, data } = await moneyApi.redPacketAdd({
-    title: '现金红包',
+    title: isScoreWallet.value ? '积分红包' : '现金红包',
     status: 1,
     userId: userStore.userInfo.id,
     money: money.value,
     content: content.value || '恭喜发财，大吉大利',
     toUserId: '',
     totalMoney: totalMoney.value,
-    totalCount: count.value,
+    count: Number(count.value),
     friendCircleId: props.circleId,
-    nickname: userStore.userInfo.nickname
+    nickname: userStore.userInfo.nickname,
+    toWalletRuleId: toWalletRuleId.value
   })
   if (code === 200) {
     sendRedPacketShow()
     const params = {
+      title: isScoreWallet.value ? '积分红包' : '现金红包',
       targetId: props?.targetId,
       content: content.value || '恭喜发财，大吉大利',
       msgType: 9,
-      title: '现金红包',
-      totalCount: count.value,
+      count: count.value,
       totalMoney: totalMoney.value,
       status: 1,
       group: !isSingle.value,
       nickname: userStore.userInfo.nickname,
-      friendCircleRedPacketId: data.id
+      friendCircleRedPacketId: data.id,
+      toWalletRuleId: toWalletRuleId.value
     }
-    // if (hbType.value.userId) {
-    //   params.toUserId = hbType.value.userId
-    // }
     ryStore.sendMessage(params)
   }
 }
@@ -133,9 +159,35 @@ onLoad((option) => {})
           :title-bold="true"
           :custom-back="sendRedPacketShow"
         ></u-navbar>
+
         <view class="sendhongbao">
+          <view class="hb_type" @click="showPicker1 = true">
+            <text style="margin-right: 6rpx">{{ hbType.name }}</text>
+            <u-icon name="arrow-down" size="10"></u-icon>
+          </view>
+          <u-action-sheet
+            :list="typeMaps"
+            v-model="showPicker1"
+            label-name="name"
+            @click="actionSheetCallback"
+          ></u-action-sheet>
           <view class="item">
-            <view class="label">金额</view>
+            <view class="label">数量</view>
+            <view class="content-text">
+              <u-input
+                type="number"
+                :clearable="false"
+                maxlength="10"
+                v-model="count"
+                input-align="right"
+                placeholder="填写个数"
+              />
+            </view>
+            <view class="foot">个</view>
+          </view>
+          <view class="item">
+            <view class="label" v-if="isScoreWallet">积分</view>
+            <view class="label" v-else>金额</view>
             <view class="content-text">
               <u-input
                 type="digit"
@@ -146,7 +198,7 @@ onLoad((option) => {})
                 placeholder="0.00"
               />
             </view>
-            <view class="foot">元</view>
+            <view class="foot" v-if="!isScoreWallet">元</view>
           </view>
           <view class="item" style="height: 130rpx">
             <view class="content-textarea">
@@ -161,7 +213,11 @@ onLoad((option) => {})
               />
             </view>
           </view>
-          <view class="money">¥ {{ totalMoney }}</view>
+          <view class="money">
+            <text class="unit" v-if="!isScoreWallet">¥</text>
+            <text>{{ totalMoney }}</text>
+            <text class="unit" v-if="isScoreWallet">积分</text>
+          </view>
           <view class="buttom">
             <u-button
               ripple
@@ -174,7 +230,7 @@ onLoad((option) => {})
               :hair-line="false"
               @click="submithb"
             >
-              塞钱进红包
+              塞{{ isScoreWallet ? '积分' : '钱' }}进红包
             </u-button>
           </view>
         </view>
@@ -207,28 +263,33 @@ onLoad((option) => {})
   width: 100%;
   height: 100%;
   padding: 30rpx 40rpx;
+  .hb_type {
+    margin-bottom: 12rpx;
+    color: orange;
+  }
 
   .item {
     width: 100%;
     height: 100rpx;
     margin-bottom: 40rpx;
-    display: inline-flex;
+    display: flex;
     background-color: #ffffff;
     border-radius: 12rpx;
+    align-items: center;
+    padding-right: 30rpx;
 
     .label {
       padding-left: 20rpx;
-      display: inline-flex;
       align-items: center;
       font-size: 35rpx;
+      flex-shrink: 0;
     }
 
     .content-text {
       padding-left: 20rpx;
-      display: inline-flex;
-      align-items: center;
+      align-items: right;
       position: relative;
-      right: -170rpx;
+      flex: 1;
     }
 
     .content-textarea {
@@ -239,11 +300,10 @@ onLoad((option) => {})
 
     .foot {
       padding-left: 20rpx;
-      display: inline-flex;
       align-items: center;
       font-size: 35rpx;
       position: relative;
-      right: -180rpx;
+      flex-shrink: 0;
     }
   }
 
@@ -253,6 +313,10 @@ onLoad((option) => {})
     justify-content: center;
     font-size: 80rpx;
     font-weight: bold;
+    align-items: flex-start;
+    .unit {
+      font-size: 34rpx;
+    }
   }
 
   .buttom {
