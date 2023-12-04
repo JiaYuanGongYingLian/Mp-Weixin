@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-04 14:45:37
+ * @LastEditTime: 2023-12-04 18:16:26
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -244,6 +244,7 @@ onUnmounted(() => {})
                   <u-image
                     width="80"
                     height="80"
+                    border-radius="8"
                     :loading-icon="RY_AVATAR"
                     :error-icon="RY_AVATAR"
                     :src="

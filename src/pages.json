@@ -232,6 +232,20 @@
 						"navigationBarTitleText": "红包记录",
 						"backgroundColor": "#F5F5F5"
 					}
+				},
+				{
+					"path": "pages/wallet/index",
+					"style": {
+						"navigationBarTitleText": "钱包",
+						"backgroundColor": "#FFFFFF"
+					}
+				},
+				{
+					"path": "pages/wallet/withdraw",
+					"style": {
+						"navigationBarTitleText": "提现",
+						"backgroundColor": "#FFFFFF"
+					}
 				}
 			]
 		},

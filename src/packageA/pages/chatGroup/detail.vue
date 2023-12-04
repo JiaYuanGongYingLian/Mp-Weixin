@@ -5,7 +5,7 @@
  * @Description: 群详情
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-11-30 12:28:55
+ * @LastEditTime: 2023-12-04 14:51:57
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -157,6 +157,7 @@ onShareAppMessage(() => {
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      position: relative;
       .name {
         width: 90rpx;
         font-size: 22rpx;

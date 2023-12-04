@@ -2,7 +2,7 @@
  * @Description: 红包记录
  * @Author: Kerwin
  * @Date: 2023-11-30 17:11:21
- * @LastEditTime: 2023-12-03 23:59:18
+ * @LastEditTime: 2023-12-04 18:14:24
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -56,7 +56,7 @@ onLoad((optons) => {
         <view class="title">{{ hongBaoInfo?.user.nickname }}发出的红包</view>
         <view class="info">{{ hongBaoInfo?.content }}</view>
         <view class="money">
-          <text>{{ hongBaoInfo?.money }}</text>
+          <text>{{ hongBaoInfo?.totalMoney }}</text>
           <text class="unit" v-if="!isScoreWalet">元</text>
           <text class="unit" v-if="isScoreWalet">积分</text>
         </view>
@@ -87,14 +87,14 @@ onLoad((optons) => {
               class="images"
               border-radius="12"
               height="100"
-              :image="getImgFullPath(item.avatar)"
+              :image="getImgFullPath(item?.user?.avatar)"
               threshold="300"
               img-mode="aspectFill"
             ></u-lazy-load>
           </view>
           <view class="content u-m-t-20">
             <view class="title">
-              {{ item.nickname }}
+              {{ item?.user?.nickname }}
             </view>
             <view class="head_right">
               <text>{{ item?.money }}</text>

@@ -207,7 +207,11 @@ onPullDownRefresh(() => {
           </view>
         </view>
         <view class="labelBox" v-if="!isStoreUiModel">
-          <view class="item" data-url="/pages/mine/myBalance" @tap="goUrlFn">
+          <view
+            class="item"
+            data-url="/packageA/pages/wallet/index"
+            @tap="goUrlFn"
+          >
             <view class="con">{{ hasLogin ? moneyInfo[0].money : '--' }}</view>
             <view class="name">余额</view>
           </view>
