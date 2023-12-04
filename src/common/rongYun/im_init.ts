@@ -12,5 +12,12 @@ export const HongBaoMessage = RongIMLib.registerMessageType(
   [],
   false
 )
+export const ProductMessage = RongIMLib.registerMessageType(
+  'KX:Product',
+  true,
+  true,
+  [],
+  false
+)
 
 export default RongIMLib

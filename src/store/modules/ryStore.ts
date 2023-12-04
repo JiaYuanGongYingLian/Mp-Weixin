@@ -3,32 +3,37 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-empty */
-
 import { defineStore } from 'pinia'
-import RongIMLib, { HongBaoMessage } from '@/common/rongYun/im_init'
+import RongIMLib, {
+  HongBaoMessage,
+  ProductMessage
+} from '@/common/rongYun/im_init'
 
 let lifeData = {}
+let groupUserlist = {}
 try {
   // 尝试获取本地是否存在lifeData变量，第一次启动应用时是不存在的
   lifeData = uni.getStorageSync('lifeData')
+  groupUserlist = uni.getStorageSync('groupUserlist')
 } catch (e) {}
 // 需要永久存储，且下次应用启动需要取出的，在state中的变量名
 const saveStateKeys = [
   'userinfo',
   'pinia_latestConversationList',
-  'pinia_messagelist'
-] // pinia_nlist pinia_grouplist
+  'pinia_messagelist',
+  'pinia_groupUserlist'
+]
 // 保存变量到本地存储中
-const saveLifeData = (key: string, value: any) => {
+const saveLifeData = (key: string, value: any, storageKey: string) => {
   // 判断变量名是否在需要存储的数组中
   if (saveStateKeys.indexOf(key) !== -1) {
     // 获取本地存储的lifeData对象，将变量添加到对象中
-    let tmp = uni.getStorageSync('lifeData')
+    let tmp = uni.getStorageSync(storageKey)
     // 第一次打开APP，不存在lifeData变量，故放一个{}空对象
     tmp = tmp || {}
     tmp[key] = value
     // 执行这一步后，所有需要存储的变量，都挂载在本地的lifeData对象中
-    uni.setStorageSync('lifeData', tmp)
+    uni.setStorageSync(storageKey, tmp)
   }
 }
 const useStore = defineStore('ry', {
@@ -38,7 +43,7 @@ const useStore = defineStore('ry', {
     friendsUnreadCount: 0,
     pinia_latestConversationList: lifeData.pinia_latestConversationList ?? {},
     pinia_messagelist: lifeData.pinia_messagelist ?? {},
-    pinia_nlist: {}, // lifeData.pinia_nlist ? lifeData.pinia_nlist :
+    pinia_groupUserlist: groupUserlist.pinia_groupUserlist ?? {},
     pinia_indexList: [],
     pinia_friendslist: [],
     pinia_grouplist: [],
@@ -73,7 +78,11 @@ const useStore = defineStore('ry', {
     ]
   }),
   actions: {
-    $uStore(name: string, value: RongIMLib.IAReceivedConversation[]) {
+    $uStore(
+      name: string,
+      value: RongIMLib.IAReceivedConversation[],
+      storageKey: string
+    ) {
       // debugger
       // 判断是否多层级调用，state中为对象存在的情况，诸如user.info.score = 1
       const nameArr = name.split('.')
@@ -92,7 +101,7 @@ const useStore = defineStore('ry', {
         saveKey = name
       }
       // 保存变量到本地，见顶部函数定义
-      saveLifeData(saveKey, this[saveKey])
+      saveLifeData(saveKey, this[saveKey], storageKey)
     },
     // 建立链接
     connect(token: string) {
@@ -124,8 +133,12 @@ const useStore = defineStore('ry', {
       innerAudioContext.play()
     },
     // 全局更新
-    setvar(name: string, value: RongIMLib.IAReceivedConversation[]) {
-      this.$uStore(name, value)
+    setvar(
+      name: string,
+      value: RongIMLib.IAReceivedConversation[],
+      storageKey: string
+    ) {
+      this.$uStore(name, value, storageKey)
     },
     // 缓存消息
     setMessage(
@@ -157,116 +170,38 @@ const useStore = defineStore('ry', {
       } else if (type === 'update' && index !== undefined) {
         pinia_messagelist[message.targetId][index] = message
       }
-      this.setvar(`pinia_messagelist.${this.userinfo.id}`, pinia_messagelist)
+      this.setvar(
+        `pinia_messagelist.${this.userinfo.id}`,
+        pinia_messagelist,
+        'lifeData'
+      )
     },
-    // 初始化监听
-    rongWatch() {
-      const that = this
-      RongIMLib.watch({
-        conversation(event: { updatedConversationList: any }) {
-          const conversationList =
-            this.pinia_latestConversationList[this.userinfo.id]
-          const { updatedConversationList } = event
-          if (typeof updatedConversationList[0].latestMessage !== 'undefined') {
-            if (
-              updatedConversationList[0].latestMessage.messageType ==
-              'RC:ContactNtf'
-            ) {
-              const conversationLists = this.pinia_friendslist
-              const latestConversationLists = RongIMLib.Conversation.merge({
-                conversationLists,
-                updatedConversationList
-              })
-              console.log(conversationLists, latestConversationLists)
-              return false
-            }
-          }
-          console.log('会话更新', updatedConversationList)
-          const latestConversationList = RongIMLib.Conversation.merge({
-            conversationList,
-            updatedConversationList
-          })
-          console.log('计算会话', latestConversationList)
-          that.setvar(
-            `pinia_latestConversationList.${this.userinfo.id}`,
-            latestConversationList
-          )
-        },
-        async message(event: { message: any }) {
-          that.ScanAudio()
-          const { message } = event
-          const connect = message.content.content
-          const { id } = this.userinfo
-          const pinia_messagelist = this.pinia_messagelist[id]
-          // if(!this.pinia_messagelist[message.targetId]){
-          // 	pinia_messagelist[message.targetId] = [];
-          // 	that.setvar('pinia_messagelist.',pinia_messagelist);
-          // }
-          pinia_messagelist[message.targetId].push(message)
-          that.setvar(
-            `pinia_messagelist.${this.userinfo.id}`,
-            pinia_messagelist
-          )
-          console.log(message)
-          console.log('接收消息成功，消息内容为:', message.content.content)
-        },
-        status(event: { status: any }) {
-          const { status } = event
-          console.log('正在连接；连接状态码:', status)
-        }
-      })
-    },
-
-    // 获取会话列表
-    getlist() {
-      const that = this
-      RongIMLib.getConversationList()
-        .then((res) => {
-          console.log(res, 899)
-          const { code, data: conversationList } = res
-          if (code === 0) {
-            console.log('获取会话列表成功', conversationList)
-            const list = []
-            const friendslist = []
-            const homeUnreadCount = 0
-            const friendsUnreadCount = 0
-            const { id } = this.userinfo
-            const messagelist = this.pinia_messagelist[id]
-            console.log(messagelist)
-            for (let i = 0; i < conversationList.length; i++) {
-              const index = conversationList[i]
-              const uuid = index.targetId
-              if (index.latestMessage.messageType !== 'RC:ContactNtf') {
-                index.show = false
-                list.push(index)
-                if (!messagelist[uuid]) {
-                  messagelist[index.targetId] = []
-                  that.setvar(`pinia_messagelist.${id}`, messagelist)
-                }
-                // homeUnreadCount = homeUnreadCount+index.unreadMessageCount;
-              } else if (
-                index.latestMessage.messageType === 'RC:ContactNtf' &&
-                index.type === 6
-              ) {
-                // index.read = false;
-                // friendslist.push(index);
-                // friendsUnreadCount = friendsUnreadCount+1;
-              }
-            }
-            console.log('消息会话', list)
-            // // console.log(friendslist)
-            // this.pinia_tabbar[0].count = homeUnreadCount;
-            // this.pinia_tabbar[1].count = friendsUnreadCount;
-            this.setvar(`pinia_latestConversationList.${id}`, list)
-            // // this.setvar('pinia_friendslist',friendslist);
-            // this.setvar('friendsUnreadCount',friendsUnreadCount);
-          } else {
-            console.log('获取会话列表失败: ', error.code, error.msg)
-          }
-        })
-        .catch((error) => {
-          console.log('获取会话列表失败: ', error)
-        })
+    // 缓存群成员
+    setGroupUser(
+      data: { targetId: string | number; userList?: any; user?: any },
+      type: string,
+      index?: number
+    ) {
+      const { id } = this.userinfo
+      if (!this.pinia_groupUserlist[id]) {
+        this.pinia_groupUserlist[id] = {}
+      }
+      const pinia_groupUserlist = this.pinia_groupUserlist[id]
+      if (!pinia_groupUserlist[data.targetId]) {
+        pinia_groupUserlist[data.targetId] = []
+      }
+      if (type === 'add') {
+        pinia_groupUserlist[data.targetId] = data.userList
+      } else if (type === 'delete') {
+        pinia_groupUserlist[data.targetId].splice(index, 1)
+      } else if (type === 'update' && index !== undefined) {
+        pinia_groupUserlist[data.targetId][index] = data.user
+      }
+      this.setvar(
+        `pinia_groupUserlist.${this.userinfo.id}`,
+        pinia_groupUserlist,
+        'groupUserlist'
+      )
     },
 
     delMessage(uuid: any, group = false) {
@@ -289,7 +224,7 @@ const useStore = defineStore('ry', {
       const uid = this.userinfo.id
       const list = this.pinia_latestConversationList[uid]
       list.splice(id, 1)
-      this.setvar(`pinia_latestConversationList.${uid}`, list)
+      this.setvar(`pinia_latestConversationList.${uid}`, list, 'lifeData')
     },
     clearMessagesUnreadStatus(data: { targetId: any; isGroup: any }) {
       const { targetId, isGroup } = data
@@ -313,6 +248,7 @@ const useStore = defineStore('ry', {
     },
     buildMsg(data: {
       targetId?: any
+      title?: string
       content?: any
       msgType: any
       imageUri?: string
@@ -324,9 +260,13 @@ const useStore = defineStore('ry', {
       totalMoney?: number
       nickname?: string
       friendCircleRedPacketId?: number
+      coverImgUrl?: string
+      productId?: string
+      shopId?: string
     }) {
       const {
         msgType,
+        title,
         content,
         imageUri,
         latitude,
@@ -335,7 +275,10 @@ const useStore = defineStore('ry', {
         totalCount,
         nickname,
         friendCircleRedPacketId,
-        totalMoney
+        totalMoney,
+        coverImgUrl,
+        productId,
+        shopId
       } = data
       let message: RongIMLib.BaseMessage<any> | null = null
       switch (msgType) {
@@ -408,6 +351,15 @@ const useStore = defineStore('ry', {
             friendCircleRedPacketId
           })
           break
+        case 10:
+          message = new ProductMessage({
+            title,
+            content,
+            coverImgUrl,
+            productId,
+            shopId
+          })
+          break
         default:
           message = new RongIMLib.TextMessage({ content })
           break
@@ -443,7 +395,11 @@ const useStore = defineStore('ry', {
           const messagelist = this.pinia_messagelist[userId][targetId]
           messagelist.push(data)
           console.log(`pinia_messagelist.${userId}.${targetId}`)
-          this.setvar(`pinia_messagelist.${userId}.${targetId}`, messagelist)
+          this.setvar(
+            `pinia_messagelist.${userId}.${targetId}`,
+            messagelist,
+            'lifeData'
+          )
         } else {
           console.log('消息发送失败：', code)
         }

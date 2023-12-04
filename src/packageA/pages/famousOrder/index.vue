@@ -132,7 +132,7 @@ function toChat(data) {
     })
   } else {
     uni.navigateTo({
-      url: `/packageA/pages/chat/index?username=hy_${data?.orderProductSkus[0]?.shopProductSku?.shop?.userId}`
+      url: `/packageA/pages/?username=hy_${data?.orderProductSkus[0]?.shopProductSku?.shop?.userId}`
     })
   }
 }

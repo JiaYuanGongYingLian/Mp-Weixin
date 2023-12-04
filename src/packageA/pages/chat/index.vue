@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-04 02:30:19
+ * @LastEditTime: 2023-12-04 14:45:37
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -16,7 +16,7 @@ import { reactive, ref, computed, onBeforeMount, watch, onUnmounted } from 'vue'
 import { onLoad, onShow, onReady, onHide } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import RongIMLib from '@/common/rongYun/im_init'
-import { baseApi, productApi } from '@/api'
+import { baseApi, productApi, socialApi } from '@/api'
 import {
   getImgFullPath,
   getDistance,
@@ -39,14 +39,27 @@ const userStore = useUserStore()
 const chatStore = useChatStore()
 const ryStore = useRyStore()
 const { singleInfo, syncConversation, groupMemberList } = storeToRefs(chatStore)
-const { userinfo, pinia_messagelist } = storeToRefs(ryStore)
+const { userinfo, pinia_messagelist, pinia_groupUserlist } =
+  storeToRefs(ryStore)
 const chatType = ref(0)
 const targetId = ref()
 const chatList = computed(() => {
   if (!ryStore.userinfo?.id) return []
   if (!targetId.value) return []
   if (!pinia_messagelist.value[ryStore.userinfo.id]) return []
-  return pinia_messagelist.value[ryStore.userinfo.id][targetId.value] || []
+  const msglist =
+    pinia_messagelist.value[ryStore.userinfo.id][targetId.value] || []
+  const userlist =
+    pinia_groupUserlist.value[ryStore.userinfo.id][targetId.value] || []
+  msglist.forEach((msg: { senderUserId: any; user: any }) => {
+    const user = userlist.find(
+      (item: { rongId: string }) => item.rongId === msg.senderUserId
+    )
+    if (user) {
+      msg.user = user.user
+    }
+  })
+  return msglist
 })
 const promise = Promise.resolve()
 function nextTick(callback?: Function) {
@@ -58,7 +71,7 @@ function setChatScrollHeight(arg_isScrollHeight?: boolean | undefined) {
   isScrollHeight.value = arg_isScrollHeight || false
 }
 function setChatScrollTop() {
-  chatScrollTop.value += 1
+  chatScrollTop.value += 10
   bottomId.value = `msg${chatList.value.length - 1}`
 }
 const bottomId = ref(`msg${chatList.value.length - 1}`)
@@ -140,7 +153,7 @@ function openhb(message: { content: any }, i: any) {
 function sendRedPacket() {
   hongBaoRef.value.sendRedPacketShow()
 }
-
+// 更新消息
 function msgUpdate() {
   message_checked.value.content.status = 0
   ryStore.setMessage(
@@ -149,6 +162,7 @@ function msgUpdate() {
     message_checked_index.value
   )
 }
+// 删除消息
 function msgDelete() {
   ryStore.setMessage(
     message_checked.value,
@@ -156,7 +170,22 @@ function msgDelete() {
     message_checked_index.value
   )
 }
-
+// 获取群成员
+async function circleUserList() {
+  const { data } = await socialApi.circleUserList({
+    friendCircleId: groupInfo.cid,
+    detail: true,
+    noPaging: true
+  })
+  data.map((e: { user: { avatar: string } }) => {
+    if (!e.user.avatar) {
+      e.user.avatar = RY_AVATAR
+    }
+    e.user.avatar = getImgFullPath(e.user.avatar)
+    return e.user
+  })
+  ryStore.setGroupUser({ targetId: targetId.value, userList: data }, 'add')
+}
 onLoad(async (option) => {
   groupInfo.gid = option?.groupId
   groupInfo.cid = option?.cid
@@ -167,6 +196,7 @@ onLoad(async (option) => {
     targetId: targetId.value,
     isGroup: false
   })
+  circleUserList()
 })
 
 onUnmounted(() => {})
@@ -185,12 +215,13 @@ onUnmounted(() => {})
     </u-navbar>
     <view class="l-chat-body" @tap="onChatClick">
       <!-- :scroll-top="chatScrollTop" -->
+      <!-- :scroll-into-view="bottomId" -->
 
       <scroll-view
         scroll-y="true"
         class="l-char-scroll"
         scroll-with-animation
-        :scroll-into-view="bottomId"
+        :scroll-top="chatScrollTop"
         :class="{ 'l-char-scroll-height': isScrollHeight }"
       >
         <view class="l-char-scroll-content">
@@ -215,7 +246,11 @@ onUnmounted(() => {})
                     height="80"
                     :loading-icon="RY_AVATAR"
                     :error-icon="RY_AVATAR"
-                    :src="RY_AVATAR"
+                    :src="
+                      s?.user?.avatar
+                        ? getImgFullPath(s?.user?.avatar)
+                        : RY_AVATAR
+                    "
                     :lazy-load="false"
                     :fade="false"
                     mode="aspectFill"
@@ -223,7 +258,7 @@ onUnmounted(() => {})
                 </view>
                 <view class="l-chat-view">
                   <view class="l-chat-name" v-if="chatType === 1">
-                    {{ s.senderUserId }}
+                    {{ s?.user?.nickname ? s?.user?.nickname : s.senderUserId }}
                   </view>
                   <template v-if="s.messageType == 'RC:TxtMsg'">
                     <view class="l-chat-text">
@@ -439,6 +474,7 @@ onUnmounted(() => {})
   font-size: 24rpx;
   color: #666666;
   margin-bottom: 10rpx;
+  @include ellipsis();
 }
 
 .l-chat-text {
