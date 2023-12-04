@@ -15,6 +15,7 @@ const userStore = defineStore('user', {
     openid: '',
     wxUserInfo: {},
     walletList: [],
+    shopWalletList:[],
     hasNewDynamic: false,
     useShareCode: true,
     myShopList: [], // 用户拥有的店铺
@@ -73,6 +74,11 @@ const userStore = defineStore('user', {
     syncSetWalletList(data: never[]) {
       if (data && data.length) {
         this.walletList = data
+      }
+    },
+    syncSetShopWalletList(data: never[]) {
+      if (data && data.length) {
+        this.shopWalletList = data
       }
     },
     getImgFullPath(suffix: string){

@@ -83,6 +83,29 @@ async function getMoney() {
     userStore.syncSetWalletList(data)
   }
 }
+async function getShopWallet() {
+  if (hasLogin.value) {
+    const { data } = await moneyApi.walletList({
+      objectType: 13,
+      objectId: currentShop.value.id,
+      noPaging: true,
+      detail: true
+    })
+    userStore.syncSetShopWalletList(data)
+  }
+}
+const shopWalletInfo = ref({})
+async function getShopWalletInfo() {
+  if (hasLogin.value) {
+    const { data } = await moneyApi.walletInfo({
+      objectType: 13,
+      objectId: currentShop.value.id,
+      noPaging: true,
+      detail: true
+    })
+    shopWalletInfo.value = data
+  }
+}
 
 const myShopList = ref([])
 const showPicker = ref(false)
@@ -101,7 +124,8 @@ async function getShopList() {
     if (myShopList.value.length > 0 && isEmptyObject(currentShop.value)) {
       userStore.syncSetCurrentShop(myShopList.value[0])
     }
-    getShopStatisticsInfo()
+    getShopWallet()
+    getShopWalletInfo()
   }
 }
 function changeShop(e: any[]) {
@@ -111,7 +135,9 @@ function changeShop(e: any[]) {
 }
 watch(currentShop, (newValue, oldValue) => {
   if (newValue) {
-    getShopStatisticsInfo()
+    // getShopStatisticsInfo()
+    getShopWallet()
+    getShopWalletInfo()
   }
 })
 // 切换界面模式
@@ -120,7 +146,7 @@ function changeModel() {
     configStore.setUiModel('user')
   } else {
     configStore.setUiModel('store')
-    getShopStatisticsInfo()
+    // getShopStatisticsInfo()
   }
   uni.pageScrollTo({
     scrollTop: 0,
@@ -145,6 +171,7 @@ onShow(() => {
 onPullDownRefresh(() => {
   setTimeout(async () => {
     getMoney()
+    getShopList()
     uni.stopPullDownRefresh()
   }, 500)
 })
@@ -162,7 +189,7 @@ onPullDownRefresh(() => {
     <view class="contentBox">
       <view class="user">
         <!--已登录-->
-        <view class="top">
+        <view class="top" v-if="!isStoreUiModel">
           <!-- #ifdef H5 -->
           <view class="imgBox" @tap="goUrlFn">
             <image
@@ -206,6 +233,32 @@ onPullDownRefresh(() => {
             ></u-picker>
           </view>
         </view>
+        <view class="top" v-else>
+          <u-avatar
+            :src="getImgFullPath(currentShop.avatar)"
+            v-if="currentShop.avatar"
+            mode="square"
+          ></u-avatar>
+          <view class="right">
+            <view class="name" v-if="hasLogin" @click="showPicker = true">
+              <view class="leftName">{{ currentShop.name }} </view>
+              <view style="margin-left: 10rpx"
+                ><u-icon name="arrow-down" size="28"></u-icon
+              ></view>
+            </view>
+            <view v-else class="name" @tap="goUrlFn" :data-url="false">{{
+              '点击登录'
+            }}</view>
+            <u-picker
+              mode="selector"
+              v-model="showPicker"
+              :default-selector="[0]"
+              :range="myShopList"
+              @confirm="changeShop"
+              range-key="name"
+            ></u-picker>
+          </view>
+        </view>
         <view class="labelBox" v-if="!isStoreUiModel">
           <view
             class="item"
@@ -223,87 +276,45 @@ onPullDownRefresh(() => {
           </view>
         </view>
       </view>
-      <!-- 商家红包券 -->
+      <!-- 门店收入 -->
       <view class="myBox" v-if="isStoreUiModel">
-        <view class="dataBox">
+        <view class="tit"
+          ><u-icon
+            custom-prefix="custom-icon"
+            name="wodedianpu"
+            size="52"
+            color="#FEA917"
+            class="icon"
+          ></u-icon
+          >门店收入</view
+        >
+        <view
+          class="dataBox"
+          data-url="/packageA/pages/wallet/index?isShop=1"
+          @tap="goUrlFn"
+        >
           <view class="item">
-            <view class="num">{{
-              shopStatisticsInfo.couponTodayCountCompleted
-            }}</view>
-            <view class="name">核券次数(日)</view>
-          </view>
-          <view class="item">
-            <view class="num">
-              {{ shopStatisticsInfo.couponMonthCountCompleted }}
-            </view>
-            <view class="name">核券次数(月)</view>
-          </view>
-          <view class="item">
-            <view class="num">
-              {{ shopStatisticsInfo.couponTotalCountCompleted }}
-            </view>
-            <view class="name">核券次数(历史)</view>
-          </view>
-          <view class="item">
-            <view class="num">
-              {{ shopStatisticsInfo.couponTodayMoneyCompleted }}
-            </view>
-            <view class="name">核券金额(日)</view>
+            <view class="num">{{ shopWalletInfo?.money || 0 }}</view>
+            <view class="name">当前余额</view>
           </view>
           <view class="item">
             <view class="num">
-              {{ shopStatisticsInfo.couponMonthMoneyCompleted }}
+              {{ shopWalletInfo?.dayIncome || 0 }}
             </view>
-            <view class="name">核券金额(月)</view>
+            <view class="name">今日收入</view>
           </view>
           <view class="item">
             <view class="num">
-              {{ shopStatisticsInfo.couponTotalMoneyCompleted }}
+              {{ shopWalletInfo?.monthIncome || 0 }}
             </view>
-            <view class="name">核券金额(历史)</view>
+            <view class="name">当月收入</view>
           </view>
           <view class="item">
             <view class="num">
-              {{ shopStatisticsInfo.couponUserCountCompleted }}
+              {{ shopWalletInfo?.totalIncome || 0 }}
             </view>
-            <view class="name">核券人数</view>
+            <view class="name">历史收入</view>
           </view>
-          <view class="item">
-            <view class="num">
-              {{ shopStatisticsInfo.couponUserRepurchaseRateCompleted }}
-            </view>
-            <view class="name">复购率</view>
-          </view>
-        </view>
-        <view class="box">
-          <!-- <view class="bar" data-url="/pages/storeVip/index" @tap="goUrlFn">
-            <u-icon
-              custom-prefix="custom-icon"
-              name="goumai"
-              size="36"
-            ></u-icon>
-            <text>购买VIP</text>
-          </view>
-          <view class="bar" data-url="/pages/storeVip/share" @tap="goUrlFn">
-            <u-icon custom-prefix="custom-icon" name="VIP" size="40"></u-icon>
-            <text>赠送VIP</text>
-          </view>
-          <view class="bar" data-url="/pages/vip/index" @tap="goUrlFn">
-            <u-icon
-              custom-prefix="custom-icon"
-              name="youhuiquan"
-              size="40"
-            ></u-icon>
-            <text>门店发券</text>
-          </view>
-          <view class="bar">
-            <u-icon
-              custom-prefix="custom-icon"
-              name="waihuimaimai"
-              size="40"
-            ></u-icon>
-            <text>门店买券</text>
-          </view> -->
         </view>
       </view>
 
@@ -353,28 +364,6 @@ onPullDownRefresh(() => {
       </view>
       <view class="myBox healthTool tool">
         <view class="box">
-          <!-- <view
-            class="bar"
-            @tap="goUrlFn"
-            data-url="/packageA/pages/famousOrder/index"
-            v-if="configStore.videoPageOpen"
-          >
-            <image
-              src="https://image.blacksilverscore.com/uploads/516fd61d-c1d3-4878-815e-26ed4d216502.png"
-            ></image
-            >我对接的
-          </view>
-          <view
-            class="bar reverse"
-            @tap="goUrlFn"
-            data-url="/packageA/pages/famousOrder/index?passive=true"
-            v-if="configStore.videoPageOpen"
-          >
-            <image
-              src="https://image.blacksilverscore.com/uploads/516fd61d-c1d3-4878-815e-26ed4d216502.png"
-            ></image
-            >对接我的
-          </view> -->
           <view
             class="bar"
             @tap="goUrlFn"
@@ -418,7 +407,7 @@ onPullDownRefresh(() => {
         </view>
       </view>
       <view class="btnBox" v-if="myShopList.length > 0">
-        <u-button type="primary" ripple @click="changeModel">{{
+        <u-button type="warning" ripple @click="changeModel">{{
           isStoreUiModel ? '切换为用户模式' : '切换为商家模式'
         }}</u-button>
       </view>
@@ -827,8 +816,17 @@ onPullDownRefresh(() => {
     border-radius: 24rpx;
     background-color: #fff;
     position: relative;
-    z-index: 3;
+    z-index: 2;
     padding: 43rpx 0;
+    .tit {
+      font-size: 28rpx;
+      color: #222;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      padding: 0 30rpx;
+      margin-bottom: 20rpx;
+    }
 
     .h2 {
       font-size: 36rpx;

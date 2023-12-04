@@ -75,8 +75,8 @@ onLoad(async (option) => {
       } catch (err) {
         console.log(err)
       }
+      await getConfig('mini_project')
       toTargetPage(url_rewirte)
-      getConfig('mini_project')
     },
     fail: () => {
       uni.hideLoading()

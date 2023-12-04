@@ -1,34 +1,94 @@
+<!-- eslint-disable no-use-before-define -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-04 15:57:32
- * @LastEditTime: 2023-12-04 18:09:54
+ * @LastEditTime: 2023-12-04 23:30:53
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { onLoad, onShow, onReady, onReachBottom, onPageScroll } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi, socialApi, enumAll } from '@/api'
-import { getImgFullPath, getDistance } from '@/utils/index'
+import { moneyApi } from '@/api'
+import { getImgFullPath, dateFormat } from '@/utils/index'
 import { useUserStore } from '@/store'
 import { route } from '@/utils/common'
 
 const userStore = useUserStore()
 const form = ref()
-const list = [
+const list = ref([
   {
     name: '余额钱包'
   }
-]
-function toWithdraw() {
-  route({
-    url: '/packageA/pages/wallet/withdraw'
+])
+const walletInfo = ref({})
+async function getShopWalletInfo() {
+  const { data } = await moneyApi.walletInfo({
+    objectType: 13,
+    objectId: userStore.currentShop.id,
+    noPaging: true,
+    detail: true
   })
+  walletInfo.value = data
+  getWalletFlow()
 }
-onLoad((option) => {})
+async function getWalletInfo() {
+  const { data } = await moneyApi.walletInfo({
+    detail: true
+  })
+  walletInfo.value = data
+  getWalletFlow()
+}
+const flowList = reactive({
+  pageIndex: 1,
+  pageSize: 18,
+  list: []
+})
+const status = ref('loadmore')
+async function getWalletFlow() {
+  if (status.value === 'nomore') return
+  status.value = 'loading'
+  const { data } = await moneyApi.walletFlowList({
+    pageIndex: flowList.pageIndex,
+    pageSize: flowList.pageSize,
+    detail: true,
+    walletId: walletInfo.value.id
+  })
+  const { records, current, pages } = data
+  flowList.list.push(...records)
+  if (current < pages) {
+    flowList.pageIndex += 1
+  } else {
+    status.value = 'nomore'
+  }
+}
+function toWithdraw() {
+  // route({
+  //   url: '/packageA/pages/wallet/withdraw'
+  // })
+}
+const scrollTop = ref(0)
+onPageScroll((e) => {
+  scrollTop.value = e.scrollTop
+})
+onLoad((option) => {
+  if (option?.isShop) {
+    list.value = [
+      {
+        name: '门店钱包'
+      }
+    ]
+    getShopWalletInfo()
+  } else {
+    getWalletInfo()
+  }
+})
+onReachBottom(() => {
+  getWalletFlow()
+})
 </script>
 <template>
   <view class="container">
@@ -36,52 +96,58 @@ onLoad((option) => {})
       ref="tabs"
       :list="list"
       active-color="#F1B44F"
+      bg-color="transparent"
       :is-scroll="false"
     ></u-tabs-swiper>
     <view class="main">
       <view class="name">余额（元）</view>
       <view class="restBox">
-        <view class="num">0.14</view>
+        <view class="num">{{ walletInfo?.money || 0.0 }}</view>
         <view @click="toWithdraw"
           >提现 <u-icon name="arrow-right" size="30"></u-icon>
         </view>
       </view>
       <view class="bot">
         <view class="det">
-          <view>0.00</view>
+          <view>{{ walletInfo?.dayIncome || 0.0 }}</view>
           <view>今日收入</view>
         </view>
         <view class="det">
-          <view>0.00</view>
-          <view>今日收入</view>
+          <view>{{ walletInfo?.monthIncome || 0.0 }}</view>
+          <view>当月收入</view>
         </view>
         <view class="det">
-          <view>0.00</view>
-          <view>今日收入</view>
+          <view>{{ walletInfo?.totalIncome || 0.0 }}</view>
+          <view>历史收入</view>
         </view>
       </view>
     </view>
     <view class="list">
-      <view class="item">
+      <view class="item" v-for="item in flowList.list" :key="item.id">
         <view class="data">
           <view class="top">
-            <view class="tit">排队金额到余额+</view>
+            <view class="tit">{{ item.name }}</view>
             <view class="money">0.02</view>
           </view>
-          <view class="mid">排队金额到余额+</view>
-          <view class="bot">2023-11-3016:42</view>
+          <view class="mid">{{ item.remark }}</view>
+          <view class="bot">{{
+            dateFormat(new Date(item.createTime * 1000), 'yyyy-MM-dd hh:mm')
+          }}</view>
         </view>
         <u-icon name="arrow-right" size="28"></u-icon>
       </view>
     </view>
+    <u-loadmore :status="status" />
+    <u-back-top :scroll-top="scrollTop"></u-back-top>
   </view>
 </template>
 
 <style lang="scss" scoped>
+.container {
+  padding: 0 30rpx 30rpx 30rpx;
+}
 .main {
   background: $bg-primary;
-  width: 686rpx;
-  margin: 0 auto;
   border-radius: 12rpx;
   padding: 20rpx;
   color: #fff;
@@ -112,6 +178,9 @@ onLoad((option) => {})
 }
 .list {
   margin-top: 30rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
   .item {
     display: flex;
     justify-content: space-between;

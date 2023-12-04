@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-04 18:16:26
+ * @LastEditTime: 2023-12-04 21:24:42
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -49,8 +49,10 @@ const chatList = computed(() => {
   if (!pinia_messagelist.value[ryStore.userinfo.id]) return []
   const msglist =
     pinia_messagelist.value[ryStore.userinfo.id][targetId.value] || []
-  const userlist =
-    pinia_groupUserlist.value[ryStore.userinfo.id][targetId.value] || []
+  let userlist: any[] = []
+  if (pinia_groupUserlist.value[ryStore.userinfo.id]) {
+    userlist = pinia_groupUserlist.value[ryStore.userinfo.id][targetId.value] || []
+  }
   msglist.forEach((msg: { senderUserId: any; user: any }) => {
     const user = userlist.find(
       (item: { rongId: string }) => item.rongId === msg.senderUserId

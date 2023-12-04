@@ -1,8 +1,9 @@
+<!-- eslint-disable no-unused-expressions -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 17:53:57
- * @LastEditTime: 2023-11-28 18:33:11
+ * @LastEditTime: 2023-12-05 01:05:12
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -35,9 +36,29 @@ const getShopList = async () => {
   const { records, current, pages } = data
   shopList.list.push(...records)
   const index = shopList.list.findIndex((item) => item.id === 3)
+  const index2 = shopList.list.findIndex((item) => item.id === 11)
+  const index3 = shopList.list.findIndex((item) => item.id === 21)
   if (index > 0 && configStore.hideData) {
     shopList.list.splice(index, 1)
+    shopList.list.splice(index2, 1)
+    shopList.list.splice(index3, 1)
   }
+  const indexs: number[] = []
+  shopList.list.forEach((item, index) => {
+    if (!configStore.hideData) return
+    if (item.name.indexOf('酒') > 0) {
+      indexs.push(index)
+    }
+    if (item.name.indexOf('贵') > 0) {
+      indexs.push(index)
+    }
+    if (item.name.indexOf('乳') > 0) {
+      indexs.push(index)
+    }
+  })
+  indexs.forEach((i) => {
+    shopList.list.splice(i, 1)
+  })
   if (current < pages) {
     shopList.pageIndex += 1
   } else {

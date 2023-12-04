@@ -12,6 +12,16 @@ function walletList(data: any) {
 function walletInfo(data: any) {
   return http.get('/money/api/v1/wallet/info', data)
 }
+/**
+ * 用户钱包跟踪明细列表接口
+ */
+
+function walletFlowInfo(data: any) {
+  return http.get('/money/api/v1/wallet/flow/info', data)
+}
+function walletFlowList(data: any) {
+  return http.get('/money/api/v1/wallet/flow/list', data)
+}
 
 /**
  * 红包
@@ -35,5 +45,7 @@ export default {
   redPacketAdd,
   redPacketInfo,
   redPacketList,
-  redPacketDistribution
+  redPacketDistribution,
+  walletFlowInfo,
+  walletFlowList
 }
