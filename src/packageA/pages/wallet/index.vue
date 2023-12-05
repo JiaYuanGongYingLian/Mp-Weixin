@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-04 15:57:32
- * @LastEditTime: 2023-12-04 23:30:53
+ * @LastEditTime: 2023-12-05 15:31:57
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -127,7 +127,7 @@ onReachBottom(() => {
         <view class="data">
           <view class="top">
             <view class="tit">{{ item.name }}</view>
-            <view class="money">0.02</view>
+            <view class="money">{{item.money}}</view>
           </view>
           <view class="mid">{{ item.remark }}</view>
           <view class="bot">{{
