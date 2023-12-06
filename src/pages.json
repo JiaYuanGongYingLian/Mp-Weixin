@@ -227,6 +227,13 @@
 					}
 				},
 				{
+					"path": "pages/chatGroup/addNewcomer",
+					"style": {
+						"navigationBarTitleText": "添加",
+						"backgroundColor": "#FFFFFF"
+					}
+				},
+				{
 					"path": "pages/hongBaoRecord/index",
 					"style": {
 						"navigationBarTitleText": "红包记录",
@@ -253,9 +260,9 @@
 			"root": "packageB",
 			"pages": [
 				{
-					"path": "pages/heidouShop/index",
+					"path": "pages/welferShop/index",
 					"style": {
-						"navigationBarTitleText": "开心商城"
+						"navigationBarTitleText": "福利专区"
 					}
 				},
 				{

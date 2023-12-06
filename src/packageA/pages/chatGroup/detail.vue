@@ -5,7 +5,7 @@
  * @Description: 群详情
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-04 14:51:57
+ * @LastEditTime: 2023-12-06 18:09:35
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -21,13 +21,8 @@ import {
 } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { socialApi } from '@/api'
-import {
-  getImgFullPath,
-  getDistance,
-  previewImage,
-  dateFormat,
-  handleMapLocation
-} from '@/utils/index'
+import { getImgFullPath } from '@/utils/index'
+import { route } from '@/utils/common'
 import { UPLOADURL, RY_AVATAR } from '@/common/config'
 import { useUserStore, useChatStore } from '@/store'
 import { sharePathFormat } from '@/common/wechat-share'
@@ -78,6 +73,11 @@ function editName() {
 function editInfo() {
   if (!hasPermission()) return
 }
+function addNew() {
+  route({
+    url: '/packageA/pages/chatGroup/addNewcomer'
+  })
+}
 onLoad(async (option) => {
   groupInfo.value.gid = option?.gid
   groupInfo.value.id = option?.cid
@@ -116,6 +116,7 @@ onShareAppMessage(() => {
           name="tianjia"
           size="95"
           color="#666"
+          @click="addNew"
         ></u-icon>
         <view class="name"></view>
       </view>
@@ -133,6 +134,11 @@ onShareAppMessage(() => {
       <u-cell-item
         title="群简介"
         :value="groupInfo.remark"
+        @click="editInfo"
+      ></u-cell-item>
+      <u-cell-item
+        title="我在群里的昵称"
+        :value="userStore.userInfo.nickname"
         @click="editInfo"
       ></u-cell-item>
     </u-cell-group>

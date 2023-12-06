@@ -2,18 +2,13 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-30 17:32:42
- * @LastEditTime: 2023-11-30 17:32:46
+ * @LastEditTime: 2023-12-06 18:19:19
  * @LastEditors:  Please set LastEditors
 -->
 <template>
   <view>
-    <u-navbar title="选择好友" :background="ryStore.head_background"></u-navbar>
-    <u-index-list
-      :scrollTop="scrollTop"
-      :sticky="false"
-      :indexList="ryStore.pinia_indexList.letterArr"
-    >
-      <view v-for="(item, index) in ryStore.pinia_indexList.list" :key="index">
+    <u-index-list :scrollTop="scrollTop" :sticky="false" :indexList="letterArr">
+      <view v-for="(item, index) in list" :key="index">
         <u-index-anchor :use-slot="true" :index="item.letter">
           <view class="u-m-l-10">{{ item.letter }}</view>
         </u-index-anchor>
@@ -58,13 +53,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { route } from '@/utils/common'
 import { useRyStore } from '@/store'
+import { socialApi } from '@/api'
 
 const ryStore = useRyStore()
 const scrollTop = ref(0)
 const addlist = ref([])
+const list = ref([])
+const letterArr = computed(() => {
+  return []
+})
 function checkbox(e: { name: any }) {
   if (addlist.value.includes(e.name)) {
     const index = addlist.value.indexOf(e.name)
@@ -72,6 +72,11 @@ function checkbox(e: { name: any }) {
   } else {
     addlist.value.push(e.name)
   }
+}
+async function getUserWithoutGroup() {
+  const { data } = await socialApi.circleUserList({
+    
+  })
 }
 </script>
 

@@ -2,12 +2,13 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 15:06:58
- * @LastEditTime: 2023-11-29 10:17:35
+ * @LastEditTime: 2023-12-06 18:31:41
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { getMockData } from '@/api'
+import { route } from '@/utils/common'
 
 const myCommunities = ref([
   {
@@ -46,7 +47,8 @@ const mainModules = ref([
     name: '福利专区',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/8b03983b-9d5d-4fd8-bbdb-3bfabe211060.png',
     msg: '源头厂家，红包天天见…',
-    bg: 'linear-gradient(90deg, #F1FAFE 0%, #DEF3FC 100%)'
+    bg: 'linear-gradient(90deg, #F1FAFE 0%, #DEF3FC 100%)',
+    url: '/packageB/pages/welferShop/index'
   },
   {
     name: '学生专区',
@@ -62,6 +64,13 @@ const mainModules = ref([
   }
 ])
 function handleClick(data) {
+  const { url } = data
+  if (url) {
+    route({
+      url
+    })
+    return
+  }
   uni.navigateTo({
     url: '/pages/physicalShop/index?shopId=9'
   })

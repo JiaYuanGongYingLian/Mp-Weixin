@@ -55,7 +55,8 @@ async function getHeidouProductList() {
     pageIndex,
     pageSize,
     detail: 'true',
-    shopId: 225, // 黑豆线上商城
+    // shopId: 225,
+    activitySku: true,
     categoryId: tab.id,
     keywords: keyword.value
   })
@@ -159,7 +160,7 @@ onReachBottom(() => {
               </view>
               <view class="content">
                 <view class="name">{{ product.name }}</view>
-                <view class="money">{{ product.money }}黑豆</view>
+                <view class="money">￥{{ product.money }}</view>
               </view>
             </view>
           </view>
