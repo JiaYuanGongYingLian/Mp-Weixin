@@ -2,7 +2,7 @@
  * @Description: 社交服务
  * @Author: Kerwin
  * @Date: 2023-06-29 15:54:59
- * @LastEditTime: 2023-11-30 17:39:00
+ * @LastEditTime: 2023-12-07 16:56:45
  * @LastEditors:  Please set LastEditors
  */
 import http from '../http'
@@ -66,6 +66,9 @@ function circleDynamicUpdate(data: any) {
  */
 function circleUserAdd(data: any) {
   return http.post('/social/api/v1/friend/circle/user/add', data)
+}
+function circleUserAddBatch(data: any) {
+  return http.post('/social/api/v1/friend/circle/user/addBatch', data)
 }
 function circleUserList(data: any) {
   return http.get('/social/api/v1/friend/circle/user/list', data)
@@ -154,6 +157,7 @@ export default {
   circleInfo,
   circleUpdate,
   circleUserAdd,
+  circleUserAddBatch,
   circleUserList,
   circleUserDelete,
   circleUserUpdate,

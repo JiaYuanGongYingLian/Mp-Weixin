@@ -5,7 +5,7 @@
  * @Description: 群详情
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-06 18:09:35
+ * @LastEditTime: 2023-12-07 17:49:29
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -33,7 +33,7 @@ const userList = ref([])
 async function circleUserList() {
   const { data } = await socialApi.circleUserList({
     chatGroupId: groupInfo.value.gid,
-    friendCircleId: groupInfo.value.id,
+    friendCircleId: groupInfo.value.cid,
     detail: true,
     pageSize: 19
   })
@@ -47,10 +47,10 @@ async function circleUserList() {
 }
 async function getCircleInfo() {
   const { data } = await socialApi.circleInfo({
-    id: groupInfo.value.id
+    id: groupInfo.value.cid
     // detail: true
   })
-  groupInfo.value = data
+  groupInfo.value = { ...data, ...groupInfo.value }
 }
 
 const editPermission = computed(() => {
@@ -75,12 +75,18 @@ function editInfo() {
 }
 function addNew() {
   route({
-    url: '/packageA/pages/chatGroup/addNewcomer'
+    url: '/packageA/pages/chatGroup/addNewcomer',
+    params: {
+      cid: groupInfo.value.cid,
+      gid: groupInfo.value.gid
+    }
   })
 }
 onLoad(async (option) => {
   groupInfo.value.gid = option?.gid
-  groupInfo.value.id = option?.cid
+  groupInfo.value.cid = option?.cid
+})
+onShow(async () => {
   await circleUserList()
   await getCircleInfo()
 })
@@ -110,7 +116,6 @@ onShareAppMessage(() => {
         </view>
       </view>
       <view class="user">
-        <button open-type="share" class="btn"></button>
         <u-icon
           custom-prefix="custom-icon"
           name="tianjia"

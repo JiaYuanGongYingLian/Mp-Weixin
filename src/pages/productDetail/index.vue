@@ -409,7 +409,7 @@ onShareAppMessage(() => {
       <view class="d-header">
         <view class="text">图文详情</view>
       </view>
-      <!-- <rich-text :nodes="productData.description"></rich-text> -->
+      <rich-text :nodes="productData.description"></rich-text>
       <view>
         <u-image
           class="image"

@@ -62,6 +62,7 @@
     "cz-git": "^1.4.1",
     "jiguang-wx-js-sdk": "^1.4.4",
     "js-base64": "^3.7.5",
+    "js-pinyin": "^0.2.5",
     "jweixin-module": "^1.6.0",
     "pinia": "^2.0.14",
     "recorder-core": "^1.2.23070100",

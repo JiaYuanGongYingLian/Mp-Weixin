@@ -50,6 +50,9 @@ function getCode(phone: string): Promise<{ num: number }> {
 function userInfo() {
   return http.get('/ups/api/v1/user/info')
 }
+function userList(data: any) {
+  return http.get('/ups/api/v1/user/list', data)
+}
 function userInfoUpdate(data: any) {
   return http.post('/ups/api/v1/user/update', data)
 }
@@ -90,5 +93,6 @@ export default {
   userInfoUpdate,
   wxUserPhoneNumber,
   LOGIN_TYPE_ENUM,
-  roleUpdate
+  roleUpdate,
+  userList
 }
