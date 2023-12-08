@@ -5,7 +5,7 @@
  * @Description: 群详情
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-07 17:49:29
+ * @LastEditTime: 2023-12-08 16:44:08
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -20,6 +20,7 @@ import {
   onShareAppMessage
 } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
+import { json } from 'stream/consumers'
 import { socialApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { route } from '@/utils/common'
@@ -30,31 +31,37 @@ import { sharePathFormat } from '@/common/wechat-share'
 const userStore = useUserStore()
 const groupInfo = ref({})
 const userList = ref([])
+const mySelfInfoInGroup = computed(() => {
+  const user = userList.value.find((item) => item.id == userStore.userInfo.id)
+  return user || userStore.userInfo
+})
 async function circleUserList() {
   const { data } = await socialApi.circleUserList({
     chatGroupId: groupInfo.value.gid,
     friendCircleId: groupInfo.value.cid,
     detail: true,
-    pageSize: 19
+    // pageSize: 19
+    noPaging: true
   })
-  userList.value = data.records.map((e: { user: { avatar: string } }) => {
-    if (!e.user.avatar) {
-      e.user.avatar = RY_AVATAR
+  userList.value = data.map(
+    (e: { user: { avatar: string }; nickname: any; id: any }) => {
+      if (!e.user.avatar) {
+        e.user.avatar = RY_AVATAR
+      }
+      return { ...e.user, circle_nickname: e.nickname, fid: e.id }
     }
-    e.user.avatar = getImgFullPath(e.user.avatar)
-    return e.user
-  })
+  )
 }
 async function getCircleInfo() {
   const { data } = await socialApi.circleInfo({
     id: groupInfo.value.cid
     // detail: true
   })
-  groupInfo.value = { ...data, ...groupInfo.value }
+  groupInfo.value = { ...groupInfo.value, ...data }
 }
 
 const editPermission = computed(() => {
-  return groupInfo.value.userId === 1
+  return groupInfo.value.userId === userStore.userInfo.id
 })
 function hasPermission() {
   if (!editPermission.value) {
@@ -67,11 +74,29 @@ function hasPermission() {
   }
   return editPermission.value
 }
-function editName() {
+function editGroupName() {
   if (!hasPermission()) return
+  jumpFn(2)
 }
-function editInfo() {
+function editGroupRemark() {
   if (!hasPermission()) return
+  jumpFn(3)
+}
+function editNickname() {
+  jumpFn(1)
+}
+function jumpFn(type: any) {
+  route({
+    url: '/packageA/pages/chatGroup/infoEdit',
+    params: {
+      type,
+      groupInfo: JSON.stringify(groupInfo.value),
+      avatarList: JSON.stringify(
+        userList.value.slice(0, 9).map((item) => item.avatar)
+      ),
+      mySelfInfoInGroup: JSON.stringify(mySelfInfoInGroup.value)
+    }
+  })
 }
 function addNew() {
   route({
@@ -105,14 +130,14 @@ onShareAppMessage(() => {
     <view class="userList mb2">
       <view class="user" v-for="user in userList" :key="user.rongId">
         <u-image
-          :src="user.avatar"
+          :src="getImgFullPath(user.avatar)"
           mode="widthFix"
           width="90rpx"
           height="90rpx"
           :error-icon="RY_AVATAR"
         ></u-image>
         <view class="name">
-          {{ user.nickname }}
+          {{ user.circle_nickname || user.nickname }}
         </view>
       </view>
       <view class="user">
@@ -122,6 +147,7 @@ onShareAppMessage(() => {
           size="95"
           color="#666"
           @click="addNew"
+          v-if="editPermission"
         ></u-icon>
         <view class="name"></view>
       </view>
@@ -134,17 +160,17 @@ onShareAppMessage(() => {
       <u-cell-item
         title="群聊名称"
         :value="groupInfo.name"
-        @click="editName"
+        @click="editGroupName"
       ></u-cell-item>
       <u-cell-item
         title="群简介"
         :value="groupInfo.remark"
-        @click="editInfo"
+        @click="editGroupRemark"
       ></u-cell-item>
       <u-cell-item
         title="我在群里的昵称"
-        :value="userStore.userInfo.nickname"
-        @click="editInfo"
+        :value="mySelfInfoInGroup.circle_nickname || mySelfInfoInGroup.nickname"
+        @click="editNickname"
       ></u-cell-item>
     </u-cell-group>
   </view>

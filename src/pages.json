@@ -234,6 +234,13 @@
 					}
 				},
 				{
+					"path": "pages/chatGroup/infoEdit",
+					"style": {
+						"navigationBarTitleText": "",
+						"backgroundColor": "#FFFFFF"
+					}
+				},
+				{
 					"path": "pages/hongBaoRecord/index",
 					"style": {
 						"navigationBarTitleText": "红包记录",

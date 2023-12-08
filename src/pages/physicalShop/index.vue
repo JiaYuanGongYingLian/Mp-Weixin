@@ -1,7 +1,13 @@
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady, onPageScroll, onShareAppMessage } from '@dcloudio/uni-app'
+import {
+  onLoad,
+  onShow,
+  onReady,
+  onPageScroll,
+  onShareAppMessage
+} from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { useConfigStore, useUserStore } from '@/store'
 import { baseApi, productApi } from '@/api'
@@ -439,6 +445,14 @@ onShareAppMessage(() => {
                     mode="aspectFill"
                   />
                 </view>
+                <view class="tag">
+                  <u-tag
+                    text="福利款"
+                    type="warning"
+                    size="mini"
+                    v-if="product.activitySku"
+                  />
+                </view>
                 <view class="content">
                   <view class="name">{{ product.name }}</view>
                   <view class="money">￥{{ product.money }}</view>
@@ -597,9 +611,13 @@ onShareAppMessage(() => {
           border-radius: $section-raduis;
         }
       }
+      .tag {
+        padding: 10rpx 30rpx 10rpx 30rpx;
+      }
 
       .content {
         padding: $uni-spacing-row-lg;
+        padding-top: 0;
 
         .name {
           @include ellipsis;

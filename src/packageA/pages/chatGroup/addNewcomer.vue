@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-30 17:32:42
- * @LastEditTime: 2023-12-07 18:04:33
+ * @LastEditTime: 2023-12-08 12:26:28
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -78,10 +78,10 @@ async function addUserBatch() {
       icon: 'none',
       title: '添加成功'
     })
-    deleteChecked()
+    hideChecked()
   }
 }
-function deleteChecked() {
+function hideChecked() {
   list.value.forEach((item) => {
     item.forEach((e: { hide: boolean }) => {
       e.hide = true

@@ -2,13 +2,13 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 15:06:58
- * @LastEditTime: 2023-12-06 18:31:41
+ * @LastEditTime: 2023-12-08 11:06:48
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { getMockData } from '@/api'
-import { route } from '@/utils/common'
+import { qs, route } from '@/utils/common'
 
 const myCommunities = ref([
   {
@@ -54,7 +54,10 @@ const mainModules = ref([
     name: '学生专区',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/926019bc-8b73-4268-80f4-1a537bcee6de.png',
     msg: '让每个孩子都能绽放自己…',
-    bg: 'linear-gradient(90deg, #F1F4FE 0%, #DEE5FC 100%)'
+    bg: 'linear-gradient(90deg, #F1F4FE 0%, #DEE5FC 100%)',
+    url: `/pages/physicalShopList/index?${qs({
+      categoryData: JSON.stringify({ categoryId: 11000 })
+    })}`
   },
   {
     name: '生活专区',

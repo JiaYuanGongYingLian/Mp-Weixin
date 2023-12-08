@@ -396,7 +396,7 @@ export function qs(data: { [x: string]: any }) {
 export function route(data: { url: any; params?: any }) {
   const { url, params } = data
   uni.navigateTo({
-    url: `${url}?${qs(params || {})}`
+    url: params ? `${url}?${qs(params || {})}` : url
   })
 }
 export default {
