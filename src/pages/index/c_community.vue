@@ -2,14 +2,16 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 15:06:58
- * @LastEditTime: 2023-12-08 17:47:33
+ * @LastEditTime: 2023-12-08 17:56:13
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { getMockData } from '@/api'
 import { qs, route } from '@/utils/common'
+import { useConfigStore } from '@/store'
 
+const configStore = useConfigStore()
 const myCommunities = ref([
   {
     name: '我的主群',
@@ -76,8 +78,11 @@ function handleClick(data) {
     })
     return
   }
-  uni.navigateTo({
-    url: '/pages/physicalShop/index?shopId=9'
+  route({
+    url: '/pages/physicalShop/index',
+    params: {
+      shopId: configStore.shopId
+    }
   })
 }
 function toGroup(item: { roleId: any }) {

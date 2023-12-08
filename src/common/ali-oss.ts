@@ -1,8 +1,6 @@
 /* eslint-disable no-return-assign */
 /* eslint-disable no-unused-expressions */
 import OSS from 'ali-oss'
-import CryptoJS from 'crypto-js'
-import { Base64 } from 'js-base64'
 import { generateId } from '@/utils/common'
 import { baseApi } from '@/api'
 
@@ -89,68 +87,6 @@ export const webUploadVideo = async (options: {
         })
     } catch (e) {
       options.onError && options.onError('上传失败')
-    }
-  })
-}
-
-// 计算签名。
-function computeSignature(
-  accessKeySecret: string | CryptoJS.lib.WordArray,
-  canonicalString: string | CryptoJS.lib.WordArray
-) {
-  console.log(canonicalString, accessKeySecret)
-  return CryptoJS.enc.Base64.stringify(
-    CryptoJS.HmacSHA1(canonicalString, accessKeySecret)
-  )
-}
-const date = new Date()
-date.setHours(date.getHours() + 1)
-const policyText = {
-  expiration: date.toISOString(), // 设置policy过期时间。
-  conditions: [
-    // 限制上传大小。
-    ['content-length-range', 0, 1024 * 1024 * 1024]
-  ]
-}
-async function getFormDataParams() {
-  const { data } = await baseApi.getAliOssToken({ id: new Date().getTime() })
-  const policy = Base64.encode(JSON.stringify(policyText)) // policy必须为base64的string。
-  const signature = computeSignature(data.accessKeySecret, policy)
-  const formData = {
-    OSSAccessKeyId: data.accessKeyId,
-    signature,
-    policy,
-    securityToken: data.securityToken
-  }
-  return formData
-}
-export const wxUpload = async (options: {
-  filePath: any
-  onSuccess: (arg0: any) => any
-  onError: (arg0: string) => any
-}) => {
-  const { policy, key, OSSAccessKeyId, signature, securityToken } =
-    await getFormDataParams()
-  uni.uploadFile({
-    url: ENDPOINT,
-    filePath: options.filePath,
-    name: 'file',
-    formData: {
-      key,
-      policy,
-      OSSAccessKeyId,
-      signature,
-      'x-oss-security-token': securityToken // 使用STS签名时必传。
-    },
-    success: (res) => {
-      if (res.statusCode === 204) {
-        console.log('上传成功')
-        options.onSuccess && options.onSuccess(res)
-      }
-    },
-    fail: (err) => {
-      console.log(err)
-      options.onError && options.onError(err)
     }
   })
 }

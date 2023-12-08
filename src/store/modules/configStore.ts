@@ -4,7 +4,7 @@ import { isWeChat, isAlipayClient } from '@/utils/common'
 const useStore = defineStore('config', {
   state: () => ({
     version: '1.0.8',
-    shopId: 9,
+    shopId: 3,
     hideData: false,
     navBarHeight: 44,
     enterType: null,
