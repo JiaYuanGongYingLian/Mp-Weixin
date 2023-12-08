@@ -56,7 +56,7 @@ const submit = async () => {
     }
     const { data } = await orderApi.orderAdd(orderData)
     uni.navigateTo({
-      url: `/pages/payment/index?order=${JSON.stringify(data)}`
+      url: `/packageA/pages/payment/index?order=${JSON.stringify(data)}`
     })
   }
 }

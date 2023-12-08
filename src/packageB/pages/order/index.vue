@@ -130,7 +130,7 @@ async function cancelOrder(item: { id: any }) {
 function payOrder(data: any) {
   uni.setStorageSync('orderJson', JSON.stringify(data))
   uni.navigateTo({
-    url: '/pages/payment/index?type=orderList&order=true'
+    url: '/packageA/pages/payment/index?type=orderList&order=true'
   })
 }
 function getOrderProductSkusCount(order: {

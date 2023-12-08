@@ -171,7 +171,7 @@ function handleCheck(shop: { name: any; id: any }) {
   if (userStore.checkLoginState()) {
     const { name, id } = shop
     uni.navigateTo({
-      url: `/pages/physicalShopCheck/index?name=${name}&shopId=${id}`
+      url: `/packageA/pages/physicalShopCheck/index?name=${name}&shopId=${id}`
     })
   }
 }

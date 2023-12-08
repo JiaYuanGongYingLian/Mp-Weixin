@@ -252,7 +252,7 @@ async function confirm() {
   if (actionType.value === 'toBuyNow') {
     uni.setStorageSync('orderJson', orderJson)
     uni.navigateTo({
-      url: '/pages/productCheckout/index'
+      url: '/packageA/pages/productCheckout/index'
     })
   }
   if (actionType.value === 'toCart') {

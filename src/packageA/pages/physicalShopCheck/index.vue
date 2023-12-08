@@ -33,7 +33,7 @@ async function creatOrder() {
     if (data) {
       uni.setStorageSync('orderJson', JSON.stringify(data))
       uni.navigateTo({
-        url: '/pages/payment/index?order=true'
+        url: '/packageA/pages/payment/index?order=true'
       })
     }
   } catch (err) {

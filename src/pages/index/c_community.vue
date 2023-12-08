@@ -58,7 +58,7 @@ const mainModules = ref([
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/926019bc-8b73-4268-80f4-1a537bcee6de.png',
     msg: '让每个孩子都能绽放自己…',
     bg: 'linear-gradient(90deg, #F1F4FE 0%, #DEE5FC 100%)',
-    url: `/pages/physicalShopList/index?${qs({
+    url: `/packageA/pages/physicalShopList/index?${qs({
       categoryData: JSON.stringify({ categoryId: 11000 })
     })}`
   },
@@ -67,7 +67,7 @@ const mainModules = ref([
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/e2437040-69f0-4f3b-82c1-19e943982538.png',
     msg: '生活缴费,生活服务…',
     bg: 'linear-gradient(90deg, #FDF7E7 0%, #FAEDCA 100%)',
-    url: '/pages/physicalShopList/index'
+    url: '/packageA/pages/physicalShopList/index'
   }
 ])
 function handleClick(data) {

@@ -36,41 +36,6 @@
 			}
 		},
 		{
-			"path": "pages/physicalShopList/index",
-			"style": {
-				"navigationBarTitleText": "店铺列表"
-			}
-		},
-		{
-			"path": "pages/physicalShopCheck/index",
-			"style": {
-				"navigationBarTitleText": "店铺付款",
-				"navigationStyle": "custom",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/productCheckout/index",
-			"style": {
-				"navigationBarTitleText": "创建订单",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/payment/index",
-			"style": {
-				"navigationBarTitleText": "订单支付",
-				"navigationStyle": "custom",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/payment/success",
-			"style": {
-				"navigationBarTitleText": "支付成功"
-			}
-		},
-		{
 			"path": "pages/mine/index",
 			"style": {
 				"navigationStyle": "custom",
@@ -83,6 +48,41 @@
 		{
 			"root": "packageA",
 			"pages": [
+				{
+					"path": "pages/payment/index",
+					"style": {
+						"navigationBarTitleText": "订单支付",
+						"navigationStyle": "custom",
+						"navigationBarTextStyle": "black"
+					}
+				},
+				{
+					"path": "pages/payment/success",
+					"style": {
+						"navigationBarTitleText": "支付成功"
+					}
+				},
+				{
+					"path": "pages/productCheckout/index",
+					"style": {
+						"navigationBarTitleText": "创建订单",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "pages/physicalShopList/index",
+					"style": {
+						"navigationBarTitleText": "店铺列表"
+					}
+				},
+				{
+					"path": "pages/physicalShopCheck/index",
+					"style": {
+						"navigationBarTitleText": "店铺付款",
+						"navigationStyle": "custom",
+						"navigationBarTextStyle": "black"
+					}
+				},
 				{
 					"path": "pages/productDetail/index",
 					"style": {

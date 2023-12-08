@@ -173,7 +173,7 @@ function createOrder() {
   }
   const orderJson = JSON.stringify(order)
   uni.navigateTo({
-    url: `/pages/productCheckout/index?orderData=${orderJson}`
+    url: `/packageA/pages/productCheckout/index?orderData=${orderJson}`
   })
 }
 function back() {

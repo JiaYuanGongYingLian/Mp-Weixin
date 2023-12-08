@@ -71,7 +71,7 @@ const toProductDetail = (product: { shopId: any; productId: any }) => {
 // 跳转线下店列表页面
 const toPhysicalStore = (content: any) => {
   uni.navigateTo({
-    url: `/pages/physicalShopList/index?categoryData= ${content}`
+    url: `/packageA/pages/physicalShopList/index?categoryData= ${content}`
   })
 }
 const toShopProduct = () => {}
@@ -102,7 +102,7 @@ const handleClick = (adv: { webUrl: any; objectType: any }) => {
 }
 const onSearch = () => {
   uni.navigateTo({
-    url: '/pages/physicalShopList/index'
+    url: '/packageA/pages/physicalShopList/index'
   })
 }
 

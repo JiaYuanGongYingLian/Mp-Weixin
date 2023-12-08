@@ -6,7 +6,7 @@
 h5分享的链接统一通过此页面重定向
 分享链接或生成二维码的链接有（示例）：
 1.付款链接
-https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShopCheck/index&qrcode=1&shopId=1073
+https://wap.blacksilverscore.com/?redirect_url=/packageA/pages/physicalShopCheck/index&qrcode=1&shopId=1073
 2.店铺分享链接
 https://wap.blacksilverscore.com/?redirect_url=/packageA/pages/physicalShop/index&qrcode=1&shopId=1073
 3.商品分享链接
@@ -45,7 +45,7 @@ async function getConfig(fieldName = 'mini_project') {
 }
 
 const uncertainShareCodeLinks = [
-  '/pages/physicalShopCheck/index',
+  '/packageA/pages/physicalShopCheck/index',
   '/packageA/pages/physicalShop/index',
   '/packageA/pages/productDetail/index'
 ]
@@ -111,7 +111,7 @@ onLoad(async (option) => {
   url = parseParams(origin_url, tempParams)
   if (qrcode) {
     configStore.setEnterType('storeQrcode')
-    if (origin_url === '/pages/physicalShopCheck/index') {
+    if (origin_url === '/packageA/pages/physicalShopCheck/index') {
       // 扫店铺结算二维码的特殊处理，使结算完成跳转首页为店铺首页
       // eslint-disable-next-line no-shadow
       // const url_rewirte = parseParams('/packageA/pages/physicalShop/index', tempParams)

@@ -33,7 +33,7 @@ function toAddressList() {
   uni.navigateTo({
     url: '/packageB/pages/addressList/index?type=setAddress',
     success: () => {
-      uni.$once('/pages/productCheckout/index', (data: { address: {} }) => {
+      uni.$once('/packageA/pages/productCheckout/index', (data: { address: {} }) => {
         console.log('addressData:>>', data)
         setAddress(data)
       })
@@ -61,7 +61,7 @@ async function creatOrder() {
   const { data } = await orderApi.orderAdd(orderData.value)
   uni.setStorageSync('orderJson', JSON.stringify(data))
   uni.redirectTo({
-    url: '/pages/payment/index?order=true'
+    url: '/packageA/pages/payment/index?order=true'
   })
 }
 

@@ -66,7 +66,7 @@ function submit() {
       if (data) {
         uni.setStorageSync('orderJson', JSON.stringify(data))
         uni.navigateTo({
-          url: '/pages/payment/index?order=true'
+          url: '/packageA/pages/payment/index?order=true'
         })
         showPop.value = false
       }

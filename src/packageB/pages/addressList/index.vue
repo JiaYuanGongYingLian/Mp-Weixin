@@ -23,7 +23,7 @@ defineExpose({
 // 选择地址
 function chooseAddress(item: any) {
   if (type.value === 'setAddress') {
-    uni.$emit('/pages/productCheckout/index', item)
+    uni.$emit('/packageA/pages/productCheckout/index', item)
   }
   uni.navigateBack()
 }
@@ -40,7 +40,7 @@ async function delAddress(index: number) {
   list.value.splice(index, 1)
   const prePage = getPrePage()
   if (prePage.addressData.id === addressId) {
-    uni.$emit('/pages/productCheckout/index', {})
+    uni.$emit('/packageA/pages/productCheckout/index', {})
   }
 }
 function delAddressConfirm(index: any) {
