@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-25 09:26:40
- * @LastEditTime: 2023-09-08 11:49:47
+ * @LastEditTime: 2023-12-09 02:45:39
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -24,7 +24,7 @@ import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi } from '@/api'
 import { getImgFullPath, getDistance, previewImage } from '@/utils/index'
 import { useUserStore, useConfigStore } from '@/store'
-import hyNavBarSimpler from '@/components/hy-nav-bar-simpler/index.vue'
+import hyNavBarSimpler from '../../components/hy-nav-bar-simpler/index.vue'
 import c_shop from './c_shop.vue'
 import c_biography from './c_biography.vue'
 import c_video from './c_video.vue'

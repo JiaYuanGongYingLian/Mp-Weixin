@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-14 18:20:41
- * @LastEditTime: 2023-11-13 16:15:19
+ * @LastEditTime: 2023-12-09 02:41:38
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -13,7 +13,7 @@ import { storeToRefs } from 'pinia'
 import { baseApi, productApi } from '@/api'
 import { dateFormat } from '@/utils/index'
 import { useUserStore } from '@/store'
-import qrcode from '@/components/hy-qrcode'
+import qrcode from '../../components/hy-qrcode/index.vue'
 
 const userStore = useUserStore()
 const { currentShop, myShopList } = storeToRefs(userStore)

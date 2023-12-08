@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-09-20 11:12:09
+ * @LastEditTime: 2023-12-09 02:50:38
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -24,7 +24,7 @@ import { storeToRefs } from 'pinia'
 import { baseApi, productApi, socialApi, enumAll } from '@/api'
 import { getImgFullPath, getDistance } from '@/utils/index'
 import { useUserStore, useConfigStore } from '@/store'
-import hyNavBarSimpler from '@/components/hy-nav-bar-simpler/index.vue'
+import hyNavBarSimpler from '../../components/hy-nav-bar-simpler/index.vue'
 import { sharePathFormat } from '@/common/wechat-share'
 import c_tabbar from './c_tabbar.vue'
 import c_loading from './c_loading.vue'

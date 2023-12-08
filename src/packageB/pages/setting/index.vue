@@ -7,11 +7,8 @@ import { userApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { upload } from '@/common/ali-oss'
 import { useUserStore } from '@/store'
-import {
-  isWeChat,
-  base64ToFile,
-  wxUploadImage
-} from '@/utils/common'
+import { isWeChat, base64ToFile, wxUploadImage } from '@/utils/common'
+import hyImageCropper from '../../components/hy-image-cropper/hy-image-cropper.vue'
 
 const userStore = useUserStore()
 const { userInfo } = storeToRefs(userStore)

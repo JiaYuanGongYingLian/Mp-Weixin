@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-14 11:31:39
- * @LastEditTime: 2023-11-13 16:07:06
+ * @LastEditTime: 2023-12-09 02:39:05
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -74,7 +74,7 @@ function changeTab(i: number) {
 // 点击去核券
 function showCoupon(obj: any) {
   const coupon = JSON.stringify(obj)
-  uni.navigateTo({ url: `/pages/couponQrcode/index?coupon=${coupon}` })
+  uni.navigateTo({ url: `/packageC/pages/couponQrcode/index?coupon=${coupon}` })
 }
 // 优惠券状态
 function getStatus(status: number) {

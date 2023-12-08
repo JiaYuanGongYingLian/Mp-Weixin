@@ -6,7 +6,7 @@ import { storeToRefs } from 'pinia'
 import { baseApi, productApi } from '@/api'
 import { dateFormat } from '@/utils/index'
 import { useUserStore } from '@/store'
-import qrcode from '@/components/hy-qrcode'
+import qrcode from '../../components/hy-qrcode/index.vue'
 
 const store = useUserStore()
 const { hasLogin } = storeToRefs(store)

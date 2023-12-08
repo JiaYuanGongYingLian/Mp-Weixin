@@ -260,6 +260,12 @@
 						"navigationBarTitleText": "提现",
 						"backgroundColor": "#FFFFFF"
 					}
+				},
+				{
+					"path": "pages/couponQrcode/index",
+					"style": {
+						"navigationBarTitleText": "票券使用"
+					}
 				}
 			]
 		},
@@ -276,12 +282,6 @@
 					"path": "pages/secondKillShop/index",
 					"style": {
 						"navigationBarTitleText": "限时秒杀"
-					}
-				},
-				{
-					"path": "pages/couponQrcode/index",
-					"style": {
-						"navigationBarTitleText": "票券使用"
 					}
 				},
 				{

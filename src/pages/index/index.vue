@@ -2,9 +2,6 @@
 import { computed, reactive, ref } from 'vue'
 import {
   onReady,
-  onShow,
-  onLoad,
-  onReachBottom,
   onPageScroll,
   onShareAppMessage,
   onPullDownRefresh
@@ -13,9 +10,6 @@ import { storeToRefs } from 'pinia'
 import { baseApi, moneyApi, productApi } from '@/api'
 import { getImgFullPath } from '@/utils'
 import { useUserStore } from '@/store'
-import searchBar from '@/components/hy-search-bar/index.vue'
-import hyDownloadTips from '@/components/hy-download-tips/index.vue'
-import { isAlipayClient, isWeChat } from '@/utils/common'
 import { sharePathFormat } from '@/common/wechat-share'
 import C_CATES from './c_category.vue'
 import C_COMMUNITY from './c_community.vue'

@@ -15,7 +15,7 @@
   </view>
 </template>
 <script>
-import uQRCode from '@/common/uqrcode.js'
+import uQRCode from '../../statics/js/uqrcode.js'
 
 export default {
   props: {

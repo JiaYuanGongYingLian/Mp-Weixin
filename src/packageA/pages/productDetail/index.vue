@@ -120,7 +120,7 @@ function showCoupon() {
     return
   }
   const coupon = JSON.stringify(userCoupons.value[0])
-  uni.navigateTo({ url: `/packageB/pages/couponQrcode/index?coupon=${coupon}` })
+  uni.navigateTo({ url: `/packageC/pages/couponQrcode/index?coupon=${coupon}` })
 }
 // 领券
 async function couponAdd() {
