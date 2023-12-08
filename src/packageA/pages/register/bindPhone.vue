@@ -58,7 +58,7 @@ function handleClick() {
   // doRegister()
   // 2023/6/20 需求更改为使用随机密码，不再跳转去手动输入密码
   uni.redirectTo({
-    url: `/pages/register/index?phone=${phone}&code=${sms_code}`
+    url: `/packageA/pages/register/index?phone=${phone}&code=${sms_code}`
   })
 }
 async function sendSmsCode() {

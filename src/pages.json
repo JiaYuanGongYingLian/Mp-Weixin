@@ -57,22 +57,6 @@
 			}
 		},
 		{
-			"path": "pages/register/bindPhone",
-			"style": {
-				"navigationBarTitleText": "验证手机号",
-				"navigationStyle": "custom",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/register/index",
-			"style": {
-				"navigationBarTitleText": "注册",
-				"navigationStyle": "custom",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
 			"path": "pages/webview/index",
 			"style": {
 				"navigationStyle": "custom",
@@ -120,6 +104,22 @@
 		{
 			"root": "packageA",
 			"pages": [
+				{
+					"path": "pages/register/index",
+					"style": {
+						"navigationBarTitleText": "注册",
+						"navigationStyle": "custom",
+						"navigationBarTextStyle": "black"
+					}
+				},
+				{
+					"path": "pages/register/bindPhone",
+					"style": {
+						"navigationBarTitleText": "验证手机号",
+						"navigationStyle": "custom",
+						"navigationBarTextStyle": "black"
+					}
+				},
 				{
 					"path": "pages/community/index",
 					"style": {

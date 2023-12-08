@@ -116,7 +116,7 @@ async function getPhoneNumber(res: { detail: { code: any } }) {
     })
     console.log(data)
     uni.redirectTo({
-      url: `/pages/register/bindPhone?phone=${data.phoneNumber}`
+      url: `/packageA/pages/register/bindPhone?phone=${data.phoneNumber}`
     })
   } catch (err) {
     console.log('getNumber', err)
@@ -127,7 +127,7 @@ async function handleWxWebLogin() {
 }
 function toRegister() {
   uni.navigateTo({
-    url: '/pages/register/bindPhone'
+    url: '/packageA/pages/register/bindPhone'
   })
 }
 async function sendSmsCode() {
@@ -195,7 +195,7 @@ onLoad(async (option) => {
         getWxSdkConfig()
       } else {
         uni.redirectTo({
-          url: '/pages/register/bindPhone'
+          url: '/packageA/pages/register/bindPhone'
         })
       }
     } else {
