@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 15:06:58
- * @LastEditTime: 2023-12-08 11:06:48
+ * @LastEditTime: 2023-12-08 17:47:33
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -35,7 +35,8 @@ const mainModules = ref([
     name: '限时秒杀',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/f6b8bcdf-e754-4e4d-aeea-941393a062dc.png',
     msg: '超值好货 等你来秒…',
-    bg: 'linear-gradient(90deg, #FDF7E7 0%, #FAEDCA 100%)'
+    bg: 'linear-gradient(90deg, #FDF7E7 0%, #FAEDCA 100%)',
+    url: '/packageB/pages/secondKillShop/index'
   },
   {
     name: '积分专区',
@@ -63,7 +64,8 @@ const mainModules = ref([
     name: '生活专区',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/e2437040-69f0-4f3b-82c1-19e943982538.png',
     msg: '生活缴费,生活服务…',
-    bg: 'linear-gradient(90deg, #FDF7E7 0%, #FAEDCA 100%)'
+    bg: 'linear-gradient(90deg, #FDF7E7 0%, #FAEDCA 100%)',
+    url: '/pages/physicalShopList/index'
   }
 ])
 function handleClick(data) {

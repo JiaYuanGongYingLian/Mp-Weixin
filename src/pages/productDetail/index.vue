@@ -343,6 +343,11 @@ onShareAppMessage(() => {
             >
           </view>
           <view class="price-tip" v-if="productData.moneyUnit">黑豆</view>
+          <u-count-down
+            v-if="productData.limitEndTime"
+            :timestamp="productData.limitEndTime"
+            format="DD天HH时mm分ss秒"
+          ></u-count-down>
         </view>
         <view class="bot-row">
           <view class="text">销量 {{ productData.saleCount || 0 }}</view>
@@ -350,7 +355,16 @@ onShareAppMessage(() => {
       </view>
       <view class="intro-top">
         <view class="intro-top-tit">
-          <view class="title f-m">{{ productData.name }}</view>
+          <view class="title f-m">
+            <u-tag
+              text="秒杀"
+              size="mini"
+              type="warning"
+              mode="dark"
+              style="transform: translateY(-6rpx); margin-right: 6rpx"
+              v-if="productData.limitEndTime"
+            />{{ productData.name }}</view
+          >
           <view class="subtitle">{{ productData.subtitle }}</view>
         </view>
         <!-- #ifdef MP -->
