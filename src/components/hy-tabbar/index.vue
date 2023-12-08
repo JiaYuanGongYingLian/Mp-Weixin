@@ -90,7 +90,7 @@ const pageslist = [
     text: '首页'
   },
   // {
-  //   pagePath: '/pages/community/index',
+  //   pagePath: '/packageA/pages/community/index',
   //   iconPath: '/static/ic_bar_circle.png',
   //   selectedIconPath: '/static/ic_bar_circle_checked.png',
   //   text: '分类'

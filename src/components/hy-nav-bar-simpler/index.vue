@@ -79,7 +79,7 @@ function goback() {
   if (getCurrentPages().length > 1) {
     uni.navigateBack()
   } else {
-    uni.switchTab({ url: '/pages/community/index' })
+    uni.switchTab({ url: '/packageA/pages/community/index' })
   }
 }
 </script>

@@ -98,7 +98,7 @@ onPullDownRefresh(() => {
   console.log('refresh')
   setTimeout(() => {
     uni.reLaunch({
-      url: `/pages/community/index?tabIndex=${currentTab.value}`
+      url: `/packageA/pages/community/index?tabIndex=${currentTab.value}`
     })
     uni.stopPullDownRefresh()
   }, 1000)
