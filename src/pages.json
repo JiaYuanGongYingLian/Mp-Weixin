@@ -65,14 +65,6 @@
 			}
 		},
 		{
-			"path": "pages/login/index",
-			"style": {
-				"navigationBarTitleText": "登录",
-				"navigationStyle": "custom",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
 			"path": "pages/register/bindPhone",
 			"style": {
 				"navigationBarTitleText": "验证手机号",
@@ -139,20 +131,28 @@
 				"backgroundColor": "#F5F5F5",
 				"enablePullDownRefresh": true
 			}
-		},
-		{
-			"path": "pages/cart/index",
-			"style": {
-				"navigationBarTitleText": "购物车",
-				"backgroundColor": "#F5F5F5",
-				"enablePullDownRefresh": true
-			}
 		}
 	],
 	"subPackages": [
 		{
 			"root": "packageA",
 			"pages": [
+				{
+					"path": "pages/login/index",
+					"style": {
+						"navigationBarTitleText": "登录",
+						"navigationStyle": "custom",
+						"navigationBarTextStyle": "black"
+					}
+				},
+				{
+					"path": "pages/cart/index",
+					"style": {
+						"navigationBarTitleText": "购物车",
+						"backgroundColor": "#F5F5F5",
+						"enablePullDownRefresh": true
+					}
+				},
 				{
 					"path": "pages/famous/index",
 					"style": {
