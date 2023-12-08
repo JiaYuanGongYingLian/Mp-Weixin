@@ -402,18 +402,6 @@
 			"packages": [
 				"packageA"
 			]
-		},
-		"packageA/pages/businessCard/index": {
-			"network": "all",
-			"packages": [
-				"packageA"
-			]
-		},
-		"packageA/pages/publish/index": {
-			"network": "all",
-			"packages": [
-				"packageA"
-			]
 		}
 	},
 	"globalStyle": {

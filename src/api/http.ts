@@ -175,17 +175,17 @@ export class RequestHttp {
                   return
                 }
                 uni.navigateTo({
-                  url: '/pages/login/index'
+                  url: '/packageA/pages/login/index'
                 })
                 // #endif
                 // #ifdef H5
                 const pages = getCurrentPages()
                 const page = pages[pages.length - 1]
-                if (!page.$page.fullPath.includes('/pages/login/index')) {
+                if (!page.$page.fullPath.includes('/packageA/pages/login/index')) {
                   uni.setStorageSync('redirect_url', page.$page.fullPath)
                 }
                 uni.navigateTo({
-                  url: '/pages/login/index'
+                  url: '/packageA/pages/login/index'
                 })
                 // #endif
               }

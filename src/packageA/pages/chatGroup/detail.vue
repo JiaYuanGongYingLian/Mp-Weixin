@@ -93,10 +93,10 @@ function jumpFn(type: any) {
       groupInfo: JSON.stringify(groupInfo.value),
       avatarList: JSON.stringify(
         userList.value.slice(0, 9).map((item) => item.avatar)
-      ),
-      mySelfInfoInGroup: JSON.stringify(mySelfInfoInGroup.value)
+      )
     }
   })
+  uni.setStorageSync('mySelfInfoInGroup',JSON.stringify(mySelfInfoInGroup.value))
 }
 function addNew() {
   route({

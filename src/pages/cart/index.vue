@@ -40,7 +40,7 @@ async function loadData() {
 }
 function toLogin() {
   uni.navigateTo({
-    url: '/pages/login/index'
+    url: '/packageA/pages/login/index'
   })
 }
 // 更新购物车

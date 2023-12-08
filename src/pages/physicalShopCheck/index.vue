@@ -124,7 +124,7 @@ onLoad(async (option) => {
   }
   if (!userStore.hasLogin) {
     uni.navigateTo({
-      url: '/pages/login/index'
+      url: '/packageA/pages/login/index'
     })
   }
 })

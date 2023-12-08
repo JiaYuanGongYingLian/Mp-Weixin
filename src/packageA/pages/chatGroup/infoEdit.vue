@@ -3,7 +3,7 @@
  * @Description: 群相关信息编辑
  * @Author: Kerwin
  * @Date: 2023-12-08 12:37:48
- * @LastEditTime: 2023-12-08 16:35:56
+ * @LastEditTime: 2023-12-08 23:09:19
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -95,14 +95,17 @@ onLoad((option) => {
   groupInfo.value = JSON.parse(option?.groupInfo)
   avatarList.value = JSON.parse(option?.avatarList)
   if (type.value === 1) {
-    textVal.value = JSON.parse(option?.mySelfInfoInGroup)?.circle_nickname
-    info.value.id = JSON.parse(option?.mySelfInfoInGroup)?.fid
+    const mySelfInfoInGroup =JSON.parse( uni.getStorageSync('mySelfInfoInGroup'))
+    textVal.value = mySelfInfoInGroup?.circle_nickname
+    info.value.id = mySelfInfoInGroup?.fid
   } else if (type.value === 2) {
-    textVal.value = JSON.parse(option?.groupInfo)?.name
-    info.value.id = JSON.parse(option?.groupInfo)?.id
+    const groupInfo = JSON.parse(option?.groupInfo)
+    textVal.value = groupInfo?.name
+    info.value.id = groupInfo?.id
   } else if (type.value === 3) {
-    textVal.value = JSON.parse(option?.groupInfo)?.remark
-    info.value.id = JSON.parse(option?.groupInfo)?.id
+    const groupInfo = JSON.parse(option?.groupInfo)
+    textVal.value = groupInfo?.remark
+    info.value.id = groupInfo?.id
   }
   console.log(groupInfo.value)
 })
@@ -123,7 +126,8 @@ onLoad((option) => {
           :error-icon="RY_AVATAR"
         ></u-image>
       </view>
-      <u-input
+      <view class="inptr">
+        <u-input
         v-model="textVal"
         type="textarea"
         :border="false"
@@ -131,6 +135,7 @@ onLoad((option) => {
         :auto-height="true"
         clearable
       />
+      </view>
     </view>
     <view class="btn">
       <u-button
@@ -176,6 +181,9 @@ onLoad((option) => {
       flex-wrap: wrap;
       gap: 6;
       margin-right: 18rpx;
+    }
+    .inptr {
+      flex: 1
     }
   }
 

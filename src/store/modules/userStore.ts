@@ -202,7 +202,7 @@ const userStore = defineStore('user', {
     checkLoginState() {
       if (!this.hasLogin) {
         uni.navigateTo({
-          url: '/pages/login/index'
+          url: '/packageA/pages/login/index'
         })
         return false
       }

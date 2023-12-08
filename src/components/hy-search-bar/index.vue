@@ -54,7 +54,7 @@ const link = () => {
       success: ({ confirm, cancel }) => {
         if (confirm) {
           uni.navigateTo({
-            url: '/pages/login/index'
+            url: '/packageA/pages/login/index'
           })
         }
       }
