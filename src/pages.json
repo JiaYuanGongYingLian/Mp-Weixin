@@ -50,13 +50,6 @@
 			}
 		},
 		{
-			"path": "pages/productDetail/index",
-			"style": {
-				"navigationBarTitleText": "商品详情",
-				"navigationStyle": "custom"
-			}
-		},
-		{
 			"path": "pages/productCheckout/index",
 			"style": {
 				"navigationBarTitleText": "创建订单",
@@ -90,6 +83,13 @@
 		{
 			"root": "packageA",
 			"pages": [
+				{
+					"path": "pages/productDetail/index",
+					"style": {
+						"navigationBarTitleText": "商品详情",
+						"navigationStyle": "custom"
+					}
+				},
 				{
 			
 					"path": "pages/unocss/index",

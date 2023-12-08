@@ -43,7 +43,7 @@ async function getOderInfo(id: any) {
 function navToProductDetail(data) {
   const { shopId, productId } = data
   uni.navigateTo({
-    url: `/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
+    url: `/packageA/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
   })
 }
 onLoad((option) => {

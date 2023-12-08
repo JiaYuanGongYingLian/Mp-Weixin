@@ -72,7 +72,7 @@ async function getHeidouProductList() {
 function toProductDetail(product: { shopId: any; productId: any }) {
   const { shopId, productId } = product
   uni.navigateTo({
-    url: `/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
+    url: `/packageA/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
   })
 }
 function tabsChange(index: any) {

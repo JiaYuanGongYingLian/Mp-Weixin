@@ -64,7 +64,7 @@ const getBaseDataFn = async (type: any, callback: (arg0: any) => void) => {
 const toProductDetail = (product: { shopId: any; productId: any }) => {
   const { shopId, productId } = product
   uni.navigateTo({
-    url: `/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
+    url: `/packageA/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
   })
 }
 
@@ -151,7 +151,7 @@ const handleBannerClick = (i: number, dataList: any[]) => {
       if (content) {
         const obj = JSON.parse(content)
         uni.navigateTo({
-          url: `/pages/productDetail/index?shopId=${obj.shopId}&productId=${obj.productId}`
+          url: `/packageA/pages/productDetail/index?shopId=${obj.shopId}&productId=${obj.productId}`
         })
       }
       break

@@ -229,9 +229,9 @@ function tabsChange(index: any) {
 function toProductDetail(id: any) {
   if (userStore.checkLoginState()) {
     if (!id) return
-    let url = `/pages/productDetail/index?shopId=${shopId.value}&productId=${id}`
+    let url = `/packageA/pages/productDetail/index?shopId=${shopId.value}&productId=${id}`
     if (shareCode.value) {
-      url = `/pages/productDetail/index?shopId=${shopId.value}&productId=${id}&shareCode=${shareCode.value}`
+      url = `/packageA/pages/productDetail/index?shopId=${shopId.value}&productId=${id}&shareCode=${shareCode.value}`
     }
     uni.navigateTo({
       url

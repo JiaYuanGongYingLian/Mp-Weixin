@@ -10,7 +10,7 @@ https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShopCheck/index&qr
 2.店铺分享链接
 https://wap.blacksilverscore.com/?redirect_url=/packageA/pages/physicalShop/index&qrcode=1&shopId=1073
 3.商品分享链接
-https://wap.blacksilverscore.com/?redirect_url=/pages/productDetail/index&qrcode=1&shopId=1073&productId=100003057&shareCode='84DUO4'
+https://wap.blacksilverscore.com/?redirect_url=/packageA/pages/productDetail/index&qrcode=1&shopId=1073&productId=100003057&shareCode='84DUO4'
  -->
 
 <script setup lang="ts">
@@ -47,7 +47,7 @@ async function getConfig(fieldName = 'mini_project') {
 const uncertainShareCodeLinks = [
   '/pages/physicalShopCheck/index',
   '/packageA/pages/physicalShop/index',
-  '/pages/productDetail/index'
+  '/packageA/pages/productDetail/index'
 ]
 function isNoCodeLink(url: string) {
   return uncertainShareCodeLinks.some((item) => {

@@ -57,7 +57,7 @@ function toProductDetail(product: any) {
   const { shopId, productId } = product
   if (userStore.checkLoginState()) {
     uni.navigateTo({
-      url: `/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
+      url: `/packageA/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
     })
   }
 }
