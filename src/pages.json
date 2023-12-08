@@ -260,12 +260,6 @@
 						"navigationBarTitleText": "提现",
 						"backgroundColor": "#FFFFFF"
 					}
-				},
-				{
-					"path": "pages/couponQrcode/index",
-					"style": {
-						"navigationBarTitleText": "票券使用"
-					}
 				}
 			]
 		},
@@ -391,6 +385,12 @@
 						"navigationStyle": "custom",
 						"navigationBarTitleText": "优惠券核销",
 						"backgroundColor": "#F5F5F5"
+					}
+				},
+				{
+					"path": "pages/couponQrcode/index",
+					"style": {
+						"navigationBarTitleText": "票券使用"
 					}
 				}
 			]
