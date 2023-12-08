@@ -49,14 +49,6 @@
 			}
 		},
 		{
-			"path": "pages/physicalShop/index",
-			"style": {
-				"navigationBarTitleText": "店铺详情",
-				"navigationStyle": "custom",
-				"navigationBarTextStyle": "black"
-			}
-		},
-		{
 			"path": "pages/physicalShopCheck/index",
 			"style": {
 				"navigationBarTitleText": "店铺付款",
@@ -137,6 +129,14 @@
 		{
 			"root": "packageA",
 			"pages": [
+				{
+					"path": "pages/physicalShop/index",
+					"style": {
+						"navigationBarTitleText": "店铺详情",
+						"navigationStyle": "custom",
+						"navigationBarTextStyle": "black"
+					}
+				},
 				{
 					"path": "pages/login/index",
 					"style": {

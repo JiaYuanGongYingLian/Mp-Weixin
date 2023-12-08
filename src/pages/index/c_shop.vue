@@ -80,7 +80,7 @@ const getShopList = async () => {
 // 点击进入店铺
 function toShopDetail(id: any) {
   uni.navigateTo({
-    url: `/pages/physicalShop/index?shopId=${id}`
+    url: `/packageA/pages/physicalShop/index?shopId=${id}`
   })
 }
 onReachBottom(() => {

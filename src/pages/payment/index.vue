@@ -239,7 +239,7 @@ async function onSubmit() {
     code: sms_code.value,
     // #ifdef H5
     returnUrl: shopId
-      ? `https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShop/index&qrcode=1&shopId=${shopId}`
+      ? `https://wap.blacksilverscore.com/?redirect_url=/packageA/pages/physicalShop/index&qrcode=1&shopId=${shopId}`
       : null
     // #endif
   })

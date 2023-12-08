@@ -3,8 +3,6 @@
 import { reactive, ref } from 'vue'
 import {
   onLoad,
-  onShow,
-  onReady,
   onPageScroll,
   onShareAppMessage
 } from '@dcloudio/uni-app'
@@ -40,7 +38,7 @@ const tabList = ref([
     iconPath: '/static/icon/ic_bar_main_pg.png',
     selectedIconPath: '/static/icon/ic_bar_main_page_checked.png',
     text: '首页',
-    hy_path: '/pages/physicalShop/index'
+    hy_path: '/packageA/pages/physicalShop/index'
   },
   {
     iconPath: '/static/icon/ic_bar_mine.png',

@@ -143,7 +143,7 @@ const handleBannerClick = (i: number, dataList: any[]) => {
       if (content) {
         const obj = JSON.parse(content)
         uni.navigateTo({
-          url: `/pages/physicalShop/index?shopId=${obj.id}&shopType=${obj.shopType}`
+          url: `/packageA/pages/physicalShop/index?shopId=${obj.id}&shopType=${obj.shopType}`
         })
       }
       break

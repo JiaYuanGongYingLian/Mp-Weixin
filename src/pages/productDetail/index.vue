@@ -262,7 +262,7 @@ async function confirm() {
 const byShare = ref(false)
 function toHome() {
   if (byShare.value) {
-    uni.redirectTo({ url: `/pages/physicalShop/index?shopId=${shopId.value} ` })
+    uni.redirectTo({ url: `/packageA/pages/physicalShop/index?shopId=${shopId.value} ` })
   } else {
     uni.switchTab({ url: '/pages/index/index' })
   }

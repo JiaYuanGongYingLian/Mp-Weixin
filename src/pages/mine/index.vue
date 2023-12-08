@@ -40,7 +40,7 @@ const tabList = ref([
   {
     iconPath: '/static/icon/ic_bar_main_pg.png',
     selectedIconPath: '/static/icon/ic_bar_main_page_checked.png',
-    hy_path: '/pages/physicalShop/index',
+    hy_path: '/packageA/pages/physicalShop/index',
     text: '首页'
   },
   {

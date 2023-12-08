@@ -79,7 +79,7 @@ function handleClick(data) {
     return
   }
   route({
-    url: '/pages/physicalShop/index',
+    url: '/packageA/pages/physicalShop/index',
     params: {
       shopId: configStore.shopId
     }

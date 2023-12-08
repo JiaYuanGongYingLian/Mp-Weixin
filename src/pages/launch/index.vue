@@ -8,7 +8,7 @@ h5分享的链接统一通过此页面重定向
 1.付款链接
 https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShopCheck/index&qrcode=1&shopId=1073
 2.店铺分享链接
-https://wap.blacksilverscore.com/?redirect_url=/pages/physicalShop/index&qrcode=1&shopId=1073
+https://wap.blacksilverscore.com/?redirect_url=/packageA/pages/physicalShop/index&qrcode=1&shopId=1073
 3.商品分享链接
 https://wap.blacksilverscore.com/?redirect_url=/pages/productDetail/index&qrcode=1&shopId=1073&productId=100003057&shareCode='84DUO4'
  -->
@@ -46,7 +46,7 @@ async function getConfig(fieldName = 'mini_project') {
 
 const uncertainShareCodeLinks = [
   '/pages/physicalShopCheck/index',
-  '/pages/physicalShop/index',
+  '/packageA/pages/physicalShop/index',
   '/pages/productDetail/index'
 ]
 function isNoCodeLink(url: string) {
@@ -114,7 +114,7 @@ onLoad(async (option) => {
     if (origin_url === '/pages/physicalShopCheck/index') {
       // 扫店铺结算二维码的特殊处理，使结算完成跳转首页为店铺首页
       // eslint-disable-next-line no-shadow
-      // const url_rewirte = parseParams('/pages/physicalShop/index', tempParams)
+      // const url_rewirte = parseParams('/packageA/pages/physicalShop/index', tempParams)
       // uni.setStorageSync('redirect_url', url_rewirte)
     } else {
       uni.setStorageSync('redirect_url', url)

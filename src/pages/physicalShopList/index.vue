@@ -163,7 +163,7 @@ function getLocation() {
 // 点击进入店铺
 function toShopDetail(id: any) {
   uni.navigateTo({
-    url: `/pages/physicalShop/index?shopId=${id}`
+    url: `/packageA/pages/physicalShop/index?shopId=${id}`
   })
 }
 // 点击付款按钮
