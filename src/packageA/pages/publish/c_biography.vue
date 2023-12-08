@@ -64,7 +64,7 @@ function toProtocol() {
   const url =
     'https://www.blacksilverscore.com/download/shop_agreement_license.html'
   uni.navigateTo({
-    url: `/pages/webview/index?url=${url}`
+    url: `/packageA/pages/webview/index?url=${url}`
   })
 }
 const upload1 = ref()

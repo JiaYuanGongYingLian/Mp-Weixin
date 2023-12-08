@@ -36,13 +36,6 @@
 			}
 		},
 		{
-			
-			"path": "pages/unocss/index",
-			"style": {
-				"navigationBarTitleText": "UnoCSS 示例"
-			}
-		},
-		{
 			"path": "pages/physicalShopList/index",
 			"style": {
 				"navigationBarTitleText": "店铺列表"
@@ -54,13 +47,6 @@
 				"navigationBarTitleText": "店铺付款",
 				"navigationStyle": "custom",
 				"navigationBarTextStyle": "black"
-			}
-		},
-		{
-			"path": "pages/webview/index",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": ""
 			}
 		},
 		{
@@ -104,6 +90,20 @@
 		{
 			"root": "packageA",
 			"pages": [
+				{
+			
+					"path": "pages/unocss/index",
+					"style": {
+						"navigationBarTitleText": "UnoCSS 示例"
+					}
+				},
+				{
+					"path": "pages/webview/index",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": ""
+					}
+				},
 				{
 					"path": "pages/register/index",
 					"style": {

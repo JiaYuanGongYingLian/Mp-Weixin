@@ -78,7 +78,7 @@ const toShopProduct = () => {}
 const toDevice = () => {}
 const toWebview = (url: string) => {
   uni.navigateTo({
-    url: `/pages/webview/index?url=${url}`
+    url: `/packageA/pages/webview/index?url=${url}`
   })
 }
 const handleClick = (adv: { webUrl: any; objectType: any }) => {
@@ -135,7 +135,7 @@ const handleBannerClick = (i: number, dataList: any[]) => {
       // dev const url = ''
       if (webUrl) {
         uni.navigateTo({
-          url: `/pages/webview/index?url=${webUrl}`
+          url: `/packageA/pages/webview/index?url=${webUrl}`
         })
       }
       break
