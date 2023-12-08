@@ -65,6 +65,7 @@
     },
     "requiredPrivateInfos" : [ "getLocation","chooseLocation","chooseAddress" ],
     "usingComponents": true,
+    "lazyCodeLoading": "requiredComponents",
     "optimization":{"subPackages":true}
   },
   "h5" : {

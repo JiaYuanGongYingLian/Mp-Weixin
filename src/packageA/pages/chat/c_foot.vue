@@ -16,7 +16,7 @@ import { storeToRefs } from 'pinia'
 import { socialApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { $toast } from '@/utils/common'
-import { useUserStore, useChatStore, useRyStore } from '@/store'
+import { useUserStore, useRyStore } from '@/store'
 // #ifdef MP-WEIXIN
 const RongEmoji = require('../../static/js/RongIMEmoji-2.2.6.js')
 // #endif
@@ -58,9 +58,7 @@ const isSingle = computed(() => {
   return props.chatType === 0
 })
 const userStore = useUserStore()
-const chatStore = useChatStore()
 const ryStore = useRyStore()
-const { chatHasLogin, singleInfo, groupInfo } = storeToRefs(chatStore)
 const videoList = reactive({
   list: [],
   loading: true,

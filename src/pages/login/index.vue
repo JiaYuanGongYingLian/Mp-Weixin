@@ -5,14 +5,12 @@
 import { reactive, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { Md5 } from 'ts-md5'
-import { useUserStore, useChatStore, useConfigStore } from '@/store'
+import { useUserStore, useConfigStore } from '@/store'
 import { baseApi, userApi } from '@/api'
 import { LOGO } from '@/common/config'
 import { isWeChat, getQueryVariable } from '@/utils/common'
-import wxShare from '@/common/wechat-share'
 
 const userStore = useUserStore()
-const chatStore = useChatStore()
 const configStore = useConfigStore()
 const isWeChatOfficial = ref(true)
 // #ifdef MP-WEIXIN

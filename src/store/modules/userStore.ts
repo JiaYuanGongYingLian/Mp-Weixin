@@ -56,9 +56,6 @@ const userStore = defineStore('user', {
     async syncSetUserInfo(data: object) {
       this.userInfo = data
       uni.setStorageSync('userInfo', data)
-      // 登陆极光IM
-      // const chatStore = useChatStore()
-      // await chatStore.jimLoginFn()
       // 登陆融云IM
       const ryStore = useRyStore()
       ryStore.connect(this.userInfo?.rongToken)

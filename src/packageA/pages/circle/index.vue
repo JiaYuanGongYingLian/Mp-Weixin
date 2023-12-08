@@ -11,15 +11,14 @@
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue';
-import { onLoad, onShow, onReady, onReachBottom } from '@dcloudio/uni-app'
+import { onReachBottom } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, socialApi } from '@/api'
-import { getImgFullPath, getDistance, dateFormat } from '@/utils/index'
-import { useUserStore, useChatStore } from '@/store'
+import { socialApi } from '@/api'
+import { getImgFullPath, dateFormat } from '@/utils/index'
+import { useUserStore } from '@/store'
 
 const userStore = useUserStore()
-const chatStore = useChatStore()
-const { hasLogin, userInfo } = storeToRefs(userStore)
+const { userInfo } = storeToRefs(userStore)
 const circleList = reactive({
   list: [],
   loading: true,

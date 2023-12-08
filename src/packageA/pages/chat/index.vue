@@ -6,25 +6,23 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-07 17:45:45
+ * @LastEditTime: 2023-12-08 22:31:11
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref, computed, onBeforeMount, watch, onUnmounted } from 'vue'
-import { onLoad, onShow, onReady, onHide } from '@dcloudio/uni-app'
+import { reactive, ref, computed, watch, onUnmounted } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import RongIMLib from '@/common/rongYun/im_init'
-import { baseApi, productApi, socialApi } from '@/api'
+import { socialApi } from '@/api'
 import {
   getImgFullPath,
-  getDistance,
   previewImage,
   dateFormat,
   handleMapLocation
 } from '@/utils/index'
-import { useUserStore, useChatStore, useRyStore } from '@/store'
+import { useUserStore, useRyStore } from '@/store'
 import { RY_AVATAR } from '@/common/config'
 import c_foot from './c_foot.vue'
 import c_msgpup from './c_msgpup.vue'
@@ -33,13 +31,9 @@ import { route } from '@/utils/common'
 import hongbao from '../../static/img/hongbao.png'
 import hongbao_chai from '../../static/img/red-chai.png'
 
-const $config = reactive({})
-const emojiAllJson = reactive([])
-const userStore = useUserStore()
-const chatStore = useChatStore()
+
 const ryStore = useRyStore()
-const { singleInfo, syncConversation, groupMemberList } = storeToRefs(chatStore)
-const { userinfo, pinia_messagelist, pinia_groupUserlist } =
+const { pinia_messagelist, pinia_groupUserlist } =
   storeToRefs(ryStore)
 const chatType = ref(0)
 const targetId = ref()
@@ -206,7 +200,7 @@ onUnmounted(() => {})
 </script>
 <template>
   <view class="container">
-    <u-navbar :title="chatType === 1 ? groupInfo.name : singleInfo.nickname">
+    <u-navbar :title="groupInfo.name">
       <view slot="right">
         <u-icon
           class="u-m-r-30"

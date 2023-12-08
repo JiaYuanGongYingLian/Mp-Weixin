@@ -1,21 +1,19 @@
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
-import { baseApi, productApi, userApi } from '@/api'
+import { userApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { upload } from '@/common/ali-oss'
-import { useUserStore, useChatStore } from '@/store'
+import { useUserStore } from '@/store'
 import {
   isWeChat,
   base64ToFile,
-  imageUrlToFile,
   wxUploadImage
 } from '@/utils/common'
 
 const userStore = useUserStore()
-const chatStore = useChatStore()
 const { userInfo } = storeToRefs(userStore)
 function goUrlFn(url: any) {
   if (userStore.checkLoginState()) {

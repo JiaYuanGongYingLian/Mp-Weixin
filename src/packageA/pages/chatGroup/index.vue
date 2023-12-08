@@ -4,7 +4,7 @@
  * @Description: 群聊列表
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-01 10:40:16
+ * @LastEditTime: 2023-12-08 22:36:03
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -22,7 +22,7 @@ import {
   handleMapLocation
 } from '@/utils/index'
 import { UPLOADURL } from '@/common/config'
-import { useUserStore, useChatStore } from '@/store'
+import { useUserStore } from '@/store'
 import c_newGroup from './c_newGroup.vue'
 import { route } from '@/utils/common'
 

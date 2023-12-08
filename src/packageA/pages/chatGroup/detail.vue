@@ -25,7 +25,7 @@ import { socialApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { route } from '@/utils/common'
 import { UPLOADURL, RY_AVATAR } from '@/common/config'
-import { useUserStore, useChatStore } from '@/store'
+import { useUserStore } from '@/store'
 import { sharePathFormat } from '@/common/wechat-share'
 
 const userStore = useUserStore()
