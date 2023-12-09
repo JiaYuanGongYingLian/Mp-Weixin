@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 15:06:58
- * @LastEditTime: 2023-12-08 17:56:13
+ * @LastEditTime: 2023-12-09 16:56:32
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -67,12 +67,12 @@ const mainModules = ref([
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/e2437040-69f0-4f3b-82c1-19e943982538.png',
     msg: '生活缴费,生活服务…',
     bg: 'linear-gradient(90deg, #FDF7E7 0%, #FAEDCA 100%)',
-    url: '/packageA/pages/physicalShopList/index'
+    url: '/packageB/pages/lifeShop/index'
   }
 ])
 function handleClick(data) {
   const { url } = data
-  if (url) {
+  if (url && !configStore.hideData) {
     route({
       url
     })

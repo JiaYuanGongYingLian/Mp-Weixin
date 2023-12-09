@@ -321,6 +321,14 @@
 						"navigationStyle": "custom",
 						"backgroundColor": "#F5F5F5"
 					}
+				},
+				{
+					"path": "pages/lifeShop/index",
+					"style": {
+						"navigationBarTitleText": "生活专区",
+						"navigationStyle": "custom",
+						"backgroundColor": "#FFFFFF"
+					}
 				}
 			]
 		},
