@@ -2,21 +2,27 @@
  * @Description: 红包记录
  * @Author: Kerwin
  * @Date: 2023-11-30 17:11:21
- * @LastEditTime: 2023-12-04 18:14:24
+ * @LastEditTime: 2023-12-09 14:19:58
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { storeToRefs } from 'pinia'
 import { route } from '@/utils/common'
 import { getImgFullPath } from '@/utils'
 import { moneyApi } from '@/api'
-import { useUserStore } from '@/store'
+import { useUserStore, useRyStore } from '@/store'
+import { RY_AVATAR } from '@/common/config'
 
 const userStore = useUserStore()
+const ryStore = useRyStore()
+const { pinia_groupUserlist } = storeToRefs(ryStore)
+console.log(pinia_groupUserlist.value)
 const id = ref('')
 const loading = ref(false)
 const hongBaoInfo = ref({})
+const targetId = ref('')
 const wallets = [
   {
     name: '余额',
@@ -39,6 +45,15 @@ async function gethongBaoInfo() {
     hongBaoInfo.value = data
     loading.value = true
     uni.hideLoading()
+    const groupUser =
+      pinia_groupUserlist.value[ryStore.userinfo.id][targetId.value]
+    hongBaoInfo.value.senderNickname =
+      groupUser.find((item) => item.userId === hongBaoInfo.value.userId)
+        ?.nickname || ''
+    hongBaoInfo.value.walletFlows.forEach((e) => {
+      e.user.circle_nickname =
+        groupUser.find((item) => item.userId === e.userId)?.nickname || ''
+    })
   }
 }
 const isScoreWalet = computed(() => {
@@ -46,6 +61,7 @@ const isScoreWalet = computed(() => {
 })
 onLoad((optons) => {
   id.value = optons?.id
+  targetId.value = optons?.targetId
   gethongBaoInfo()
 })
 </script>
@@ -53,7 +69,11 @@ onLoad((optons) => {
   <view class="container">
     <view v-if="loading">
       <view class="head">
-        <view class="title">{{ hongBaoInfo?.user.nickname }}发出的红包</view>
+        <view class="title"
+          >{{
+            hongBaoInfo?.senderNickname || hongBaoInfo?.user.nickname
+          }}发出的红包</view
+        >
         <view class="info">{{ hongBaoInfo?.content }}</view>
         <view class="money">
           <text>{{ hongBaoInfo?.totalMoney }}</text>
@@ -83,18 +103,25 @@ onLoad((optons) => {
           :key="item.id"
         >
           <view class="u-m-t-20" style="position: relative">
-            <u-lazy-load
-              class="images"
-              border-radius="12"
-              height="100"
-              :image="getImgFullPath(item?.user?.avatar)"
-              threshold="300"
-              img-mode="aspectFill"
-            ></u-lazy-load>
+            <u-image
+              width="80"
+              height="80"
+              border-radius="8"
+              :loading-icon="RY_AVATAR"
+              :error-icon="RY_AVATAR"
+              :src="
+                item?.user?.avatar
+                  ? getImgFullPath(item?.user?.avatar)
+                  : RY_AVATAR
+              "
+              :lazy-load="false"
+              :fade="false"
+              mode="aspectFill"
+            ></u-image>
           </view>
           <view class="content u-m-t-20">
             <view class="title">
-              {{ item?.user?.nickname }}
+              {{ item?.user?.circle_nickname || item?.user?.nickname }}
             </view>
             <view class="head_right">
               <text>{{ item?.money }}</text>

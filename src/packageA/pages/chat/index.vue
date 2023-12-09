@@ -139,7 +139,8 @@ function openhb(message: { content: any }, i: any) {
     route({
       url: '/packageA/pages/hongBaoRecord/index',
       params: {
-        id: message.content.friendCircleRedPacketId
+        id: message.content.friendCircleRedPacketId,
+        targetId: targetId.value
       }
     })
   }
