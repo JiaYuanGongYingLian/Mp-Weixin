@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-08 22:31:11
+ * @LastEditTime: 2023-12-09 10:37:23
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -31,10 +31,8 @@ import { route } from '@/utils/common'
 import hongbao from '../../static/img/hongbao.png'
 import hongbao_chai from '../../static/img/red-chai.png'
 
-
 const ryStore = useRyStore()
-const { pinia_messagelist, pinia_groupUserlist } =
-  storeToRefs(ryStore)
+const { pinia_messagelist, pinia_groupUserlist } = storeToRefs(ryStore)
 const chatType = ref(0)
 const targetId = ref()
 const chatList = computed(() => {
@@ -53,7 +51,7 @@ const chatList = computed(() => {
       (item: { rongId: string }) => item.rongId === msg.senderUserId
     )
     if (user) {
-      msg.user = user.user
+      msg.user = { ...user.user, circle_nickname: user.nickname }
     }
   })
   return msglist
@@ -256,7 +254,11 @@ onUnmounted(() => {})
                 </view>
                 <view class="l-chat-view">
                   <view class="l-chat-name" v-if="chatType === 1">
-                    {{ s?.user?.nickname ? s?.user?.nickname : s.senderUserId }}
+                    {{
+                      s?.user?.circle_nickname
+                        ? s?.user?.circle_nickname
+                        : s?.user?.nickname
+                    }}
                   </view>
                   <template v-if="s.messageType == 'RC:TxtMsg'">
                     <view class="l-chat-text">
