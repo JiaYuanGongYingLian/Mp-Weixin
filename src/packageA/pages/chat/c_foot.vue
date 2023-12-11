@@ -4,7 +4,7 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-12-02 17:01:26
+ * @LastEditTime: 2023-12-09 22:55:17
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -230,6 +230,7 @@ onMounted((option) => {})
             auto-height
             placeholder=""
             :cursor-spacing="20"
+            :show-confirmbar="false"
           />
           <view class="refer" v-if="referMsg">
             <view class="txt">

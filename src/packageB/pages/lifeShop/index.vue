@@ -1,15 +1,16 @@
+<!-- eslint-disable consistent-return -->
 <!-- eslint-disable no-use-before-define -->
 <!-- eslint-disable no-shadow -->
 <!--
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-14 15:17:59
- * @LastEditTime: 2023-12-09 17:41:09
+ * @LastEditTime: 2023-12-10 14:49:49
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { baseApi, orderApi, productApi } from '@/api'
@@ -21,16 +22,45 @@ const current = ref(0)
 const swiperCurrent = ref(0)
 const tabsRef = ref()
 const productList = ref([])
+const account = ref()
+const clickable = computed(() => {
+  return account.value
+})
 async function getProduct() {
   const { data } = await productApi.getShopProductList({
     noPaging: true,
     detail: false,
-    shopId
+    shopId,
+    shopType: 3
   })
   productList.value = data
-  productList.value.forEach((product) => {
+  productList.value.forEach((product, index) => {
     getSkuList(product)
+    if (product.name.indexOf('电') > -1) {
+      product.placeholder = '请输入用电户号'
+    } else if (product.name.indexOf('气') > -1) {
+      product.placeholder = '请输入燃气户号'
+    } else if (product.name.indexOf('话费') > -1) {
+      product.placeholder = '请输入手机号码'
+      swiperCurrent.value = index
+      current.value = index
+      account.value =
+        uni.getStorageSync('lastPhone') || userStore.userInfo.phone
+    } else {
+      account.value = ''
+    }
   })
+}
+function reset(product: { name: string | string[] }) {
+  if (product.name.indexOf('电') > -1) {
+    account.value = uni.getStorageSync('lasteAcount') || ''
+  } else if (product.name.indexOf('气') > -1) {
+    account.value = uni.getStorageSync('lastgAcount') || ''
+  } else if (product.name.indexOf('话费') > -1) {
+    account.value = uni.getStorageSync('lastPhone') || userStore.userInfo.phone
+  } else {
+    account.value = ''
+  }
 }
 async function getSkuList(product) {
   const { data } = await productApi.getShopProductSkuList({
@@ -38,18 +68,16 @@ async function getSkuList(product) {
     detail: false,
     shopType: 3,
     shopId,
-    productId: product.id
+    productId: product.productId
   })
-  if (data && data.length > 0) {
-    data.forEach((e: { select: boolean }) => {
-      e.select = false
-    })
-    data[0].select = true
-    product.sku = data
-  }
+  data.sort((a: { money: number }, b: { money: number }) => {
+    return a.money - b.money
+  })
+  product.sku = data || []
 }
-function tabsChange(index) {
+function tabsChange(index: number) {
   swiperCurrent.value = index
+  reset(productList.value[index])
 }
 function transition(e) {
   const { dx } = e.detail
@@ -61,31 +89,45 @@ function animationfinish(e) {
   current.value = e.detail.current
 }
 function cardClick(index: number) {
-  vipList.value.forEach((item) => {
-    item.select = false
-  })
-  vipList.value[index].select = true
-}
-const submit = async () => {
-  if (userStore.checkLoginState()) {
-    const vip = vipList.value.find((item) => item.select) || {}
-    const orderData = {
-      orderProductSkus: [
-        {
-          count: 1,
-          shopProductSkuId: vip.id,
-          externalData: {
-            shopId
-          }
-        }
-      ],
-      detail: true
-    }
-    const { data } = await orderApi.orderAdd(orderData)
-    uni.navigateTo({
-      url: `/packageA/pages/payment/index?order=${JSON.stringify(data)}`
+  if (!clickable.value) {
+    uni.showToast({
+      icon: 'none',
+      title: `请输入正确的${productList.value[
+        current.value
+      ].placeholder.substring(3)}`
     })
+    return false
   }
+  uni.showModal({
+    title: '请确认充值账户',
+    content: `${account.value}\r\n 充值成功后无法退款`,
+    cancelText: '取消充值',
+    confirmText: '确认充值',
+    success: ({ confirm, cancel }) => {
+      if (confirm) {
+        submit(index)
+      }
+    }
+  })
+}
+const submit = async (i) => {
+  const orderData = {
+    orderProductSkus: [
+      {
+        count: 1,
+        shopProductSkuId: productList.value[current.value]?.sku[i].id,
+        externalData: {
+          shopId
+        }
+      }
+    ],
+    detail: true
+  }
+  const { data } = await orderApi.orderAdd(orderData)
+  uni.setStorageSync('orderJson', JSON.stringify(data))
+  uni.navigateTo({
+    url: '/packageA/pages/payment/index?order=true'
+  })
 }
 onLoad((option) => {
   getProduct()
@@ -99,12 +141,11 @@ onLoad((option) => {
         backgroundImage: 'linear-gradient(to right, #484b5c, #515365, #2f3b4a)'
       }"
     ></hy-nav-bar>
-    <view class=""></view>
     <view class="intro">
       <view class="title">开心家园便捷生活服务</view>
-      <view class="desc">用心“省”，放心“付”</view>
+      <view class="desc">省心、省时、省力</view>
       <u-gap height="30"></u-gap>
-      <view class="tit2"> 不定时开放优惠套餐 </view>
+      <!-- <view class="tit2"> 不定时开放优惠套餐 </view> -->
     </view>
     <view>
       <u-tabs-swiper
@@ -120,6 +161,7 @@ onLoad((option) => {
       :current="swiperCurrent"
       @transition="transition"
       @animationfinish="animationfinish"
+      style="height: 700rpx"
     >
       <swiper-item
         class="swiper-item"
@@ -127,23 +169,45 @@ onLoad((option) => {
         :key="index"
       >
         <view class="section">
-          <view class="tit">选择套餐</view>
+          <view class="inpt">
+            <view style="flex: 1">
+              <u-input
+                v-model="account"
+                :placeholder="item.placeholder"
+                :border="false"
+                height="100rpx"
+                placeholder-style="
+                  fontWeight: bold;
+                  fontSize: 40rpx;
+                  letterSpacing: 0.1ch
+                "
+              />
+            </view>
+
+            <u-icon name="edit-pen" size="38" color="#ccc"></u-icon>
+          </view>
+
+          <view class="tit">选择金额</view>
           <view class="card">
             <view
               class="item"
-              v-for="(item, index) in item.sku"
+              v-for="(s, index) in item.sku"
               :key="index"
-              :class="{ checked: item.select }"
+              :class="{ able: clickable }"
               @click="cardClick(index)"
             >
-              <view class="name">{{ item.name }}</view>
-              <view class="price"> ￥{{ item.money }}</view>
+              <!-- <view class="name">{{ s.name }}</view> -->
+              <view class="price">
+                <text>{{ s.money }}</text
+                >元</view
+              >
             </view>
           </view>
         </view>
+        <view class="remark">{{ item.remark }}</view>
       </swiper-item>
     </swiper>
-    <u-button
+    <!-- <u-button
       type="primary"
       class="hy-btn btn"
       shape="circle"
@@ -151,7 +215,7 @@ onLoad((option) => {
       @click="submit"
     >
       立即购买
-    </u-button>
+    </u-button> -->
   </div>
 </template>
 
@@ -159,7 +223,7 @@ onLoad((option) => {
 .intro {
   background-image: linear-gradient(to right, #484b5c, #515365, #2f3b4a);
   color: #eecfa7;
-  padding: 0 30rpx 40rpx 30rpx;
+  padding: 20rpx 30rpx 40rpx 30rpx;
   .title {
     font-size: 46rpx;
     font-weight: bold;
@@ -176,36 +240,59 @@ onLoad((option) => {
 .section {
   padding: 30rpx;
   background-color: #fff;
-  margin-top: 30rpx;
+  padding-top: 60rpx;
   .tit {
     font-size: 30rpx;
     font-weight: bold;
     margin-bottom: 30rpx;
   }
+  .inpt {
+    display: flex;
+    align-items: center;
+    border-bottom: 4rpx solid #ccc;
+    padding-bottom: 16rpx;
+    margin-bottom: 30rpx;
+    :deep(.u-input) {
+      input {
+        font-size: 40rpx;
+        font-weight: bold;
+      }
+    }
+  }
 }
 .card {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  gap: 30rpx;
   .item {
     width: 30%;
-    border: 1px solid #f0e9d7;
+    border: 1px solid #f5f5f5;
     border-radius: 10rpx;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    height: 240rpx;
-    &.checked {
-      background-color: #f9f2e2;
+    height: 100rpx;
+    color: #bbb;
+    &.able {
+      background-color: #f5f5f5;
+      color: #333;
     }
     .name {
       font-size: 28rpx;
       margin-bottom: 10rpx;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       width: 100%;
+    }
+    .price {
+      font-size: 30rpx;
+      text {
+        font-size: 36rpx;
+        font-weight: bold;
+      }
     }
   }
 }
@@ -221,5 +308,18 @@ onLoad((option) => {
   margin: 0 auto;
   margin-top: 20rpx;
   margin-bottom: 20rpx;
+}
+:deep(.uni-modal) {
+  .uni-modal__bd {
+    color: #333;
+    font-size: 30rpx;
+    font-weight: bold;
+  }
+}
+.remark {
+  padding: 30rpx;
+  font-size: 24rpx;
+  color: #f90;
+
 }
 </style>
