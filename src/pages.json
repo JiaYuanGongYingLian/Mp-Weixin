@@ -194,14 +194,14 @@
 						"backgroundColor": "#F5F5F5"
 					}
 				},
-				{
-					"path": "pages/tweetEdit/index",
-					"style": {
-						"navigationBarTitleText": "编辑动态",
-						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5"
-					}
-				},
+				// {
+				// 	"path": "pages/tweetEdit/index",
+				// 	"style": {
+				// 		"navigationBarTitleText": "编辑动态",
+				// 		"navigationStyle": "custom",
+				// 		"backgroundColor": "#F5F5F5"
+				// 	}
+				// },
 				{
 					"path": "pages/chat/index",
 					"style": {
