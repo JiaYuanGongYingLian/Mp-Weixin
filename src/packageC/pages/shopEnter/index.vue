@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-16 09:49:21
- * @LastEditTime: 2023-11-16 17:31:21
+ * @LastEditTime: 2023-12-12 17:20:22
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -168,6 +168,9 @@ async function shopAdd() {
         icon: 'none',
         title: '店铺添加成功！'
       })
+      setTimeout(() => {
+        uni.navigateBack()
+      }, 1000)
     }
   } catch {}
 }
@@ -179,6 +182,9 @@ async function shopUpdate() {
         icon: 'none',
         title: '店铺信息更新成功！'
       })
+      setTimeout(() => {
+        uni.navigateBack()
+      }, 1000)
     }
   } catch {}
 }
