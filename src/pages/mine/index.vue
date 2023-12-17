@@ -270,7 +270,11 @@ onPullDownRefresh(() => {
           </view>
           <view class="border"></view>
 
-          <view class="item" data-url="/packageB/myCoupon" @tap="goUrlFn">
+          <view
+            class="item"
+            data-url="/packageA/pages/wallet/index"
+            @tap="goUrlFn"
+          >
             <view class="con">{{ hasLogin ? moneyInfo[1].money : '--' }}</view>
             <view class="name">积分</view>
           </view>
@@ -403,6 +407,21 @@ onPullDownRefresh(() => {
               class="icon"
             ></u-icon>
             店铺入驻
+          </view>
+          <view
+            class="bar"
+            @tap="goUrlFn"
+            data-url="/packageB/pages/pinTuan/order"
+            v-if="!configStore.hideData"
+          >
+            <u-icon
+              custom-prefix="custom-icon"
+              name="pintuan"
+              size="52"
+              color="#FEA917"
+              class="icon"
+            ></u-icon>
+            我的拼团
           </view>
         </view>
       </view>

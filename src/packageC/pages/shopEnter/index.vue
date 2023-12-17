@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-16 09:49:21
- * @LastEditTime: 2023-11-16 17:31:21
+ * @LastEditTime: 2023-12-17 21:30:49
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -561,9 +561,11 @@ onReady(() => {
         </u-checkbox>
       </u-checkbox-group>
     </view> -->
-    <u-button class="submitBtn" @click="submit" type="primary" ripple
-      >提交</u-button
-    >
+    <view class="btnWrap">
+      <u-button class="submitBtn" @click="submit" type="primary" ripple
+        >提交</u-button
+      >
+    </view>
   </view>
 </template>
 
@@ -630,7 +632,9 @@ onReady(() => {
   gap: 20rpx;
   margin-top: 20rpx;
 }
-
+.btnWrap {
+  padding-bottom: env(safe-area-inset-bottom);
+}
 .submitBtn {
   margin: 50rpx 0;
   display: block;

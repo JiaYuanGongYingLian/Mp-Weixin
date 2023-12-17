@@ -262,7 +262,9 @@ async function confirm() {
 const byShare = ref(false)
 function toHome() {
   if (byShare.value) {
-    uni.redirectTo({ url: `/packageA/pages/physicalShop/index?shopId=${shopId.value} ` })
+    uni.redirectTo({
+      url: `/packageA/pages/physicalShop/index?shopId=${shopId.value} `
+    })
   } else {
     uni.switchTab({ url: '/pages/index/index' })
   }
@@ -335,14 +337,11 @@ onShareAppMessage(() => {
           <view class="price-tip" v-if="!productData.moneyUnit">￥</view>
           <view class="price"
             >{{ shopProductSkuSelected.money || productData.money }}
-            <text class="origin"
-              >￥{{
-                shopProductSkuSelected.originalMoney ||
-                productData.originalMoney
-              }}</text
-            >
+            <text class="origin">{{
+              shopProductSkuSelected.originalMoney || productData.originalMoney
+            }}</text>
           </view>
-          <view class="price-tip" v-if="productData.moneyUnit">黑豆</view>
+          <view class="price-tip" v-if="productData.moneyUnit">积分</view>
           <u-count-down
             v-if="productData.limitEndTime"
             :timestamp="productData.limitEndTime"
@@ -367,7 +366,6 @@ onShareAppMessage(() => {
           >
           <view class="subtitle">{{ productData.subtitle }}</view>
         </view>
-        <!-- #ifdef MP -->
         <view class="share-content">
           <image
             class="img"
@@ -376,7 +374,6 @@ onShareAppMessage(() => {
           <view class="text">分享</view>
           <button open-type="share" class="btn" @click="showShare"></button>
         </view>
-        <!-- #endif -->
 
         <!-- #ifdef H5 -->
         <hy-share ref="shareComp" :shareData="shareData" />
@@ -505,9 +502,9 @@ onShareAppMessage(() => {
             <view class="price"
               ><text class="symbol" v-if="!productData.moneyUnit">￥</text
               >{{ shopProductSkuSelected.money || productData.money
-              }}<text class="symbol" v-if="productData.moneyUnit"
-                >黑豆</text
-              ></view
+              }}<text class="symbol" v-if="productData.moneyUnit">{{
+                productData.moneyUnit
+              }}</text></view
             >
             <view class="stock"
               >库存：{{

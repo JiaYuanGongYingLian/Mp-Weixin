@@ -75,7 +75,7 @@ const sms_code = ref()
 const wallet = ref({})
 
 // 获取系统默认支持支付方式
-async function getSystemConfig(fieldName = 'pay_way_h5') {
+async function getSystemConfig(fieldName = 'pay_way_mp') {
   const { data } = await baseApi.getSystemConfigInfo({
     fieldName
   })
@@ -92,24 +92,25 @@ async function getSystemConfig(fieldName = 'pay_way_h5') {
 // 获取订单的钱包规则
 async function getWalletRuleList() {
   try {
-    const { data } = await moneyApi.walletList({ noPaging: true })
+    const { data } = await moneyApi.walletList({ noPaging: true, detail: true })
     const res = await productApi.walletRuleList({
       noPaging: true,
       orderId: order.value.id
     })
     if (res.data && res.data.length > 0) {
       const wallet_temp = res.data[0]
-      payWay[2].name = wallet_temp.walletRuleName
+      const payWay_wallet = payWay.find((item) => item.payWay === 1)
+      payWay_wallet.name = wallet_temp.walletRuleName
       if (wallet_temp.uniqueness) {
         // 唯一可用的支付方式uniqueness为true,只显示余额支付
         payWay.forEach((item) => {
           item.available = false
           item.selected = false
         })
-        payWay[2].available = true
-        payWay[2].selected = true
+        payWay_wallet.available = true
+        payWay_wallet.selected = true
       } else {
-        payWay[2].available = true
+        payWay_wallet.available = true
       }
       if (data && data.length) {
         // 当前钱包信息
@@ -321,11 +322,21 @@ onLoad(async (option) => {
     order.value = JSON.parse(uni.getStorageSync('orderJson'))
     info.money = order.value.money
     info.moneyUnit = order.value.moneyUnit
+    if (order.value.orderType === 2) {
+      // 积分拼团
+      const orderPayInfoMoney = order.value.orderExternals.find(
+        (item: { fieldName: string }) => {
+          return item.fieldName === 'orderPayInfoMoney'
+        }
+      )
+      info.money = orderPayInfoMoney.fieldValue
+      info.moneyUnit = order.value.moneyUnit
+    }
     // #ifdef H5
     await getSystemConfig()
     // #endif
-    await getWalletRuleList()
     await getSystemConfig()
+    await getWalletRuleList()
   }
 })
 </script>
@@ -354,7 +365,7 @@ onLoad(async (option) => {
               size="40"
             ></u-icon>
           </view>
-          <u-form-item
+          <!-- <u-form-item
             label=""
             prop="name"
             :left-icon="icon_verify"
@@ -371,7 +382,7 @@ onLoad(async (option) => {
               ref="uCode1"
               @change="codeChange"
             ></u-verification-code>
-          </u-form-item>
+          </u-form-item> -->
         </view>
       </view>
     </view>

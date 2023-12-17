@@ -267,6 +267,27 @@
 			"root": "packageB",
 			"pages": [
 				{
+					"path": "pages/pinTuan/index",
+					"style": {
+						"navigationBarTitleText": "拼团",
+						"backgroundColor": "#FFFFFF"
+					}
+				},
+				{
+					"path": "pages/pinTuan/order",
+					"style": {
+						"navigationBarTitleText": "我的拼团",
+						"backgroundColor": "#FFFFFF"
+					}
+				},
+				{
+					"path": "pages/pinTuan/checkout",
+					"style": {
+						"navigationBarTitleText": "拼团结算",
+						"backgroundColor": "#FFFFFF"
+					}
+				},
+				{
 					"path": "pages/welferShop/index",
 					"style": {
 						"navigationBarTitleText": "福利专区"

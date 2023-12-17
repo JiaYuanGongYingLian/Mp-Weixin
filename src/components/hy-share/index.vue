@@ -1,57 +1,15 @@
+<!-- eslint-disable no-console -->
+<!-- eslint-disable no-use-before-define -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <!--
  * @Description: 分享弹窗
  * @Author: Kerwin
  * @Date: 2023-09-20 11:50:40
- * @LastEditTime: 2023-10-27 11:55:06
+ * @LastEditTime: 2023-12-16 17:30:43
  * @LastEditors:  Please set LastEditors
 -->
-<template>
-  <view>
-    <hy-transition
-      :mode-class="['fade']"
-      :styles="maskClass"
-      :duration="duration"
-      :show="show"
-      @click="closePop"
-    />
-    <hy-transition
-      :mode-class="['slide-bottom']"
-      :styles="transClass"
-      :duration="duration"
-      :show="show"
-      @click="closePop"
-    >
-      <view class="uni-share">
-        <view class="uni-share-content">
-          <view
-            v-for="(item, index) in options"
-            :key="index"
-            class="uni-share-content-box"
-            @click="handleShare(index)"
-          >
-            <view class="uni-share-content-image">
-              <!-- <u-icon
-                :name="item.icon"
-                :custom-prefix="'custom-icon'"
-                class="content-image"
-              /> -->
-              <svg class="hy-icon content-image" aria-hidden="true">
-                <use :xlink:href="item.icon"></use>
-              </svg>
-            </view>
-            <text class="uni-share-content-text">{{ item.text }}</text>
-          </view>
-        </view>
-      </view>
-    </hy-transition>
-  </view>
-</template>
-
 <script setup lang="ts">
-import { onMounted, ref, reactive, watch } from 'vue'
-import { onPageScroll, onReady } from '@dcloudio/uni-app'
-import { launchClientApp } from '@/utils/common'
+import { ref, reactive, watch } from 'vue'
 import {
   updateAppMessageShareData,
   updateTimelineShareData
@@ -60,6 +18,7 @@ import {
 const props = withDefaults(
   defineProps<{
     shareData?: object
+    useInnerGroup?: boolean
   }>(),
   {
     shareData: () => {
@@ -69,22 +28,37 @@ const props = withDefaults(
         link: '',
         imgUrl: ''
       }
-    }
+    },
+    useInnerGroup: true
   }
 )
 
 const options = ref([
   {
     text: '好友',
-    icon: '#hy-icon-weixin',
+    icon: 'weixin',
+    openType: 'share',
+    show: true,
     shareFn: updateAppMessageShareData
   },
   {
     text: '朋友圈',
-    icon: '#hy-icon-pengyouquan',
+    icon: 'pengyouquan',
+    openType: 'share',
+    show: true,
     shareFn: updateTimelineShareData
+  },
+  {
+    text: '内部群',
+    icon: 'weixin',
+    openType: 'share',
+    show: props.useInnerGroup,
+    shareFn: innerGroupShareData
   }
 ])
+function innerGroupShareData() {
+  console.log('转发内部群')
+}
 const duration = ref(300)
 const maskClass = reactive({
   position: 'fixed',
@@ -125,6 +99,48 @@ watch(props.shareData, (data) => {
 })
 </script>
 
+<template>
+  <view>
+    <hy-transition
+      :mode-class="['fade']"
+      :styles="maskClass"
+      :duration="duration"
+      :show="show"
+      @click="closePop"
+    />
+    <hy-transition
+      :mode-class="['slide-bottom']"
+      :styles="transClass"
+      :duration="duration"
+      :show="show"
+      @click="closePop"
+    >
+      <view class="uni-share">
+        <view class="uni-share-content">
+          <template v-for="(item, index) in options" :key="index">
+            <view
+              class="uni-share-content-box"
+              @click="handleShare(index)"
+              v-if="item.show"
+            >
+              <button :open-type="item.openType" class="btn"></button>
+              <view class="uni-share-content-image">
+                <u-icon
+                  :name="item.icon"
+                  :custom-prefix="'custom-icon'"
+                  class="content-image"
+                  size="60"
+                />
+              </view>
+              <text class="uni-share-content-text">{{ item.text }}</text>
+            </view>
+          </template>
+        </view>
+      </view>
+    </hy-transition>
+  </view>
+</template>
+
 <style lang="scss" scoped>
 .uni-share {
   width: 690rpx;
@@ -155,11 +171,11 @@ watch(props.shareData, (data) => {
       // width: 25%;
       // justify-content: space-between;
       margin-right: 60rpx;
+      position: relative;
 
       &:nth-last-child(1) {
         margin-right: 0;
       }
-
       .uni-share-content-image {
         /* #ifndef APP-NVUE */
         display: flex;
@@ -167,14 +183,14 @@ watch(props.shareData, (data) => {
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        width: 90rpx;
-        height: 90rpx;
         overflow: hidden;
         border-radius: 10rpx;
 
         .content-image {
-          width: 80rpx;
-          height: 80rpx;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: $text-color-primary;
         }
       }
 
@@ -190,6 +206,18 @@ watch(props.shareData, (data) => {
         color: #333;
         padding-top: 5px;
         padding-bottom: 10px;
+      }
+      .btn {
+        background-color: transparent;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        &::after {
+          border: none;
+        }
       }
     }
   }

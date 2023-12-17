@@ -3,14 +3,20 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-04 15:57:32
- * @LastEditTime: 2023-12-05 15:31:57
+ * @LastEditTime: 2023-12-17 23:02:38
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { onLoad, onShow, onReady, onReachBottom, onPageScroll } from '@dcloudio/uni-app'
+import { reactive, ref, computed } from 'vue'
+import {
+  onLoad,
+  onShow,
+  onReady,
+  onReachBottom,
+  onPageScroll
+} from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { moneyApi } from '@/api'
 import { getImgFullPath, dateFormat } from '@/utils/index'
@@ -24,22 +30,28 @@ const list = ref([
     name: '余额钱包'
   }
 ])
+const walletList = ref([])
 const walletInfo = ref({})
+const current = ref(0)
 async function getShopWalletInfo() {
-  const { data } = await moneyApi.walletInfo({
+  const { data } = await moneyApi.walletList({
     objectType: 13,
     objectId: userStore.currentShop.id,
     noPaging: true,
     detail: true
   })
-  walletInfo.value = data
+  walletList.value = data
+  walletInfo.value = walletList.value[current.value]
   getWalletFlow()
 }
-async function getWalletInfo() {
-  const { data } = await moneyApi.walletInfo({
-    detail: true
+async function getUserWalletList() {
+  const { data } = await moneyApi.walletList({
+    noPaging: true,
+    detail: true,
+    objectType: 11
   })
-  walletInfo.value = data
+  walletList.value = data
+  walletInfo.value = walletList.value[current.value]
   getWalletFlow()
 }
 const flowList = reactive({
@@ -65,6 +77,17 @@ async function getWalletFlow() {
     status.value = 'nomore'
   }
 }
+function switchWallet(e: number) {
+  current.value = e
+  walletInfo.value = walletList.value[current.value]
+  refresh()
+}
+function refresh() {
+  flowList.list = []
+  flowList.pageIndex = 1
+  status.value = 'loading'
+  getWalletFlow()
+}
 function toWithdraw() {
   // route({
   //   url: '/packageA/pages/wallet/withdraw'
@@ -83,7 +106,7 @@ onLoad((option) => {
     ]
     getShopWalletInfo()
   } else {
-    getWalletInfo()
+    getUserWalletList()
   }
 })
 onReachBottom(() => {
@@ -92,15 +115,19 @@ onReachBottom(() => {
 </script>
 <template>
   <view class="container">
-    <u-tabs-swiper
+    <u-tabs
       ref="tabs"
-      :list="list"
+      v-model="current"
+      :list="walletList"
       active-color="#F1B44F"
       bg-color="transparent"
       :is-scroll="false"
-    ></u-tabs-swiper>
+      @change="switchWallet"
+    ></u-tabs>
     <view class="main">
-      <view class="name">余额（元）</view>
+      <view class="name"
+        >余额（{{ walletInfo?.walletRule?.moneyUnit || '元' }}）</view
+      >
       <view class="restBox">
         <view class="num">{{ walletInfo?.money || 0.0 }}</view>
         <view @click="toWithdraw"
@@ -127,7 +154,7 @@ onReachBottom(() => {
         <view class="data">
           <view class="top">
             <view class="tit">{{ item.name }}</view>
-            <view class="money">{{item.money}}</view>
+            <view class="money">{{ item.money }}</view>
           </view>
           <view class="mid">{{ item.remark }}</view>
           <view class="bot">{{

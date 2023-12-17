@@ -453,7 +453,11 @@ onShareAppMessage(() => {
                 </view>
                 <view class="content">
                   <view class="name">{{ product.name }}</view>
-                  <view class="money">￥{{ product.money }}</view>
+                  <view class="money">
+                    <text v-if="!product.moneyUnit">￥</text>
+                    {{ product.money }}
+                    <text v-if="product.moneyUnit">{{ product.moneyUnit }}</text>
+                  </view>
                 </view>
               </view>
             </view>

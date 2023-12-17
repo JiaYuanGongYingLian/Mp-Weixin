@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-08 15:03:59
- * @LastEditTime: 2023-10-27 09:59:19
+ * @LastEditTime: 2023-12-16 14:31:28
  * @LastEditors:  Please set LastEditors
  */
 
@@ -40,6 +40,7 @@ export const updateAppMessageShareData = (data: {
   link: any
   imgUrl: any
 }) => {
+  // #ifdef H5
   console.log('h5-Share==>', data)
   jWeixin.updateAppMessageShareData({
     title: data.title, // 分享标题
@@ -50,6 +51,7 @@ export const updateAppMessageShareData = (data: {
       // 设置成功
     }
   })
+  // #endif
 }
 /**
  * 微信js-sdk自定义“分享到朋友圈”及“分享到QQ空间”按钮的分享内容（1.4.0）
@@ -60,6 +62,7 @@ export const updateTimelineShareData = (data: {
   link: any
   imgUrl: any
 }) => {
+  // #ifdef H5
   jWeixin.updateTimelineShareData({
     title: data.title, // 分享标题
     desc: data.desc, // 分享描述
@@ -69,6 +72,7 @@ export const updateTimelineShareData = (data: {
       // 设置成功
     }
   })
+  // #endif
 }
 /**
  * 微信小程序分享路径格式化

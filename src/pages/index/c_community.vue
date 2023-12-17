@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 15:06:58
- * @LastEditTime: 2023-12-09 16:56:32
+ * @LastEditTime: 2023-12-17 12:34:52
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -31,7 +31,8 @@ const mainModules = ref([
     name: '超值拼团',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/53c11fb1-a1e7-4848-9f4e-f3e66b7bcbbb.png',
     msg: '趣味拼团,约好友一起来…',
-    bg: 'linear-gradient(90deg, #F1F4FE 0%, #DEE5FC 100%)'
+    bg: 'linear-gradient(90deg, #F1F4FE 0%, #DEE5FC 100%)',
+    url: '/packageB/pages/pinTuan/index'
   },
   {
     name: '限时秒杀',
@@ -44,7 +45,8 @@ const mainModules = ref([
     name: '积分专区',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/c0d66b9c-dcb2-445d-a85e-e8a0f6d471ae.png',
     msg: '累计积分，总换好物…',
-    bg: 'linear-gradient(90deg, #FDEFE7 0%, #FADBCA 100%)'
+    bg: 'linear-gradient(90deg, #FDEFE7 0%, #FADBCA 100%)',
+    url: '/packageA/pages/physicalShop/index?shopId=28'
   },
   {
     name: '福利专区',

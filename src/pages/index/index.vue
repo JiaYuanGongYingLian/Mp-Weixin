@@ -104,7 +104,7 @@ const moneyInfo = ref([
   {
     money: 0,
     walletRuleId: 6,
-    name: '黑豆钱包'
+    name: '积分钱包'
   }
 ])
 moneyInfo.value.forEach((e) => {
