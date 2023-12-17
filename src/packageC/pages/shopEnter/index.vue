@@ -168,6 +168,9 @@ async function shopAdd() {
         icon: 'none',
         title: '店铺添加成功！'
       })
+      setTimeout(() => {
+        uni.navigateBack()
+      }, 1000)
     }
   } catch {}
 }
@@ -179,6 +182,9 @@ async function shopUpdate() {
         icon: 'none',
         title: '店铺信息更新成功！'
       })
+      setTimeout(() => {
+        uni.navigateBack()
+      }, 1000)
     }
   } catch {}
 }

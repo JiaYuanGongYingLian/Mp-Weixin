@@ -177,23 +177,23 @@
 						"enablePullDownRefresh": true
 					}
 				},
-				{
-					"path": "pages/shortVideo/index",
-					"style": {
-						"navigationBarTitleText": "短视频",
-						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5",
-						"enablePullDownRefresh": true
-					}
-				},
-				{
-					"path": "pages/publish/index",
-					"style": {
-						"navigationBarTitleText": "发布中心",
-						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5"
-					}
-				},
+				// {
+				// 	"path": "pages/shortVideo/index",
+				// 	"style": {
+				// 		"navigationBarTitleText": "短视频",
+				// 		"navigationStyle": "custom",
+				// 		"backgroundColor": "#F5F5F5",
+				// 		"enablePullDownRefresh": true
+				// 	}
+				// },
+				// {
+				// 	"path": "pages/publish/index",
+				// 	"style": {
+				// 		"navigationBarTitleText": "发布中心",
+				// 		"navigationStyle": "custom",
+				// 		"backgroundColor": "#F5F5F5"
+				// 	}
+				// },
 				// {
 				// 	"path": "pages/tweetEdit/index",
 				// 	"style": {
@@ -426,12 +426,12 @@
 		}
 	],
 	"preloadRule": {
-		"packageA/pages/shortVideo/index": {
-			"network": "all",
-			"packages": [
-				"packageA"
-			]
-		}
+		// "packageA/pages/shortVideo/index": {
+		// 	"network": "all",
+		// 	"packages": [
+		// 		"packageA"
+		// 	]
+		// }
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

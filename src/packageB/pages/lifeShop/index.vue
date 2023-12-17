@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-14 15:17:59
- * @LastEditTime: 2023-12-10 14:49:49
+ * @LastEditTime: 2023-12-12 11:54:29
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -31,7 +31,8 @@ async function getProduct() {
     noPaging: true,
     detail: false,
     shopId,
-    shopType: 3
+    shopType: 3,
+    dynamicPrice: false
   })
   productList.value = data
   productList.value.forEach((product, index) => {
@@ -62,10 +63,10 @@ function reset(product: { name: string | string[] }) {
     account.value = ''
   }
 }
-async function getSkuList(product) {
+async function getSkuList(product: never) {
   const { data } = await productApi.getShopProductSkuList({
     noPaging: true,
-    detail: false,
+    detail: true,
     shopType: 3,
     shopId,
     productId: product.productId
@@ -79,11 +80,11 @@ function tabsChange(index: number) {
   swiperCurrent.value = index
   reset(productList.value[index])
 }
-function transition(e) {
+function transition(e: { detail: { dx: any } }) {
   const { dx } = e.detail
   tabsRef.value.setDx(dx)
 }
-function animationfinish(e) {
+function animationfinish(e: { detail: { current: number } }) {
   tabsRef.value.setFinishCurrent(e.detail.current)
   swiperCurrent.value = e.detail.current
   current.value = e.detail.current
@@ -110,14 +111,14 @@ function cardClick(index: number) {
     }
   })
 }
-const submit = async (i) => {
+const submit = async (i: number) => {
   const orderData = {
     orderProductSkus: [
       {
         count: 1,
         shopProductSkuId: productList.value[current.value]?.sku[i].id,
         externalData: {
-          shopId
+          account: account.value
         }
       }
     ],
