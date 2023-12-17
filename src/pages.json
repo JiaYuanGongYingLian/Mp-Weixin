@@ -267,10 +267,19 @@
 			"root": "packageB",
 			"pages": [
 				{
+					"path": "pages/chatGroupSelector/index",
+					"style": {
+						"navigationBarTitleText": "选择群",
+						"backgroundColor": "#FFFFFF",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
 					"path": "pages/pinTuan/index",
 					"style": {
 						"navigationBarTitleText": "拼团",
-						"backgroundColor": "#FFFFFF"
+						"backgroundColor": "#FFFFFF",
+						"enablePullDownRefresh": true
 					}
 				},
 				{

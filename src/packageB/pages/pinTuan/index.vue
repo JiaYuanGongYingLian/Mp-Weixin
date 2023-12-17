@@ -3,24 +3,46 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 17:53:57
- * @LastEditTime: 2023-12-17 12:30:46
+ * @LastEditTime: 2023-12-18 00:34:57
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onReachBottom, onShareAppMessage, onLoad } from '@dcloudio/uni-app'
+import {
+  onReachBottom,
+  onShareAppMessage,
+  onLoad,
+  onPullDownRefresh,
+onShareTimeline
+} from '@dcloudio/uni-app'
 import { orderApi } from '@/api'
 import { getImgFullPath } from '@/utils'
 import { useConfigStore } from '@/store'
+import { sharePathFormat } from '@/common/wechat-share'
 
 const configStore = useConfigStore()
 const status = ref('loadmore')
+
+// 分享
 const shareData = ref({})
 const shareComp = ref()
-function showShare() {
+function setShareData(params) {
+  const data = params
+  shareData.value = {
+    title: `拼团-${data?.orderProductSkus[0]?.name || ''}`,
+    desc: data.remark ?? '',
+    imageUrl: getImgFullPath(data?.orderProductSkus[0]?.skuImage),
+    path: sharePathFormat({
+      redirect_url: '/packageB/pages/pinTuan/checkout',
+      orderId: data?.id
+    })
+  }
+}
+function showShare(data) {
+  setShareData(data)
   shareComp.value.showPop()
 }
-// 门店列表
+// 拼团列表
 const dataList = reactive({
   pageIndex: 1,
   pageSize: 18,
@@ -56,15 +78,10 @@ const getDataList = async () => {
     status.value = 'nomore'
   }
 }
-// 点击进入店铺
-function toShopDetail(id: any) {
-  uni.navigateTo({
-    url: `/packageA/pages/physicalShop/index?shopId=${id}`
-  })
-}
+
 // 点击去拼团
-function handleCheck(shop) {
-  uni.setStorageSync('orderJson', JSON.stringify(shop))
+function handleCheck(data) {
+  uni.setStorageSync('orderJson', JSON.stringify(data))
   uni.navigateTo({
     url: '/packageB/pages/pinTuan/checkout?'
   })
@@ -78,16 +95,30 @@ onLoad(async () => {
 onShareAppMessage(() => {
   return shareData.value
 })
+onShareTimeline(() => {
+  return shareData.value
+})
+onPullDownRefresh(() => {
+  setTimeout(async () => {
+    dataList.pageIndex = 1
+    dataList.pageSize = 18
+    dataList.list = []
+    status.value = 'loading'
+    await getDataList().finally(() => {
+      uni.stopPullDownRefresh()
+    })
+  }, 1000)
+})
 </script>
 <template>
   <view class="c_container">
     <hy-share ref="shareComp" :shareData="shareData" />
-    <view class="shop" v-for="shop in dataList.list" :key="shop.id">
+    <view class="shop" v-for="data in dataList.list" :key="data.id">
       <view class="topBox">
         <view>
-          <view class="avatars" v-if="shop?.completedPayInfos">
+          <view class="avatars" v-if="data?.completedPayInfos">
             <image
-              v-for="(item, index) in shop?.completedPayInfos"
+              v-for="(item, index) in data?.completedPayInfos"
               :src="getImgFullPath(item?.user?.avatar)"
               mode="scaleToFill"
               :key="index"
@@ -95,10 +126,10 @@ onShareAppMessage(() => {
             />
           </view>
           <view class="count">
-            {{ shop.orderPayInfoTotalCount.fieldValue }}人团
+            {{ data.orderPayInfoTotalCount.fieldValue }}人团
           </view>
         </view>
-        <view class="share" @click="showShare">
+        <view class="share" @click="showShare(data)">
           <u-icon name="share-fill" :custom-style="{ fontWeight: 'bold' }" />
           分享
         </view>
@@ -108,18 +139,18 @@ onShareAppMessage(() => {
           <u-image
             class="img"
             border-radius="10rpx"
-            :src="getImgFullPath(shop?.orderProductSkus[0]?.skuImage)"
+            :src="getImgFullPath(data?.orderProductSkus[0]?.skuImage)"
             height="160rpx"
             :lazy-load="true"
             mode="scaleToFill"
           />
         </view>
         <view class="content">
-          <text class="name">{{ shop?.orderProductSkus[0]?.name }}</text>
-          <text class="remark">{{ shop.remark }}</text>
+          <text class="name">{{ data?.orderProductSkus[0]?.name }}</text>
+          <text class="remark">{{ data.remark }}</text>
           <view class="actionBox">
             <view class="rule">
-              <view>{{ shop.orderPayInfoMoney.fieldValue }}积分</view>
+              <view>{{ data.orderPayInfoMoney.fieldValue }}积分</view>
               <view class="label">拼团价</view>
             </view>
             <view class="actions">
@@ -132,8 +163,8 @@ onShareAppMessage(() => {
                   width: '200rpx',
                   fontSize: '28rpx'
                 }"
-                @click="handleCheck(shop)"
-                >还差 {{ shop.orderPayInfoCount?.fieldValue }}人</u-button
+                @click="handleCheck(data)"
+                >还差 {{ data.orderPayInfoCount?.fieldValue }}人</u-button
               >
             </view>
           </view>
@@ -148,11 +179,7 @@ onShareAppMessage(() => {
 @import '@/styles/helper.scss';
 
 .c_container {
-  // display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  gap: 20rpx;
-  padding: 0 30rpx;
+  padding: 0 30rpx calc(30rpx + env(safe-area-inset-bottom)) 30rpx;
 
   .shop {
     border-radius: $section-raduis;

@@ -393,11 +393,20 @@ export function qs(data: { [x: string]: any }) {
  * @param {1} url 跳转路径
  * @param {2} params 参数
  */
-export function route(data: { url: any; params?: any }) {
-  const { url, params } = data
-  uni.navigateTo({
-    url: params ? `${url}?${qs(params || {})}` : url
-  })
+export function route(data: { url: any; params?: any; type?: any }) {
+  const { url, params, type } = data
+  switch (type) {
+    case 2:
+      uni.redirectTo({
+        url: params ? `${url}?${qs(params || {})}` : url
+      })
+      break
+    default:
+      uni.navigateTo({
+        url: params ? `${url}?${qs(params || {})}` : url
+      })
+      break
+  }
 }
 export default {
   getQueryObject,

@@ -1,9 +1,9 @@
 @font-face {
   font-family: "custom-icon";
   /* Project id 3983494 */
-  src: url('//at.alicdn.com/t/c/font_3983494_7y5ac2gx0dk.woff2?t=1702818063108') format('woff2'),
-  url('//at.alicdn.com/t/c/font_3983494_7y5ac2gx0dk.woff?t=1702818063108') format('woff'),
-  url('//at.alicdn.com/t/c/font_3983494_7y5ac2gx0dk.ttf?t=1702818063108') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3983494_7cmzkivgdvj.woff2?t=1702828831235') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3983494_7cmzkivgdvj.woff?t=1702828831235') format('woff'),
+       url('//at.alicdn.com/t/c/font_3983494_7cmzkivgdvj.ttf?t=1702828831235') format('truetype');
 }
 
 .custom-icon {
@@ -16,6 +16,9 @@
 }
 
 /* uview自定义字体图标的前缀为"custom-icon-" */
+.custom-icon-qunliao:before {
+  content: "\e661";
+}
 .custom-icon-pintuan:before {
   content: "\e613";
 }

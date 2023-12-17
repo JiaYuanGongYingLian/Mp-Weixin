@@ -5,11 +5,12 @@
  * @Description: 分享弹窗
  * @Author: Kerwin
  * @Date: 2023-09-20 11:50:40
- * @LastEditTime: 2023-12-16 17:30:43
+ * @LastEditTime: 2023-12-18 01:51:49
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
+import { route } from '@/utils/common'
 import {
   updateAppMessageShareData,
   updateTimelineShareData
@@ -50,14 +51,22 @@ const options = ref([
   },
   {
     text: '内部群',
-    icon: 'weixin',
+    icon: 'qunliao',
     openType: 'share',
     show: props.useInnerGroup,
     shareFn: innerGroupShareData
   }
 ])
 function innerGroupShareData() {
-  console.log('转发内部群')
+  console.log('转发内部群==>', props.shareData)
+  // eslint-disable-next-line vue/no-mutating-props
+  props.shareData.path = encodeURIComponent(props.shareData.path)
+  route({
+    url: '/packageB/pages/chatGroupSelector/index',
+    params: {
+      shareData: JSON.stringify(props.shareData)
+    }
+  })
 }
 const duration = ref(300)
 const maskClass = reactive({
