@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 17:53:57
- * @LastEditTime: 2023-12-18 00:34:57
+ * @LastEditTime: 2023-12-18 11:17:45
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -35,7 +35,9 @@ function setShareData(params) {
     path: sharePathFormat({
       redirect_url: '/packageB/pages/pinTuan/checkout',
       orderId: data?.id
-    })
+    }),
+    orderId: data?.id,
+    msgType: 11
   }
 }
 function showShare(data) {

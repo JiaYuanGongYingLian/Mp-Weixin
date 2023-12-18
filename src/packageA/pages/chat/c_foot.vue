@@ -4,7 +4,7 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-12-09 22:55:17
+ * @LastEditTime: 2023-12-18 11:03:00
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -448,6 +448,7 @@ onMounted((option) => {})
       font-size: 30rpx;
       border-radius: 6rpx;
       background-color: #ffffff;
+      min-height: 60rpx;
     }
     .refer {
       margin-top: 16rpx;

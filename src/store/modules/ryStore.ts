@@ -263,6 +263,9 @@ const useStore = defineStore('ry', {
       friendCircleRedPacketId?: number
       imageUrl?: string
       path?: string
+      orderId?: any
+      productId?: any
+      shopId?: any
     }) {
       const {
         msgType,
@@ -277,7 +280,10 @@ const useStore = defineStore('ry', {
         friendCircleRedPacketId,
         totalMoney,
         imageUrl,
-        path
+        path,
+        orderId,
+        productId,
+        shopId
       } = data
       let message: RongIMLib.BaseMessage<any> | null = null
       switch (msgType) {
@@ -355,7 +361,9 @@ const useStore = defineStore('ry', {
             title,
             content,
             imageUrl,
-            path
+            path,
+            productId,
+            shopId
           })
           break
         case 11:
@@ -363,7 +371,8 @@ const useStore = defineStore('ry', {
             title,
             content,
             imageUrl,
-            path
+            path,
+            orderId
           })
           break
         default:

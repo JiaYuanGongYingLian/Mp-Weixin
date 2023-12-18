@@ -291,7 +291,10 @@ onLoad(async (option) => {
     title: productData.value.name,
     desc: productData.value.subtitle ?? '',
     imageUrl: getImgFullPath(productData.value.image),
-    path: sharePathFormat({ productId: productId.value, shopId: shopId.value })
+    path: sharePathFormat({ productId: productId.value, shopId: shopId.value }),
+    productId: productId.value,
+    shopId: shopId.value,
+    msgType: 10
   }
 })
 const shareComp = ref()

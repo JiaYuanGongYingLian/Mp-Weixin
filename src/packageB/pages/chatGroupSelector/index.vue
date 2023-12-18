@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-30 17:32:42
- * @LastEditTime: 2023-12-18 10:54:30
+ * @LastEditTime: 2023-12-18 11:18:04
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -94,7 +94,7 @@ function invokeSendMessage() {
   const { friendCircle } =
     groups.value.find((item) => item?.friendCircleId === addlist.value[0]) || {}
   ryStore.sendMessage({
-    msgType: 11,
+    msgType: shareData.value.msgType,
     targetId: friendCircle?.chatGroupId,
     ...shareData.value
   })

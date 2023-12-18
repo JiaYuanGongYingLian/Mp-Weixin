@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-18 10:39:43
+ * @LastEditTime: 2023-12-18 11:21:47
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -183,12 +183,17 @@ async function circleUserList() {
   ryStore.setGroupUser({ targetId: targetId.value, userList: data }, 'add')
 }
 // 点击产品消息
-function toProductDetail(product) {
-  console.log(product)
-  return
+function toProductDetail(product: { shopId: any; productId: any }) {
   const { shopId, productId } = product
   uni.navigateTo({
     url: `/packageA/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
+  })
+}
+// 点击拼团消息
+function toPinTuanDetail(data: { orderId: any }) {
+  const { orderId } = data
+  uni.navigateTo({
+    url: `/packageB/pages/pinTuan/checkout?orderId=${orderId}`
   })
 }
 onLoad(async (option) => {
@@ -368,14 +373,13 @@ onUnmounted(() => {})
                     </view>
                   </template>
                   <template v-else-if="s.messageType === 'KX:Product'">
-                    {{ s }}
                     <view
                       class="msg-product"
                       @click="toProductDetail(s.content)"
                     >
                       <view class="imgCover">
                         <view class="content">
-                          <view class="name">{{ s.content.name }}</view>
+                          <view class="name">{{ s.content.title }}</view>
                         </view>
                         <u-image
                           class="img"
@@ -391,7 +395,7 @@ onUnmounted(() => {})
                   <template v-else-if="s.messageType === 'KX:PinTuan'">
                     <view
                       class="msg-product"
-                      @click="toProductDetail(s.content)"
+                      @click="toPinTuanDetail(s.content)"
                     >
                       <view class="content">
                         <view class="name">{{ s.content.title }}</view>
