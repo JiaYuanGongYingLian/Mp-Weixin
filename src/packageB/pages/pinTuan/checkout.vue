@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-16 17:33:11
- * @LastEditTime: 2023-12-16 18:23:59
+ * @LastEditTime: 2023-12-18 18:07:31
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -11,7 +11,9 @@ import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { userApi, orderApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
+import { useUserStore } from '@/store'
 
+const userStore = useUserStore()
 const addressData = ref({})
 const orderData = ref({})
 const orderPayInfoMoney = ref({})
@@ -65,8 +67,7 @@ defineExpose({
 
 // 创建订单
 async function creatOrder() {
-  // const { data } = await orderApi.orderAdd(orderData.value)
-  // uni.setStorageSync('orderJson', JSON.stringify(data))
+  uni.setStorageSync('orderJson', JSON.stringify(orderData.value))
   uni.redirectTo({
     url: '/packageA/pages/payment/index?order=true'
   })
@@ -83,12 +84,33 @@ function onSubmit() {
   creatOrder()
 }
 
-onLoad(async (option) => {
-  orderData.value = JSON.parse(uni.getStorageSync('orderJson') || '')
-  console.log(orderData.value, 123)
-  orderPayInfoMoney.value = orderData.value.orderExternals.find((item) => {
-    return item.fieldName === 'orderPayInfoMoney'
+async function getOrderInfo(orderId: any) {
+  const { data } = await orderApi.orderInfo({
+    id: orderId,
+    detail: true,
+    otherColumns: 'user,order,address',
+    orderType: 2 // 拼团
   })
+  orderData.value = data
+  orderPayInfoMoney.value = orderData.value.orderExternals.find(
+    (item: { fieldName: string }) => {
+      return item.fieldName === 'orderPayInfoMoney'
+    }
+  )
+}
+
+onLoad(async (option) => {
+  if (option?.orderId) {
+    await getOrderInfo(option?.orderId)
+  } else {
+    orderData.value = JSON.parse(uni.getStorageSync('orderJson') || '')
+    orderPayInfoMoney.value = orderData.value.orderExternals.find(
+      (item: { fieldName: string }) => {
+        return item.fieldName === 'orderPayInfoMoney'
+      }
+    )
+  }
+
   await getAddressList()
   await getOrderMoney()
 })
@@ -174,13 +196,13 @@ onLoad(async (option) => {
     <!-- 底部 -->
     <view class="footer">
       <view class="price-content">
-        <!-- <text>拼团价 </text> -->
+        <text>拼团价 </text>
         <text class="price"
           >{{ orderPayInfoMoney.fieldValue }}
           <text class="unit"> 积分</text></text
         >
       </view>
-      <text class="submit" @click="onSubmit">立即拼团</text>
+      <text class="submit" @click="onSubmit">确认</text>
     </view>
   </div>
 </template>

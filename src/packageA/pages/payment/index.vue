@@ -146,7 +146,7 @@ async function sendSmsCode() {
         type: 6,
         phone: userStore.userInfo.phone
       })
-    } catch {}
+    } catch { }
   }
 }
 function codeChange(text: string) {
@@ -183,6 +183,12 @@ function paySuccess() {
     duration: 2000
   })
   setTimeout(() => {
+    if (order.value.orderType === 2) {
+      uni.redirectTo({
+        url: `/packageB/pages/pinTuan/orderDetail?orderId=${order.value.id}`
+      })
+      return
+    }
     uni.redirectTo({
       url: `/packageB/pages/order/detail?orderId=${order.value.id}`
     })
@@ -228,6 +234,7 @@ async function onSubmit() {
   const shopId = order.value.orderProductSkus[0].shopId || ''
   const { code, data } = await orderApi.orderPay({
     orderId: order.value.id,
+    addressId: order.value.addressId,
     openId: uni.getStorageSync('openid'),
     // #ifdef H5
     payPlatform: payPlatform_enum.H5,
@@ -342,14 +349,8 @@ onLoad(async (option) => {
 </script>
 <template>
   <div class="payment">
-    <u-navbar
-      back-text=""
-      :title="'订单支付'"
-      :title-bold="true"
-      v-if="!isWeChatBrowser && !isAlipayClient"
-    ></u-navbar>
-    <view class="money"
-      ><text v-if="!info.moneyUnit">￥</text> {{ info.money }}
+    <u-navbar back-text="" :title="'订单支付'" :title-bold="true" v-if="!isWeChatBrowser && !isAlipayClient"></u-navbar>
+    <view class="money"><text v-if="!info.moneyUnit">￥</text> {{ info.money }}
       <text class="unit" v-if="info.moneyUnit"> {{ info.moneyUnit }}</text>
     </view>
     <view class="payWay">
@@ -360,10 +361,7 @@ onLoad(async (option) => {
               <u-icon :name="item.icon" size="50"></u-icon>
               <text class="name">{{ item.name }}</text>
             </view>
-            <u-icon
-              :name="item.selected ? icon_selected : icon_select"
-              size="40"
-            ></u-icon>
+            <u-icon :name="item.selected ? icon_selected : icon_select" size="40"></u-icon>
           </view>
           <!-- <u-form-item
             label=""

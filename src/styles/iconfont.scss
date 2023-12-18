@@ -1,9 +1,9 @@
 @font-face {
   font-family: "custom-icon";
   /* Project id 3983494 */
-  src: url('//at.alicdn.com/t/c/font_3983494_7cmzkivgdvj.woff2?t=1702828831235') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3983494_7cmzkivgdvj.woff?t=1702828831235') format('woff'),
-       url('//at.alicdn.com/t/c/font_3983494_7cmzkivgdvj.ttf?t=1702828831235') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3983494_sefj5dwy0u.woff2?t=1702891161182') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3983494_sefj5dwy0u.woff?t=1702891161182') format('woff'),
+       url('//at.alicdn.com/t/c/font_3983494_sefj5dwy0u.ttf?t=1702891161182') format('truetype');
 }
 
 .custom-icon {
@@ -16,6 +16,19 @@
 }
 
 /* uview自定义字体图标的前缀为"custom-icon-" */
+.custom-icon-yiwancheng:before {
+  content: "\e63f";
+}
+
+.custom-icon-daishouhuo:before {
+  content: "\e63e";
+}
+.custom-icon-qunliao:before {
+  content: "\e661";
+}
+.custom-icon-qunliao:before {
+  content: "\e661";
+}
 .custom-icon-qunliao:before {
   content: "\e661";
 }

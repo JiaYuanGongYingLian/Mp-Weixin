@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-17 21:02:45
- * @LastEditTime: 2023-12-17 21:07:50
+ * @LastEditTime: 2023-12-18 17:15:39
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -22,7 +22,7 @@ const tabCurrentIndex = ref(0)
 const navList = reactive([
   {
     pageIndex: 1,
-    status: 0,
+    status: '',
     text: '全部',
     loadingType: 'more',
     loaded: false,
@@ -30,15 +30,15 @@ const navList = reactive([
   },
   {
     pageIndex: 1,
-    status: 10,
-    text: '待支付',
+    status: 20,
+    text: '待成团',
     loadingType: 'more',
     loaded: false,
     orderList: []
   },
   {
     pageIndex: 1,
-    status: 20,
+    status: 30,
     text: '待收货',
     loadingType: 'more',
     loaded: false,
@@ -51,7 +51,7 @@ const navList = reactive([
     loadingType: 'more',
     loaded: false,
     orderList: []
-  },
+  }
   // {
   //   pageIndex: 1,
   //   status: 90,
@@ -80,12 +80,12 @@ async function loadData(source?: string | undefined) {
     return
   }
   navItem.loadingType = 'loading'
-  const { data } = await orderApi.orderList({
+  const { data } = await orderApi.payInfoList({
     pageIndex: navItem.pageIndex,
     detail: true,
-    statuses: getOrderStatuses(navItem.status),
+    statuses: navItem.status,
     userId: userStore.userInfo.id,
-    otherColumns: 'user,completedPayInfos',
+    otherColumns: 'user,order,address',
     orderType: 2 // 拼团
   })
   if (navItem.pageIndex === 1) {
@@ -170,7 +170,7 @@ function getOrderStatuses(status: number) {
 function toOrderDetail(order: { orderId: any }) {
   const { id } = order
   uni.navigateTo({
-    url: `/packageB/pages/order/detail?orderId=${id}`
+    url: `/packageB/pages/pinTuan/orderDetail?orderId=${id}`
   })
 }
 
@@ -236,20 +236,22 @@ onLoad((option) => {
               <text class="time">{{
                 dateFormat(new Date(item.createTime * 1000), 'yyyy-MM-dd hh:mm')
               }}</text>
-              <text class="state" :style="{ color: getStatusColor(item) }">{{
+              <!-- <text class="state" :style="{ color: getStatusColor(item) }">{{
                 $orderStatus.getStatusTitle(item.status)
-              }}</text>
+              }}</text> -->
             </view>
             <view @click="toOrderDetail(item)">
               <scroll-view
-                v-if="item.orderProductSkus && item.orderProductSkus.length > 1"
+                v-if="
+                  item?.order?.orderProductSkus &&
+                  item?.order?.orderProductSkus.length > 1
+                "
                 class="goods-box"
                 scroll-x
               >
                 <view
-                  v-for="(
-                    orderProductSkuItem, goodsIndex
-                  ) in item.orderProductSkus"
+                  v-for="(orderProductSkuItem, goodsIndex) in item?.order
+                    ?.orderProductSkus"
                   :key="goodsIndex"
                   class="goods-item"
                 >
@@ -260,48 +262,55 @@ onLoad((option) => {
                   ></image>
                 </view>
               </scroll-view>
-              <view
-                v-if="
-                  item.orderProductSkus && item.orderProductSkus.length === 1
-                "
-                class="goods-box-single"
-                v-for="(
-                  orderProductSkuItem, goodsIndex
-                ) in item.orderProductSkus"
+              <template
+                v-for="(orderProductSkuItem, goodsIndex) in item?.order
+                  ?.orderProductSkus"
                 :key="goodsIndex"
               >
-                <image
-                  class="goods-img"
-                  :src="getImgFullPath(orderProductSkuItem.skuImage)"
-                  mode="aspectFill"
-                ></image>
                 <view
-                  class="right"
                   v-if="
-                    orderProductSkuItem &&
-                    orderProductSkuItem.shopProductSku &&
-                    orderProductSkuItem.shopProductSku.product
+                    item?.order?.orderProductSkus &&
+                    item?.order?.orderProductSkus.length === 1
                   "
+                  class="goods-box-single"
                 >
-                  <text class="title clamp">{{
-                    orderProductSkuItem.shopProductSku.product.name
-                  }}</text>
-                  <text class="attr-box"
-                    >{{ orderProductSkuItem.skuName }} x
-                    {{ orderProductSkuItem.count }}</text
+                  <image
+                    class="goods-img"
+                    :src="getImgFullPath(orderProductSkuItem.skuImage)"
+                    mode="aspectFill"
+                  ></image>
+                  <view
+                    class="right"
+                    v-if="
+                      orderProductSkuItem &&
+                      orderProductSkuItem.shopProductSku &&
+                      orderProductSkuItem.shopProductSku.product
+                    "
                   >
-                  <text class="price">{{ orderProductSkuItem.money }}</text>
+                    <text class="title clamp">{{
+                      orderProductSkuItem.shopProductSku.product.name
+                    }}</text>
+                    <text class="attr-box"
+                      >{{ orderProductSkuItem.skuName }} x
+                      {{ orderProductSkuItem.count }}</text
+                    >
+                    <text class="price"
+                      >{{ orderProductSkuItem.money }}
+                      {{ orderProductSkuItem.moneyUnit }}</text
+                    >
+                  </view>
                 </view>
-              </view>
+              </template>
             </view>
 
             <view class="price-box">
-              共
+              <!-- 共
               <text class="num">{{ getOrderProductSkusCount(item) }}</text>
-              件商品 实付款
-              <text class="price">{{ item.money }}</text>
+              件商品 实付款 -->
+              实付款
+              <text class="price">{{ item.money }}积分</text>
             </view>
-            <view class="action-box b-t">
+            <!-- <view class="action-box b-t">
               <button
                 class="action-btn"
                 @click="cancelOrder(item)"
@@ -323,7 +332,7 @@ onLoad((option) => {
               >
                 立即支付
               </button>
-            </view>
+            </view> -->
           </view>
           <u-loadmore
             margin-top="30"
@@ -488,7 +497,7 @@ onLoad((option) => {
         color: #333;
 
         &:before {
-          content: '￥';
+          content: '';
           font-size: 24rpx;
           margin: 0 2upx 0 0;
         }
@@ -514,7 +523,7 @@ onLoad((option) => {
       color: #333;
 
       &:before {
-        content: '￥';
+        content: '';
         font-size: 24rpx;
         margin: 0 2upx 0 8upx;
       }

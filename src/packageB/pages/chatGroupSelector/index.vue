@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-30 17:32:42
- * @LastEditTime: 2023-12-18 11:18:04
+ * @LastEditTime: 2023-12-18 11:36:47
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -152,6 +152,7 @@ onLoad((option) => {
                 <u-checkbox
                   v-model="item1.checked"
                   shape="circle"
+                  size="40"
                   :name="item1?.friendCircleId"
                   :key="item1?.friendCircleId"
                   :disabled="
@@ -222,6 +223,7 @@ onLoad((option) => {
     height: auto;
     width: 100%;
     color: #333;
+    align-items: center;
 
     .content {
       display: flex;

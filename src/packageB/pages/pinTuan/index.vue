@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 17:53:57
- * @LastEditTime: 2023-12-18 11:17:45
+ * @LastEditTime: 2023-12-18 18:24:54
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -13,7 +13,7 @@ import {
   onShareAppMessage,
   onLoad,
   onPullDownRefresh,
-onShareTimeline
+  onShareTimeline
 } from '@dcloudio/uni-app'
 import { orderApi } from '@/api'
 import { getImgFullPath } from '@/utils'
@@ -88,6 +88,13 @@ function handleCheck(data) {
     url: '/packageB/pages/pinTuan/checkout?'
   })
 }
+// 点击查看拼团详情
+function toPinTuanDetail(order: { orderId: any }) {
+  const { id } = order
+  uni.navigateTo({
+    url: `/packageB/pages/pinTuan/detail?orderId=${id}`
+  })
+}
 onReachBottom(() => {
   getDataList()
 })
@@ -136,7 +143,7 @@ onPullDownRefresh(() => {
           分享
         </view>
       </view>
-      <view class="contentBox">
+      <view class="contentBox" @click="toPinTuanDetail(data)">
         <view class="imgCover">
           <u-image
             class="img"

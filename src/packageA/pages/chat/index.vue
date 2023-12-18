@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-18 11:21:47
+ * @LastEditTime: 2023-12-18 18:24:01
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -193,7 +193,7 @@ function toProductDetail(product: { shopId: any; productId: any }) {
 function toPinTuanDetail(data: { orderId: any }) {
   const { orderId } = data
   uni.navigateTo({
-    url: `/packageB/pages/pinTuan/checkout?orderId=${orderId}`
+    url: `/packageB/pages/pinTuan/detail?orderId=${orderId}`
   })
 }
 onLoad(async (option) => {

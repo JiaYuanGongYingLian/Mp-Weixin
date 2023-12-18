@@ -283,9 +283,24 @@
 					}
 				},
 				{
+					"path": "pages/pinTuan/detail",
+					"style": {
+						"navigationBarTitleText": "拼团详情",
+						"backgroundColor": "#FFFFFF",
+						"enablePullDownRefresh": false
+					}
+				},
+				{
 					"path": "pages/pinTuan/order",
 					"style": {
 						"navigationBarTitleText": "我的拼团",
+						"backgroundColor": "#FFFFFF"
+					}
+				},
+				{
+					"path": "pages/pinTuan/orderDetail",
+					"style": {
+						"navigationBarTitleText": "拼团订单详情",
 						"backgroundColor": "#FFFFFF"
 					}
 				},

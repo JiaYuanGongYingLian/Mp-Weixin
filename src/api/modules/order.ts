@@ -42,6 +42,15 @@ function orderPay(data: any) {
 function orderUpdate(data: any) {
   return http.post('/order/api/v1/order/update', data)
 }
+/**
+ * 订单支付
+ */
+function payInfoInfo(data: any) {
+  return http.get('/order/api/v1/pay/info/info', data)
+}
+function payInfoList(data: any) {
+  return http.get('/order/api/v1/pay/info/list', data)
+}
 
 export default {
   orderAdd,
@@ -50,5 +59,7 @@ export default {
   orderList,
   orderMoney,
   orderPay,
-  orderUpdate
+  orderUpdate,
+  payInfoInfo,
+  payInfoList
 }
