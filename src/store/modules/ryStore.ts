@@ -7,7 +7,7 @@ import { defineStore } from 'pinia'
 import RongIMLib, {
   HongBaoMessage,
   ProductMessage,
-  PintuanMessage
+  PinTuanMessage
 } from '@/common/rongYun/im_init'
 
 let lifeData = {}
@@ -261,9 +261,8 @@ const useStore = defineStore('ry', {
       totalMoney?: number
       nickname?: string
       friendCircleRedPacketId?: number
-      coverImgUrl?: string
-      productId?: string
-      shopId?: string
+      imageUrl?: string
+      path?: string
     }) {
       const {
         msgType,
@@ -277,9 +276,8 @@ const useStore = defineStore('ry', {
         nickname,
         friendCircleRedPacketId,
         totalMoney,
-        coverImgUrl,
-        productId,
-        shopId
+        imageUrl,
+        path
       } = data
       let message: RongIMLib.BaseMessage<any> | null = null
       switch (msgType) {
@@ -356,18 +354,16 @@ const useStore = defineStore('ry', {
           message = new ProductMessage({
             title,
             content,
-            coverImgUrl,
-            productId,
-            shopId
+            imageUrl,
+            path
           })
           break
         case 11:
-          message = new PintuanMessage({
+          message = new PinTuanMessage({
             title,
             content,
-            coverImgUrl,
-            productId,
-            shopId
+            imageUrl,
+            path
           })
           break
         default:

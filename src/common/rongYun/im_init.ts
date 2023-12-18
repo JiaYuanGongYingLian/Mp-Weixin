@@ -19,8 +19,8 @@ export const ProductMessage = RongIMLib.registerMessageType(
   [],
   false
 )
-export const PintuanMessage = RongIMLib.registerMessageType(
-  'KX:Pintuan',
+export const PinTuanMessage = RongIMLib.registerMessageType(
+  'KX:PinTuan',
   true,
   true,
   [],

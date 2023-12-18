@@ -3,7 +3,7 @@
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
+import { onLoad, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { productApi, couponApi } from '@/api'
 import { getImgFullPath, previewImage } from '@/utils/index'
@@ -290,26 +290,18 @@ onLoad(async (option) => {
   shareData.value = {
     title: productData.value.name,
     desc: productData.value.subtitle ?? '',
-    // #ifdef MP-WEIXIN
     imageUrl: getImgFullPath(productData.value.image),
-    path: sharePathFormat({ productId: productId.value, shopId: shopId.value }),
-    // #endif
-    // #ifdef H5
-    imgUrl: getImgFullPath(productData.value.image),
-    link: webSharePathFormat({
-      productId: productId.value,
-      shopId: shopId.value
-    })
-    // #endif
+    path: sharePathFormat({ productId: productId.value, shopId: shopId.value })
   }
 })
 const shareComp = ref()
 function showShare() {
-  // #ifdef H5
   shareComp.value.showPop()
-  // #endif
 }
 onShareAppMessage(() => {
+  return shareData.value
+})
+onShareTimeline(() => {
   return shareData.value
 })
 </script>
@@ -374,10 +366,7 @@ onShareAppMessage(() => {
           <view class="text">分享</view>
           <button open-type="share" class="btn" @click="showShare"></button>
         </view>
-
-        <!-- #ifdef H5 -->
         <hy-share ref="shareComp" :shareData="shareData" />
-        <!-- #endif -->
       </view>
     </view>
     <view class="c-list section yhq">

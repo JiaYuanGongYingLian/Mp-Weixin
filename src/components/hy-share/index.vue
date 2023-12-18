@@ -5,7 +5,7 @@
  * @Description: 分享弹窗
  * @Author: Kerwin
  * @Date: 2023-09-20 11:50:40
- * @LastEditTime: 2023-12-18 01:51:49
+ * @LastEditTime: 2023-12-18 10:51:15
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -52,7 +52,7 @@ const options = ref([
   {
     text: '内部群',
     icon: 'qunliao',
-    openType: 'share',
+    openType: '',
     show: props.useInnerGroup,
     shareFn: innerGroupShareData
   }
@@ -132,7 +132,11 @@ watch(props.shareData, (data) => {
               @click="handleShare(index)"
               v-if="item.show"
             >
-              <button :open-type="item.openType" class="btn"></button>
+              <button
+                v-if="item.openType"
+                :open-type="item.openType"
+                class="btn"
+              ></button>
               <view class="uni-share-content-image">
                 <u-icon
                   :name="item.icon"

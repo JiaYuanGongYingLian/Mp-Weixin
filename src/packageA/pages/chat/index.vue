@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-09 10:37:23
+ * @LastEditTime: 2023-12-18 10:39:43
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -182,6 +182,15 @@ async function circleUserList() {
   })
   ryStore.setGroupUser({ targetId: targetId.value, userList: data }, 'add')
 }
+// 点击产品消息
+function toProductDetail(product) {
+  console.log(product)
+  return
+  const { shopId, productId } = product
+  uni.navigateTo({
+    url: `/packageA/pages/productDetail/index?shopId=${shopId}&productId=${productId}`
+  })
+}
 onLoad(async (option) => {
   groupInfo.gid = option?.groupId
   groupInfo.cid = option?.cid
@@ -356,6 +365,47 @@ onUnmounted(() => {})
                         </view>
                       </view>
                       <view class="footer u-border-top">开心红包</view>
+                    </view>
+                  </template>
+                  <template v-else-if="s.messageType === 'KX:Product'">
+                    {{ s }}
+                    <view
+                      class="msg-product"
+                      @click="toProductDetail(s.content)"
+                    >
+                      <view class="imgCover">
+                        <view class="content">
+                          <view class="name">{{ s.content.name }}</view>
+                        </view>
+                        <u-image
+                          class="img"
+                          border-radius="0"
+                          :src="getImgFullPath(s.content.imageUrl)"
+                          width="300rpx"
+                          :lazy-load="true"
+                          mode="widthFix"
+                        />
+                      </view>
+                    </view>
+                  </template>
+                  <template v-else-if="s.messageType === 'KX:PinTuan'">
+                    <view
+                      class="msg-product"
+                      @click="toProductDetail(s.content)"
+                    >
+                      <view class="content">
+                        <view class="name">{{ s.content.title }}</view>
+                      </view>
+                      <view class="imgCover">
+                        <u-image
+                          class="img"
+                          border-radius="0"
+                          :src="getImgFullPath(s.content.imageUrl)"
+                          height="300rpx"
+                          :lazy-load="true"
+                          mode="scaleToFill"
+                        />
+                      </view>
                     </view>
                   </template>
                 </view>
@@ -672,6 +722,37 @@ onUnmounted(() => {})
     height: 20px;
     padding: 4rpx 0 0 16px;
     color: rgba(255, 255, 255, 0.5);
+  }
+}
+.msg-product {
+  background: #fff;
+  padding: 20rpx;
+  border-radius: 8rpx;
+  .imgCover {
+    position: relative;
+    width: 300rpx;
+    flex-shrink: 0;
+    margin-right: 20rpx;
+
+    .img {
+      width: 100%;
+      border-radius: $section-raduis;
+    }
+  }
+
+  .content {
+    text-align: left;
+    .name {
+      @include ellipsis;
+      font-size: 28rpx;
+      margin-bottom: 18rpx;
+    }
+
+    .money {
+      color: red;
+      font-size: 26rpx;
+      margin-top: 10rpx;
+    }
   }
 }
 </style>

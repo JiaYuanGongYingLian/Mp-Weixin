@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-30 17:32:42
- * @LastEditTime: 2023-12-08 12:26:28
+ * @LastEditTime: 2023-12-18 10:55:36
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -152,6 +152,9 @@ onLoad((option) => {
           size="big"
           class="button"
           @click="submit"
+          :custom-style="{
+            height: '70rpx'
+          }"
           ripple
           >完成{{
             addlist.length == 0 ? '' : ' (' + addlist.length + ')'

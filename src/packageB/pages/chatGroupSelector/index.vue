@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-30 17:32:42
- * @LastEditTime: 2023-12-18 02:37:15
+ * @LastEditTime: 2023-12-18 10:54:30
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -190,6 +190,9 @@ onLoad((option) => {
         <u-button
           type="primary"
           size="big"
+          :custom-style="{
+            height: '70rpx'
+          }"
           class="button"
           @click="submit"
           ripple
