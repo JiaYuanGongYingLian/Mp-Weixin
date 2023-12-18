@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-18 13:42:20
- * @LastEditTime: 2023-12-18 17:58:03
+ * @LastEditTime: 2023-12-18 21:55:21
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -57,6 +57,7 @@ async function getPayInfo(id: any) {
   const { data } = await orderApi.payInfoInfo({
     orderId: id,
     detail: true,
+    userId: userStore.userInfo.id,
     otherColumns: 'user,order,completedPayInfos,address',
     orderType: 2 // 拼团
   })

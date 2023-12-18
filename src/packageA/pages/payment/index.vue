@@ -146,7 +146,7 @@ async function sendSmsCode() {
         type: 6,
         phone: userStore.userInfo.phone
       })
-    } catch { }
+    } catch {}
   }
 }
 function codeChange(text: string) {
@@ -349,8 +349,8 @@ onLoad(async (option) => {
 </script>
 <template>
   <div class="payment">
-    <u-navbar back-text="" :title="'订单支付'" :title-bold="true" v-if="!isWeChatBrowser && !isAlipayClient"></u-navbar>
-    <view class="money"><text v-if="!info.moneyUnit">￥</text> {{ info.money }}
+    <view class="money"
+      ><text v-if="!info.moneyUnit">￥</text> {{ info.money }}
       <text class="unit" v-if="info.moneyUnit"> {{ info.moneyUnit }}</text>
     </view>
     <view class="payWay">
@@ -361,7 +361,10 @@ onLoad(async (option) => {
               <u-icon :name="item.icon" size="50"></u-icon>
               <text class="name">{{ item.name }}</text>
             </view>
-            <u-icon :name="item.selected ? icon_selected : icon_select" size="40"></u-icon>
+            <u-icon
+              :name="item.selected ? icon_selected : icon_select"
+              size="40"
+            ></u-icon>
           </view>
           <!-- <u-form-item
             label=""

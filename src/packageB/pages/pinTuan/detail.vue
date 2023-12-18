@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-16 17:33:11
- * @LastEditTime: 2023-12-18 18:22:38
+ * @LastEditTime: 2023-12-18 21:57:18
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -115,7 +115,7 @@ onLoad(async (option) => {
     </view>
     <!-- 底部 -->
     <view class="footer">
-      <view class="avatars" v-if="orderData?.completedPayInfos">
+      <view class="avatars">
         <image
           v-for="(item, index) in orderData?.completedPayInfos"
           :src="getImgFullPath(item?.user?.avatar)"

@@ -52,7 +52,6 @@
 					"path": "pages/payment/index",
 					"style": {
 						"navigationBarTitleText": "订单支付",
-						"navigationStyle": "custom",
 						"navigationBarTextStyle": "black"
 					}
 				},

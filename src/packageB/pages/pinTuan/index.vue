@@ -33,7 +33,7 @@ function setShareData(params) {
     desc: data.remark ?? '',
     imageUrl: getImgFullPath(data?.orderProductSkus[0]?.skuImage),
     path: sharePathFormat({
-      redirect_url: '/packageB/pages/pinTuan/checkout',
+      redirect_url: '/packageB/pages/pinTuan/detail',
       orderId: data?.id
     }),
     orderId: data?.id,
