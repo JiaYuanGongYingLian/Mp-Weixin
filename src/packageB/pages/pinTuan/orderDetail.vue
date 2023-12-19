@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-18 13:42:20
- * @LastEditTime: 2023-12-18 21:55:21
+ * @LastEditTime: 2023-12-18 22:31:32
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -53,9 +53,9 @@ const statusMap = {
   }
 }
 const orderPayInfoCount = ref({})
-async function getPayInfo(id: any) {
+async function getPayInfo(orderNo: any) {
   const { data } = await orderApi.payInfoInfo({
-    orderId: id,
+    orderNo,
     detail: true,
     userId: userStore.userInfo.id,
     otherColumns: 'user,order,completedPayInfos,address',
@@ -78,9 +78,9 @@ function navToProductDetail(data) {
 }
 onLoad((option) => {
   if (option) {
-    const { orderId } = option
-    if (orderId) {
-      getPayInfo(option.orderId)
+    const { orderNo } = option
+    if (orderNo) {
+      getPayInfo(orderNo)
     }
   }
 })
@@ -151,18 +151,18 @@ onLoad((option) => {
         </view>
       </view>
       <!-- 消费明细 -->
-      <!-- <view class="yh-item">
+      <view class="yh-item" v-if="orderData?.completedPayInfos">
         <view class="tit">拼团用户</view>
-        <view class="avatars" v-if="data?.user">
+        <view class="avatars">
           <image
-            v-for="(item, index) in data?.completedPayInfos"
+            v-for="(item, index) in orderData?.completedPayInfos"
             :src="getImgFullPath(item?.user?.avatar)"
             mode="scaleToFill"
             :key="index"
             :style="{ left: index * 40 + 'rpx', zIndex: index }"
           />
         </view>
-      </view> -->
+      </view>
       <view class="yh-item last">
         <text class="tit">实际支付</text>
         <text class="price"

@@ -5,7 +5,7 @@
  * @Description: 分享弹窗
  * @Author: Kerwin
  * @Date: 2023-09-20 11:50:40
- * @LastEditTime: 2023-12-18 10:51:15
+ * @LastEditTime: 2023-12-19 07:07:53
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -45,7 +45,7 @@ const options = ref([
   {
     text: '朋友圈',
     icon: 'pengyouquan',
-    openType: 'share',
+    openType: '',
     show: true,
     shareFn: updateTimelineShareData
   },

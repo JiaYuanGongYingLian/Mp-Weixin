@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 17:53:57
- * @LastEditTime: 2023-12-18 18:24:54
+ * @LastEditTime: 2023-12-18 22:50:27
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -156,7 +156,9 @@ onPullDownRefresh(() => {
         </view>
         <view class="content">
           <text class="name">{{ data?.orderProductSkus[0]?.name }}</text>
-          <text class="remark">{{ data.remark }}</text>
+          <text class="remark">{{
+            data?.orderProductSkus[0]?.skuName || data.remark
+          }}</text>
           <view class="actionBox">
             <view class="rule">
               <view>{{ data.orderPayInfoMoney.fieldValue }}积分</view>
@@ -267,7 +269,7 @@ onPullDownRefresh(() => {
         .remark {
           @include ellipsis;
           color: $uni-text-color-light;
-          font-size: 20rpx;
+          font-size: 24rpx;
           margin-top: 10rpx;
         }
 

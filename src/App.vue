@@ -6,7 +6,15 @@ import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { useUserStore, useRyStore } from '@/store'
-import RongIMLib from '@/common/rongYun/im_init'
+import RongIMLib, {
+  HongBaoMessage,
+  ProductMessage,
+  PinTuanMessage
+} from '@/common/rongYun/im_init'
+
+console.log(HongBaoMessage,
+  ProductMessage,
+  PinTuanMessage)
 
 const userStore = useUserStore()
 const ryStore = useRyStore()
@@ -27,6 +35,7 @@ onLaunch(() => {
       chatHasLogin.value = false
     }
   })
+  console.log('event')
   const { Events } = RongIMLib
   RongIMLib.addEventListener(Events.CONNECTING, () => {
     console.log('正在链接服务器')
@@ -36,6 +45,7 @@ onLaunch(() => {
   })
   RongIMLib.addEventListener(Events.MESSAGES, (evt) => {
     const { messages } = evt
+    console.log('listener==>', evt)
     if (messages && messages.length > 0) {
       messages.forEach((message) => {
         ryStore.setMessage(message, 'add')

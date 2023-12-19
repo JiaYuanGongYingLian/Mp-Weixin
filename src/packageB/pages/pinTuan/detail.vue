@@ -2,13 +2,13 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-16 17:33:11
- * @LastEditTime: 2023-12-18 21:57:18
+ * @LastEditTime: 2023-12-18 23:05:52
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
 <script setup lang="ts">
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShow } from '@dcloudio/uni-app'
 import { userApi, orderApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { useUserStore } from '@/store'
@@ -36,9 +36,9 @@ function onSubmit() {
   creatOrder()
 }
 
-async function getOrderInfo(orderId) {
+async function getOrderInfo() {
   const { data } = await orderApi.orderInfo({
-    id: orderId,
+    id: orderId.value,
     detail: true,
     otherColumns: 'user,order,completedPayInfos',
     orderType: 2 // 拼团
@@ -48,10 +48,18 @@ async function getOrderInfo(orderId) {
     return item.fieldName === 'orderPayInfoMoney'
   })
 }
+const orderId = ref('')
+onShow(async () => {
+  if (orderId.value) {
+    await getOrderInfo()
+    await getOrderMoney()
+  }
+})
 
 onLoad(async (option) => {
   if (option?.orderId) {
-    await getOrderInfo(option?.orderId)
+    orderId.value = option?.orderId
+    await getOrderInfo()
     await getOrderMoney()
   }
 })

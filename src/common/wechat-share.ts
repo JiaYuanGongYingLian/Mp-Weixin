@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-08 15:03:59
- * @LastEditTime: 2023-12-16 14:31:28
+ * @LastEditTime: 2023-12-19 07:07:08
  * @LastEditors:  Please set LastEditors
  */
 
@@ -62,6 +62,10 @@ export const updateTimelineShareData = (data: {
   link: any
   imgUrl: any
 }) => {
+  uni.showToast({
+    icon: 'none',
+    title: '点击小程序右上角分享'
+  })
   // #ifdef H5
   jWeixin.updateTimelineShareData({
     title: data.title, // 分享标题

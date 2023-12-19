@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-17 21:02:45
- * @LastEditTime: 2023-12-18 17:15:39
+ * @LastEditTime: 2023-12-18 22:29:49
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -167,10 +167,10 @@ function getStatusColor(order: { status: any }) {
 function getOrderStatuses(status: number) {
   return $orderStatus.getStatuses(status)
 }
-function toOrderDetail(order: { orderId: any }) {
-  const { id } = order
+function toOrderDetail(order: { orderNo: any }) {
+  const { orderNo } = order
   uni.navigateTo({
-    url: `/packageB/pages/pinTuan/orderDetail?orderId=${id}`
+    url: `/packageB/pages/pinTuan/orderDetail?orderNo=${orderNo}`
   })
 }
 
