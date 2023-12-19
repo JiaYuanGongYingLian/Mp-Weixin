@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-18 13:42:20
- * @LastEditTime: 2023-12-18 22:31:32
+ * @LastEditTime: 2023-12-19 21:51:16
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -143,7 +143,7 @@ onLoad((option) => {
             <text class="spec">{{ item?.skuName || item.name }}</text>
             <view class="bot">
               <text class="price"
-                >{{ item?.money }}{{ item?.moneyUnit || '' }}</text
+                >{{ orderData.money }}{{ item?.moneyUnit || '' }}</text
               >
               <text class="num">x {{ item?.count }}</text>
             </view>

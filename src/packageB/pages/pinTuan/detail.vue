@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-16 17:33:11
- * @LastEditTime: 2023-12-18 23:05:52
+ * @LastEditTime: 2023-12-19 21:47:00
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -80,7 +80,9 @@ onLoad(async (option) => {
           </view>
           <view class="spec">{{ item.skuName }}</view>
           <view class="price-box">
-            <text class="price">{{ item.money }} {{ item.moneyUnit }}</text>
+            <text class="price"
+              >{{ orderPayInfoMoney.fieldValue }} {{ item.moneyUnit }}</text
+            >
             <text class="number">x {{ item.count }}</text>
           </view>
         </view>
@@ -94,7 +96,7 @@ onLoad(async (option) => {
         :key="index"
       >
         <text class="cell-tit clamp">{{ item.name }}</text>
-        <text class="cell-tip num">{{ item.money }}</text>
+        <text class="cell-tip num">{{ orderPayInfoMoney.fieldValue }}</text>
       </view>
       <view class="yt-list-cell">
         <text class="cell-tit clamp">运费</text>

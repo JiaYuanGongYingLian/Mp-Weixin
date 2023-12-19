@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-17 21:02:45
- * @LastEditTime: 2023-12-18 22:29:49
+ * @LastEditTime: 2023-12-19 21:50:36
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -295,7 +295,7 @@ onLoad((option) => {
                       {{ orderProductSkuItem.count }}</text
                     >
                     <text class="price"
-                      >{{ orderProductSkuItem.money }}
+                      >{{ item.money }}
                       {{ orderProductSkuItem.moneyUnit }}</text
                     >
                   </view>
