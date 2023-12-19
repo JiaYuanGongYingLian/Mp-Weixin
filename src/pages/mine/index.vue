@@ -77,9 +77,12 @@ function handleTabBarChange(index: any) {
   }
 }
 
-async function getMoney() {
+async function getUserWallet() {
   if (hasLogin.value) {
-    const { data } = await moneyApi.walletList({ noPaging: true })
+    const { data } = await moneyApi.walletList({
+      noPaging: true,
+      objectType: 11
+    })
     userStore.syncSetWalletList(data)
   }
 }
@@ -164,13 +167,13 @@ async function getShopStatisticsInfo() {
 }
 onShow(() => {
   if (hasLogin.value) {
-    getMoney()
+    getUserWallet()
     getShopList()
   }
 })
 onPullDownRefresh(() => {
   setTimeout(async () => {
-    getMoney()
+    getUserWallet()
     getShopList()
     uni.stopPullDownRefresh()
   }, 500)

@@ -162,7 +162,7 @@ onReachBottom(() => {
                   <view class="counter">
                     <u-count-down
                       :timestamp="
-                        product.limitEndTime - new Date().getTime() / 1000
+                        product.limitEndTime * 1000 - new Date().getTime()
                       "
                       format="DD天HH时mm分ss秒"
                     ></u-count-down>

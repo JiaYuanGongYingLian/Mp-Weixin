@@ -339,7 +339,7 @@ onShareTimeline(() => {
           <view class="price-tip" v-if="productData.moneyUnit">积分</view>
           <u-count-down
             v-if="productData.limitEndTime"
-            :timestamp="productData.limitEndTime - new Date().getTime() / 1000"
+            :timestamp="productData.limitEndTime * 1000 - new Date().getTime()"
             format="DD天HH时mm分ss秒"
           ></u-count-down>
         </view>
