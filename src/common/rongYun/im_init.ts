@@ -26,5 +26,4 @@ export const ProductMessage = RongIMLib.registerMessageType(
   [],
   false
 )
-console.log(ProductMessage)
 export default RongIMLib

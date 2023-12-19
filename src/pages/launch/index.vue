@@ -22,7 +22,8 @@ import { baseApi } from '@/api'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
-function toTargetPage(URL?: any, duration = 0) {
+async function toTargetPage(URL?: any, duration = 0) {
+  await getConfig('mini_project')
   const url = URL || '/pages/index/index'
   console.log('启动页跳转至：', url)
   setTimeout(() => {
@@ -75,7 +76,6 @@ onLoad(async (option) => {
       } catch (err) {
         console.log(err)
       }
-      await getConfig('mini_project')
       toTargetPage(url_rewirte)
     },
     fail: () => {

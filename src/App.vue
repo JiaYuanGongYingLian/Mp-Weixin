@@ -6,15 +6,7 @@ import { onLaunch, onShow, onHide } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { useUserStore, useRyStore } from '@/store'
-import RongIMLib, {
-  HongBaoMessage,
-  ProductMessage,
-  PinTuanMessage
-} from '@/common/rongYun/im_init'
-
-console.log(HongBaoMessage,
-  ProductMessage,
-  PinTuanMessage)
+import RongIMLib from '@/common/rongYun/im_init'
 
 const userStore = useUserStore()
 const ryStore = useRyStore()

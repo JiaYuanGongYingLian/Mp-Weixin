@@ -50,7 +50,6 @@ const getBaseDataFn = async (type: any, callback: (arg0: any) => void) => {
       type
     })
     .then((res) => {
-      console.log(res)
       callback(res.data)
     })
 }
