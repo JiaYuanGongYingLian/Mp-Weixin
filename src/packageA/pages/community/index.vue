@@ -7,7 +7,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 09:59:19
- * @LastEditTime: 2023-11-15 17:26:31
+ * @LastEditTime: 2023-12-20 14:43:56
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -34,9 +34,9 @@ const tabBgColor = ref('#fff')
 const tabActiveColor = ref('#2979ff')
 const tabInactiveColor = ref('#303133')
 let list = [
-  {
-    name: '圈子'
-  },
+  // {
+  //   name: '圈子'
+  // },
   // {
   //   name: '对接名人'
   // },

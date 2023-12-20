@@ -119,15 +119,15 @@
 						"navigationBarTextStyle": "black"
 					}
 				},
-				{
-					"path": "pages/community/index",
-					"style": {
-						"navigationBarTitleText": "圈子",
-						"navigationStyle": "custom",
-						"backgroundColor": "#F5F5F5",
-						"enablePullDownRefresh": true
-					}
-				},
+				// {
+				// 	"path": "pages/community/index",
+				// 	"style": {
+				// 		"navigationBarTitleText": "圈子",
+				// 		"navigationStyle": "custom",
+				// 		"backgroundColor": "#F5F5F5",
+				// 		"enablePullDownRefresh": true
+				// 	}
+				// },
 				{
 					"path": "pages/physicalShop/index",
 					"style": {
