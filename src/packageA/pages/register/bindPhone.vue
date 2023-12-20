@@ -48,13 +48,13 @@ function handleClick() {
     })
     return
   }
-  if (!sms_code) {
-    uni.showToast({
-      title: '请输入验证码',
-      icon: 'none'
-    })
-    return
-  }
+  // if (!sms_code) {
+  //   uni.showToast({
+  //     title: '请输入验证码',
+  //     icon: 'none'
+  //   })
+  //   return
+  // }
   // doRegister()
   // 2023/6/20 需求更改为使用随机密码，不再跳转去手动输入密码
   uni.redirectTo({
