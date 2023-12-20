@@ -116,7 +116,7 @@ async function getPhoneNumber(res: { detail: { code: any } }) {
     })
     console.log(data)
     uni.redirectTo({
-      url: `/packageA/pages/register/bindPhone?phone=${data.phoneNumber}`
+      url: `/packageA/pages/register/index?phone=${data.phoneNumber}`
     })
   } catch (err) {
     console.log('getNumber', err)

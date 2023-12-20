@@ -100,7 +100,7 @@ async function submit() {
 onLoad((option) => {
   if (option?.phone) {
     form.phone = option.phone
-    form.code = option.code
+    form.code = option?.code
   }
   // #ifdef H5
   isWeChatOfficial.value = isWeChat()
