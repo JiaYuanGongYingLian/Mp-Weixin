@@ -16,7 +16,7 @@ isWeChatOfficial.value = false
 const form = reactive({
   password: '',
   passwordr: '',
-  code: '',
+  code: '123456',
   phone: ''
 })
 const disabled = computed(() => {
@@ -100,6 +100,8 @@ async function submit() {
 onLoad((option) => {
   if (option?.phone) {
     form.phone = option.phone
+  }
+  if (option?.code) {
     form.code = option?.code
   }
   // #ifdef H5

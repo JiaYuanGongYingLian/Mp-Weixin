@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-16 17:33:11
- * @LastEditTime: 2023-12-19 22:26:06
+ * @LastEditTime: 2023-12-21 01:36:29
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -37,6 +37,7 @@ function onSubmit() {
 }
 
 async function getOrderInfo() {
+  if (!userStore.checkLoginState()) return
   const { data } = await orderApi.orderInfo({
     id: orderId.value,
     detail: true,
