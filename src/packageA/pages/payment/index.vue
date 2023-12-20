@@ -185,7 +185,7 @@ function paySuccess() {
   setTimeout(() => {
     if (order.value.orderType === 2) {
       uni.redirectTo({
-        url: `/packageB/pages/pinTuan/orderDetail?orderId=${order.value.id}`
+        url: `/packageB/pages/pinTuan/orderDetail?orderNo=${order.value.orderNo}`
       })
       return
     }

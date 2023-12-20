@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-16 17:33:11
- * @LastEditTime: 2023-12-19 21:47:00
+ * @LastEditTime: 2023-12-19 22:26:06
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable no-use-before-define -->
@@ -47,12 +47,25 @@ async function getOrderInfo() {
   orderPayInfoMoney.value = orderData.value.orderExternals.find((item) => {
     return item.fieldName === 'orderPayInfoMoney'
   })
+  if (Number(data.status) > 59) {
+    uni.showToast({
+      icon: 'none',
+      title: '拼团已结束，即将返回首页',
+      duration: 2500
+    })
+    setTimeout(() => {
+      uni.switchTab({
+        url: '/pages/index/index'
+      })
+    }, 2000)
+    return
+  }
+  getOrderMoney()
 }
 const orderId = ref('')
 onShow(async () => {
   if (orderId.value) {
     await getOrderInfo()
-    await getOrderMoney()
   }
 })
 
@@ -60,7 +73,6 @@ onLoad(async (option) => {
   if (option?.orderId) {
     orderId.value = option?.orderId
     await getOrderInfo()
-    await getOrderMoney()
   }
 })
 </script>
