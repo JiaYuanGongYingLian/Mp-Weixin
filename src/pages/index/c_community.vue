@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 15:06:58
- * @LastEditTime: 2023-12-18 14:59:41
+ * @LastEditTime: 2023-12-21 10:32:39
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -28,7 +28,7 @@ const myCommunities = ref([
 ])
 const mainModules = ref([
   {
-    name: '超值拼团',
+    name: '幸运拼团',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/53c11fb1-a1e7-4848-9f4e-f3e66b7bcbbb.png',
     msg: '趣味拼团,约好友一起来…',
     bg: 'linear-gradient(90deg, #F1F4FE 0%, #DEE5FC 100%)',

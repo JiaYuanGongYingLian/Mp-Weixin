@@ -158,7 +158,7 @@ onReachBottom(() => {
                   mode="scaleToFill"
                 />
                 <view class="countDown">
-                  <view class="tit">现时秒杀</view>
+                  <view class="tit">限时秒杀</view>
                   <view class="counter">
                     <u-count-down
                       :timestamp="
