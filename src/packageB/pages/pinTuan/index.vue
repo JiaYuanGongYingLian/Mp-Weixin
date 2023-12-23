@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 17:53:57
- * @LastEditTime: 2023-12-18 22:50:27
+ * @LastEditTime: 2023-12-23 18:12:30
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -17,16 +17,17 @@ import {
 } from '@dcloudio/uni-app'
 import { orderApi } from '@/api'
 import { getImgFullPath } from '@/utils'
-import { useConfigStore } from '@/store'
+import { useConfigStore, useUserStore } from '@/store'
 import { sharePathFormat } from '@/common/wechat-share'
 
 const configStore = useConfigStore()
+const userStore = useUserStore()
 const status = ref('loadmore')
 
 // 分享
 const shareData = ref({})
 const shareComp = ref()
-function setShareData(params) {
+function setShareData(params: any) {
   const data = params
   shareData.value = {
     title: `拼团-${data?.orderProductSkus[0]?.name || ''}`,
@@ -99,6 +100,7 @@ onReachBottom(() => {
   getDataList()
 })
 onLoad(async () => {
+  if (!userStore.checkLoginState()) return
   getDataList()
 })
 onShareAppMessage(() => {
@@ -181,6 +183,9 @@ onPullDownRefresh(() => {
           </view>
         </view>
       </view>
+    </view>
+    <view class="empty">
+      
     </view>
     <u-loadmore :status="status" />
   </view>

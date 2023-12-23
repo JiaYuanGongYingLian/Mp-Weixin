@@ -162,7 +162,7 @@ onLoad(async (option) => {
     width: 420rpx;
     height: 420rpx;
     border-radius: 50%;
-    border: 1px solid $bg-primary;
+    // border: 1px solid $bg-primary;
     animation: fadeIn 2s linear forwards;
 
     .logo {
@@ -182,6 +182,7 @@ onLoad(async (option) => {
       inset: 0rpx;
       z-index: 10;
       animation: animateDot 3s linear forwards;
+      display: none;
 
       &::before {
         content: '';
