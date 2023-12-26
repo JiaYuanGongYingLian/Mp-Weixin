@@ -259,6 +259,21 @@
 						"navigationBarTitleText": "提现",
 						"backgroundColor": "#FFFFFF"
 					}
+				},
+				{
+					"path": "pages/circle/detail",
+					"style": {
+						"navigationBarTitleText": "",
+						"backgroundColor": "#FFFFFF",
+						"navigationStyle": "custom"
+					}
+				},
+				{
+					"path": "pages/circle/edit",
+					"style": {
+						"navigationBarTitleText": "",
+						"backgroundColor": "#FFFFFF"
+					}
 				}
 			]
 		},

@@ -1,10 +1,11 @@
 @font-face {
   font-family: "custom-icon";
   /* Project id 3983494 */
-  src: url('//at.alicdn.com/t/c/font_3983494_sefj5dwy0u.woff2?t=1702891161182') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3983494_sefj5dwy0u.woff?t=1702891161182') format('woff'),
-       url('//at.alicdn.com/t/c/font_3983494_sefj5dwy0u.ttf?t=1702891161182') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3983494_wyfosvw9nul.woff2?t=1703578074045') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3983494_wyfosvw9nul.woff?t=1703578074045') format('woff'),
+       url('//at.alicdn.com/t/c/font_3983494_wyfosvw9nul.ttf?t=1703578074045') format('truetype');
 }
+
 
 .custom-icon {
   /* 引用上面声明的"custom-icon"字体 */
@@ -71,6 +72,17 @@
 
 .custom-icon-waihuimaimai:before {
   content: "\e606";
+}
+.custom-icon-tupian:before {
+  content: "\e64a";
+}
+
+.custom-icon-shipin:before {
+  content: "\e644";
+}
+
+.custom-icon-wenjianjia:before {
+  content: "\e602";
 }
 
 @font-face {

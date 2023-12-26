@@ -221,8 +221,6 @@ topBtn.top = obj?.top + obj?.height
       <view style="height: 23rpx"></view>
       <hy-search-bar @on-search="onSearch" />
       <view style="height: 23rpx"></view>
-      <C_CATES></C_CATES>
-      <view style="height: 23rpx"></view>
       <u-swiper
         :list="bannerList"
         height="200"
@@ -231,6 +229,8 @@ topBtn.top = obj?.top + obj?.height
         bg-color="transparent"
         @click="handleBannerClick($event, bannerList)"
       ></u-swiper>
+      <view style="height: 23rpx"></view>
+      <C_CATES></C_CATES>
       <view class="section" v-if="categoryList.list2.length">
         <view class="tit">线下好店</view>
         <view class="actions">
