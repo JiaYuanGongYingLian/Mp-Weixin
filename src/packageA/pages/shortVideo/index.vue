@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-26 11:51:54
- * @LastEditTime: 2023-12-09 02:50:38
+ * @LastEditTime: 2023-12-27 17:31:07
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -399,8 +399,11 @@ onPullDownRefresh(() => {
           }"
         >
           <view class="top">
-            <view class="name" @click="toBusinessCardHome(item, index)"
-              >@{{ item?.user?.nickname }}</view
+            <view
+              class="name"
+              @click="toBusinessCardHome(item, index)"
+              v-if="item?.user?.nickname"
+              >{{ '@' + item?.user?.nickname }}</view
             >
             <view class="textBox tit" v-if="item?.name">{{ item?.name }}</view>
             <view class="textBox">{{ item.content }}</view>

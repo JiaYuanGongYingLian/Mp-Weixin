@@ -176,15 +176,15 @@
 						"enablePullDownRefresh": true
 					}
 				},
-				// {
-				// 	"path": "pages/shortVideo/index",
-				// 	"style": {
-				// 		"navigationBarTitleText": "短视频",
-				// 		"navigationStyle": "custom",
-				// 		"backgroundColor": "#F5F5F5",
-				// 		"enablePullDownRefresh": true
-				// 	}
-				// },
+				{
+					"path": "pages/shortVideo/index",
+					"style": {
+						"navigationBarTitleText": "",
+						"navigationStyle": "custom",
+						"backgroundColor": "#F5F5F5",
+						"enablePullDownRefresh": true
+					}
+				},
 				// {
 				// 	"path": "pages/publish/index",
 				// 	"style": {
@@ -265,13 +265,14 @@
 					"style": {
 						"navigationBarTitleText": "",
 						"backgroundColor": "#FFFFFF",
-						"navigationStyle": "custom"
+						"navigationStyle": "custom",
+						"enablePullDownRefresh": true
 					}
 				},
 				{
 					"path": "pages/circle/edit",
 					"style": {
-						"navigationBarTitleText": "",
+						"navigationBarTitleText": "编辑",
 						"backgroundColor": "#FFFFFF"
 					}
 				}
