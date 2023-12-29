@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-24 14:50:01
- * @LastEditTime: 2023-12-27 18:32:51
+ * @LastEditTime: 2023-12-28 14:16:50
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -21,7 +21,7 @@ import {
 } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { enumAll, socialApi } from '@/api'
-import { getImgFullPath, dateFormat } from '@/utils/index'
+import { getImgFullPath, dateFormat, previewImage } from '@/utils/index'
 import { useUserStore } from '@/store'
 import { route } from '@/utils/common'
 
@@ -77,6 +77,54 @@ function toEdit() {
     }
   })
 }
+function deleteFn(item: { id: any }, index: number) {
+  uni.showModal({
+    title: '提示',
+    content: '确认删除？',
+    showCancel: true,
+    success: async ({ confirm, cancel }) => {
+      if (confirm) {
+        await socialApi.circleDynamicDelete({
+          friendCircleId: friendCircleId.value,
+          id: item.id
+        })
+        dynamicList.list.splice(index, 1)
+      }
+    }
+  })
+}
+function previewImageFn(arr: { resourceUrl: string }[], i: number) {
+  const pics = arr?.map((item: { resourceUrl: string }) =>
+    getImgFullPath(item.resourceUrl)
+  )
+  previewImage(pics, i)
+}
+function copyContent(data: { content: any }) {
+  const { content } = data
+  uni.setClipboardData({
+    data: content,
+    success() {}
+  })
+}
+function download(data: { resources: any }) {
+  const { resources } = data
+  resources.forEach((e: { resourceUrl: string }) => {
+    uni.downloadFile({
+      url: getImgFullPath(e.resourceUrl),
+      success(res) {
+        uni.saveImageToPhotosAlbum({
+          filePath: res.tempFilePath,
+          success() {
+            uni.showToast({
+              title: '保存成功',
+              icon: 'success'
+            })
+          }
+        })
+      }
+    })
+  })
+}
 onLoad((option) => {
   option?.friendCircleId && (friendCircleId.value = option?.friendCircleId)
 })
@@ -95,7 +143,14 @@ onPullDownRefresh(() => {
 <template>
   <hy-nav-bar :title="title"></hy-nav-bar>
   <view class="container">
-    <view class="circle" v-for="item in dynamicList.list" :key="item.id">
+    <view
+      class="circle"
+      v-for="(item, index) in dynamicList.list"
+      :key="item.id"
+    >
+      <view class="delete" @click="deleteFn(item, index)">
+        <text class="iconfont hy-icon-delete"></text>
+      </view>
       <view class="c-top">
         <u-image
           class="avatar"
@@ -116,16 +171,31 @@ onPullDownRefresh(() => {
         </view>
       </view>
       <view class="c-mid">
-        <view>
-          {{ item.content }}
+        <view class="content-view">
+          <pre class="pre">{{ item.content }}</pre>
+        </view>
+        <view class="img-view">
+          <view
+            class="imgItem"
+            v-for="(e, index) in item?.resources"
+            :key="index"
+            @click="previewImageFn(item?.resources, index)"
+          >
+            <u-image
+              :src="getImgFullPath(e.resourceUrl)"
+              :width="item?.resources?.length > 1 ? 200 : 300"
+              border-radius="4"
+              mode="widthFix"
+            ></u-image>
+          </view>
         </view>
       </view>
       <view class="c-bot">
-        <view class="act">
+        <view class="act" @click="copyContent(item)">
           <u-icon name="file-text-fill" :size="30"></u-icon>
           <view>复制文案</view>
         </view>
-        <view class="act">
+        <view class="act" @click="download(item)">
           <u-icon name="download" :size="30"></u-icon>
           <view>下载素材</view>
         </view>
@@ -150,6 +220,22 @@ onPullDownRefresh(() => {
   border-radius: 16rpx;
   padding: 30rpx;
   margin-bottom: 30rpx;
+  position: relative;
+  overflow: hidden;
+  .delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 6rpx;
+    z-index: 1;
+    // background: #fa3534;
+    opacity: 0.8;
+
+    // border-bottom-left-radius: 8rpx;
+    .hy-icon-delete {
+      color: #333;
+    }
+  }
 
   .c-top {
     display: flex;
@@ -187,7 +273,19 @@ onPullDownRefresh(() => {
     }
   }
   .c-mid {
-    padding: 20rpx 0;
+    padding: 0 20rpx 20rpx 20rpx;
+    .content-view {
+      font-size: 32rpx;
+      pre {
+        font-family: 'Microsoft YaHei';
+      }
+    }
+    .img-view {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5rpx;
+      padding-top: 20rpx;
+    }
   }
   .c-bot {
     display: flex;
