@@ -163,7 +163,7 @@ export class RequestHttp {
           this.showModal = true
           uni.showModal({
             title: '提示',
-            content: '登录过期，请重新登录',
+            content: '是否立即登录',
             showCancel: true,
             success: ({ confirm, cancel }) => {
               if (confirm) {

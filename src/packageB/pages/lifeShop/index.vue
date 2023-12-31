@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-14 15:17:59
- * @LastEditTime: 2023-12-12 11:54:29
+ * @LastEditTime: 2023-12-31 22:21:53
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -162,7 +162,7 @@ onLoad((option) => {
       :current="swiperCurrent"
       @transition="transition"
       @animationfinish="animationfinish"
-      style="height: 700rpx"
+      style="min-height: 800rpx; overflow-y: auto"
     >
       <swiper-item
         class="swiper-item"
@@ -205,7 +205,9 @@ onLoad((option) => {
             </view>
           </view>
         </view>
-        <view class="remark">{{ item.remark }}</view>
+        <view class="remark">
+          <pre class="pre">{{ item.remark }}</pre>
+        </view>
       </swiper-item>
     </swiper>
     <!-- <u-button
@@ -221,6 +223,9 @@ onLoad((option) => {
 </template>
 
 <style lang="scss" scoped>
+.container {
+  padding-bottom: 30rpx;
+}
 .intro {
   background-image: linear-gradient(to right, #484b5c, #515365, #2f3b4a);
   color: #eecfa7;
@@ -242,6 +247,8 @@ onLoad((option) => {
   padding: 30rpx;
   background-color: #fff;
   padding-top: 60rpx;
+  margin-bottom: 30rpx;
+
   .tit {
     font-size: 30rpx;
     font-weight: bold;
@@ -318,9 +325,15 @@ onLoad((option) => {
   }
 }
 .remark {
-  padding: 30rpx;
-  font-size: 24rpx;
+  font-size: 26rpx;
+  line-height: 38rpx;
   color: #f90;
-
+  padding: 0 30rpx 0 30rpx;
+  box-sizing: border-box;
+  .pre {
+    font-family: 'Microsoft YaHei';
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
 }
 </style>

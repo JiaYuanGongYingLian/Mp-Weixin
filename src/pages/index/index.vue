@@ -300,6 +300,9 @@ topBtn.top = obj?.top + obj?.height
   left: 0;
   width: 100%;
   height: 540rpx;
+  /* #ifndef H5 */
+  height: 670rpx;
+  /* #endif */
   background: $bg-primary;
   background-image: url('https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/64a2cb6b-e64f-47ab-ab84-0d5aedc7d1fd.png');
   background-position: top center;

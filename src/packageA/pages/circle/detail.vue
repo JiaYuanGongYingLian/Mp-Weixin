@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-24 14:50:01
- * @LastEditTime: 2023-12-28 14:16:50
+ * @LastEditTime: 2023-12-31 22:00:34
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -276,8 +276,9 @@ onPullDownRefresh(() => {
     padding: 0 20rpx 20rpx 20rpx;
     .content-view {
       font-size: 32rpx;
-      pre {
+      .pre {
         font-family: 'Microsoft YaHei';
+        white-space: pre-wrap;
       }
     }
     .img-view {
