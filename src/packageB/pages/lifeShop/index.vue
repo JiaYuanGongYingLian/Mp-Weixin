@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-14 15:17:59
- * @LastEditTime: 2024-01-02 15:18:28
+ * @LastEditTime: 2024-01-02 15:23:17
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -91,6 +91,7 @@ function animationfinish(e: { detail: { current: number } }) {
 }
 function cardClick(index: number, externals) {
   let accounOk = true
+  if (!clickable.value) return
   account.value = account.value.replace(/\s/g, '')
   if (externals) {
     const accountRegex =
