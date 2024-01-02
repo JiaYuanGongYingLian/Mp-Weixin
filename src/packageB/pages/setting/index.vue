@@ -113,7 +113,7 @@ onLoad((option) => {})
       <button
         class="customBtn"
         open-type="chooseAvatar"
-        @click="mpOnChooseAvatar"
+        @chooseavatar="onChooseAvatar"
       ></button>
       <!-- #endif -->
 
