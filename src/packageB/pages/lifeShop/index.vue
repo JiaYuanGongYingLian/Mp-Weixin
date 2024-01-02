@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-14 15:17:59
- * @LastEditTime: 2023-12-12 11:54:29
+ * @LastEditTime: 2024-01-02 15:18:28
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -89,16 +89,25 @@ function animationfinish(e: { detail: { current: number } }) {
   swiperCurrent.value = e.detail.current
   current.value = e.detail.current
 }
-function cardClick(index: number) {
-  if (!clickable.value) {
-    uni.showToast({
-      icon: 'none',
-      title: `请输入正确的${productList.value[
-        current.value
-      ].placeholder.substring(3)}`
-    })
-    return false
+function cardClick(index: number, externals) {
+  let accounOk = true
+  account.value = account.value.replace(/\s/g, '')
+  if (externals) {
+    const accountRegex =
+      externals.find(
+        (item: { fieldName: string }) => item.fieldName === 'accountRegex'
+      )?.fieldValue || ''
+    if (!new RegExp(accountRegex).test(account.value)) {
+      uni.showToast({
+        icon: 'none',
+        title: `请输入正确的${productList.value[
+          current.value
+        ].placeholder.substring(3)}`
+      })
+      accounOk = false
+    }
   }
+  if (!accounOk) return
   uni.showModal({
     title: '请确认充值账户',
     content: `${account.value}\r\n 充值成功后无法退款`,
@@ -176,6 +185,7 @@ onLoad((option) => {
                 v-model="account"
                 :placeholder="item.placeholder"
                 :border="false"
+                trim
                 height="100rpx"
                 placeholder-style="
                   fontWeight: bold;
@@ -195,7 +205,7 @@ onLoad((option) => {
               v-for="(s, index) in item.sku"
               :key="index"
               :class="{ able: clickable }"
-              @click="cardClick(index)"
+              @click="cardClick(index, s.shopProductSkuExternals)"
             >
               <!-- <view class="name">{{ s.name }}</view> -->
               <view class="price">
@@ -321,6 +331,5 @@ onLoad((option) => {
   padding: 30rpx;
   font-size: 24rpx;
   color: #f90;
-
 }
 </style>
