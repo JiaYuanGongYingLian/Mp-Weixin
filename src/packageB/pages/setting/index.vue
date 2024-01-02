@@ -58,6 +58,10 @@ function onChooseImage() {
     }
   })
 }
+function mpOnChooseAvatar(e: { detail: { avatarUrl: any } }) {
+  const { avatarUrl } = e.detail
+  console.log(e, avatarUrl)
+}
 function uploadImage(file: any) {
   upload({
     file,
@@ -102,7 +106,16 @@ onLoad((option) => {})
         open-type="chooseAvatar"
         @chooseavatar="onChooseAvatar"
       ></button> -->
+      <!-- #ifdef H5 -->
       <button class="customBtn" @click="onChooseImage"></button>
+      <!-- #endif -->
+      <!-- #ifdef MP-WEIXIN -->
+      <button
+        class="customBtn"
+        open-type="chooseAvatar"
+        @click="mpOnChooseAvatar"
+      ></button>
+      <!-- #endif -->
 
       <u-cell-item title="头像" hover-class="cell-hover-class">
         <!-- #ifdef H5 -->
@@ -113,9 +126,6 @@ onLoad((option) => {})
           :src="getImgFullPath(userInfo.avatar)"
           v-if="userInfo.avatar"
         ></u-avatar>
-        <view v-else class="avatar">
-          <open-data type="userAvatarUrl"></open-data>
-        </view>
         <!-- #endif -->
       </u-cell-item>
     </u-cell-group>
