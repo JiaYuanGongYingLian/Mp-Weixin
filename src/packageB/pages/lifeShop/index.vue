@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-14 15:17:59
- * @LastEditTime: 2024-01-02 15:23:17
+ * @LastEditTime: 2024-01-02 15:28:48
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -89,7 +89,7 @@ function animationfinish(e: { detail: { current: number } }) {
   swiperCurrent.value = e.detail.current
   current.value = e.detail.current
 }
-function cardClick(index: number, externals) {
+function cardClick(index: number, externals: any[]) {
   let accounOk = true
   if (!clickable.value) return
   account.value = account.value.replace(/\s/g, '')
