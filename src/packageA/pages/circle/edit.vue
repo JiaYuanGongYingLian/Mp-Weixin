@@ -3,7 +3,11 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-29 17:12:32
+<<<<<<< HEAD
  * @LastEditTime: 2023-12-31 21:50:23
+=======
+ * @LastEditTime: 2024-01-06 11:51:59
+>>>>>>> 6a74dfd2efe84674e59a62b9cc7cd2cc6f1e8835
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -234,7 +238,14 @@ onLoad((option) => {
             label-width="auto"
             prop="content"
             :border-bottom="false"
-            ><u-input
+          >
+            <u-input
+              v-model="formData.name"
+              type="textarea"
+              maxlength="1000"
+              height="200"
+              placeholder="标题：" />
+            <u-input
               v-model="formData.content"
               type="textarea"
               maxlength="1000"
