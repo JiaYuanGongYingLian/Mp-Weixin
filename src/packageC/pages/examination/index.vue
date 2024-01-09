@@ -5,7 +5,7 @@
  * @Description: 商学院量表
  * @Author: Kerwin
  * @Date: 2023-11-01 14:51:39
- * @LastEditTime: 2023-11-11 15:59:29
+ * @LastEditTime: 2024-01-06 10:24:04
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -131,7 +131,7 @@ onLoad((option) => {
 <template>
   <view class="container">
     <!-- #ifdef MP-WEIXIN -->
-    <hy-nav-bar title="问卷调查" />
+    <hy-nav-bar title="群主考试中心" />
     <!-- #endif -->
     <!-- <u-navbar
       back-text=""

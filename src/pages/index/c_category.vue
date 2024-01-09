@@ -18,8 +18,8 @@ const cates = ref([
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/5c1ea6ec-c734-4897-9fd7-f9518769818a.svg'
   },
   {
-    name: '今日大事',
-    url: '/packageA/pages/circle/detail?friendCircleId=12',
+    name: '家园头条',
+    url: '/packageA/pages/news/index?friendCircleId=12',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/1bebfe9a-c4de-4ce1-8ab1-9b641bd834dc.svg'
   },
   {

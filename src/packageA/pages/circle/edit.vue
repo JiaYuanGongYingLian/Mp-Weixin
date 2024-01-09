@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-29 17:12:32
- * @LastEditTime: 2023-12-27 17:56:51
+ * @LastEditTime: 2024-01-06 11:51:59
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -233,7 +233,14 @@ onLoad((option) => {
             label-width="auto"
             prop="content"
             :border-bottom="false"
-            ><u-input
+          >
+            <u-input
+              v-model="formData.name"
+              type="textarea"
+              maxlength="1000"
+              height="200"
+              placeholder="标题：" />
+            <u-input
               v-model="formData.content"
               type="textarea"
               maxlength="1000"
