@@ -2,13 +2,15 @@
 import * as RongIMLib from '@rongcloud/imlib-next'
 import { RONGYUN_APPKEY_V1, RONGYUN_APPKEY_V2 } from '@/common/config'
 
-const v = uni.getStorageSync('version')
-console.log('vvv==>', v)
-if (v && v > '1.1.1') {
-  RongIMLib.init({ appkey: RONGYUN_APPKEY_V2 })
-} else {
-  RongIMLib.init({ appkey: RONGYUN_APPKEY_V1 })
-}
+RongIMLib.init({ appkey: RONGYUN_APPKEY_V2 })
+// const v = uni.getStorageSync('version')
+// console.log('vvv==>', v)
+// if (v && v > '1.1.1') {
+//   console.log('appKey2', RONGYUN_APPKEY_V2)
+//   RongIMLib.init({ appkey: RONGYUN_APPKEY_V2 })
+// } else {
+//   RongIMLib.init({ appkey: RONGYUN_APPKEY_V1 })
+// }
 console.log('融云初始化=======>完成')
 
 export const PinTuanMessage = RongIMLib.registerMessageType(

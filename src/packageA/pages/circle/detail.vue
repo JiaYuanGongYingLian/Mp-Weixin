@@ -6,7 +6,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-07-24 14:50:01
- * @LastEditTime: 2024-01-10 10:12:11
+ * @LastEditTime: 2024-01-10 17:47:13
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -148,7 +148,7 @@ onPullDownRefresh(() => {
       v-for="(item, index) in dynamicList.list"
       :key="item.id"
     >
-      <view class="delete" @click="deleteFn(item, index)">
+      <view class="delete" @click="deleteFn(item, index)" v-if="false">
         <text class="iconfont hy-icon-delete"></text>
       </view>
       <view class="c-top">
@@ -208,7 +208,7 @@ onPullDownRefresh(() => {
       mode="history"
       margin-top="100"
     ></u-empty>
-    <view class="edit" @click="toEdit">
+    <view class="edit" @click="toEdit" v-if="false">
       <u-icon name="edit-pen-fill" size="40"></u-icon>
     </view>
   </view>

@@ -269,13 +269,13 @@
 						"enablePullDownRefresh": true
 					}
 				},
-				{
-					"path": "pages/circle/edit",
-					"style": {
-						"navigationBarTitleText": "编辑",
-						"backgroundColor": "#FFFFFF"
-					}
-				},
+				// {
+				// 	"path": "pages/circle/edit",
+				// 	"style": {
+				// 		"navigationBarTitleText": "编辑",
+				// 		"backgroundColor": "#FFFFFF"
+				// 	}
+				// },
 				{
 					"path": "pages/news/index",
 					"style": {
