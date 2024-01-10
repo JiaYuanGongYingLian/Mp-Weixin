@@ -221,6 +221,8 @@ topBtn.top = obj?.top + obj?.height
       <view style="height: 23rpx"></view>
       <hy-search-bar @on-search="onSearch" />
       <view style="height: 23rpx"></view>
+      <C_CATES></C_CATES>
+      <view style="height: 23rpx"></view>
       <u-swiper
         :list="bannerList"
         height="200"
@@ -229,8 +231,6 @@ topBtn.top = obj?.top + obj?.height
         bg-color="transparent"
         @click="handleBannerClick($event, bannerList)"
       ></u-swiper>
-      <view style="height: 23rpx"></view>
-      <C_CATES></C_CATES>
       <view class="section" v-if="categoryList.list2.length">
         <view class="tit">线下好店</view>
         <view class="actions">
@@ -299,12 +299,19 @@ topBtn.top = obj?.top + obj?.height
   top: 0;
   left: 0;
   width: 100%;
-  height: 540rpx;
+  height: 680rpx;
   background: $bg-primary;
   background-image: url('https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/64a2cb6b-e64f-47ab-ab84-0d5aedc7d1fd.png');
   background-position: top center;
   background-size: 100% auto;
   background-repeat: no-repeat;
+  background: linear-gradient(
+    to bottom,
+    $bg-primary,
+    $bg-primary,
+    $bg-primary,
+    #f6f6f6
+  );
 }
 .index-page {
   font-style: normal;

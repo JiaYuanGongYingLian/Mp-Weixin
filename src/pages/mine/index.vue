@@ -464,6 +464,13 @@ onPullDownRefresh(() => {
     .bg {
       display: block;
       width: 100%;
+      background: linear-gradient(
+        to bottom,
+        #ff0000,
+        $bg-primary,
+        $bg-primary,
+        transparent
+      );
     }
 
     .city {
