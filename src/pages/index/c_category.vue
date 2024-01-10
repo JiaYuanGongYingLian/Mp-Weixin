@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { getMockData } from '@/api'
+import { useConfigStore } from '@/store'
 
+const configStore = useConfigStore()
 const cates = ref([
   {
     name: '商学院',
@@ -39,6 +41,10 @@ function handleClick(item: { name: any; url: any }) {
 }
 onMounted(async () => {
   // cates.value = await getMockData('cates')
+  if (configStore.hideData) {
+    cates.value.splice(1, 1)
+    cates.value.splice(2, 1)
+  }
 })
 </script>
 <template>
