@@ -5,7 +5,7 @@
  * @Description: 商学院量表
  * @Author: Kerwin
  * @Date: 2023-11-01 14:51:39
- * @LastEditTime: 2024-01-06 10:24:04
+ * @LastEditTime: 2024-01-10 14:20:07
  * @LastEditors:  Please set LastEditors
 -->
 
@@ -213,8 +213,9 @@ onLoad((option) => {
         v-else
         class="btn"
         ripple
-        type="primary"
+        type="warning"
         shape="circle"
+        plain
         @click="switchFn(1)"
         >下一题</u-button
       >
@@ -228,18 +229,20 @@ onLoad((option) => {
   background: #fff;
   line-height: 40rpx;
   min-height: 100vh;
-  background: linear-gradient(180deg, #caedfe, #f4fbff);
+  background: linear-gradient(180deg, $bg-primary, $bg-primary, #f2f2f2);
 
   .ptit {
     font-size: 46rpx;
     font-weight: bold;
     text-align: center;
     margin-top: 30rpx;
+    color: #f6f6f6;
   }
 
   .remark {
     margin-top: 30rpx;
-    color: #666;
+    color: #fff;
+    text-align: center;
   }
 
   .section {
