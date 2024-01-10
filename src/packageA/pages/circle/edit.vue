@@ -3,7 +3,11 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-29 17:12:32
+<<<<<<< HEAD
+ * @LastEditTime: 2023-12-31 21:50:23
+=======
  * @LastEditTime: 2024-01-06 11:51:59
+>>>>>>> 6a74dfd2efe84674e59a62b9cc7cd2cc6f1e8835
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -115,6 +119,9 @@ function handleChooseSuccess(i: number, res: any) {
 
   // #endif
   // #ifndef H5
+  if (!res.tempFilePaths) {
+    res.tempFilePaths = res.tempFiles.map((item: { path: any }) => item.path)
+  }
   res.tempFilePaths.forEach((e: any) => {
     uni.uploadFile({
       url: UPLOADURL,
@@ -126,11 +133,9 @@ function handleChooseSuccess(i: number, res: any) {
       success(ret) {
         const { data } = ret
         const jsonData = JSON.parse(data)
-        if (i === 0) {
-          formData.resources.push({
-            resourceUrl: jsonData.data
-          })
-        }
+        formData.resources.push({
+          resourceUrl: jsonData.data
+        })
         if (i === 1) {
           formData.videoUrl = jsonData.data
         }

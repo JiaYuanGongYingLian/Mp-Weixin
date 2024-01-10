@@ -43,6 +43,7 @@ async function getConfig(fieldName = 'mini_project') {
     configStore.hideData = !!config.hideData
     configStore.shopId = config.shopId
   }
+  uni.setStorageSync('version', config.version)
 }
 
 const uncertainShareCodeLinks = [
