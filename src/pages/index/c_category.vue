@@ -10,6 +10,7 @@ const cates = ref([
   },
   {
     name: 'PK场',
+    url: '/packageB/pages/pk/index',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/1cc99a49-53ad-4008-b4f5-4d984527448f.svg'
   },
   {
@@ -19,7 +20,7 @@ const cates = ref([
   },
   {
     name: '家园头条',
-    url: '/packageA/pages/news/index?friendCircleId=12',
+    url: '/packageA/pages/circle/detail?friendCircleId=12',
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/1bebfe9a-c4de-4ce1-8ab1-9b641bd834dc.svg'
   },
   {

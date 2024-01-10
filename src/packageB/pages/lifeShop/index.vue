@@ -5,7 +5,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-06-14 15:17:59
- * @LastEditTime: 2024-01-02 15:28:48
+ * @LastEditTime: 2024-01-10 10:39:42
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
@@ -339,5 +339,12 @@ onLoad((option) => {
   font-size: 26rpx;
   line-height: 38rpx;
   color: #f90;
+  padding: 0 20rpx;
+  .pre {
+    font-family: 'Microsoft YaHei';
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-all;
+  }
 }
 </style>
