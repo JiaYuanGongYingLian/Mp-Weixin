@@ -4,7 +4,7 @@
  * @Description: 群聊列表
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-08 22:36:03
+ * @LastEditTime: 2024-01-12 16:20:07
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -78,7 +78,6 @@ async function getList() {
 function handleSuccess() {
   status.value = 'loadmore'
   getList()
-
 }
 // 切换主副群
 function switchType() {

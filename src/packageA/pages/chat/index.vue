@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2023-12-18 18:24:01
+ * @LastEditTime: 2024-01-12 14:51:53
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -130,11 +130,11 @@ function toGroupDetail() {
 
 // 点击红包
 const hongBaoRef = ref()
-function openhb(message: { content: any }, i: any) {
+function openhb(message: { content?: any }, i: any) {
   message_checked.value = message
   message_checked_index.value = i
   if (message.content.status === 1) {
-    hongBaoRef.value.openhb(message.content)
+    hongBaoRef.value.openhb(message)
   } else {
     route({
       url: '/packageA/pages/hongBaoRecord/index',

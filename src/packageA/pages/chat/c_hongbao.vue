@@ -1,3 +1,4 @@
+<!-- eslint-disable no-shadow -->
 <!-- eslint-disable consistent-return -->
 <script setup lang="ts">
 import { reactive, ref, computed } from 'vue'
@@ -5,6 +6,8 @@ import { onLoad } from '@dcloudio/uni-app'
 import { moneyApi } from '@/api'
 import { useUserStore, useRyStore } from '@/store'
 import { route } from '@/utils/common'
+import { getImgFullPath } from '@/utils/index'
+import { RY_AVATAR } from '@/common/config'
 
 const emit = defineEmits(['received'])
 const ryStore = useRyStore()
@@ -14,26 +17,25 @@ const money = ref<string | number>('')
 const count = ref(1)
 const content = ref('')
 const totalMoney = computed(() => {
-  const m = money.value || 0
-  return Number((m * count.value).toFixed(2))
+  return Number(count.value).toFixed(2)
 })
 const typeMaps = [
   {
     name: '普通红包',
     value: 1
   },
-  // {
-  //   name: '专属红包',
-  //   value: 2
-  // },
+  {
+    name: '专属红包',
+    value: 2
+  },
   {
     name: '普通积分红包',
     value: 3
+  },
+  {
+    name: '专属积分红包',
+    value: 4
   }
-  // {
-  //   name: '专属积分红包',
-  //   value: 4
-  // }
 ]
 const hbType = ref(typeMaps[1])
 const isScoreWallet = computed(() => {
@@ -50,7 +52,10 @@ const actionSheetCallback = (e: number) => {
   hbType.value = typeMaps[e]
 }
 const showPicker1 = ref(false)
-const hongBaoInfo = ref({})
+const message = ref({})
+const hongBaoInfo = computed(() => {
+  return message.value?.content || {}
+})
 const props = withDefaults(
   defineProps<{
     chatType?: number
@@ -72,8 +77,8 @@ function sendRedPacketShow() {
 }
 // 点击红包
 const openhongbao = ref(false)
-function openhb(e: { open: number }) {
-  hongBaoInfo.value = e
+function openhb(e: {}) {
+  message.value = e
   openhongbao.value = true
 }
 // 开启红包
@@ -131,6 +136,21 @@ async function submithb() {
     }
     ryStore.sendMessage(params)
   }
+}
+function checkRecord(hongBaoInfo: { friendCircleRedPacketId: any }) {
+  route({
+    url: '/packageA/pages/hongBaoRecord/index',
+    params: {
+      id: hongBaoInfo.friendCircleRedPacketId
+    }
+  })
+}
+// 点击进入店铺
+function toShopDetail(shop: { id: any }) {
+  const { id } = shop
+  uni.navigateTo({
+    url: `/packageA/pages/physicalShop/index?shopId=${id}`
+  })
 }
 defineExpose({
   openhb,
@@ -247,12 +267,66 @@ onLoad((option) => {})
       <view class="openhongbao">
         <view class="bj"></view>
         <view class="head">
-          <view class="title">{{ hongBaoInfo.nickname }}发出的红包</view>
+          <view class="title" v-if="message?.shop">
+            <view>{{ message?.shop?.name }}店发出的红包</view>
+          </view>
+          <view class="title" v-else>
+            <u-image
+              width="60"
+              height="60"
+              border-radius="8"
+              :loading-icon="RY_AVATAR"
+              :error-icon="RY_AVATAR"
+              :src="
+                message?.user?.avatar
+                  ? getImgFullPath(message?.user?.avatar)
+                  : RY_AVATAR
+              "
+              :lazy-load="false"
+              :fade="false"
+              mode="aspectFill"
+            ></u-image>
+            <view
+              >{{
+                message?.user?.circle_nickname
+                  ? message?.user?.circle_nickname
+                  : message?.user?.nickname
+              }}发出的红包</view
+            >
+          </view>
           <view class="info">{{ hongBaoInfo.content }}</view>
+          <view
+            class="shopLink"
+            v-if="message?.shop"
+            @click="toShopDetail(message?.shop)"
+          >
+            <u-image
+              width="110"
+              height="110"
+              border-radius="8"
+              :loading-icon="RY_AVATAR"
+              :error-icon="RY_AVATAR"
+              :src="
+                message?.shop?.avatar
+                  ? getImgFullPath(message?.shop?.avatar)
+                  : RY_AVATAR
+              "
+              :lazy-load="false"
+              :fade="false"
+              mode="aspectFill"
+            ></u-image>
+            <view class="tips"
+              >点击头像进店，超多福利！
+              <u-icon name="arrow-right" size="24"></u-icon
+            ></view>
+          </view>
         </view>
         <view class="an">
           <view class="an1" @click="receive_hongbao(hongBaoInfo)">開</view>
         </view>
+        <view class="lingqu" @click="checkRecord(hongBaoInfo)">
+          查看领取详情 <u-icon name="arrow-right" size="26"></u-icon
+        ></view>
       </view>
     </u-popup>
   </view>
@@ -357,12 +431,36 @@ onLoad((option) => {})
     .title {
       display: flex;
       justify-content: center;
+      align-items: center;
+      gap: 10rpx;
     }
     .info {
       margin-top: 30rpx;
       display: flex;
       justify-content: center;
     }
+  }
+  .shopLink {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 100rpx;
+    .tips {
+      margin-top: 20rpx;
+      font-size: 24rpx;
+    }
+  }
+  .lingqu {
+    color: #e5cda0;
+    margin-top: 40rpx;
+    position: relative;
+    text-align: center;
+    position: absolute;
+    bottom: 5%;
+    left: 0;
+    width: 100%;
   }
   .an {
     display: flex;
