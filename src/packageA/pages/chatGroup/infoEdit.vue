@@ -3,7 +3,7 @@
  * @Description: 群相关信息编辑
  * @Author: Kerwin
  * @Date: 2023-12-08 12:37:48
- * @LastEditTime: 2023-12-08 23:09:19
+ * @LastEditTime: 2024-01-13 17:01:05
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -86,6 +86,9 @@ async function circleUpdate() {
 function submit() {
   info.value.fn()
 }
+function onChange(e: { detail: { value: string } }) {
+  textVal.value = e.detail.value
+}
 onLoad((option) => {
   type.value = Number(option?.type)
   if (!option?.type) {
@@ -95,7 +98,9 @@ onLoad((option) => {
   groupInfo.value = JSON.parse(option?.groupInfo)
   avatarList.value = JSON.parse(option?.avatarList)
   if (type.value === 1) {
-    const mySelfInfoInGroup =JSON.parse( uni.getStorageSync('mySelfInfoInGroup'))
+    const mySelfInfoInGroup = JSON.parse(
+      uni.getStorageSync('mySelfInfoInGroup')
+    )
     textVal.value = mySelfInfoInGroup?.circle_nickname
     info.value.id = mySelfInfoInGroup?.fid
   } else if (type.value === 2) {
@@ -128,13 +133,24 @@ onLoad((option) => {
       </view>
       <view class="inptr">
         <u-input
-        v-model="textVal"
-        type="textarea"
-        :border="false"
-        :height="40"
-        :auto-height="true"
-        clearable
-      />
+          v-model="textVal"
+          type="textarea"
+          :border="false"
+          :height="40"
+          :auto-height="true"
+          clearable
+          v-if="type != 1"
+        />
+        <input
+          v-else
+          v-model="textVal"
+          type="nickname"
+          :border="false"
+          :height="40"
+          :auto-height="true"
+          clearable
+          @change="onChange"
+        />
       </view>
     </view>
     <view class="btn">
@@ -183,7 +199,7 @@ onLoad((option) => {
       margin-right: 18rpx;
     }
     .inptr {
-      flex: 1
+      flex: 1;
     }
   }
 

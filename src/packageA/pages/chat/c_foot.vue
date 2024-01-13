@@ -4,7 +4,7 @@
  * @Description: 对话操作
  * @Author: Kerwin
  * @Date: 2023-07-28 16:01:21
- * @LastEditTime: 2023-12-19 10:43:23
+ * @LastEditTime: 2024-01-14 00:00:39
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -15,8 +15,9 @@ import { onLoad, onShow, onReady } from '@dcloudio/uni-app'
 import { storeToRefs } from 'pinia'
 import { socialApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
-import { $toast } from '@/utils/common'
+import { $toast, wxUploadFile } from '@/utils/common'
 import { useUserStore, useRyStore } from '@/store'
+import { webUploadVideo } from '@/common/ali-oss'
 // #ifdef MP-WEIXIN
 const RongEmoji = require('../../static/js/RongIMEmoji-2.2.6.js')
 // #endif
@@ -99,17 +100,12 @@ function sendFilesItem(tempFilePaths: any) {
     isUpload.value = !isUpload.value
   }
 }
-function sendImageItem(
-  tempFilePath: string,
-  info: UniApp.GetImageInfoSuccessData
-) {
-  // const fd = new FormData();
-  // fd.append('image',tempFilePath)
+function sendImageItem(imgUrl: string) {
   const params = {
     targetId: props?.targetId,
-    content: tempFilePath,
+    content: imgUrl,
     msgType: 2,
-    imageUri: tempFilePath,
+    imageUri: imgUrl,
     group: !isSingle.value
   }
   ryStore.sendMessage(params)
@@ -121,14 +117,10 @@ function sendImageItem(
 function chooseImage() {
   uni.chooseImage({
     count: 1,
-    success(res) {
+    async success(res) {
       const tempFilePath = res.tempFilePaths[0]
-      uni.getImageInfo({
-        src: tempFilePath,
-        success(info) {
-          sendImageItem(tempFilePath, info)
-        }
-      })
+      const { data } = await wxUploadFile(tempFilePath)
+      sendImageItem(data)
     }
   })
 }
@@ -143,14 +135,24 @@ function chooseMessageFile() {
     sendFilesItem(file)
   }
   // #endif
-  // #ifndef H5
-  uni.chooseMessageFile({
-    count: 1,
-    success(res) {
-      console.log(res)
+  // #ifdef MP-WEIXIN
+  wx.chooseMessageFile({
+    count: 9,
+    type: 'image',
+    success(res: any) {
+      handleChooseSuccess(res)
     }
   })
   // #endif
+}
+function handleChooseSuccess(res: any) {
+  if (!res.tempFilePaths) {
+    res.tempFilePaths = res.tempFiles.map((item: { path: any }) => item.path)
+  }
+  res.tempFilePaths.forEach(async (e: any) => {
+    const { data } = await wxUploadFile(e)
+    sendImageItem(data)
+  })
 }
 // 地图选择地址
 function chooseLocation() {
@@ -223,11 +225,13 @@ onMounted((option) => {})
     <view class="l-chat-posi">
       <view class="l-chat-foot">
         <view class="l-chat-form">
-          <textarea
+          <u-input
+            type="textarea"
             class="l-chat-textarea"
             v-model="content"
             @focus="onFocus(false)"
             auto-height
+            :height="40"
             placeholder=""
             :cursor-spacing="20"
             :show-confirmbar="false"
@@ -313,14 +317,17 @@ onMounted((option) => {})
                 </view>
                 <view class="l-upload-name">相册</view>
               </view>
-              <!-- <view class="l-chat-upload-item">
+              <view class="l-chat-upload-item">
                 <view class="l-upload-img-wrap">
-                  <image class="l-upload-img" @tap="chooseMessageFile"
+                  <image
+                    class="l-upload-img"
+                    @tap="chooseMessageFile"
                     src="https://image.blacksilverscore.com/uploads/6d00c584-b472-4b78-85d2-2da964a1f7fc.png"
-                    mode="aspectFill"></image>
+                    mode="aspectFill"
+                  ></image>
                 </view>
-                <view class="l-upload-name">文件</view>
-              </view> -->
+                <view class="l-upload-name">群文件</view>
+              </view>
               <view class="l-chat-upload-item">
                 <view class="l-upload-img-wrap">
                   <u-icon
@@ -475,7 +482,7 @@ onMounted((option) => {})
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    align-self: flex-end;
+    // align-self: flex-end;
 
     .l-send-emoji {
       width: 54rpx;

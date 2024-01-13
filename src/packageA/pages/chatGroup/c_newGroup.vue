@@ -2,7 +2,7 @@
  * @Description: 新增群聊
  * @Author: Kerwin
  * @Date: 2023-11-29 11:16:12
- * @LastEditTime: 2023-11-29 11:27:55
+ * @LastEditTime: 2024-01-13 01:01:24
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -66,13 +66,12 @@ async function submit() {
     ...formData,
     ...tempImageData
   })
-  if (code === 200) {
-    uni.showToast({
-      icon: 'none',
-      title: '创建成功'
-    })
-    emit('onSuccess')
-  }
+  showPop.value = false
+  uni.showToast({
+    icon: 'none',
+    title: '创建成功'
+  })
+  emit('onSuccess')
 }
 </script>
 <template>

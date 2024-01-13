@@ -8,7 +8,7 @@ import { useUserStore, useConfigStore } from '@/store'
 import { moneyApi, productApi, userApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import hyTabBar from '@/components/hy-tabbar/index.vue'
-import { isEmptyObject } from '@/utils/common'
+import { isEmptyObject, route } from '@/utils/common'
 
 const userStore = useUserStore()
 const configStore = useConfigStore()
@@ -51,14 +51,13 @@ const tabList = ref([
   }
 ])
 const currentTabbar = ref(1)
-function goUrlFn(e: { currentTarget: { dataset: { url: any } } }) {
-  const { url } = e.currentTarget.dataset
+function goUrlFn(e: { currentTarget: { dataset: { url: any; id?: number } } }) {
+  const { url, id } = e.currentTarget.dataset
   if (userStore.checkLoginState()) {
-    if (url) {
-      uni.navigateTo({
-        url
-      })
-    }
+    route({
+      url,
+      params: { id }
+    })
   }
 }
 // 切换tab
@@ -220,7 +219,7 @@ onPullDownRefresh(() => {
           <view class="right">
             <view class="name" v-if="hasLogin">
               <view class="leftName"
-                >{{ userInfo?.username || wxUserInfo.nickname }}
+                >{{ userInfo?.nickname || wxUserInfo.nickname }}
               </view>
             </view>
             <view v-else class="name" @tap="goUrlFn" :data-url="false">{{
@@ -266,6 +265,7 @@ onPullDownRefresh(() => {
           <view
             class="item"
             data-url="/packageA/pages/wallet/index"
+            :data-id="moneyInfo[0].walletRuleId"
             @tap="goUrlFn"
           >
             <view class="con">{{ hasLogin ? moneyInfo[0].money : '--' }}</view>
@@ -276,6 +276,7 @@ onPullDownRefresh(() => {
           <view
             class="item"
             data-url="/packageA/pages/wallet/index"
+            :data-id="moneyInfo[1].walletRuleId"
             @tap="goUrlFn"
           >
             <view class="con">{{ hasLogin ? moneyInfo[1].money : '--' }}</view>

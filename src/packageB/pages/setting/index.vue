@@ -7,7 +7,7 @@ import { userApi } from '@/api'
 import { getImgFullPath } from '@/utils/index'
 import { upload } from '@/common/ali-oss'
 import { useUserStore } from '@/store'
-import { isWeChat, base64ToFile, wxUploadImage } from '@/utils/common'
+import { isWeChat, base64ToFile, wxUploadFile } from '@/utils/common'
 import hyImageCropper from '../../components/hy-image-cropper/hy-image-cropper.vue'
 
 const userStore = useUserStore()
@@ -34,9 +34,10 @@ async function onChooseAvatar(e: { detail: { avatarUrl: any } }) {
   const { avatarUrl } = e.detail
   userInfo.value.avatar = avatarUrl
   console.log('url', e, avatarUrl)
+  // #ifdef H5
   upload({
     filePath: avatarUrl,
-    onSuccess: async () => {
+    onSuccess: async (e) => {
       const { data } = await userApi.userInfoUpdate({
         avatar: url
       })
@@ -47,6 +48,11 @@ async function onChooseAvatar(e: { detail: { avatarUrl: any } }) {
       })
     }
   })
+  // #endif
+  // #ifdef MP-WEIXIN
+  const res = await wxUploadFile(avatarUrl)
+  successFn(res.data)
+  // #endif
 }
 const avatarTempUrl = ref('')
 function onChooseImage() {
@@ -82,7 +88,7 @@ async function cutConfirm(e: any) {
   uploadImage(file)
   // #endif
   // #ifdef MP-WEIXIN
-  const res = await wxUploadImage(e.detail.tempFilePath)
+  const res = await wxUploadFile(e.detail.tempFilePath)
   successFn(res.data)
   // #endif
 }
@@ -95,38 +101,41 @@ async function successFn(url: any) {
   })
   await userStore.getUserInfo()
 }
+async function updateNickname(e: { detail: { value: any } }) {
+  await userApi.userInfoUpdate({
+    nickname: e.detail.value
+  })
+  await userStore.getUserInfo()
+}
 onLoad((option) => {})
 </script>
 <template>
   <div class="container">
     <hy-nav-bar :title="'设置'"></hy-nav-bar>
     <u-cell-group>
-      <!-- <button
-        class="customBtn"
-        open-type="chooseAvatar"
-        @chooseavatar="onChooseAvatar"
-      ></button> -->
-      <!-- #ifdef H5 -->
-      <button class="customBtn" @click="onChooseImage"></button>
-      <!-- #endif -->
-      <!-- #ifdef MP-WEIXIN -->
-      <button
-        class="customBtn"
-        open-type="chooseAvatar"
-        @chooseavatar="onChooseAvatar"
-      ></button>
-      <!-- #endif -->
-
       <u-cell-item title="头像" hover-class="cell-hover-class">
         <!-- #ifdef H5 -->
+        <button class="customBtn" @click="onChooseImage"></button>
         <u-avatar :src="getImgFullPath(userInfo.avatar)"></u-avatar>
         <!-- #endif -->
         <!-- #ifdef MP-WEIXIN -->
+        <button
+          class="customBtn"
+          open-type="chooseAvatar"
+          @chooseavatar="onChooseAvatar"
+        ></button>
         <u-avatar
           :src="getImgFullPath(userInfo.avatar)"
           v-if="userInfo.avatar"
         ></u-avatar>
         <!-- #endif -->
+      </u-cell-item>
+      <u-cell-item title="昵称" hover-class="cell-hover-class">
+        <input
+          type="nickname"
+          v-model="userInfo.nickname"
+          @change="updateNickname"
+        />
       </u-cell-item>
     </u-cell-group>
     <hy-image-cropper

@@ -17,25 +17,26 @@ const money = ref<string | number>('')
 const count = ref(1)
 const content = ref('')
 const totalMoney = computed(() => {
-  return Number(count.value).toFixed(2)
+  return Number(money.value).toFixed(2)
 })
+const selectedUser = ref({})
 const typeMaps = [
   {
     name: '普通红包',
     value: 1
   },
   {
-    name: '专属红包',
-    value: 2
-  },
-  {
     name: '普通积分红包',
     value: 3
   },
-  {
-    name: '专属积分红包',
-    value: 4
-  }
+  // {
+  //   name: '专属红包',
+  //   value: 2
+  // },
+  // {
+  //   name: '专属积分红包',
+  //   value: 4
+  // }
 ]
 const hbType = ref(typeMaps[1])
 const isScoreWallet = computed(() => {
@@ -191,7 +192,7 @@ onLoad((option) => {})
             label-name="name"
             @click="actionSheetCallback"
           ></u-action-sheet>
-          <view class="item">
+          <view class="item" v-if="[1, 3].includes(hbType.value)">
             <view class="label">数量</view>
             <view class="content-text">
               <u-input
@@ -204,6 +205,27 @@ onLoad((option) => {})
               />
             </view>
             <view class="foot">个</view>
+          </view>
+          <view class="item" v-if="[2, 4].includes(hbType.value)">
+            <view class="label">发给谁</view>
+            <view class="content-text">
+              <u-image
+                width="80"
+                height="80"
+                border-radius="8"
+                :loading-icon="RY_AVATAR"
+                :error-icon="RY_AVATAR"
+                :src="
+                  selectedUser?.avatar
+                    ? getImgFullPath(selectedUser?.avatar)
+                    : RY_AVATAR
+                "
+                :lazy-load="false"
+                :fade="false"
+                mode="aspectFill"
+              ></u-image>
+            </view>
+            <view class="foot">{{  selectedUser?.nickname }}</view>
           </view>
           <view class="item">
             <view class="label" v-if="isScoreWallet">积分</view>

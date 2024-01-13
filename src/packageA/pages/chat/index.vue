@@ -6,7 +6,7 @@
  * @Description: 聊天界面
  * @Author: Kerwin
  * @Date: 2023-07-25 10:21:35
- * @LastEditTime: 2024-01-12 14:51:53
+ * @LastEditTime: 2024-01-13 21:03:23
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -283,8 +283,10 @@ onUnmounted(() => {})
                   <template v-else-if="s.messageType === 'RC:ImgMsg'">
                     <view>
                       <u-image
-                        @tap="previewImage([s.content.imageUri])"
-                        :src="s.content.imageUri"
+                        @tap="
+                          previewImage([getImgFullPath(s.content.imageUri)])
+                        "
+                        :src="getImgFullPath(s.content.imageUri)"
                         :style="{
                           'max-width': '250rpx'
                         }"
@@ -458,7 +460,7 @@ onUnmounted(() => {})
   height: calc(100vh - 190rpx);
   /* #endif */
   /* #ifndef H5 */
-  height: calc(100vh - 250rpx);
+  height: calc(100vh - 300rpx);
   /* #endif */
   background-color: #f6f6f6;
 }

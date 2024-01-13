@@ -253,46 +253,53 @@ onLoad((option) => {
                   ></image>
                 </view>
               </scroll-view>
-              <view
+              <template
                 v-if="
-                  item.orderProductSkus && item.orderProductSkus.length === 1
+                  item?.orderProductSkus && item?.orderProductSkus?.length === 1
                 "
-                class="goods-box-single"
-                v-for="(
-                  orderProductSkuItem, goodsIndex
-                ) in item.orderProductSkus"
-                :key="goodsIndex"
               >
-                <image
-                  class="goods-img"
-                  :src="getImgFullPath(orderProductSkuItem.skuImage)"
-                  mode="aspectFill"
-                ></image>
                 <view
-                  class="right"
-                  v-if="
-                    orderProductSkuItem &&
-                    orderProductSkuItem.shopProductSku &&
-                    orderProductSkuItem.shopProductSku.product
-                  "
+                  class="goods-box-single"
+                  v-for="(
+                    orderProductSkuItem, goodsIndex
+                  ) in item.orderProductSkus"
+                  :key="goodsIndex"
                 >
-                  <text class="title clamp">{{
-                    orderProductSkuItem.shopProductSku.product.name
-                  }}</text>
-                  <text class="attr-box"
-                    >{{ orderProductSkuItem.skuName }} x
-                    {{ orderProductSkuItem.count }}</text
+                  <image
+                    class="goods-img"
+                    :src="getImgFullPath(orderProductSkuItem.skuImage)"
+                    mode="aspectFill"
+                  ></image>
+                  <view
+                    class="right"
+                    v-if="
+                      orderProductSkuItem &&
+                      orderProductSkuItem.shopProductSku &&
+                      orderProductSkuItem.shopProductSku.product
+                    "
                   >
-                  <text class="price">{{ orderProductSkuItem.money }}</text>
+                    <text class="title clamp">{{
+                      orderProductSkuItem.shopProductSku.product.name
+                    }}</text>
+                    <text class="attr-box"
+                      >{{ orderProductSkuItem.skuName }} x
+                      {{ orderProductSkuItem.count }}</text
+                    >
+                    <text class="price" :class="{ jf: item?.moneyUnit }">{{
+                      orderProductSkuItem.money
+                    }}</text>
+                  </view>
                 </view>
-              </view>
+              </template>
             </view>
 
             <view class="price-box">
               共
               <text class="num">{{ getOrderProductSkusCount(item) }}</text>
               件商品 实付款
-              <text class="price">{{ item.money }}</text>
+              <text class="price" :class="{ jf: item?.moneyUnit }">{{
+                item.money
+              }}</text>
             </view>
             <view class="action-box b-t">
               <button
@@ -485,6 +492,16 @@ onLoad((option) => {
           font-size: 24rpx;
           margin: 0 2upx 0 0;
         }
+        &.jf {
+          &:before {
+            content: '';
+          }
+          &:after {
+            content: '积分';
+            font-size: 24rpx;
+            margin: 0 2upx 0 8upx;
+          }
+        }
       }
     }
   }
@@ -510,6 +527,16 @@ onLoad((option) => {
         content: '￥';
         font-size: 24rpx;
         margin: 0 2upx 0 8upx;
+      }
+      &.jf {
+        &:before {
+          content: '';
+        }
+        &:after {
+          content: '积分';
+          font-size: 24rpx;
+          margin: 0 2upx 0 8upx;
+        }
       }
     }
   }

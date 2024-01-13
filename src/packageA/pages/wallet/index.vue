@@ -3,7 +3,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-12-04 15:57:32
- * @LastEditTime: 2023-12-17 23:02:38
+ * @LastEditTime: 2024-01-14 00:32:34
  * @LastEditors:  Please set LastEditors
 -->
 <!-- eslint-disable @typescript-eslint/no-empty-function -->
@@ -44,13 +44,21 @@ async function getShopWalletInfo() {
   walletInfo.value = walletList.value[current.value]
   getWalletFlow()
 }
-async function getUserWalletList() {
+async function getUserWalletList(id?: string) {
   const { data } = await moneyApi.walletList({
     noPaging: true,
     detail: true,
     objectType: 11
   })
   walletList.value = data
+  if (id) {
+    const i = data.findIndex(
+      (item: { walletRuleId: number }) => item.walletRuleId === Number(id)
+    )
+    if (i > -1) {
+      current.value = i
+    }
+  }
   walletInfo.value = walletList.value[current.value]
   getWalletFlow()
 }
@@ -98,6 +106,7 @@ onPageScroll((e) => {
   scrollTop.value = e.scrollTop
 })
 onLoad((option) => {
+  console.log(option)
   if (option?.isShop) {
     list.value = [
       {
@@ -106,7 +115,7 @@ onLoad((option) => {
     ]
     getShopWalletInfo()
   } else {
-    getUserWalletList()
+    getUserWalletList(option?.id)
   }
 })
 onReachBottom(() => {
@@ -136,7 +145,7 @@ onReachBottom(() => {
       </view>
       <view class="bot">
         <view class="det">
-          <view>{{ walletInfo?.dayIncome || 0.0 }}</view>
+          <view>{{ walletInfo?.todayIncome || 0.0 }}</view>
           <view>今日收入</view>
         </view>
         <view class="det">

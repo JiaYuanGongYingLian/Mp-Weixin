@@ -258,7 +258,7 @@ export const imageUrlToFile = async (url: string) => {
   return file
 }
 
-export const wxUploadImage = (filePath: any) => {
+export const wxUploadFile = (filePath: any) => {
   return new Promise((resolve, reject) => {
     uni.uploadFile({
       url: UPLOADURL,
@@ -422,7 +422,7 @@ export default {
   isMobile,
   $toast,
   imageUrlToFile,
-  wxUploadImage,
+  wxUploadFile,
   browserVersion,
   setCookie,
   getCookie,

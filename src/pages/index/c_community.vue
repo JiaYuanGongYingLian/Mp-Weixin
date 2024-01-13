@@ -2,7 +2,7 @@
  * @Description: Description
  * @Author: Kerwin
  * @Date: 2023-11-19 15:06:58
- * @LastEditTime: 2023-12-21 10:32:39
+ * @LastEditTime: 2024-01-13 18:23:39
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -46,7 +46,7 @@ const mainModules = ref([
     icon: 'https://family-service-platform.oss-cn-chengdu.aliyuncs.com/uploads/c0d66b9c-dcb2-445d-a85e-e8a0f6d471ae.png',
     msg: '累计积分，总换好物…',
     bg: 'linear-gradient(90deg, #FDEFE7 0%, #FADBCA 100%)',
-    url: '/packageA/pages/physicalShop/index?shopId=29'
+    url: '/packageA/pages/physicalShop/index?shopId=28'
   },
   {
     name: '福利专区',

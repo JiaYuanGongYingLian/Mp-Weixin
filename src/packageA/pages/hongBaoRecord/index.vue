@@ -2,7 +2,7 @@
  * @Description: 红包记录
  * @Author: Kerwin
  * @Date: 2023-11-30 17:11:21
- * @LastEditTime: 2023-12-09 14:19:58
+ * @LastEditTime: 2024-01-13 20:53:29
  * @LastEditors:  Please set LastEditors
 -->
 <script setup lang="ts">
@@ -80,9 +80,9 @@ onLoad((optons) => {
           <text class="unit" v-if="!isScoreWalet">元</text>
           <text class="unit" v-if="isScoreWalet">积分</text>
         </view>
-        <view class="tip"
+        <!-- <view class="tip"
           >已存入{{ isScoreWalet ? '积分' : '' }}钱包，可用于发红包</view
-        >
+        > -->
       </view>
       <view class="item">
         <view class="tips">
@@ -91,7 +91,7 @@ onLoad((optons) => {
             }}{{ isScoreWalet ? '积分' : '元' }}，已被抢完
           </view>
           <view v-else>
-            已领取{{ hongBaoInfo.walletFlows.length }}/{{
+            已领取{{ hongBaoInfo?.walletFlows?.length || 0 }}/{{
               hongBaoInfo.totalCount
             }}个
           </view>
@@ -159,7 +159,13 @@ onLoad((optons) => {
     display: flex;
     justify-content: center;
     color: #bea375;
+    align-items: flex-end;
     font-size: 100rpx;
+    gap: 20rpx;
+    .unit {
+      font-size: 60rpx;
+      margin-bottom: 20rpx;
+    }
   }
   .tip {
     display: flex;

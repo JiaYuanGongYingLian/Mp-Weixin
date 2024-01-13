@@ -266,6 +266,9 @@ const useStore = defineStore('ry', {
       orderId?: any
       productId?: any
       shopId?: any
+      sightUrl?: any
+      size?: any
+      duration?: any
     }) {
       const {
         msgType,
@@ -283,7 +286,10 @@ const useStore = defineStore('ry', {
         path,
         orderId,
         productId,
-        shopId
+        shopId,
+        sightUrl,
+        size,
+        duration
       } = data
       let message: RongIMLib.BaseMessage<any> | null = null
       switch (msgType) {
@@ -312,11 +318,11 @@ const useStore = defineStore('ry', {
           break
         case 5:
           message = new RongIMLib.SightMessage({
-            sightUrl: '<视频资源的远程地址>',
-            content: '<缩略图base64>',
-            duration: 10,
-            size: 100,
-            name: '视频名称'
+            sightUrl,
+            content, // '<缩略图>'
+            duration,
+            size,
+            name: title as string
           })
           break
         case 6:
